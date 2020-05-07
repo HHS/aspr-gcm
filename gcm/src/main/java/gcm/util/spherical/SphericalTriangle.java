@@ -4,6 +4,12 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.vector.Vector3D;
 
+/**
+ * Represents a triangle on a unit sphere.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public class SphericalTriangle {
 
 	public static class Builder {

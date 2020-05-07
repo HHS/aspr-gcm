@@ -2,7 +2,12 @@ package gcm.util.spherical;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Represents a non-crossing polygon on the surface of a unit sphere. 
+ * 
+ * @author Shawn Hatch
+ *
+ */
 public class SphericalPolygon {
 
 	private static class Scaffold {

@@ -55,7 +55,7 @@ public final class Context implements MemoryReportParticipant {
 	private OutputItemManager outputItemManager;
 	private ProfileManager profileManager;
 	private PlanningQueueReportItemManager planningQueueReportItemManager;
-	private SimulationWarningManager simulationWarningManager;	
+	private SimulationWarningManager simulationWarningManager;
 	private double memoryReportInterval;
 	private boolean produceProfileItems;
 	private long planningQueueReportThreshold;
@@ -69,7 +69,7 @@ public final class Context implements MemoryReportParticipant {
 		replication = scaffold.replication;
 		profileManager = new ProfileManager();
 		outputItemManager = new OutputItemManagerImpl();
-		simulationWarningManager = new SimulationWarningManagerImpl(); 
+		simulationWarningManager = new SimulationWarningManagerImpl();
 		componentManager = new ComponentManagerImpl();
 		outputItemHandlers = new ArrayList<>(scaffold.outputItemHandlers);
 		reportsManager = new ReportsManagerImpl();
@@ -203,7 +203,7 @@ public final class Context implements MemoryReportParticipant {
 		outputItemManager.init(this);
 		simulationWarningManager.init(this);
 		environment.init(this);
-		observableEnvironment.init(this);		
+		observableEnvironment.init(this);
 		stochasticsManager.init(this);
 		observationManager.init(this);
 		materialsManager.init(this);
@@ -226,18 +226,16 @@ public final class Context implements MemoryReportParticipant {
 		externalAccessManager.releaseGlobalReadAccessLock();
 
 		/*
-		 * Reports are turned on. This allows reports to engage with the
-		 * environment and observe the remaining data mutations from the
-		 * scenario as it is written into the simulation.
+		 * The mutation resolver is now initialized after all fixed/structural
+		 * data has been loaded from the scenario. The remaining property
+		 * values, people, groups, resources, batches and stages are now loaded
+		 * by the mutation resolver.
 		 */
-		//reportsManager.openReports();
-
-		// Initialize the mutation resolver last so that it can orchestrate the
-		// remaining inputs from the scenario and engage in reporting. People,
-		// property values, resource levels and the like are loaded now while
-		// reports are fully functioning so that initial data load from the
-		// simulation is not treated differently from other mutations.
 		mutationResolver.init(this);
+
+		/*
+		 * Reports are activated
+		 */
 		reportsManager.init(this);
 
 		/*
@@ -479,8 +477,7 @@ public final class Context implements MemoryReportParticipant {
 	public OutputItemManager getOutputItemManager() {
 		return outputItemManager;
 	}
-	
-	
+
 	/**
 	 * Returns the warning manager for the simulation instance
 	 */
@@ -540,7 +537,7 @@ public final class Context implements MemoryReportParticipant {
 		memoryPartition.addMemoryLink(this, profileManager, "Profile Manager");
 		memoryPartition.addMemoryLink(this, planningQueueReportItemManager, "Planning Queue Report Item Manager");
 		memoryPartition.addMemoryLink(this, simulationWarningManager, "Warning Manager");
-		
+
 	}
 
 	/**

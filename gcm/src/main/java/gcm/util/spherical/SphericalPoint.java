@@ -1,5 +1,7 @@
 package gcm.util.spherical;
 
+import org.apache.commons.math3.util.FastMath;
+
 import gcm.util.earth.ECC;
 import gcm.util.vector.Vector3D;
 
@@ -71,25 +73,64 @@ public final class SphericalPoint {
 			scaffold.coordinates[index] = value;
 			return this;
 		}
-		
+
 		public Builder fromVector3D(Vector3D vector3d) {
 			scaffold.coordinates[0] = vector3d.getX();
 			scaffold.coordinates[1] = vector3d.getY();
 			scaffold.coordinates[2] = vector3d.getZ();
-			return this;			
+			return this;
 		}
-		
+
 		public Builder fromECC(ECC ecc) {
 			scaffold.coordinates[0] = ecc.getX();
 			scaffold.coordinates[1] = ecc.getY();
 			scaffold.coordinates[2] = ecc.getZ();
-			return this;			
+			return this;
 		}
 
 	}
-	
+
 	public Vector3D toVector3D() {
-		return new Vector3D(coordinates[0],coordinates[1],coordinates[2]);
+		return new Vector3D(coordinates[0], coordinates[1], coordinates[2]);
+	}
+
+	/**
+	 * Returns <tt>true</tt> if any of the vector components are positive or
+	 * negative infinity.
+	 * 
+	 * @return <tt>true</tt> if the vector is infinite.
+	 */
+	public boolean isInfinite() {
+		return Double.isInfinite(coordinates[0]) || Double.isInfinite(coordinates[1]) || Double.isInfinite(coordinates[2]);
+	}
+
+	/**
+	 * Returns <tt>true</tt> if any of the vector components are NaN 'Not a
+	 * Number'.
+	 * 
+	 * @return <tt>true</tt> if the vector is NaN 'Not a Number'.
+	 */
+	public boolean isNaN() {
+		return Double.isNaN(coordinates[0]) || Double.isNaN(coordinates[1]) || Double.isNaN(coordinates[2]);
+	}
+
+	/**
+	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
+	 * 'Not a Number') and is not infinite.
+	 * 
+	 * @return <tt>true</tt> if the vector is not NaN (i.e. 'Not a Number') and
+	 *         is not infinite.
+	 */
+	public boolean isRealValued() {
+		return !isNaN() && !isInfinite();
+	}
+
+	public boolean isNormal() {
+		double sum = 0;
+		for (int i = 0; i < 3; i++) {
+			sum += coordinates[i];
+		}
+		return isRealValued() && FastMath.abs(sum - 1) < 1E-13;
 	}
 
 }

@@ -2,26 +2,44 @@ package gcm.util.spherical;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.vector.Vector3D;
+import net.jcip.annotations.Immutable;
 
 /**
- * Represents a great arc segment on the unit sphere defined by two distinct
- * SphericalPoints.
+ * Represents an immutable great arc segment on the unit sphere defined by two
+ * distinct SphericalPoints. Instances are created via included builder class.
  * 
  * @author Shawn Hatch
  *
  */
+
+@Immutable
+@Source(status = TestStatus.REQUIRED)
 public class SphericalArc {
 
+	/*
+	 * Hidden constructor
+	 * 
+	 * @throws NullPointerException <li> if not all vertexes of the arc were
+	 * contributed to the builder
+	 */
 	private SphericalArc(Scaffold scaffold) {
 
+		for(SphericalPoint sphericalPoint: scaffold.sphericalPoints) {
+			if(sphericalPoint==null) {
+				throw new NullPointerException("null/no spherical point contributed to build of spherical arc");
+			}
+		}
+
 		sphericalPoints = scaffold.sphericalPoints;
+
 		for (int i = 0; i < 3; i++) {
 			int j = (i + 1) % 3;
 			int k = (i + 2) % 3;
 			double value = sphericalPoints[0].getCoordinate(j) * sphericalPoints[1].getCoordinate(k) - sphericalPoints[0].getCoordinate(k) * sphericalPoints[1].getCoordinate(j);
 			perp[i] = value;
-
 		}
 		double value = 0;
 		for (int i = 0; i < 3; i++) {
@@ -30,15 +48,26 @@ public class SphericalArc {
 		value = FastMath.min(value, 1);
 		value = FastMath.max(value, -1);
 		length = FastMath.acos(value);
-
 	}
 
+	/**
+	 * Builder class for {@link SphericalArc}
+	 * 
+	 * @author Shawn Hatch
+	 *
+	 */
 	public static class Builder {
 
+		/*
+		 * Hidden constructor
+		 */
 		private Builder() {
 
 		}
 
+		/**
+		 * Sets the {@link SphericalPoint} for the given index.
+		 */
 		public Builder setSphereicalPoint(int index, SphericalPoint sphericalPoint) {
 			scaffold.sphericalPoints[index] = sphericalPoint;
 			return this;
@@ -46,6 +75,15 @@ public class SphericalArc {
 
 		private Scaffold scaffold = new Scaffold();
 
+		/**
+		 * Returns the {@link SphericalArc} from the contributed
+		 * {@link SphericalPoint} values
+		 * 
+		 * @throws NullPointerException
+		 *             <li>if not all {@link SphericalPoint} values were
+		 *             contributed or were null
+		 * 
+		 */
 		public SphericalArc build() {
 			try {
 				return new SphericalArc(scaffold);
@@ -55,15 +93,26 @@ public class SphericalArc {
 		}
 	}
 
+	/**
+	 * Returns a new builder instance for {@link SphericalArc}
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	/**
+	 * Static class for containing client contributed values for the builder
+	 * 
+	 * @author Shawn Hatch
+	 *
+	 */
 	private static class Scaffold {
 		SphericalPoint[] sphericalPoints = new SphericalPoint[2];
 	}
 
 	private final SphericalPoint[] sphericalPoints;
+	
+	
 
 	/**
 	 * Returns the spin of a SphericalPoint relative to this SphericalArc in the
@@ -197,7 +246,7 @@ public class SphericalArc {
 	}
 
 	/**
-	 * Return the distance from the given {@linkplain SphericalPoint} to this
+	 * Returns the distance from the given {@linkplain SphericalPoint} to this
 	 * {@linkplain SphericalArc}
 	 */
 	public double distanceTo(SphericalPoint sphericalPoint) {
@@ -245,11 +294,10 @@ public class SphericalArc {
 				 * qOnPlane, from the perspective of the normal, is CCW from A
 				 * and CW from B, so it lies between them
 				 */
-				
+
 				return -angle;
 			}
 		}
-		
 
 		/*
 		 * q's projection onto the plane does not lie between the end points

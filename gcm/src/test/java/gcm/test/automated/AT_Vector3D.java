@@ -679,11 +679,11 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector3D#isRealValued()}
+	 * Tests {@linkplain Vector3D#isFinite()}
 	 * 
 	 */
 	@Test
-	public void testIsRealValued() {
+	public void testIsFinite() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(20);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -695,49 +695,49 @@ public class AT_Vector3D {
 			Vector3D v = new Vector3D();
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setX(Double.NaN);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setX(Double.NEGATIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setX(Double.POSITIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setY(Double.NaN);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setY(Double.NEGATIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setY(Double.POSITIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setZ(Double.NaN);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setZ(Double.NEGATIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 			v.assign(x, y, z);
-			assertTrue(v.isRealValued());
+			assertTrue(v.isFinite());
 			v.setZ(Double.POSITIVE_INFINITY);
-			assertFalse(v.isRealValued());
+			assertFalse(v.isFinite());
 
 		}
 	}

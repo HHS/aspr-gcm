@@ -2,28 +2,55 @@ package gcm.util.spherical;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.vector.Vector3D;
+import net.jcip.annotations.Immutable;
 
 /**
- * Represents a triangle on a unit sphere.
+ * Represents an immutable triangle on the unit sphere.
  * 
  * @author Shawn Hatch
  *
  */
+
+@Immutable
+@Source(status = TestStatus.REQUIRED)
 public class SphericalTriangle {
 
+	/**
+	 * Static builder class for {@link SphericalArc}
+	 * 
+	 * @author Shawn Hatch
+	 *
+	 */
 	public static class Builder {
+		/*
+		 * Hidden constructor
+		 */
 		private Builder() {
 
 		}
 
 		private Scaffold scaffold = new Scaffold();
 
+		/**
+		 * Sets the {@link SphericalArc} for the given index.
+		 */
 		public Builder setSphericalPoint(int index, SphericalPoint sphericalPoint) {
 			scaffold.sphericalPoints[index] = sphericalPoint;
 			return this;
 		}
 
+		/**
+		 * Returns the {@link SphericalTriangle} from the contributed
+		 * {@link SphericalPoint} values
+		 * 
+		 * @throws NullPointerException
+		 *             <li>if not all {@link SphericalPoint} values were
+		 *             contributed or were null
+		 * 
+		 */
 		public SphericalTriangle build() {
 			try {
 				return new SphericalTriangle(scaffold);
@@ -49,7 +76,7 @@ public class SphericalTriangle {
 		return result;
 	}
 
-	private double getTangentialAngle(Vector3D v1, Vector3D v2, Vector3D v3) {
+	private static double getTangentialAngle(Vector3D v1, Vector3D v2, Vector3D v3) {
 		Vector3D p = new Vector3D();
 		p.assign(v1);
 		p.cross(v2);
@@ -63,8 +90,16 @@ public class SphericalTriangle {
 		return p.angle(q);
 	}
 
+	/*
+	 * Hidden constructor
+	 */
 	private SphericalTriangle(Scaffold scaffold) {
 
+		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+			if (sphericalPoint == null) {
+				throw new NullPointerException("null/no spherical point contributed to build of spherical triangle");
+			}
+		}
 		sphericalPoints = scaffold.sphericalPoints;
 		sphericalArcs = new SphericalArc[3];
 
@@ -76,50 +111,47 @@ public class SphericalTriangle {
 		}
 
 		spin = sphericalArcs[0].getSpin(sphericalPoints[2]);
-		Vector3D c = new Vector3D();
-		for (int i = 0; i < 3; i++) {
-			Vector3D v = new Vector3D();
-			v.setX(sphericalPoints[i].getCoordinate(0));
-			v.setY(sphericalPoints[i].getCoordinate(1));
-			v.setZ(sphericalPoints[i].getCoordinate(2));
-			v.normalize();
-			c.add(v);
+
+		final Vector3D v0 = sphericalPoints[0].toVector3D();
+		final Vector3D v1 = sphericalPoints[1].toVector3D();
+		final Vector3D v2 = sphericalPoints[2].toVector3D();
+
+		final Vector3D perp = new Vector3D(v0);
+		perp.cross(v1);
+		final boolean leftHanded = perp.dot(v2) < 0;
+
+		Vector3D midPoint = new Vector3D(v0);
+		midPoint.add(v1);
+		final Vector3D c = new Vector3D(v0);
+		c.cross(v1);
+		c.cross(midPoint);
+
+		midPoint = new Vector3D(v1);
+		midPoint.add(v2);
+		final Vector3D d = new Vector3D(v1);
+		d.cross(v2);
+		d.cross(midPoint);
+
+		c.cross(d);
+		c.normalize();
+
+		if (leftHanded) {
+			c.reverse();
 		}
+		radius = c.distanceTo(v0);
+		centroid = SphericalPoint.builder().fromVector3D(c).build();
 
-		SphericalPoint.Builder sphericalPointBuilder = SphericalPoint.builder();
-		sphericalPointBuilder.setCoordinate(0, c.getX());
-		sphericalPointBuilder.setCoordinate(1, c.getY());
-		sphericalPointBuilder.setCoordinate(2, c.getZ());
-		centroid = sphericalPointBuilder.build();
-
-		sphereicalArcBuilder.setSphereicalPoint(0, sphericalPoints[0]);
-		sphereicalArcBuilder.setSphereicalPoint(1, centroid);
-		SphericalArc sphericalArc = sphereicalArcBuilder.build();
-		radius = sphericalArc.getLength();
-
-		Vector3D v1 = new Vector3D();
-		v1.setX(sphericalPoints[0].getCoordinate(0));
-		v1.setY(sphericalPoints[0].getCoordinate(1));
-		v1.setZ(sphericalPoints[0].getCoordinate(2));
-
-		Vector3D v2 = new Vector3D();
-		v2.setX(sphericalPoints[1].getCoordinate(0));
-		v2.setY(sphericalPoints[1].getCoordinate(1));
-		v2.setZ(sphericalPoints[1].getCoordinate(2));
-
-		Vector3D v3 = new Vector3D();
-		v3.setX(sphericalPoints[2].getCoordinate(0));
-		v3.setY(sphericalPoints[2].getCoordinate(1));
-		v3.setZ(sphericalPoints[2].getCoordinate(2));
-
-		double alpha = getTangentialAngle(v1, v2, v3);
-		double beta = getTangentialAngle(v2, v3, v1);
-		double gamma = getTangentialAngle(v3, v1, v2);
+		double alpha = getTangentialAngle(v0, v1, v2);
+		double beta = getTangentialAngle(v1, v2, v0);
+		double gamma = getTangentialAngle(v2, v0, v1);
 
 		area = (alpha + beta + gamma) - FastMath.PI;
 
 	}
 
+	/**
+	 * Returns a new builder instance for {@link SphericalTriangle}
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -139,7 +171,12 @@ public class SphericalTriangle {
 	private final double area;
 
 	private final Spin spin;
-
+	
+	
+	/**
+	 * Returns true if and only if the given {@link SphericalPoint} is in the
+	 * interior or the arcs of this {@link SphericalTriangle}
+	 */
 	public boolean contains(SphericalPoint sphericalPoint) {
 		for (int i = 0; i < 3; i++) {
 			if (sphericalArcs[i].getSpin(sphericalPoint) != spin) {
@@ -149,22 +186,40 @@ public class SphericalTriangle {
 		return true;
 	}
 
+	/**
+	 * Returns the area of this {@link SphericalTriangle}
+	 */
 	public double getArea() {
 		return area;
 	}
 
+	/**
+	 * Returns the centroid point of this {@link SphericalTriangle}
+	 */
 	public SphericalPoint getCentroid() {
 		return centroid;
 	}
 
+	/**
+	 * Returns the radius of this {@link SphericalTriangle}. The radius is
+	 * defined as the distance to the centroid from the vertices.
+	 */
 	public double getRadius() {
 		return radius;
 	}
 
+	/**
+	 * Returns the spin of this {@link SphericalTriangle} relative to the
+	 * natural order of its SphericalPoints.
+	 */
 	public Spin getSpin() {
 		return spin;
 	}
 
+	/**
+	 * Returns true if this {@link SphericalTriangle} overlaps with any part of
+	 * the given {@link SphericalTriangle}
+	 */
 	public boolean intersects(SphericalTriangle sphericalTriangle) {
 		for (int i = 0; i < 3; i++) {
 			if (contains(sphericalTriangle.getSphericalpoint(i))) {
@@ -192,14 +247,30 @@ public class SphericalTriangle {
 		return false;
 	}
 
+	/**
+	 * Returns the {@link SphericalArc} that corresponds to the index. These
+	 * arcs are formed from the original {@link SphericalPoint} members that
+	 * define this {@link SphericalTriangle}. Arc[0] is formed(in order) from
+	 * Point[0] and Point[1]. Arc[1] is formed(in order) from Point[1] and
+	 * Point[2]. Arc[2] is formed(in order) from Point[2] and Point[0].
+	 * 
+	 */
 	public SphericalArc getSphericalArc(int index) {
 		return sphericalArcs[index];
 	}
 
+	/**
+	 * Returns the {@link SphericalPoint} that corresponds to the index and was
+	 * used to construct this {@link SphericalTriangle}
+	 */
 	public SphericalPoint getSphericalpoint(int index) {
 		return sphericalPoints[index];
 	}
 
+	/**
+	 * Returns true if this {@link SphericalTriangle} intersects the given
+	 * {@link SphericalArc}
+	 */
 	public boolean intersects(SphericalArc sphericalArc) {
 		for (int i = 0; i < 2; i++) {
 			if (contains(sphericalArc.getSphericalPoint(i))) {

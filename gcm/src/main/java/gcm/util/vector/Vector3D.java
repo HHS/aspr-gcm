@@ -221,9 +221,9 @@ public final class Vector3D {
 
 	/**
 	 * Scales and then adds the given vector.
-
-	 * Aadding a vector scaled by 'zero' results in a (0,0,0) vector
-	 * such that no effective scaling or addition occurs.
+	 * 
+	 * Aadding a vector scaled by 'zero' results in a (0,0,0) vector such that
+	 * no effective scaling or addition occurs.
 	 * <p>
 	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>
 	 * <ul>
@@ -522,7 +522,7 @@ public final class Vector3D {
 	 * @return <tt>true</tt> if the vector is not NaN (i.e. 'Not a Number') and
 	 *         is not infinite.
 	 */
-	public boolean isRealValued() {
+	public boolean isFinite() {
 		return !isNaN() && !isInfinite();
 	}
 
@@ -830,11 +830,22 @@ public final class Vector3D {
 		return "Vector3D [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 
-	/**	  
-	 * Sets each component of this {@link Vector3D} to zero. <b>Note:</b> This is the
-	 * same as calling <tt>v.assign(0,0,0)</tt>.
+	/**
+	 * Sets each component of this {@link Vector3D} to zero. <b>Note:</b> This
+	 * is the same as calling <tt>v.assign(0,0,0)</tt>.
 	 */
 	public void zero() {
 		assign(0, 0, 0);
+	}
+
+	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
+
+	/**
+	 * Returns true if and only if this vector is finite and has a length within
+	 * {@link Vector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
+	 */
+	public boolean isNormal() {
+		double len = length();
+		return Double.isFinite(len) && FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE;
 	}
 }

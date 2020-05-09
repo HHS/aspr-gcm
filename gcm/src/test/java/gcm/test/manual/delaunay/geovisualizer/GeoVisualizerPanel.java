@@ -442,7 +442,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 				Vector3D v = new Vector3D(cameraPosition);
 				v.rotateAbout(rotator, angle);
-				if (v.isRealValued()) {
+				if (v.isFinite()) {
 					cameraPosition.assign(v);
 					calculateVectorsFromCameraPosition();
 				}
@@ -645,7 +645,7 @@ public class GeoVisualizerPanel extends JPanel {
 			Vector3D newCamera = new Vector3D(cameraPosition);
 			newCamera.rotateAbout(v, angle);
 
-			if (newCamera.isRealValued()) {
+			if (newCamera.isFinite()) {
 				cameraPosition.assign(newCamera);
 				calculateVectorsFromCameraPosition();
 			}

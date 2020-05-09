@@ -18,7 +18,7 @@ import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 /**
  * Test class for {@link Earth}
@@ -310,7 +310,7 @@ public class AT_Earth {
 			double sinlat = FastMath.sin(FastMath.toRadians(lat));
 			double sinlon = FastMath.sin(FastMath.toRadians(lon));
 			double distance = radius + alt;
-			Vector3D v = new Vector3D(coslat * coslon, coslat * sinlon, sinlat);
+			MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
 			v.scale(distance);
 
 			LatLonAlt latLonAlt = new LatLonAlt(lat, lon, alt);
@@ -344,7 +344,7 @@ public class AT_Earth {
 			double sinlat = FastMath.sin(FastMath.toRadians(lat));
 			double sinlon = FastMath.sin(FastMath.toRadians(lon));
 
-			Vector3D v = new Vector3D(coslat * coslon, coslat * sinlon, sinlat);
+			MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
 			v.scale(radius);
 
 			LatLon latLon = new LatLon(lat, lon);

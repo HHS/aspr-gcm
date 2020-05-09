@@ -4,7 +4,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -76,13 +76,13 @@ public class SphericalTriangle {
 		return result;
 	}
 
-	private static double getTangentialAngle(Vector3D v1, Vector3D v2, Vector3D v3) {
-		Vector3D p = new Vector3D();
+	private static double getTangentialAngle(MutableVector3D v1, MutableVector3D v2, MutableVector3D v3) {
+		MutableVector3D p = new MutableVector3D();
 		p.assign(v1);
 		p.cross(v2);
 		p.cross(v2);
 
-		Vector3D q = new Vector3D();
+		MutableVector3D q = new MutableVector3D();
 		q.assign(v3);
 		q.cross(v2);
 		q.cross(v2);
@@ -112,23 +112,23 @@ public class SphericalTriangle {
 
 		spin = sphericalArcs[0].getSpin(sphericalPoints[2]);
 
-		final Vector3D v0 = sphericalPoints[0].toVector3D();
-		final Vector3D v1 = sphericalPoints[1].toVector3D();
-		final Vector3D v2 = sphericalPoints[2].toVector3D();
+		final MutableVector3D v0 = sphericalPoints[0].toVector3D();
+		final MutableVector3D v1 = sphericalPoints[1].toVector3D();
+		final MutableVector3D v2 = sphericalPoints[2].toVector3D();
 
-		final Vector3D perp = new Vector3D(v0);
+		final MutableVector3D perp = new MutableVector3D(v0);
 		perp.cross(v1);
 		final boolean leftHanded = perp.dot(v2) < 0;
 
-		Vector3D midPoint = new Vector3D(v0);
+		MutableVector3D midPoint = new MutableVector3D(v0);
 		midPoint.add(v1);
-		final Vector3D c = new Vector3D(v0);
+		final MutableVector3D c = new MutableVector3D(v0);
 		c.cross(v1);
 		c.cross(midPoint);
 
-		midPoint = new Vector3D(v1);
+		midPoint = new MutableVector3D(v1);
 		midPoint.add(v2);
-		final Vector3D d = new Vector3D(v1);
+		final MutableVector3D d = new MutableVector3D(v1);
 		d.cross(v2);
 		d.cross(midPoint);
 

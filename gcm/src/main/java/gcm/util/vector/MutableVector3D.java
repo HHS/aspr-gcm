@@ -3,11 +3,38 @@ package gcm.util.vector;
 import org.apache.commons.math3.util.FastMath;
 
 /**
- * A immutable vector class representing 3-dimensional components: v = (x,y,z).
+ * A mutable vector class representing 3-dimensional components: v = (x,y,z).
+ * 
+ * (Description adapted from Wikipedia) This is a Euclidean vector (also called
+ * geometric or spatial vector) that has a length (or magnitude) and direction.
+ * This vector can be added to other vectors and obeys vector algebra logic.
+ * 3-dimensional Euclidean space can be represented as coordinate vectors in a
+ * Cartesian coordinate system. The endpoint of a vector can be identified with
+ * an ordered list of 3 real numbers (3-tuple). These numbers are the
+ * coordinates of the endpoint of the vector, with respect to a given Cartesian
+ * coordinate system, and are typically called the scalar components (or scalar
+ * projections) of the vector on the axes of the coordinate system.
+ * <p>
+ * All calculations conform to a right handed system. Furthermore, all
+ * calculations are 'self-safe', meaning that any arguments passed in a
+ * computation will not be mutated (i.e. if provided a vector a copy of that
+ * vector may be made and mutated, but the vector itself will not be mutated).
+ * <p>
+ * It is important to note, that since this is a fully mutative vector class
+ * that method chaining is discouraged to ensure proper order of operations
+ * occur in calculations. This unit will not account for rounding error logic.
+ * This unit is not <tt>null</tt> tolerant and passing <tt>null</tt> in as a
+ * parameter for a vector will result in a {@link NullPointerException}.
+ * 
+ * @see <a href=
+ *      "http://en.wikipedia.org/wiki/Euclidean_vector">http://en.wikipedia.org/wiki/Euclidean_vector</a>
+ * @see <a href=
+ *      "http://mathworld.wolfram.com/Vector.html">http://mathworld.wolfram.com/Vector.html</a>
  * 
  * @author Shawn R. Hatch
+ * @author Christopher R. Ludka
  */
-public final class Vector3D {
+public final class MutableVector3D {
 
 	/**
 	 * Returns the value at the given index: 0->x, 1->y, 2->z
@@ -33,6 +60,13 @@ public final class Vector3D {
 	}
 
 	/**
+	 * Sets the x component of this vector
+	 */
+	public void setX(double x) {
+		this.x = x;
+	}
+
+	/**
 	 * Returns the y component of this vector
 	 */
 	public double getY() {
@@ -40,10 +74,24 @@ public final class Vector3D {
 	}
 
 	/**
+	 * Sets the y component of this vector
+	 */
+	public void setY(double y) {
+		this.y = y;
+	}
+
+	/**
 	 * Returns the z component of this vector
 	 */
 	public double getZ() {
 		return z;
+	}
+
+	/**
+	 * Sets the z component of this vector
+	 */
+	public void setZ(double z) {
+		this.z = z;
 	}
 
 	private static final long zeroLongBits = Double.doubleToLongBits(0);
@@ -71,20 +119,17 @@ public final class Vector3D {
 		}
 	}
 
-	private final double x;
+	private double x;
 
-	private final double y;
+	private double y;
 
-	private final double z;
+	private double z;
 
 	/**
 	 * Creates a vector with the default components of (0,0,0).
 	 */
-	public Vector3D() {
+	public MutableVector3D() {
 		// Do nothing. Defaults to a (0,0,0) vector construction.
-		x = 0;
-		y = 0;
-		z = 0;
 	}
 
 	/**
@@ -104,21 +149,8 @@ public final class Vector3D {
 	 * @param z
 	 *            the <tt>y</tt> component.
 	 */
-	public Vector3D(double x, double y, double z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
-	/**
-	 * Creates a new {@link Vector3D} instance that is initialized with the coordinates
-	 * values of the provided {@link MutableVector3D}.
-	 */
-	
-	public Vector3D(MutableVector3D mutableVector3D) {
-		this.x = mutableVector3D.getX();
-		this.y = mutableVector3D.getY();
-		this.z = mutableVector3D.getZ();
+	public MutableVector3D(double x, double y, double z) {
+		assign(x, y, z);
 	}
 
 	/**
@@ -139,10 +171,18 @@ public final class Vector3D {
 	 * @param v
 	 *            the initialization vector.
 	 */
-	public Vector3D(Vector3D v) {
-		this.x = v.x;
-		this.y = v.y;
-		this.z = v.z;
+	public MutableVector3D(MutableVector3D v) {
+		assign(v);
+	}
+
+	/**
+	 * Creates a new {@link MutableVector3D} instance that is initialized with
+	 * the coordinates values of the provided {@link Vector3D}.
+	 */
+	public MutableVector3D(Vector3D vector3d) {
+		this.x = vector3d.getX();
+		this.y = vector3d.getY();
+		this.z = vector3d.getZ();
 	}
 
 	/**
@@ -161,8 +201,10 @@ public final class Vector3D {
 	 * @param z
 	 *            the <tt>y</tt> component.
 	 */
-	public Vector3D add(double x, double y, double z) {
-		return new Vector3D(this.x + x, this.y + y, this.z + z);
+	public void add(double x, double y, double z) {
+		this.x = this.x + x;
+		this.y = this.y + y;
+		this.z = this.z + z;
 	}
 
 	/**
@@ -181,8 +223,19 @@ public final class Vector3D {
 	 * @param v
 	 *            the vector to be added.
 	 */
-	public Vector3D add(Vector3D v) {
-		return new Vector3D(x + v.x, y + v.y, z + v.z);
+	public void add(MutableVector3D v) {
+		x = x + v.x;
+		y = y + v.y;
+		z = z + v.z;
+	}
+
+	/**
+	 * Adds the given {@link Vector3D} components to this vector.
+	 */
+	public void add(Vector3D v) {
+		x = x + v.getX();
+		y = y + v.getY();
+		z = z + v.getZ();
 	}
 
 	/**
@@ -208,8 +261,20 @@ public final class Vector3D {
 	 * @param s
 	 *            the magnitude of the scale.
 	 */
-	public Vector3D addScaled(Vector3D v, double scalar) {
-		return new Vector3D(x + scalar * v.x, y + scalar * v.y, z + scalar * v.z);
+	public void addScaled(MutableVector3D v, double scalar) {
+		x = x + scalar * v.x;
+		y = y + scalar * v.y;
+		z = z + scalar * v.z;
+	}
+
+	/**
+	 * Adds the given {@link Vector3D} scaled by the scalar to this
+	 * {@link MutableVector3D}
+	 */
+	public void addScaled(Vector3D v, double scalar) {
+		x = x + scalar * v.getX();
+		y = y + scalar * v.getY();
+		z = z + scalar * v.getZ();
 	}
 
 	/**
@@ -240,8 +305,68 @@ public final class Vector3D {
 	 *            the vector to find the angle between.
 	 * @return the angle in radians
 	 */
+	public double angle(MutableVector3D v) {
+		return FastMath.acos(crunch(this.dot(v) / (this.length() * v.length())));
+	}
+
+	/**
+	 * Returns the angle in radians from this muta
+	 */
 	public double angle(Vector3D v) {
-		return FastMath.acos(crunch(dot(v) / (length() * v.length())));
+		return FastMath.acos(crunch(this.dot(v) / (this.length() * v.length())));
+	}
+
+	/**
+	 * Assigns this vector with the component values of (x,y,z).
+	 * <p>
+	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>:
+	 * <ul>
+	 * <li><tt>v1.assign(1,-1,-1) = (1,-1,-1)</tt>
+	 * <li><tt>v1.assign(0,0,0) = (0,0,0)</tt>
+	 * </ul>
+	 * 
+	 * @param x
+	 *            the <tt>x</tt> component to be added.
+	 * @param y
+	 *            the <tt>y</tt> component to be added.
+	 * @param z
+	 *            the <tt>y</tt> component to be added.
+	 */
+	public void assign(double x, double y, double z) {
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
+
+	/**
+	 * Assigns this vector with the coordinates values of the provided vector.
+	 * <p>
+	 * If provided a <tt>null</tt> vector, a vector with components (0,0,0) is
+	 * assigned.
+	 * <p>
+	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>:
+	 * <ul>
+	 * <li><tt>v2 = (1,-1,-1)</tt>: <tt>v1.assign(v2) = (1,-1,-1)</tt>.
+	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.assign(v2)</tt> = (0,0,0)</tt>.
+	 * </ul>
+	 * 
+	 * @param v
+	 *            the vector values to be assigned.
+	 */
+	public void assign(MutableVector3D v) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+	}
+
+	/**
+	 * Assigns this vector with the coordinates values of the provided vector.
+	 * 
+	 */
+	public void assign(Vector3D v) {
+		x = v.getX();
+		y = v.getY();
+		z = v.getZ();
 	}
 
 	/**
@@ -301,11 +426,22 @@ public final class Vector3D {
 	 * @param v
 	 *            the 'right' cross vector.
 	 */
-	public Vector3D cross(Vector3D v) {
+	public void cross(MutableVector3D v) {
 		double crossx = y * v.z - v.y * z;
 		double crossy = v.x * z - x * v.z;
 		double crossz = x * v.y - v.x * y;
-		return new Vector3D(crossx, crossy, crossz);
+		assign(crossx, crossy, crossz);
+	}
+
+	/**
+	 * Assigns this vector as the right handed cross product of this
+	 * {@link MutableVector3D} and the given {@link Vector3D}
+	 */
+	public void cross(Vector3D v) {
+		double crossx = y * v.getZ() - v.getY() * z;
+		double crossy = v.getX() * z - x * v.getZ();
+		double crossz = x * v.getY() - v.getX() * y;
+		assign(crossx, crossy, crossz);
 	}
 
 	/**
@@ -328,8 +464,15 @@ public final class Vector3D {
 	 * 
 	 * @return the distance between this vector and the given vector.
 	 */
-	public double distanceTo(Vector3D v) {
+	public double distanceTo(MutableVector3D v) {
 		return FastMath.sqrt(sqr(v.x - x) + sqr(v.y - y) + sqr(v.z - z));
+	}
+	
+	/**
+	 * Returns the distance between this vector and the given vector.
+	 */
+	public double distanceTo(Vector3D v) {
+		return FastMath.sqrt(sqr(v.getX() - x) + sqr(v.getY() - y) + sqr(v.getZ() - z));
 	}
 
 	/**
@@ -365,8 +508,15 @@ public final class Vector3D {
 	 *            the vector for the dot product.
 	 * @return the dot product
 	 */
-	public double dot(Vector3D v) {
+	public double dot(MutableVector3D v) {
 		return x * v.x + y * v.y + z * v.z;
+	}
+	
+	/**
+	 * Returns the dot product of this {@link MutableVector3D} and the given {@link Vector3D}.
+	 */
+	public double dot(Vector3D v) {
+		return x * v.getX() + y * v.getY() + z * v.getZ();
 	}
 
 	/**
@@ -386,7 +536,7 @@ public final class Vector3D {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		Vector3D other = (Vector3D) obj;
+		MutableVector3D other = (MutableVector3D) obj;
 		if (toLongBits(x) != toLongBits(other.x)) {
 			return false;
 		}
@@ -486,9 +636,8 @@ public final class Vector3D {
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Normalized_vector">http://en.wikipedia.org/wiki/Normalized_vector</a>
 	 */
-	public Vector3D normalize() {
-		double invLength = 1.0 / length();
-		return new Vector3D(x * invLength, y * invLength, z * invLength);
+	public void normalize() {
+		scale(1.0 / length());
 	}
 
 	/**
@@ -525,8 +674,8 @@ public final class Vector3D {
 	 * <li><tt>v1 = (0,0,0)</tt>: <tt>v1.reverse() = (0,0,0)</tt>
 	 * </ul>
 	 */
-	public Vector3D reverse() {
-		return scale(-1);
+	public void reverse() {
+		scale(-1);
 	}
 
 	/**
@@ -556,17 +705,90 @@ public final class Vector3D {
 	 * <tt>v1.rotate(v2, theta)</tt> -> <tt>(0,0,0)</tt>
 	 * </ul>
 	 * 
-	 * @param rotator
+	 * @param v
 	 *            the vector to rotate about.
 	 * @param theta
 	 *            the angle of rotation according to a right hand coordinate
 	 *            system (i.e. counter-clockwise).
 	 */
-	public Vector3D rotateAbout(Vector3D rotator, double theta) {		
-		MutableVector3D m = new MutableVector3D(this);
-		MutableVector3D r = new MutableVector3D(rotator);
-		m.rotateAbout(r, theta);
-		return new Vector3D(m);
+	public void rotateAbout(MutableVector3D v, double theta) {
+		// Normalize the vector
+		MutableVector3D normalizedRotator = new MutableVector3D(v);
+		normalizedRotator.normalize();
+
+		// parallelProjection is the part of this vector that lies in the
+		// direction of the rotator
+		MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
+		parallelProjection.scale(dot(normalizedRotator));
+
+		// x_perpendicularProjection is the part of this vector that is
+		// perpendicular to the rotator. It is the projection of self onto the
+		// plane perpendicular to the rotator.
+		MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
+		x_perpendicularProjection.sub(parallelProjection);
+
+		// y_perpendicularProjection is the vector that is both in the plane
+		// perpendicular to the rotator AND perpendicular to the
+		// x_perpendicularProjection
+
+		MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
+		y_perpendicularProjection.cross(x_perpendicularProjection);
+
+		// Note: y_perpendicularProjection and x_perpendicularProjection
+		// have the same length. This has reduced the problem to a rotation in
+		// the plane.
+
+		// We will now accumulate the various components after resetting this
+		// vector to zero.
+		zero();
+		addScaled(x_perpendicularProjection, FastMath.cos(theta));
+		addScaled(y_perpendicularProjection, FastMath.sin(theta));
+
+		// Now by adding back the parallelProjection, we obtain the desired
+		// result that is off the plane
+		add(parallelProjection);
+	}
+	
+	/**
+	 * Rotates this vector about the given vector at the given angle according
+	 * to a right hand coordinate system (i.e. counter-clockwise).	
+	 */
+	public void rotateAbout(Vector3D v, double theta) {
+		// Normalize the vector
+		MutableVector3D normalizedRotator = new MutableVector3D(v);
+		normalizedRotator.normalize();
+
+		// parallelProjection is the part of this vector that lies in the
+		// direction of the rotator
+		MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
+		parallelProjection.scale(dot(normalizedRotator));
+
+		// x_perpendicularProjection is the part of this vector that is
+		// perpendicular to the rotator. It is the projection of self onto the
+		// plane perpendicular to the rotator.
+		MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
+		x_perpendicularProjection.sub(parallelProjection);
+
+		// y_perpendicularProjection is the vector that is both in the plane
+		// perpendicular to the rotator AND perpendicular to the
+		// x_perpendicularProjection
+
+		MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
+		y_perpendicularProjection.cross(x_perpendicularProjection);
+
+		// Note: y_perpendicularProjection and x_perpendicularProjection
+		// have the same length. This has reduced the problem to a rotation in
+		// the plane.
+
+		// We will now accumulate the various components after resetting this
+		// vector to zero.
+		zero();
+		addScaled(x_perpendicularProjection, FastMath.cos(theta));
+		addScaled(y_perpendicularProjection, FastMath.sin(theta));
+
+		// Now by adding back the parallelProjection, we obtain the desired
+		// result that is off the plane
+		add(parallelProjection);
 	}
 
 	/**
@@ -603,10 +825,20 @@ public final class Vector3D {
 	 *            the angle of rotation according to a right hand coordinate
 	 *            system (i.e. counter-clockwise).
 	 */
-	public Vector3D rotateToward(Vector3D v, double theta) {		
-		MutableVector3D m = new MutableVector3D(this);
-		m.rotateToward(new MutableVector3D(v),theta);		
-		return new Vector3D(m);		
+	public void rotateToward(MutableVector3D v, double theta) {
+		MutableVector3D perp = new MutableVector3D(this);
+		perp.cross(v);
+		rotateAbout(perp, theta);
+	}
+	
+	/**
+	 * Rotates this vector toward the given vector at the given angle according
+	 * to a right hand coordinate system (i.e. counter-clockwise).	
+	 */
+	public void rotateToward(Vector3D v, double theta) {
+		MutableVector3D perp = new MutableVector3D(this);
+		perp.cross(v);
+		rotateAbout(perp, theta);
 	}
 
 	/**
@@ -624,8 +856,10 @@ public final class Vector3D {
 	 * @param m
 	 *            the magnitude, e.g. scaling factor.
 	 */
-	public Vector3D scale(double m) {
-		return new Vector3D(x * m, y * m, z * m);
+	public void scale(double m) {
+		x *= m;
+		y *= m;
+		z *= m;
 	}
 
 	/**
@@ -654,8 +888,15 @@ public final class Vector3D {
 	 *            the vector to find the distance to.
 	 * @return the square of the distance to the vector provided.
 	 */
-	public double squareDistanceTo(Vector3D v) {
+	public double squareDistanceTo(MutableVector3D v) {
 		return (v.x - x) * (v.x - x) + (v.y - y) * (v.y - y) + (v.z - z) * (v.z - z);
+	}
+	
+	/**
+	 * Returns the square of the distance to the vector provided.	 
+	 */
+	public double squareDistanceTo(Vector3D v) {
+		return (v.getX() - x) * (v.getX() - x) + (v.getY() - y) * (v.getY() - y) + (v.getZ() - z) * (v.getZ() - z);
 	}
 
 	/**
@@ -674,8 +915,10 @@ public final class Vector3D {
 	 * @param z
 	 *            the <tt>y</tt> component.
 	 */
-	public Vector3D sub(double x, double y, double z) {
-		return new Vector3D(this.x - x, this.y - y, this.z - z);
+	public void sub(double x, double y, double z) {
+		this.x = this.x - x;
+		this.y = this.y - y;
+		this.z = this.z - z;
 	}
 
 	/**
@@ -694,10 +937,21 @@ public final class Vector3D {
 	 * @param v
 	 *            the vector to be added.
 	 */
-	public Vector3D sub(Vector3D v) {
-		return new Vector3D(x - v.x, y - v.y, z - v.z);
+	public void sub(MutableVector3D v) {
+		x = x - v.x;
+		y = y - v.y;
+		z = z - v.z;
 	}
 
+	/**
+	 * Subtracts the given vector's components from this vector.
+	 * 
+	 */
+	public void sub(Vector3D v) {
+		x = x - v.getX();
+		y = y - v.getY();
+		z = z - v.getZ();
+	}
 	/**
 	 * Returns a length 3 array of double [x,y,z]
 	 */
@@ -715,11 +969,19 @@ public final class Vector3D {
 		return "Vector3D [x=" + x + ", y=" + y + ", z=" + z + "]";
 	}
 
+	/**
+	 * Sets each component of this {@link MutableVector3D} to zero. <b>Note:</b>
+	 * This is the same as calling <tt>v.assign(0,0,0)</tt>.
+	 */
+	public void zero() {
+		assign(0, 0, 0);
+	}
+
 	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
 
 	/**
 	 * Returns true if and only if this vector is finite and has a length within
-	 * {@link Vector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
+	 * {@link MutableVector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
 	 */
 	public boolean isNormal() {
 		double len = length();

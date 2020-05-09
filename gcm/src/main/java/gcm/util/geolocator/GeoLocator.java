@@ -14,7 +14,7 @@ import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLonAlt;
 import gcm.util.vector.Vector2D;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 /**
  * A generics-base utility class for managing point locations on a spherical
@@ -203,7 +203,7 @@ public class GeoLocator<T> {
 
 		LatLonAlt latLonAlt = new LatLonAlt(latDegrees, lonDegrees, 0);
 		ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
-		Vector3D position = ecc.toVector3D();
+		MutableVector3D position = ecc.toVector3D();
 		double[] positionArray = position.toArray();
 
 		return dimensionTree.getMembersInSphere(linearSearchRangeMeters, positionArray).stream()//
@@ -223,7 +223,7 @@ public class GeoLocator<T> {
 	public Optional<T> getNearestLocation(double latDegrees, double lonDegrees) {
 		LatLonAlt latLonAlt = new LatLonAlt(latDegrees, lonDegrees, 0);
 		ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
-		Vector3D position = ecc.toVector3D();
+		MutableVector3D position = ecc.toVector3D();
 		double[] positionArray = position.toArray();
 
 		LocationEccRecord<T> locationEccRecord = dimensionTree.getNearestMember(positionArray);

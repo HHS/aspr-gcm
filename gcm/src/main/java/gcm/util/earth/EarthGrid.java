@@ -5,7 +5,7 @@ import org.apache.commons.math3.util.FastMath;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.vector.Vector2D;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 /**
  * A utility class for converting (x,y) two dimensional grid coordinates to an
@@ -25,13 +25,13 @@ public final class EarthGrid {
 
 	private final Earth earth;
 
-	private Vector3D x;
+	private MutableVector3D x;
 
-	private Vector3D y;
+	private MutableVector3D y;
 
-	private Vector3D z;
+	private MutableVector3D z;
 
-	private Vector3D c;
+	private MutableVector3D c;
 
 	/**
 	 * Constructs a new EarthGrid centered at the given LatLon where the (x,y)
@@ -54,19 +54,19 @@ public final class EarthGrid {
 		}
 		earth = Earth.fromLatitude(center.getLatitude());
 		c = earth.getECCFromLatLon(center).toVector3D();
-		z = new Vector3D(c);
+		z = new MutableVector3D(c);
 		z.normalize();
-		x = new Vector3D(0, 0, 1);
+		x = new MutableVector3D(0, 0, 1);
 		x.cross(z);
 		x.normalize();
 		x.rotateAbout(z, -FastMath.toRadians(azimuthDegrees));
-		y = new Vector3D(z);
+		y = new MutableVector3D(z);
 		y.cross(x);
 		y.normalize();
 	}
 
 	public Vector2D getCartesian2DCoordinate(LatLon latLon) {
-		Vector3D v = earth.getECCFromLatLonAlt(new LatLonAlt(latLon)).toVector3D();
+		MutableVector3D v = earth.getECCFromLatLonAlt(new LatLonAlt(latLon)).toVector3D();
 		v.normalize();
 		v.scale(Earth.getEffectiveEarthRadius(latLon.getLatitude()));
 		v.sub(c);
@@ -75,7 +75,7 @@ public final class EarthGrid {
 
 	public LatLon getLatLon(Vector2D xyCoordinate) {
 		double zlength = FastMath.sqrt(earth.getRadius() * earth.getRadius() - xyCoordinate.getX() * xyCoordinate.getX() - xyCoordinate.getY() * xyCoordinate.getY()) - earth.getRadius();
-		Vector3D planarPosition = new Vector3D(c);
+		MutableVector3D planarPosition = new MutableVector3D(c);
 		planarPosition.addScaled(y, xyCoordinate.getY());
 		planarPosition.addScaled(x, xyCoordinate.getX());
 		planarPosition.addScaled(z, zlength);

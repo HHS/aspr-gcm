@@ -11,13 +11,13 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.dimensiontree.VolumetricDimensionTree;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 public class GeoDelaunaySolver<T extends GeoCoordinate> {
 
 	private static class Rec<T extends GeoCoordinate> implements Comparable<Rec<T>>{
 		T geoCoordinate;
-		Vector3D v;		
+		MutableVector3D v;		
 		double angleToCentroid;
 		double azimuthAngle;
 		int step;
@@ -35,7 +35,7 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 	private List<T> spiralize(List<T> geoCoordinates) {
 		
 		Rec<T> centroid = new Rec<>();
-		centroid.v = new Vector3D();
+		centroid.v = new MutableVector3D();
 		List<Rec<T>> list = new ArrayList<>();
 		geoCoordinates.forEach(geoCoordinate -> {
 			Rec<T> rec = new Rec<>();
@@ -48,14 +48,14 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		
 		centroid.v.normalize();
 		
-		Vector3D north  = new Vector3D(0,0,1);
-		Vector3D northTangent = new Vector3D(centroid.v);
+		MutableVector3D north  = new MutableVector3D(0,0,1);
+		MutableVector3D northTangent = new MutableVector3D(centroid.v);
 		northTangent.rotateToward(north, FastMath.PI/2);
 		
 		double maxGroundRange = Double.NEGATIVE_INFINITY;
 		for (Rec<T> rec : list) {			
 			rec.angleToCentroid = centroid.v.angle(rec.v);
-			Vector3D tangent = new Vector3D(centroid.v);
+			MutableVector3D tangent = new MutableVector3D(centroid.v);
 			tangent.rotateToward(rec.v, FastMath.PI/2);
 			rec.azimuthAngle = northTangent.angle(tangent);
 			tangent.cross(northTangent);
@@ -131,10 +131,10 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 
 	private static class Vertex<T extends GeoCoordinate> {
 		int id;
-		Vector3D position;
+		MutableVector3D position;
 		T geoCoordinate;
 
-		public Vertex(final int id, final Vector3D position, T geoCoordinate) {
+		public Vertex(final int id, final MutableVector3D position, T geoCoordinate) {
 			super();
 			this.id = id;
 			this.position = position;
@@ -172,23 +172,23 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 
 		Arrays.sort(ids);
 
-		final Vector3D v0 = vertexes.get(ids[0]).position;
-		final Vector3D v1 = vertexes.get(ids[1]).position;
-		final Vector3D v2 = vertexes.get(ids[2]).position;
+		final MutableVector3D v0 = vertexes.get(ids[0]).position;
+		final MutableVector3D v1 = vertexes.get(ids[1]).position;
+		final MutableVector3D v2 = vertexes.get(ids[2]).position;
 
-		final Vector3D perp = new Vector3D(v0);
+		final MutableVector3D perp = new MutableVector3D(v0);
 		perp.cross(v1);
 		final boolean leftHanded = perp.dot(v2) < 0;
 
-		Vector3D midPoint = new Vector3D(v0);
+		MutableVector3D midPoint = new MutableVector3D(v0);
 		midPoint.add(v1);
-		final Vector3D c = new Vector3D(v0);
+		final MutableVector3D c = new MutableVector3D(v0);
 		c.cross(v1);
 		c.cross(midPoint);
 
-		midPoint = new Vector3D(v1);
+		midPoint = new MutableVector3D(v1);
 		midPoint.add(v2);
-		final Vector3D d = new Vector3D(v1);
+		final MutableVector3D d = new MutableVector3D(v1);
 		d.cross(v2);
 		d.cross(midPoint);
 
@@ -293,12 +293,12 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		return result;
 	}
 
-	private Vector3D getPositionFromGeoCoordinate(GeoCoordinate geoCoordinate) {
+	private MutableVector3D getPositionFromGeoCoordinate(GeoCoordinate geoCoordinate) {
 		double coslat = FastMath.cos(FastMath.toRadians(geoCoordinate.getLatitude()));
 		double coslon = FastMath.cos(FastMath.toRadians(geoCoordinate.getLongitude()));
 		double sinlat = FastMath.sin(FastMath.toRadians(geoCoordinate.getLatitude()));
 		double sinlon = FastMath.sin(FastMath.toRadians(geoCoordinate.getLongitude()));
-		return new Vector3D(coslat * coslon, coslat * sinlon, sinlat);
+		return new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
 	}
 	
 	private void initialize() {
@@ -308,18 +308,18 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		 * Add three vertexes for the boundary
 		 */
 		for (int i = 0; i < scaffoldCount; i++) {
-			vertexes.add(new Vertex<>(i, new Vector3D(), null));
+			vertexes.add(new Vertex<>(i, new MutableVector3D(), null));
 		}
 
 		/*
 		 * Add vertexes for each point in the model and calculate the centroid
 		 * of those points
 		 */
-		final Vector3D centroid = new Vector3D();
+		final MutableVector3D centroid = new MutableVector3D();
 		int n = points.size();
 		for (int i = 0; i < n; i++) {			
 			T geoCoordinate = points.get(i);
-			final Vector3D v = getPositionFromGeoCoordinate(geoCoordinate);
+			final MutableVector3D v = getPositionFromGeoCoordinate(geoCoordinate);
 			centroid.add(v);
 			vertexes.add(new Vertex<>(i + scaffoldCount, v, geoCoordinate));
 		}
@@ -349,9 +349,9 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 
 		maxAngle += (FastMath.PI - maxAngle) / 100;
 
-		final Vector3D north = new Vector3D(0, 0, 1);
+		final MutableVector3D north = new MutableVector3D(0, 0, 1);
 
-		final List<Vector3D> tangentPlaneNormals = new ArrayList<>();
+		final List<MutableVector3D> tangentPlaneNormals = new ArrayList<>();
 
 		/*
 		 * Form the vectors that will be perpendicular to the three planes that
@@ -359,7 +359,7 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		 * 
 		 */
 		for (int i = 0; i < scaffoldCount; i++) {
-			final Vector3D v = new Vector3D(centroid);
+			final MutableVector3D v = new MutableVector3D(centroid);
 			v.rotateToward(north, maxAngle - (FastMath.PI / 2));
 			v.rotateAbout(centroid, (2 * i * FastMath.PI) / 3);
 			tangentPlaneNormals.add(v);
@@ -372,9 +372,9 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		 * the triangle will have all of the data points on its inside.
 		 */
 		for (int i = 0; i < scaffoldCount; i++) {
-			final Vector3D v0 = tangentPlaneNormals.get(i);
-			final Vector3D v1 = tangentPlaneNormals.get((i + 1) % 3);
-			final Vector3D scaffoldPoint = new Vector3D(v0);
+			final MutableVector3D v0 = tangentPlaneNormals.get(i);
+			final MutableVector3D v1 = tangentPlaneNormals.get((i + 1) % 3);
+			final MutableVector3D scaffoldPoint = new MutableVector3D(v0);
 			scaffoldPoint.cross(v1);
 			scaffoldPoint.normalize();
 

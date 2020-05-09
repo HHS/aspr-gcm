@@ -4,7 +4,7 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.earth.ECC;
 import gcm.util.vector.NonNormalVectorException;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -26,7 +26,7 @@ public final class SphericalPoint {
 	private SphericalPoint(Scaffold scaffold) {
 		this.coordinates = scaffold.coordinates;
 
-		Vector3D v = new Vector3D(scaffold.coordinates[0], scaffold.coordinates[1], scaffold.coordinates[2]);
+		MutableVector3D v = new MutableVector3D(scaffold.coordinates[0], scaffold.coordinates[1], scaffold.coordinates[2]);
 		v.normalize();
 
 		if (!v.isNormal()) {
@@ -105,9 +105,9 @@ public final class SphericalPoint {
 
 		/**
 		 * Sets the values of the coordinates of the {@link SphericalPoint} from
-		 * the {@link Vector3D} in x, y, z order.
+		 * the {@link MutableVector3D} in x, y, z order.
 		 */
-		public Builder fromVector3D(Vector3D vector3d) {
+		public Builder fromVector3D(MutableVector3D vector3d) {
 			scaffold.coordinates[0] = vector3d.getX();
 			scaffold.coordinates[1] = vector3d.getY();
 			scaffold.coordinates[2] = vector3d.getZ();
@@ -128,10 +128,10 @@ public final class SphericalPoint {
 	}
 
 	/**
-	 * Returns this {@link SphericalPoint} as a {@link Vector3D}
+	 * Returns this {@link SphericalPoint} as a {@link MutableVector3D}
 	 */
-	public Vector3D toVector3D() {
-		return new Vector3D(coordinates[0], coordinates[1], coordinates[2]);
+	public MutableVector3D toVector3D() {
+		return new MutableVector3D(coordinates[0], coordinates[1], coordinates[2]);
 	}
 	
 	/**
@@ -143,14 +143,14 @@ public final class SphericalPoint {
 
 	/**
 	 * Returns true if and only if the corresponding
-	 * {@link Vector3D#isInfinite()} is true.
+	 * {@link MutableVector3D#isInfinite()} is true.
 	 */
 	public boolean isInfinite() {
 		return Double.isInfinite(coordinates[0]) || Double.isInfinite(coordinates[1]) || Double.isInfinite(coordinates[2]);
 	}
 
 	/**
-	 * Returns true if and only if the corresponding {@link Vector3D#isNaN()} is
+	 * Returns true if and only if the corresponding {@link MutableVector3D#isNaN()} is
 	 * true.
 	 */
 	public boolean isNaN() {
@@ -158,7 +158,7 @@ public final class SphericalPoint {
 	}
 
 	/**
-	 * Returns true if and only if the corresponding {@link Vector3D#isFinite()}
+	 * Returns true if and only if the corresponding {@link MutableVector3D#isFinite()}
 	 * is true.
 	 */
 	public boolean isFinite() {
@@ -166,7 +166,7 @@ public final class SphericalPoint {
 	}
 
 	/**
-	 * Returns true if and only if the corresponding {@link Vector3D#isNormal()}
+	 * Returns true if and only if the corresponding {@link MutableVector3D#isNormal()}
 	 * is normal.
 	 */
 	public boolean isNormal() {

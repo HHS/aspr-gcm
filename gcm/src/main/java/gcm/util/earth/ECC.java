@@ -1,7 +1,7 @@
 package gcm.util.earth;
 
 import gcm.util.annotations.Source;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -76,20 +76,20 @@ public class ECC {
 	 *             <li>if the vector3D is null
 	 * 
 	 */
-	public ECC(Vector3D vector3D) {
-		if (vector3D == null) {
+	public ECC(MutableVector3D mutableVector3D) {
+		if (mutableVector3D == null) {
 			throw new RuntimeException("null vector");
 		}
-		this.x = vector3D.getX();
-		this.y = vector3D.getY();
-		this.z = vector3D.getZ();
+		this.x = mutableVector3D.getX();
+		this.y = mutableVector3D.getY();
+		this.z = mutableVector3D.getZ();
 	}
 
 	/**
 	 * Returns a Vector3D from x, y, and z
 	 */
-	public Vector3D toVector3D() {
-		return new Vector3D(x, y, z);
+	public MutableVector3D toVector3D() {
+		return new MutableVector3D(x, y, z);
 	}
 
 	/**

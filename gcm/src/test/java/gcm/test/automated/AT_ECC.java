@@ -13,7 +13,7 @@ import org.junit.Test;
 import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.earth.ECC;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 /**
  * Test class for {@link ECC}
@@ -160,7 +160,7 @@ public class AT_ECC {
 			double y = randomGenerator.nextDouble() * 1_000_000 - 500_000;
 			double z = randomGenerator.nextDouble() * 1_000_000 - 500_000;
 
-			Vector3D v = new Vector3D(x, y, z);
+			MutableVector3D v = new MutableVector3D(x, y, z);
 			ECC ecc = new ECC(v);
 			assertEquals(x, ecc.getX(), TOLERANCE);
 			assertEquals(y, ecc.getY(), TOLERANCE);
@@ -169,7 +169,7 @@ public class AT_ECC {
 
 		// pre-condition tests
 		assertException(() -> {
-			Vector3D v = null;
+			MutableVector3D v = null;
 			new ECC(v);
 		}, RuntimeException.class);
 
@@ -187,7 +187,7 @@ public class AT_ECC {
 			double y = randomGenerator.nextDouble() * 1_000_000 - 500_000;
 			double z = randomGenerator.nextDouble() * 1_000_000 - 500_000;
 			ECC ecc = new ECC(x, y, z);
-			Vector3D v = ecc.toVector3D();
+			MutableVector3D v = ecc.toVector3D();
 			assertNotNull(v);
 			assertEquals(ecc.getX(), v.getX(), TOLERANCE);
 			assertEquals(ecc.getY(), v.getY(), TOLERANCE);

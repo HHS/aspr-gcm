@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -79,8 +79,8 @@ public final class LatLonBox {
 			try {
 
 				Earth earth = Earth.fromMeanRadius();
-				Vector3D centroid = new Vector3D();
-				Vector3D v = new Vector3D();
+				MutableVector3D centroid = new MutableVector3D();
+				MutableVector3D v = new MutableVector3D();
 				double northLat = -90;
 				double southLat = 90;
 				for (LatLon latLon : latLons) {
@@ -99,7 +99,7 @@ public final class LatLonBox {
 
 				double maxDeltaLon = Double.NEGATIVE_INFINITY;
 				double minDeltaLon = Double.POSITIVE_INFINITY;
-				Vector3D u = new Vector3D();
+				MutableVector3D u = new MutableVector3D();
 				for (LatLon latLon : latLons) {
 					ECC ecc = earth.getECCFromLatLonAlt(new LatLonAlt(latLon));
 					v.assign(ecc.getX(), ecc.getY(), 0);

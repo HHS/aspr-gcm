@@ -4,7 +4,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -183,27 +183,27 @@ public class SphericalArc {
 	 */
 	public SphericalPoint getInterSection(SphericalArc arc) {
 
-		Vector3D a = new Vector3D();
+		MutableVector3D a = new MutableVector3D();
 		a.setX(sphericalPoints[0].getCoordinate(0));
 		a.setY(sphericalPoints[0].getCoordinate(1));
 		a.setZ(sphericalPoints[0].getCoordinate(2));
 
-		Vector3D b = new Vector3D();
+		MutableVector3D b = new MutableVector3D();
 		b.setX(sphericalPoints[1].getCoordinate(0));
 		b.setY(sphericalPoints[1].getCoordinate(1));
 		b.setZ(sphericalPoints[1].getCoordinate(2));
 
-		Vector3D c = new Vector3D();
+		MutableVector3D c = new MutableVector3D();
 		c.setX(arc.getSphericalPoint(0).getCoordinate(0));
 		c.setY(arc.getSphericalPoint(0).getCoordinate(1));
 		c.setZ(arc.getSphericalPoint(0).getCoordinate(2));
 
-		Vector3D d = new Vector3D();
+		MutableVector3D d = new MutableVector3D();
 		d.setX(arc.getSphericalPoint(1).getCoordinate(0));
 		d.setY(arc.getSphericalPoint(1).getCoordinate(1));
 		d.setZ(arc.getSphericalPoint(1).getCoordinate(2));
 
-		Vector3D p = new Vector3D(a);
+		MutableVector3D p = new MutableVector3D(a);
 		p.cross(b);
 
 		// po(a+sb) = po(c+td)
@@ -250,19 +250,19 @@ public class SphericalArc {
 	 * {@linkplain SphericalArc}
 	 */
 	public double distanceTo(SphericalPoint sphericalPoint) {
-		Vector3D a = sphericalPoints[0].toVector3D();
-		Vector3D b = sphericalPoints[1].toVector3D();
+		MutableVector3D a = sphericalPoints[0].toVector3D();
+		MutableVector3D b = sphericalPoints[1].toVector3D();
 
 		/*
 		 * Create a normal to the plane containing the two end points --
 		 */
-		Vector3D p = new Vector3D(a);
+		MutableVector3D p = new MutableVector3D(a);
 		p.cross(b);
 
 		/*
 		 * Create a vector3D for the input
 		 */
-		Vector3D q = sphericalPoint.toVector3D();
+		MutableVector3D q = sphericalPoint.toVector3D();
 
 		/*
 		 * Calculate the angle to rotate toward p such that q will move onto the
@@ -274,7 +274,7 @@ public class SphericalArc {
 		 * Create a new vector3D that is q rotated onto the plane containing the
 		 * end points
 		 */
-		Vector3D qOnPlane = new Vector3D(q);
+		MutableVector3D qOnPlane = new MutableVector3D(q);
 		qOnPlane.rotateToward(p, angle);
 
 		/*
@@ -282,7 +282,7 @@ public class SphericalArc {
 		 * the angle between q and the closest end point.
 		 */
 
-		Vector3D v = new Vector3D(qOnPlane);
+		MutableVector3D v = new MutableVector3D(qOnPlane);
 		v.cross(a);
 		double aDot = v.dot(p);// positive if clockwise from a
 		if (aDot <= 0) {

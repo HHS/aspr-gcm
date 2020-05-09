@@ -23,7 +23,7 @@ import gcm.util.earth.LatLonBox;
 import gcm.util.earth.LatLonBox.LatLonBoxBuilder;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalTriangle;
-import gcm.util.vector.Vector3D;
+import gcm.util.vector.MutableVector3D;
 
 /**
  * Test class for {@link LatLonBox}
@@ -254,12 +254,12 @@ public class AT_LatLonBox {
 
 		Earth earth = Earth.fromMeanRadius();
 
-		Vector3D center = earth.getECCFromLatLon(new LatLon(lat, lon)).toVector3D();
+		MutableVector3D center = earth.getECCFromLatLon(new LatLon(lat, lon)).toVector3D();
 
-		Vector3D north = new Vector3D(0, 0, 1);
+		MutableVector3D north = new MutableVector3D(0, 0, 1);
 
 		for (int i = 0; i < pointCount; i++) {
-			Vector3D v = new Vector3D(center);
+			MutableVector3D v = new MutableVector3D(center);
 			double distance = FastMath.sqrt(randomGenerator.nextDouble() * radius);
 			double angle = distance / earth.getRadius();
 			v.rotateToward(north, angle);

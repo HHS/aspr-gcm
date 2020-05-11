@@ -16,9 +16,9 @@ import gcm.util.vector.Vector2D;
 import gcm.util.vector.Vector3D;
 
 /**
- * A generics-base utility class for managing point locations on a spherical
+ * A generics-based utility class for managing point locations on a spherical
  * earth of WGS-84 mean radius. This utility specifically finds locations based
- * on a lat-lon coordinate and search radius.
+ * on a lat-lon coordinates and s search radius.
  * 
  * @author Shawn Hatch
  * 

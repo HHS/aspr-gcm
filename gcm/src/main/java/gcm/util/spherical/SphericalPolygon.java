@@ -202,7 +202,7 @@ public class SphericalPolygon {
 		SphericalTriangle t = sphericalTriangleBuilder.build();
 
 		/*
-		 * if the triangle does not agree with cw then we are done
+		 * if the triangle does not agree with spin then we are done
 		 * 
 		 */
 		if (t.getSpin() != spin) {

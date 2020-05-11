@@ -5,6 +5,7 @@ import org.apache.commons.math3.util.FastMath;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -139,7 +140,8 @@ public class SphericalTriangle {
 			c.reverse();
 		}
 		radius = c.distanceTo(v0);
-		centroid = SphericalPoint.builder().fromVector3D(c).build();
+		
+		centroid = new Vector3D(c);
 
 		double alpha = getTangentialAngle(v0, v1, v2);
 		double beta = getTangentialAngle(v1, v2, v0);
@@ -164,7 +166,7 @@ public class SphericalTriangle {
 
 	private final SphericalPoint[] sphericalPoints;
 
-	private final SphericalPoint centroid;
+	private final Vector3D centroid;
 
 	private final double radius;
 
@@ -196,7 +198,7 @@ public class SphericalTriangle {
 	/**
 	 * Returns the centroid point of this {@link SphericalTriangle}
 	 */
-	public SphericalPoint getCentroid() {
+	public Vector3D getCentroid() {
 		return centroid;
 	}
 

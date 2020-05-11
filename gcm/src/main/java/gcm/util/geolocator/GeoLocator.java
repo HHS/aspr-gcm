@@ -10,11 +10,10 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.dimensiontree.DimensionTree;
-import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLonAlt;
 import gcm.util.vector.Vector2D;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * A generics-base utility class for managing point locations on a spherical
@@ -99,14 +98,11 @@ public class GeoLocator<T> {
 	private static class LocationEccRecord<T> {
 
 		T location;
-		ECC ecc;
-		// Vector3D position;
+		Vector3D ecc;
 
-		public LocationEccRecord(ECC ecc, T location) {
-
+		public LocationEccRecord(Vector3D ecc, T location) {
 			this.location = location;
-			this.ecc = ecc;
-			// position = ecc.toVector3D();
+			this.ecc = ecc;		
 		}
 
 	}
@@ -130,7 +126,7 @@ public class GeoLocator<T> {
 		 */
 		List<LocationEccRecord<T>> locationEccRecords = scaffold.locationRecords.stream().map(rec -> {
 			LatLonAlt latLonAlt = new LatLonAlt(rec.latDegrees, rec.lonDegrees, 0);
-			ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
+			Vector3D ecc = earth.getECCFromLatLonAlt(latLonAlt);
 			return new LocationEccRecord<>(ecc, rec.location);
 		}).collect(Collectors.toList());
 
@@ -186,7 +182,7 @@ public class GeoLocator<T> {
 	 */
 	public List<T> getLocations(double latDegrees, double lonDegrees, double radiusKilometers) {
 		double linearSearchRangeMeters = getLinearSearchRangeMeters(radiusKilometers * 1000);
-		double[] position = earth.getECCFromLatLonAlt(new LatLonAlt(latDegrees, lonDegrees, 0)).toVector3D().toArray();
+		double[] position = earth.getECCFromLatLonAlt(new LatLonAlt(latDegrees, lonDegrees, 0)).toArray();
 		return dimensionTree.getMembersInSphere(linearSearchRangeMeters, position).stream()//
 							.map(rec -> rec.location)//
 							.collect(Collectors.toList());//
@@ -202,9 +198,8 @@ public class GeoLocator<T> {
 		double linearSearchRangeMeters = getLinearSearchRangeMeters(radiusKilometers * 1000);
 
 		LatLonAlt latLonAlt = new LatLonAlt(latDegrees, lonDegrees, 0);
-		ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
-		MutableVector3D position = ecc.toVector3D();
-		double[] positionArray = position.toArray();
+		Vector3D ecc = earth.getECCFromLatLonAlt(latLonAlt);		
+		double[] positionArray = ecc.toArray();
 
 		return dimensionTree.getMembersInSphere(linearSearchRangeMeters, positionArray).stream()//
 							.map(rec -> {
@@ -222,9 +217,8 @@ public class GeoLocator<T> {
 	 */
 	public Optional<T> getNearestLocation(double latDegrees, double lonDegrees) {
 		LatLonAlt latLonAlt = new LatLonAlt(latDegrees, lonDegrees, 0);
-		ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
-		MutableVector3D position = ecc.toVector3D();
-		double[] positionArray = position.toArray();
+		Vector3D ecc = earth.getECCFromLatLonAlt(latLonAlt);
+		double[] positionArray = ecc.toArray();
 
 		LocationEccRecord<T> locationEccRecord = dimensionTree.getNearestMember(positionArray);
 		if (locationEccRecord != null) {

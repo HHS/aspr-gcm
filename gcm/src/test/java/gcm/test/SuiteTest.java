@@ -9,7 +9,6 @@ import gcm.test.automated.AT_ArrayIntSet;
 import gcm.test.automated.AT_BooleanContainer;
 import gcm.test.automated.AT_DimensionTree;
 import gcm.test.automated.AT_DoubleValueContainer;
-import gcm.test.automated.AT_ECC;
 import gcm.test.automated.AT_Earth;
 import gcm.test.automated.AT_EnumContainer;
 import gcm.test.automated.AT_EnvironmentImpl_01;
@@ -64,8 +63,8 @@ import gcm.test.automated.AT_StochasticPersonSelection;
 import gcm.test.automated.AT_StructuredScenarioBuilder;
 import gcm.test.automated.AT_TimeTrackingPolicy;
 import gcm.test.automated.AT_UnstructuredScenarioBuilder;
-import gcm.test.automated.AT_Vector2D;
-import gcm.test.automated.AT_Vector3D;
+import gcm.test.automated.AT_MutableVector2D;
+import gcm.test.automated.AT_MutableVector3D;
 
 /**
  * This class executes automated JUnit tests for GCM. Automated tests are noted
@@ -138,11 +137,10 @@ import gcm.test.automated.AT_Vector3D;
 	AT_GraphPathSolver.class,
 	AT_LatLon.class,
 	AT_LatLonAlt.class,
-	AT_ECC.class,
 	AT_LatLonBox.class,
 	AT_Earth.class,
-	AT_Vector3D.class,
-	AT_Vector2D.class
+	AT_MutableVector3D.class,
+	AT_MutableVector2D.class
 	})
 
 public class SuiteTest {

@@ -11,13 +11,13 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.dimensiontree.VolumetricDimensionTree;
-import gcm.util.vector.Vector2D;
+import gcm.util.vector.MutableVector2D;
 
 public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 
 	private static class Rec<T extends PlanarCoordinate> implements Comparable<Rec<T>>{
 		T planarCoordinate;
-		Vector2D v;		
+		MutableVector2D v;		
 		double distanceToCentroid;
 		double angle;
 		int step;
@@ -34,23 +34,23 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 	
 	private List<T> spiralize(List<T> planarCoordinates) {
 		
-		Vector2D centroid = new Vector2D();
+		MutableVector2D centroid = new MutableVector2D();
 		
 		List<Rec<T>> list = new ArrayList<>();
 		planarCoordinates.forEach(planarCoordinate -> {
 			Rec<T> rec = new Rec<>();
 			rec.planarCoordinate = planarCoordinate;			
-			rec.v = new Vector2D(planarCoordinate.getX(),planarCoordinate.getY());			
+			rec.v = new MutableVector2D(planarCoordinate.getX(),planarCoordinate.getY());			
 			list.add(rec);
 			centroid.add(rec.v);
 		});
 		
 		centroid.scale(1.0/list.size());
 		
-		Vector2D xAxis  = new Vector2D(1,0);
+		MutableVector2D xAxis  = new MutableVector2D(1,0);
 		double maxDistance = Double.NEGATIVE_INFINITY;
 			
-		Vector2D v = new Vector2D();
+		MutableVector2D v = new MutableVector2D();
 		for (Rec<T> rec : list) {
 			rec.distanceToCentroid = centroid.distanceTo(rec.v);
 			v.assign(rec.v);
@@ -125,10 +125,10 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 
 	private static class Vertex<T extends PlanarCoordinate> {
 		int id;
-		Vector2D position;
+		MutableVector2D position;
 		T planarCoordinate;
 
-		public Vertex(final int id, final Vector2D position, T planarCoordinate) {
+		public Vertex(final int id, final MutableVector2D position, T planarCoordinate) {
 			super();
 			this.id = id;
 			this.position = position;
@@ -165,33 +165,33 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 
 		Arrays.sort(ids);
 
-		Vector2D a = new Vector2D(vertexes.get(ids[0]).position);
-		Vector2D b = new Vector2D(vertexes.get(ids[1]).position);
-		Vector2D c = new Vector2D(vertexes.get(ids[2]).position);
+		MutableVector2D a = new MutableVector2D(vertexes.get(ids[0]).position);
+		MutableVector2D b = new MutableVector2D(vertexes.get(ids[1]).position);
+		MutableVector2D c = new MutableVector2D(vertexes.get(ids[2]).position);
 
-		Vector2D m1 = new Vector2D(a);
+		MutableVector2D m1 = new MutableVector2D(a);
 		m1.add(b);
 		m1.scale(0.5);
 
-		Vector2D p1 = new Vector2D(a);
+		MutableVector2D p1 = new MutableVector2D(a);
 		p1.sub(b);
 		p1.perpTo(p1, true);
 
-		Vector2D m2 = new Vector2D(b);
+		MutableVector2D m2 = new MutableVector2D(b);
 		m2.add(c);
 		m2.scale(0.5);
 
-		Vector2D p2 = new Vector2D(b);
+		MutableVector2D p2 = new MutableVector2D(b);
 		p2.sub(c);
 		p2.perpTo(p2, true);
 
-		Vector2D q = new Vector2D(c);
+		MutableVector2D q = new MutableVector2D(c);
 		q.sub(b);
 
 		m2.sub(m1);
 		double j = m2.dot(q) / p1.dot(q);
 
-		Vector2D center = new Vector2D(p1);
+		MutableVector2D center = new MutableVector2D(p1);
 		center.scale(j);
 		center.add(m1);
 
@@ -329,22 +329,22 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		minY -= padY;
 		maxY += padY;
 
-		Vertex<T> vertex0 = new Vertex<>(0, new Vector2D(minX, minY),null);
+		Vertex<T> vertex0 = new Vertex<>(0, new MutableVector2D(minX, minY),null);
 		vertexes.add(vertex0);
 
-		Vertex<T> vertex1 = new Vertex<>(1, new Vector2D(minX, maxY),null);
+		Vertex<T> vertex1 = new Vertex<>(1, new MutableVector2D(minX, maxY),null);
 		vertexes.add(vertex1);
 
-		Vertex<T> vertex2 = new Vertex<>(2, new Vector2D(maxX, minY),null);
+		Vertex<T> vertex2 = new Vertex<>(2, new MutableVector2D(maxX, minY),null);
 		vertexes.add(vertex2);
 
-		Vertex<T> vertex3 = new Vertex<>(3, new Vector2D(maxX, maxY),null);
+		Vertex<T> vertex3 = new Vertex<>(3, new MutableVector2D(maxX, maxY),null);
 		vertexes.add(vertex3);
 		
 		int n = points.size();
 		for (int i = 0; i < n; i++) {			
 			T planarCoordinate = points.get(i);
-			Vector2D v = new Vector2D(planarCoordinate.getX(),planarCoordinate.getY());			
+			MutableVector2D v = new MutableVector2D(planarCoordinate.getX(),planarCoordinate.getY());			
 			vertexes.add(new Vertex<>(i + scaffoldCount, v, planarCoordinate));
 		}
 		

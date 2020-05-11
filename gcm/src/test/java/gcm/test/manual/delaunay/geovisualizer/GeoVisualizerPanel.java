@@ -32,7 +32,6 @@ import org.apache.commons.math3.util.Pair;
 
 import gcm.util.delaunay.GeoCoordinate;
 import gcm.util.dimensiontree.DimensionTree;
-import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
@@ -40,6 +39,7 @@ import gcm.util.graph.GenericMutableGraph;
 import gcm.util.graph.GraphPathSolver;
 import gcm.util.graph.Path;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 public class GeoVisualizerPanel extends JPanel {
 
@@ -56,7 +56,7 @@ public class GeoVisualizerPanel extends JPanel {
 	}
 
 	private static class Model {
-		List<MutableVector3D> positions = new ArrayList<>();
+		List<Vector3D> positions = new ArrayList<>();
 		List<Link> links = new ArrayList<>();
 	}
 
@@ -77,7 +77,7 @@ public class GeoVisualizerPanel extends JPanel {
 			int baseId = id;
 			for (int j = -90; j < 90; j++) {
 				LatLon latLon = new LatLon(j, i);
-				worldGridModel.positions.add(earth.getECCFromLatLon(latLon).toVector3D());
+				worldGridModel.positions.add(earth.getECCFromLatLon(latLon));
 				Link link;
 				if (j == 89) {
 					link = new Link(id, baseId);
@@ -93,7 +93,7 @@ public class GeoVisualizerPanel extends JPanel {
 			int baseId = id;
 			for (int j = -180; j < 180; j++) {
 				LatLon latLon = new LatLon(i, j);
-				worldGridModel.positions.add(earth.getECCFromLatLon(latLon).toVector3D());
+				worldGridModel.positions.add(earth.getECCFromLatLon(latLon));
 				Link link;
 				if (j == 179) {
 					link = new Link(id, baseId);
@@ -116,7 +116,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 		geoCoordinates.forEach(geoCoordinate -> {
 			LatLon latLon = new LatLon(geoCoordinate.getLatitude(), geoCoordinate.getLongitude());
-			MutableVector3D v = earth.getECCFromLatLon(latLon).toVector3D();
+			Vector3D v = earth.getECCFromLatLon(latLon);
 			dataModel.positions.add(v);
 		});
 		
@@ -159,7 +159,8 @@ public class GeoVisualizerPanel extends JPanel {
 		dataModel.positions.forEach(v -> initialCameraPosition.add(v));
 		initialCameraPosition.normalize();
 		initialCameraPosition.scale(earth.getRadius() + 500_000);
-		camera = new Camera(earth, initialCameraPosition);
+		
+		camera = new Camera(earth,new Vector3D(initialCameraPosition));
 
 		addMouseListener(new MouseListenerImpl());
 		addMouseWheelListener(new MouseWheelListenerImpl());
@@ -271,15 +272,15 @@ public class GeoVisualizerPanel extends JPanel {
 		private final Earth earth;
 
 		private double getEdgeCost(Edge edge) {
-			MutableVector3D a = dataModel.positions.get(edge.link.first);
-			MutableVector3D b = dataModel.positions.get(edge.link.second);
-			return earth.getGroundDistanceFromECC(new ECC(a), new ECC(b));
+			Vector3D a = dataModel.positions.get(edge.link.first);
+			Vector3D b = dataModel.positions.get(edge.link.second);
+			return earth.getGroundDistanceFromECC(a, b);
 		}
 
 		private double getTravelCost(Integer id1, Integer id2) {
-			MutableVector3D a = dataModel.positions.get(id1);
-			MutableVector3D b = dataModel.positions.get(id2);
-			return earth.getGroundDistanceFromECC(new ECC(a), new ECC(b));
+			Vector3D a = dataModel.positions.get(id1);
+			Vector3D b = dataModel.positions.get(id2);
+			return earth.getGroundDistanceFromECC(a,b);
 		}
 
 		public PathManager(Earth earth, Model dataModel) {
@@ -300,16 +301,16 @@ public class GeoVisualizerPanel extends JPanel {
 			}
 
 			for (int i = 0; i < dataModel.positions.size(); i++) {
-				MutableVector3D position = dataModel.positions.get(i);
+				Vector3D position = dataModel.positions.get(i);
 				positionTree.add(position.toArray(), i);
 			}
 		}
 
-		public MutableVector3D getPathSourcePosition() {
+		public Vector3D getPathSourcePosition() {
 			return dataModel.positions.get(pathSourceIndex);
 		}
 
-		public MutableVector3D getPathDestinationPosition() {
+		public Vector3D getPathDestinationPosition() {
 			return dataModel.positions.get(pathDestinationIndex);
 		}
 
@@ -335,7 +336,7 @@ public class GeoVisualizerPanel extends JPanel {
 			return new LinkedHashSet<>(pathLinks);
 		}
 
-		private void setPathSource(MutableVector3D position) {
+		private void setPathSource(Vector3D position) {
 
 			Integer nearestMember = positionTree.getNearestMember(position.toArray());
 			if (nearestMember != null) {
@@ -347,7 +348,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 		}
 
-		private void setPathDestination(MutableVector3D position) {
+		private void setPathDestination(Vector3D position) {
 			Integer nearestMember = positionTree.getNearestMember(position.toArray());
 			if (nearestMember != null) {
 				if (pathDestinationIndex != nearestMember) {
@@ -363,7 +364,7 @@ public class GeoVisualizerPanel extends JPanel {
 		if (camera.mousePoint == null) {
 			return;
 		}
-		MutableVector3D mousePosition = camera.get3DPositionFromPoint(camera.mousePoint);
+		Vector3D mousePosition = camera.get3DPositionFromPoint(camera.mousePoint);
 
 		if (mousePosition == null) {
 			return;
@@ -376,7 +377,7 @@ public class GeoVisualizerPanel extends JPanel {
 		if (camera.mousePoint == null) {
 			return;
 		}
-		MutableVector3D mousePosition = camera.get3DPositionFromPoint(camera.mousePoint);
+		Vector3D mousePosition = camera.get3DPositionFromPoint(camera.mousePoint);
 
 		if (mousePosition == null) {
 			return;
@@ -424,13 +425,13 @@ public class GeoVisualizerPanel extends JPanel {
 			mouseDragEndPoint = null;
 		}
 
-		private MutableVector3D mouseDragStartPosition;
+		private Vector3D mouseDragStartPosition;
 
 		public void moveCameraToDrag() {
 
 			if (mouseDragStartPosition != null && mouseDragEndPoint != null) {
 
-				MutableVector3D endPosition = get3DPositionFromPoint(mouseDragEndPoint);
+				Vector3D endPosition = get3DPositionFromPoint(mouseDragEndPoint);
 				if (endPosition == null) {
 					// the mouse was dragged off the world
 					return;
@@ -460,18 +461,18 @@ public class GeoVisualizerPanel extends JPanel {
 			if (mousePoint == null) {
 				return Optional.empty();
 			}
-			MutableVector3D mousePosition = get3DPositionFromPoint(mousePoint);
+			Vector3D mousePosition = get3DPositionFromPoint(mousePoint);
 
 			if (mousePosition == null) {
 				return Optional.empty();
 			}
 
-			LatLonAlt latLonAlt = earth.getLatLonAlt(new ECC(mousePosition));
+			LatLonAlt latLonAlt = earth.getLatLonAlt(mousePosition);
 			LatLon latLon = new LatLon(latLonAlt);
 			return Optional.of(latLon);
 		}
 
-		private MutableVector3D get3DPositionFromPoint(Point point) {
+		private Vector3D get3DPositionFromPoint(Point point) {
 
 			/*
 			 * We will convert from screen coordinates to a vector that points
@@ -546,12 +547,12 @@ public class GeoVisualizerPanel extends JPanel {
 			 */
 			u.scale(d);
 			u.add(cameraPosition);
-			return u;
+			return new Vector3D(u);
 		}
 
 		public List<String> getCameraStatus() {
 
-			LatLonAlt latLonAlt = earth.getLatLonAlt(new ECC(cameraPosition));
+			LatLonAlt latLonAlt = earth.getLatLonAlt(new Vector3D(cameraPosition));
 
 			List<String> result = new ArrayList<>();
 			result.add("Fovy = " + fovy);
@@ -601,7 +602,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 		public void zoom(boolean zoomIn) {
 			// determine where the mouse appears to be on the earth's surface
-			MutableVector3D currentPositionOfMouse = get3DPositionFromPoint(mousePoint);
+			Vector3D currentPositionOfMouse = get3DPositionFromPoint(mousePoint);
 			if (currentPositionOfMouse == null) {
 				return;
 			}
@@ -628,7 +629,7 @@ public class GeoVisualizerPanel extends JPanel {
 			}
 
 			// determine where the mouse appears to be now that we have zoomed
-			MutableVector3D newPositionOfMouse = get3DPositionFromPoint(mousePoint);
+		    Vector3D newPositionOfMouse = get3DPositionFromPoint(mousePoint);
 			if (newPositionOfMouse == null) {
 				// we are off the world
 				return;
@@ -659,21 +660,21 @@ public class GeoVisualizerPanel extends JPanel {
 
 		public void up() {
 			double alt = cameraPosition.length() - earth.getRadius();
-			MutableVector3D north = new MutableVector3D(0, 0, 1);
+			Vector3D north = new Vector3D(0, 0, 1);
 			cameraPosition.rotateToward(north, panFactor * alt);
 			calculateVectorsFromCameraPosition();
 		}
 
 		public void down() {
 			double alt = cameraPosition.length() - earth.getRadius();
-			MutableVector3D north = new MutableVector3D(0, 0, 1);
+			Vector3D north = new Vector3D(0, 0, 1);
 			cameraPosition.rotateToward(north, -panFactor * alt);
 			calculateVectorsFromCameraPosition();
 		}
 
 		public void left() {
 			double alt = cameraPosition.length() - earth.getRadius();
-			MutableVector3D north = new MutableVector3D(0, 0, 1);
+			Vector3D north = new Vector3D(0, 0, 1);
 			cameraPosition.rotateAbout(north, -panFactor * alt);
 			calculateVectorsFromCameraPosition();
 
@@ -681,7 +682,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 		public void right() {
 			double alt = cameraPosition.length() - earth.getRadius();
-			MutableVector3D north = new MutableVector3D(0, 0, 1);
+			Vector3D north = new Vector3D(0, 0, 1);
 			cameraPosition.rotateAbout(north, panFactor * alt);
 			calculateVectorsFromCameraPosition();
 
@@ -698,13 +699,13 @@ public class GeoVisualizerPanel extends JPanel {
 
 		}
 
-		public Camera(Earth earth, MutableVector3D initialCameraPosition) {
+		public Camera(Earth earth, Vector3D initialCameraPosition) {
 			this.earth = earth;
 			cameraPosition = new MutableVector3D(initialCameraPosition);
 			calculateVectorsFromCameraPosition();
 		}
 
-		public Point getPointFrom3DPosition(MutableVector3D position) {
+		public Point getPointFrom3DPosition(Vector3D position) {
 			MutableVector3D v = new MutableVector3D(position);
 			v.sub(cameraPosition);
 
@@ -777,14 +778,14 @@ public class GeoVisualizerPanel extends JPanel {
 		// paint the path source and destination
 
 		g2.setColor(Color.BLUE);
-		MutableVector3D pathSourcePosition = pathManager.getPathSourcePosition();
+		Vector3D pathSourcePosition = pathManager.getPathSourcePosition();
 		Point pathSourcePoint = camera.getPointFrom3DPosition(pathSourcePosition);
 		if (pathSourcePoint != null) {
 			g2.fillOval(pathSourcePoint.x - 15, pathSourcePoint.y - 15, 30, 30);
 		}
 
 		g2.setColor(Color.ORANGE);
-		MutableVector3D pathDestinationPosition = pathManager.getPathDestinationPosition();
+		Vector3D pathDestinationPosition = pathManager.getPathDestinationPosition();
 		Point pathDestinationPoint = camera.getPointFrom3DPosition(pathDestinationPosition);
 		if (pathDestinationPoint != null) {
 			g2.fillOval(pathDestinationPoint.x - 15, pathDestinationPoint.y - 15, 30, 30);
@@ -802,12 +803,12 @@ public class GeoVisualizerPanel extends JPanel {
 				g2.setStroke(new BasicStroke(pathEdgeWidth));
 				g2.setColor(Color.yellow);
 			}
-			MutableVector3D originPosition = dataModel.positions.get(link.first);
-			MutableVector3D destinationPosition = dataModel.positions.get(link.second);
-			List<MutableVector3D> smoothPath = getSmoothPath(originPosition, destinationPosition);
+			Vector3D originPosition = dataModel.positions.get(link.first);
+			Vector3D destinationPosition = dataModel.positions.get(link.second);
+			List<Vector3D> smoothPath = getSmoothPath(originPosition, destinationPosition);
 			for (int i = 0; i < smoothPath.size() - 1; i++) {
-				MutableVector3D a = smoothPath.get(i);
-				MutableVector3D b = smoothPath.get(i + 1);
+				Vector3D a = smoothPath.get(i);
+				Vector3D b = smoothPath.get(i + 1);
 				Point originPoint = camera.getPointFrom3DPosition(a);
 				Point destinationPoint = camera.getPointFrom3DPosition(b);
 				if (originPoint != null && destinationPoint != null) {
@@ -838,8 +839,8 @@ public class GeoVisualizerPanel extends JPanel {
 		// paint the world grid lines
 		g2.setColor(new Color(33, 180, 239));
 		worldGridModel.links.forEach(link -> {
-			MutableVector3D originPosition = worldGridModel.positions.get(link.first);
-			MutableVector3D destinationPosition = worldGridModel.positions.get(link.second);
+			Vector3D originPosition = worldGridModel.positions.get(link.first);
+			Vector3D destinationPosition = worldGridModel.positions.get(link.second);
 			Point originPoint = camera.getPointFrom3DPosition(originPosition);
 			Point destinationPoint = camera.getPointFrom3DPosition(destinationPosition);
 			if (originPoint != null && destinationPoint != null) {
@@ -858,18 +859,15 @@ public class GeoVisualizerPanel extends JPanel {
 
 	}
 
-	private List<MutableVector3D> getSmoothPath(MutableVector3D a, MutableVector3D b) {
-		List<MutableVector3D> result = new ArrayList<>();
+	private List<Vector3D> getSmoothPath(Vector3D a, Vector3D b) {
+		List<Vector3D> result = new ArrayList<>();
 		double angle = a.angle(b);
 		int steps = (int) FastMath.ceil(180 * angle / FastMath.PI);
 		for (int i = 0; i < steps; i++) {
 			double stepAngle = (i * angle) / steps;
-			MutableVector3D v = new MutableVector3D(a);
-			v.rotateToward(b, stepAngle);
-			result.add(v);
+			result.add(a.rotateToward(b, stepAngle));			
 		}
 		result.add(b);
-
 		return result;
 	}
 

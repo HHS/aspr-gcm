@@ -21,7 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.delaunay.PlanarCoordinate;
-import gcm.util.vector.Vector2D;
+import gcm.util.vector.MutableVector2D;
 
 public class PlanarVisualizerPanel extends JPanel {
 	private static final long serialVersionUID = -8746718644903555611L;
@@ -111,8 +111,8 @@ public class PlanarVisualizerPanel extends JPanel {
 		
 		private void buildPoints() {
 
-			Vector2D upperLeftDataPosition = new Vector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-			Vector2D lowerRightDataPosition = new Vector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+			MutableVector2D upperLeftDataPosition = new MutableVector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+			MutableVector2D lowerRightDataPosition = new MutableVector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
 			planarCoordinates.forEach(p -> {
 				if (p.getX() < upperLeftDataPosition.getX()) {
@@ -146,14 +146,14 @@ public class PlanarVisualizerPanel extends JPanel {
 			 */
 			double scalar = Math.min(sX, sY) * 0.9;
 
-			Vector2D screenCenter = new Vector2D(lastWidth, lastHeight);
+			MutableVector2D screenCenter = new MutableVector2D(lastWidth, lastHeight);
 			screenCenter.scale(0.5);
 
 			/*
 			 * dataCenter is the center of the box that bounds the data, rather than
 			 * the centroid of the data
 			 */
-			Vector2D dataCenter = new Vector2D(lowerRightDataPosition);
+			MutableVector2D dataCenter = new MutableVector2D(lowerRightDataPosition);
 			dataCenter.add(upperLeftDataPosition);
 			dataCenter.scale(0.5);
 
@@ -163,7 +163,7 @@ public class PlanarVisualizerPanel extends JPanel {
 			 */
 			points = new ArrayList<>();
 			for (PlanarCoordinate p : planarCoordinates) {
-				Vector2D v = new Vector2D(p.getX(), p.getY());
+				MutableVector2D v = new MutableVector2D(p.getX(), p.getY());
 				v.sub(dataCenter);
 				v.scale(scalar);
 				v.add(screenCenter);

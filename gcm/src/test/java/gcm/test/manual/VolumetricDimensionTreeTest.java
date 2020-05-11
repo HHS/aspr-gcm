@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.Set;
 
 import gcm.util.dimensiontree.VolumetricDimensionTree;
-import gcm.util.vector.Vector2D;
+import gcm.util.vector.MutableVector2D;
 
 public class VolumetricDimensionTreeTest {
 	private static int masterId;
@@ -78,9 +78,9 @@ public class VolumetricDimensionTreeTest {
 		double searchRadius = 15;
 
 		Set<Record> expectedRecords = new LinkedHashSet<>();
-		Vector2D v = new Vector2D(searchPosition[0], searchPosition[1]);
+		MutableVector2D v = new MutableVector2D(searchPosition[0], searchPosition[1]);
 		for (Record record : records) {
-			Vector2D u = new Vector2D(record.position[0], record.position[1]);
+			MutableVector2D u = new MutableVector2D(record.position[0], record.position[1]);
 			if (v.distanceTo(u) <= (searchRadius+record.radius)) {
 				expectedRecords.add(record);
 			}

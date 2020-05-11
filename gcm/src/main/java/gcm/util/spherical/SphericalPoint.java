@@ -2,9 +2,9 @@ package gcm.util.spherical;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.earth.ECC;
-import gcm.util.vector.NonNormalVectorException;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.NonNormalVectorException;
+import gcm.util.vector.Vector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -116,9 +116,9 @@ public final class SphericalPoint {
 
 		/**
 		 * Sets the values of the coordinates of the {@link SphericalPoint} from
-		 * the {@link ECC} in x, y, z order.
+		 * the {@link Vector3D} in x, y, z order.
 		 */
-		public Builder fromECC(ECC ecc) {
+		public Builder fromECC(Vector3D ecc) {
 			scaffold.coordinates[0] = ecc.getX();
 			scaffold.coordinates[1] = ecc.getY();
 			scaffold.coordinates[2] = ecc.getZ();

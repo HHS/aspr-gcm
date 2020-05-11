@@ -1,4 +1,4 @@
-package gcm.test.manual;
+package gcm.util.stats;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

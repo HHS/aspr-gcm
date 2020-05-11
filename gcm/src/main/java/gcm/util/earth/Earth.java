@@ -3,7 +3,7 @@ package gcm.util.earth;
 import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * A spherical geo-model for converting various coordinate representations and
@@ -80,18 +80,16 @@ public class Earth {
 	/**
 	 * Returns the ground distance in meters between the two positions.
 	 */
-	public double getGroundDistanceFromECC(ECC position1, ECC position2) {
-		MutableVector3D v1 = position1.toVector3D();
-		MutableVector3D v2 = position2.toVector3D();
-		return v1.angle(v2) * radius;
+	public double getGroundDistanceFromECC(Vector3D position1, Vector3D position2) {
+		return position1.angle(position2)*radius;		
 	}
 	
 	/**
 	 * Returns the ground distance in meters between the two positions.
 	 */
 	public double getGroundDistanceFromLatLon(LatLon position1, LatLon position2) {
-		MutableVector3D v1 = getECCFromLatLonAlt(new LatLonAlt(position1)).toVector3D();
-		MutableVector3D v2 = getECCFromLatLonAlt(new LatLonAlt(position2)).toVector3D();
+		Vector3D v1 = getECCFromLatLon(position1);
+		Vector3D v2 = getECCFromLatLon(position2);
 		return v1.angle(v2) * radius;
 	}
 
@@ -99,22 +97,21 @@ public class Earth {
 	 * Returns the ground distance in meters between the two positions.
 	 */
 	public double getGroundDistanceFromLatLonAlt(LatLonAlt position1, LatLonAlt position2) {
-		MutableVector3D v1 = getECCFromLatLonAlt(position1).toVector3D();
-		MutableVector3D v2 = getECCFromLatLonAlt(position2).toVector3D();
+		Vector3D v1 = getECCFromLatLonAlt(position1);
+		Vector3D v2 = getECCFromLatLonAlt(position2);
 		return v1.angle(v2) * radius;
 	}
 
 	/**
 	 * Converts an ECC position into a LatLonAlt
 	 */
-	public LatLonAlt getLatLonAlt(ECC eCC) {
-		MutableVector3D v = eCC.toVector3D();
+	public LatLonAlt getLatLonAlt(Vector3D v) {		
 		double alt = v.length() - radius;
-		v.normalize();
-		double z = v.getZ();
+		Vector3D n = v.normalize();
+		double z = n.getZ();
 		double lat = FastMath.asin(z);
-		double lon = FastMath.acos(crunch(v.getX() / FastMath.sqrt(1 - z * z)));
-		if (v.getY() < 0) {
+		double lon = FastMath.acos(crunch(n.getX() / FastMath.sqrt(1 - z * z)));
+		if (n.getY() < 0) {
 			lon *= -1;
 		}
 		lat = FastMath.toDegrees(lat);
@@ -126,28 +123,24 @@ public class Earth {
 	/**
 	 * Returns an ECC position from the given LatLonAlt
 	 */
-	public ECC getECCFromLatLonAlt(LatLonAlt latLonAlt) {
+	public Vector3D getECCFromLatLonAlt(LatLonAlt latLonAlt) {
 		double coslat = FastMath.cos(FastMath.toRadians(latLonAlt.getLatitude()));
 		double coslon = FastMath.cos(FastMath.toRadians(latLonAlt.getLongitude()));
 		double sinlat = FastMath.sin(FastMath.toRadians(latLonAlt.getLatitude()));
 		double sinlon = FastMath.sin(FastMath.toRadians(latLonAlt.getLongitude()));
 		double distance = radius + latLonAlt.getAltitude();
-		MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
-		v.scale(distance);
-		return new ECC(v);
+		return new Vector3D(coslat * coslon, coslat * sinlon, sinlat).scale(distance);				
 	}
 
 	/**
 	 * Returns an ECC position from the given LatLon
 	 */
-	public ECC getECCFromLatLon(LatLon latLon) {
+	public Vector3D getECCFromLatLon(LatLon latLon) {
 		double coslat = FastMath.cos(FastMath.toRadians(latLon.getLatitude()));
 		double coslon = FastMath.cos(FastMath.toRadians(latLon.getLongitude()));
 		double sinlat = FastMath.sin(FastMath.toRadians(latLon.getLatitude()));
 		double sinlon = FastMath.sin(FastMath.toRadians(latLon.getLongitude()));
-		MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
-		v.scale(radius);
-		return new ECC(v);
+		return new Vector3D(coslat * coslon, coslat * sinlon, sinlat).scale(radius);
 	}
 
 	private static double crunch(double value) {

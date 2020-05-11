@@ -2,11 +2,17 @@ package gcm.util.vector;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import net.jcip.annotations.Immutable;
+
 /**
  * A immutable vector class representing 3-dimensional components: v = (x,y,z).
  * 
  * @author Shawn R. Hatch
  */
+@Immutable
+@Source(status = TestStatus.REQUIRED)
 public final class Vector3D {
 
 	/**

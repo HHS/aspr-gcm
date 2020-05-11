@@ -2,12 +2,18 @@ package gcm.util.vector;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import net.jcip.annotations.Immutable;
+
 /**
- * A mutable 2-dimensional vector class supporting common 2D transforms.
+ * A immutable 2-dimensional vector class supporting common 2D transforms.
  *
  * @author Shawn Hatch
  *
  */
+@Immutable
+@Source(status = TestStatus.REQUIRED)
 public final class Vector2D {
 
 	private static final long zeroLongBits = Double.doubleToLongBits(0);
@@ -38,14 +44,16 @@ public final class Vector2D {
 		}
 	}
 
-	private double x = 0;
+	private final double x;
 
-	private double y = 0;
+	private final double y;
 
 	/**
 	 * Constructs a {@link Vector2D} where x and y are zero
 	 */
 	public Vector2D() {
+		this.x = 0;
+		this.y = 0;
 	}
 
 	/**
@@ -71,9 +79,8 @@ public final class Vector2D {
 	 * Adds the given x and y values to the corresponding values of this
 	 * {@link Vector2D}
 	 */
-	public void add(final double x, final double y) {
-		this.x += x;
-		this.y += y;
+	public Vector2D add(final double x, final double y) {
+		return new Vector2D(this.x + x, this.y + y);
 	}
 
 	/**
@@ -83,9 +90,8 @@ public final class Vector2D {
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
-	public void add(final Vector2D v) {
-		x += v.getX();
-		y += v.getY();
+	public Vector2D add(final Vector2D v) {
+		return new Vector2D(x + v.x, y + v.y);
 	}
 
 	/**
@@ -96,9 +102,8 @@ public final class Vector2D {
 	 * v=(25,37)
 	 * 
 	 */
-	public void addScaled(final Vector2D v, final double scalar) {
-		x += v.getX() * scalar;
-		y += v.getY() * scalar;
+	public Vector2D addScaled(final Vector2D v, final double scalar) {
+		return new Vector2D(x + v.getX() * scalar, y + v.getY() * scalar);
 	}
 
 	/**
@@ -108,24 +113,6 @@ public final class Vector2D {
 	public double angle(final Vector2D v) {
 		final double value = dot(v) / (v.length() * length());
 		return FastMath.acos(crunch(value));
-	}
-
-	/**
-	 * Assign the given values to this {@link Vector2D}
-	 */
-	public void assign(final double x, final double y) {
-		this.x = x;
-		this.y = y;
-
-	}
-
-	/**
-	 * Assign the values of the given {@link Vector2D} to this Vector2D
-	 */
-	public void assign(final Vector2D v) {
-		x = v.getX();
-		y = v.getY();
-
 	}
 
 	/**
@@ -264,17 +251,16 @@ public final class Vector2D {
 	/**
 	 * Scales this {@link Vector2D} so that its length is 1.
 	 */
-	public void normalize() {
+	public Vector2D normalize() {
 		final double len = length();
-		x = x / len;
-		y = y / len;
+		return new Vector2D(x / len, y / len);
 	}
 
 	/**
 	 * Assigns this {@link Vector2D} to the values of the given {@link Vector2D}
 	 * under either a clockwise or counter clockwise rotation.
 	 */
-	public void perpTo(final Vector2D v, final boolean clockwise) {
+	public Vector2D perpTo(final Vector2D v, final boolean clockwise) {
 		double newx, newy;
 		if (clockwise) {
 			newx = v.getY();
@@ -283,62 +269,45 @@ public final class Vector2D {
 			newx = -v.getY();
 			newy = v.getX();
 		}
-		x = newx;
-		y = newy;
+		return new Vector2D(newx, newy);
 	}
 
 	/**
 	 * Reverses the direction of the this Vector2D. This is equivalent to
 	 * scaling by -1.
 	 */
-	public void reverse() {
-		x *= -1;
-		y *= -1;
+	public Vector2D reverse() {
+		return scale(-1);
 	}
 
 	/**
 	 * Rotates this {@link Vector2D} about the origin by the given angle in
 	 * radians in a counter clockwise(right handed) manner.
 	 */
-	public void rotate(final double theta) {
-		final Vector2D v = new Vector2D(-y, x);
-		v.scale(FastMath.sin(theta));
-		scale(FastMath.cos(theta));
-		add(v);
+	public Vector2D rotate(final double theta) {
+		double sinTheta = FastMath.sin(theta);
+		double cosTheta = FastMath.cos(theta);
+		return new Vector2D(x * cosTheta - y * sinTheta, y * cosTheta + x * sinTheta);
 	}
 
 	/**
 	 * Rotates this {@link Vector2D} about the origin through the acute angle to
 	 * the given {@link Vector2D} by the given angle in radians.
 	 */
-	public void rotateToward(final Vector2D v, final double theta) {
-		rotate(cross(v) * theta);
+	public Vector2D rotateToward(final Vector2D v, final double theta) {
+		return rotate(cross(v) * theta);
 	}
 
 	/**
 	 * Scales this {@link Vector2D} by the scalar
 	 */
-	public void scale(final double scalar) {
-		x *= scalar;
-		y *= scalar;
+	public Vector2D scale(final double scalar) {
+		return new Vector2D(x * scalar, y * scalar);
 	}
 
 	/**
-	 * Sets the x component of this {@link Vector2D}
-	 */
-	public void setX(final double x) {
-		this.x = x;
-	}
-
-	/**
-	 * Sets the y component of this {@link Vector2D}
-	 */
-	public void setY(final double y) {
-		this.y = y;
-	}
-
-	/**
-	 * Returns the square distance between this {@link Vector2D} and the given Vector2D
+	 * Returns the square distance between this {@link Vector2D} and the given
+	 * Vector2D
 	 */
 	public double squareDistanceTo(final Vector2D v) {
 		return ((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y));
@@ -346,7 +315,7 @@ public final class Vector2D {
 
 	/**
 	 * Returns the square length of this {@link Vector2D}
-	 */	
+	 */
 	public double squareLength() {
 		return (x * x) + (y * y);
 	}
@@ -355,23 +324,20 @@ public final class Vector2D {
 	 * Subtracts the given x and y values from the corresponding values of this
 	 * {@link Vector2D}
 	 */
-	public void sub(final double x, final double y) {
-		this.x -= x;
-		this.y -= y;
+	public Vector2D sub(final double x, final double y) {
+		return new Vector2D(this.x - x, this.y - y);
 	}
 
 	/**
-	 * Subtracts the x and y of the given {@link Vector2D} from the corresponding
-	 * values of this {@link Vector2D}
+	 * Subtracts the x and y of the given {@link Vector2D} from the
+	 * corresponding values of this {@link Vector2D}
 	 * 
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
-	public void sub(final Vector2D v) {
-		x -= v.getX();
-		y -= v.getY();
+	public Vector2D sub(final Vector2D v) {
+		return new Vector2D(x - v.getX(), y - v.getY());
 	}
-
 
 	/**
 	 * Returns a length 2 array of double [x,y]
@@ -389,13 +355,5 @@ public final class Vector2D {
 	public String toString() {
 		return "Vector2D [x=" + x + ", y=" + y + "]";
 	}
-
-	/**	  
-	 * Sets each component of this {@link Vector2D} to zero. <b>Note:</b> This is the
-	 * same as calling <tt>v.assign(0,0)</tt>.
-	 */
-	public void zero() {
-		x = 0;
-		y = 0;
-	}
+	
 }

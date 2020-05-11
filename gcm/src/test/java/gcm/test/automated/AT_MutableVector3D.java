@@ -22,7 +22,7 @@ import gcm.util.vector.MutableVector3D;
  *
  */
 @UnitTest(target = MutableVector3D.class)
-public class AT_Vector3D {
+public class AT_MutableVector3D {
 	private static SeedProvider SEED_PROVIDER;
 
 	private static final double TOLERANCE = 0.000001;

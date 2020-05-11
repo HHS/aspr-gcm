@@ -14,11 +14,10 @@ import org.junit.Test;
 
 import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
-import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * Test class for {@link Earth}
@@ -310,12 +309,11 @@ public class AT_Earth {
 			double sinlat = FastMath.sin(FastMath.toRadians(lat));
 			double sinlon = FastMath.sin(FastMath.toRadians(lon));
 			double distance = radius + alt;
-			MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
-			v.scale(distance);
+			Vector3D v = new Vector3D(coslat * coslon, coslat * sinlon, sinlat).scale(distance);
 
 			LatLonAlt latLonAlt = new LatLonAlt(lat, lon, alt);
 
-			ECC ecc = earth.getECCFromLatLonAlt(latLonAlt);
+			Vector3D ecc = earth.getECCFromLatLonAlt(latLonAlt);
 			assertEquals(v.getX(), ecc.getX(), TOLERANCE);
 			assertEquals(v.getY(), ecc.getY(), TOLERANCE);
 			assertEquals(v.getZ(), ecc.getZ(), TOLERANCE);
@@ -344,12 +342,11 @@ public class AT_Earth {
 			double sinlat = FastMath.sin(FastMath.toRadians(lat));
 			double sinlon = FastMath.sin(FastMath.toRadians(lon));
 
-			MutableVector3D v = new MutableVector3D(coslat * coslon, coslat * sinlon, sinlat);
-			v.scale(radius);
+			Vector3D v = new Vector3D(coslat * coslon, coslat * sinlon, sinlat).scale(radius);
 
 			LatLon latLon = new LatLon(lat, lon);
 
-			ECC ecc = earth.getECCFromLatLon(latLon);
+			Vector3D ecc = earth.getECCFromLatLon(latLon);
 			assertEquals(v.getX(), ecc.getX(), TOLERANCE);
 			assertEquals(v.getY(), ecc.getY(), TOLERANCE);
 			assertEquals(v.getZ(), ecc.getZ(), TOLERANCE);
@@ -372,14 +369,14 @@ public class AT_Earth {
 			double lat1 = randomGenerator.nextDouble() * 180 - 90;
 			double lon1 = randomGenerator.nextDouble() * 360 - 180;
 
-			ECC ecc1 = earth.getECCFromLatLon(new LatLon(lat1, lon1));
+			Vector3D ecc1 = earth.getECCFromLatLon(new LatLon(lat1, lon1));
 
 			double lat2 = randomGenerator.nextDouble() * 180 - 90;
 			double lon2 = randomGenerator.nextDouble() * 360 - 180;
 
-			ECC ecc2 = earth.getECCFromLatLon(new LatLon(lat2, lon2));
+			Vector3D ecc2 = earth.getECCFromLatLon(new LatLon(lat2, lon2));
 
-			double expectedGroundDistance = ecc1.toVector3D().angle(ecc2.toVector3D()) * earth.getRadius();
+			double expectedGroundDistance = ecc1.angle(ecc2) * earth.getRadius();
 			double actualGroundDistance = earth.getGroundDistanceFromECC(ecc1, ecc2);
 
 			assertEquals(expectedGroundDistance, actualGroundDistance, 0);

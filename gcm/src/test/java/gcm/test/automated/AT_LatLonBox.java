@@ -16,14 +16,13 @@ import org.junit.Test;
 
 import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
-import gcm.util.earth.ECC;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonBox;
 import gcm.util.earth.LatLonBox.LatLonBoxBuilder;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalTriangle;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * Test class for {@link LatLonBox}
@@ -214,7 +213,6 @@ public class AT_LatLonBox {
 		assertTrue(eastEdgeHit);
 		assertTrue(westEdgeHit);
 
-
 	}
 
 	/**
@@ -254,19 +252,18 @@ public class AT_LatLonBox {
 
 		Earth earth = Earth.fromMeanRadius();
 
-		MutableVector3D center = earth.getECCFromLatLon(new LatLon(lat, lon)).toVector3D();
+		Vector3D center = earth.getECCFromLatLon(new LatLon(lat, lon));
 
-		MutableVector3D north = new MutableVector3D(0, 0, 1);
+		Vector3D north = new Vector3D(0, 0, 1);
 
 		for (int i = 0; i < pointCount; i++) {
-			MutableVector3D v = new MutableVector3D(center);
+			Vector3D v = new Vector3D(center);
 			double distance = FastMath.sqrt(randomGenerator.nextDouble() * radius);
 			double angle = distance / earth.getRadius();
-			v.rotateToward(north, angle);
+			v = v.rotateToward(north, angle);
 			angle = randomGenerator.nextDouble() * 2 * FastMath.PI;
-			v.rotateAbout(center, angle);
-			ECC ecc = new ECC(v);
-			result.add(new LatLon(earth.getLatLonAlt(ecc)));
+			v = v.rotateAbout(center, angle);
+			result.add(new LatLon(earth.getLatLonAlt(new Vector3D(v))));
 		}
 
 		return result;
@@ -275,10 +272,10 @@ public class AT_LatLonBox {
 	private List<SphericalTriangle> getTriangles(LatLonBox latLonBox) {
 		List<SphericalTriangle> result = new ArrayList<>();
 		Earth earth = Earth.fromMeanRadius();
-		ECC ne = earth.getECCFromLatLon(new LatLon(latLonBox.getNorthLatitude(), latLonBox.getEastLongitude()));
-		ECC se = earth.getECCFromLatLon(new LatLon(latLonBox.getSouthLatitude(), latLonBox.getEastLongitude()));
-		ECC sw = earth.getECCFromLatLon(new LatLon(latLonBox.getSouthLatitude(), latLonBox.getWestLongitude()));
-		ECC nw = earth.getECCFromLatLon(new LatLon(latLonBox.getNorthLatitude(), latLonBox.getWestLongitude()));
+		Vector3D ne = earth.getECCFromLatLon(new LatLon(latLonBox.getNorthLatitude(), latLonBox.getEastLongitude()));
+		Vector3D se = earth.getECCFromLatLon(new LatLon(latLonBox.getSouthLatitude(), latLonBox.getEastLongitude()));
+		Vector3D sw = earth.getECCFromLatLon(new LatLon(latLonBox.getSouthLatitude(), latLonBox.getWestLongitude()));
+		Vector3D nw = earth.getECCFromLatLon(new LatLon(latLonBox.getNorthLatitude(), latLonBox.getWestLongitude()));
 
 		SphericalPoint neSphericalPoint = SphericalPoint.builder().fromECC(ne).build();
 		SphericalPoint seSphericalPoint = SphericalPoint.builder().fromECC(se).build();

@@ -4,7 +4,8 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.vector.Vector2D;
+import gcm.util.vector.MutableVector2D;
+import gcm.util.vector.Vector3D;
 import gcm.util.vector.MutableVector3D;
 
 /**
@@ -18,20 +19,20 @@ import gcm.util.vector.MutableVector3D;
  * @author Shawn Hatch
  *
  */
-@Source(status= TestStatus.UNEXPECTED)
+@Source(status = TestStatus.UNEXPECTED)
 public final class EarthGrid {
 
 	public static final double MIN_ANGLE_FROM_POLE = 0.001;
 
 	private final Earth earth;
 
-	private MutableVector3D x;
+	private Vector3D x;
 
-	private MutableVector3D y;
+	private Vector3D y;
 
-	private MutableVector3D z;
+	private Vector3D z;
 
-	private MutableVector3D c;
+	private Vector3D c;
 
 	/**
 	 * Constructs a new EarthGrid centered at the given LatLon where the (x,y)
@@ -53,35 +54,35 @@ public final class EarthGrid {
 			throw new RuntimeException("Grid cannot be constructed within " + MIN_ANGLE_FROM_POLE + " degrees of a pole");
 		}
 		earth = Earth.fromLatitude(center.getLatitude());
-		c = earth.getECCFromLatLon(center).toVector3D();
-		z = new MutableVector3D(c);
-		z.normalize();
-		x = new MutableVector3D(0, 0, 1);
-		x.cross(z);
-		x.normalize();
-		x.rotateAbout(z, -FastMath.toRadians(azimuthDegrees));
-		y = new MutableVector3D(z);
-		y.cross(x);
-		y.normalize();
+
+		c = earth.getECCFromLatLon(center);
+
+		z = c.normalize();
+
+		x = new Vector3D(0, 0, 1)//
+									.cross(z)//
+									.normalize()//
+									.rotateAbout(z, -FastMath.toRadians(azimuthDegrees));//
+
+		y = z.cross(x).normalize();
 	}
 
-	public Vector2D getCartesian2DCoordinate(LatLon latLon) {
-		MutableVector3D v = earth.getECCFromLatLonAlt(new LatLonAlt(latLon)).toVector3D();
+	public MutableVector2D getCartesian2DCoordinate(LatLon latLon) {
+		MutableVector3D v = new MutableVector3D(earth.getECCFromLatLonAlt(new LatLonAlt(latLon)));
 		v.normalize();
 		v.scale(Earth.getEffectiveEarthRadius(latLon.getLatitude()));
 		v.sub(c);
-		return new Vector2D(v.dot(x), v.dot(y));
+		return new MutableVector2D(v.dot(x), v.dot(y));
 	}
 
-	public LatLon getLatLon(Vector2D xyCoordinate) {
+	public LatLon getLatLon(MutableVector2D xyCoordinate) {
 		double zlength = FastMath.sqrt(earth.getRadius() * earth.getRadius() - xyCoordinate.getX() * xyCoordinate.getX() - xyCoordinate.getY() * xyCoordinate.getY()) - earth.getRadius();
 		MutableVector3D planarPosition = new MutableVector3D(c);
 		planarPosition.addScaled(y, xyCoordinate.getY());
 		planarPosition.addScaled(x, xyCoordinate.getX());
 		planarPosition.addScaled(z, zlength);
 
-		ECC ecc = new ECC(planarPosition);
-		LatLonAlt latLonAlt = earth.getLatLonAlt(ecc);
+		LatLonAlt latLonAlt = earth.getLatLonAlt(new Vector3D(planarPosition));
 		LatLon latLon = new LatLon(latLonAlt);
 		return latLon;
 	}

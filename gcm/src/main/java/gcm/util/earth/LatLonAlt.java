@@ -1,7 +1,7 @@
 package gcm.util.earth;
 
 import gcm.util.annotations.Source;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 @Source
 public class LatLonAlt {
 
@@ -61,7 +61,7 @@ public class LatLonAlt {
 	 *             <li>if the vector3d is null
 	 * @param latLonAlt
 	 */
-	public LatLonAlt(MutableVector3D vector3d) {
+	public LatLonAlt(Vector3D vector3d) {
 		if (vector3d == null) {
 			throw new RuntimeException("null Vector3D value");
 		}
@@ -98,8 +98,8 @@ public class LatLonAlt {
 	 * Returns a Vector3D from this LatLonAlt where x = latitude, y = longitude
 	 * and z = altitude.
 	 */
-	public MutableVector3D toVector3D() {
-		return new MutableVector3D(latitude, longitude, altitude);
+	public Vector3D toVector3D() {
+		return new Vector3D(latitude, longitude, altitude);
 	}
 
 	/**

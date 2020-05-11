@@ -13,7 +13,7 @@ import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
-import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 /**
  * Test class for {@link LatLonAlt}
  * 
@@ -185,7 +185,7 @@ public class AT_LatLonAlt {
 			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
 			assertEquals(0, latLonAlt.getAltitude(), 0);
 
-			MutableVector3D v = new MutableVector3D(latitude, longitude, altitude);
+			Vector3D v = new Vector3D(latitude, longitude, altitude);
 			latLonAlt = new LatLonAlt(v);
 			assertEquals(latitude, latLonAlt.getLatitude(), TOLERANCE);
 			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
@@ -194,7 +194,7 @@ public class AT_LatLonAlt {
 
 		// pre-condition tests
 		assertException(() -> {
-			MutableVector3D v = null;
+			Vector3D v = null;
 			new LatLonAlt(v);
 		}, RuntimeException.class);
 
@@ -225,7 +225,7 @@ public class AT_LatLonAlt {
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
 			double altitude = randomGenerator.nextDouble() * 10000 - 5000;
 			LatLonAlt latLonAlt = new LatLonAlt(latitude, longitude, altitude);
-			MutableVector3D v = latLonAlt.toVector3D();
+			Vector3D v = latLonAlt.toVector3D();
 			assertEquals(latLonAlt.getLatitude(), v.getX(), TOLERANCE);
 			assertEquals(latLonAlt.getLongitude(), v.getY(), TOLERANCE);
 			assertEquals(latLonAlt.getAltitude(), v.getZ(), TOLERANCE);

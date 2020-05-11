@@ -4,7 +4,7 @@ import org.apache.commons.math3.util.FastMath;
 
 /**
  * A mutable vector class representing 3-dimensional components: v = (x,y,z).
- * 
+ *
  * (Description adapted from Wikipedia) This is a Euclidean vector (also called
  * geometric or spatial vector) that has a length (or magnitude) and direction.
  * This vector can be added to other vectors and obeys vector algebra logic.
@@ -23,80 +23,24 @@ import org.apache.commons.math3.util.FastMath;
  * It is important to note, that since this is a fully mutative vector class
  * that method chaining is discouraged to ensure proper order of operations
  * occur in calculations. This unit will not account for rounding error logic.
- * This unit is not <tt>null</tt> tolerant and passing <tt>null</tt> in as a
+ * This unit is not <tt>null</tt> tolerant and passing <tt>null</tt> as a
  * parameter for a vector will result in a {@link NullPointerException}.
- * 
+ *
  * @see <a href=
  *      "http://en.wikipedia.org/wiki/Euclidean_vector">http://en.wikipedia.org/wiki/Euclidean_vector</a>
  * @see <a href=
  *      "http://mathworld.wolfram.com/Vector.html">http://mathworld.wolfram.com/Vector.html</a>
- * 
+ *
  * @author Shawn R. Hatch
  * @author Christopher R. Ludka
  */
 public final class MutableVector3D {
 
-	/**
-	 * Returns the value at the given index: 0->x, 1->y, 2->z
-	 */
-	public double get(int index) {
-		switch (index) {
-		case 0:
-			return x;
-		case 1:
-			return y;
-		case 2:
-			return z;
-		default:
-			throw new RuntimeException("index out of bounds " + index);
-		}
-	}
+	private static final long ZERO_LONG_BITS = Double.doubleToLongBits(0);
 
-	/**
-	 * Returns the x component of this vector
-	 */
-	public double getX() {
-		return x;
-	}
+	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
 
-	/**
-	 * Sets the x component of this vector
-	 */
-	public void setX(double x) {
-		this.x = x;
-	}
-
-	/**
-	 * Returns the y component of this vector
-	 */
-	public double getY() {
-		return y;
-	}
-
-	/**
-	 * Sets the y component of this vector
-	 */
-	public void setY(double y) {
-		this.y = y;
-	}
-
-	/**
-	 * Returns the z component of this vector
-	 */
-	public double getZ() {
-		return z;
-	}
-
-	/**
-	 * Sets the z component of this vector
-	 */
-	public void setZ(double z) {
-		this.z = z;
-	}
-
-	private static final long zeroLongBits = Double.doubleToLongBits(0);
-
-	private static double crunch(double value) {
+	private static double crunch(final double value) {
 
 		if (value > 1) {
 			return 1;
@@ -111,9 +55,9 @@ public final class MutableVector3D {
 	 * A function that masks Double.doubleToLongBits() by forcing the long bits
 	 * representation of -0 to be that of +0.
 	 */
-	private static long toLongBits(double value) {
+	private static long toLongBits(final double value) {
 		if (value == 0) {
-			return zeroLongBits;
+			return ZERO_LONG_BITS;
 		} else {
 			return Double.doubleToLongBits(value);
 		}
@@ -126,14 +70,14 @@ public final class MutableVector3D {
 	private double z;
 
 	/**
-	 * Creates a vector with the default components of (0,0,0).
+	 * Creates a {@link MutableVector3D} with components of (0,0,0).
 	 */
 	public MutableVector3D() {
 		// Do nothing. Defaults to a (0,0,0) vector construction.
 	}
 
 	/**
-	 * Creates a vector with the component values of (x,y,z).
+	 * Creates a {@link MutableVector3D} with the component values of (x,y,z).
 	 * <p>
 	 * <b>Examples:</b>
 	 * <ul>
@@ -141,7 +85,7 @@ public final class MutableVector3D {
 	 * <li><tt>Vector3D(0,0,0) = (0,0,0)</tt>. <b>Note:</b> This is equivalent
 	 * to calling <tt>Vector3D()</tt>.
 	 * </ul>
-	 * 
+	 *
 	 * @param x
 	 *            the <tt>x</tt> component.
 	 * @param y
@@ -149,17 +93,13 @@ public final class MutableVector3D {
 	 * @param z
 	 *            the <tt>y</tt> component.
 	 */
-	public MutableVector3D(double x, double y, double z) {
+	public MutableVector3D(final double x, final double y, final double z) {
 		assign(x, y, z);
 	}
 
 	/**
-	 * Creates a new vector instance that is initialized with the coordinates
-	 * values of the provided vector.
-	 * <p>
-	 * If provided a <tt>null</tt> vector, a default vector with components
-	 * (0,0,0) is created. <b>Note:</b> This is equivalent to calling
-	 * <tt>Vector3D()</tt>.
+	 * Creates a new {@link MutableVector3D} instance that is initialized with
+	 * the coordinates values of the provided {@link MutableVector3D}.
 	 * <p>
 	 * <b>Examples:</b>
 	 * <ul>
@@ -167,11 +107,11 @@ public final class MutableVector3D {
 	 * <li><tt>v1 = (0,0,0)</tt>: <tt>Vector3D(v1) = (0,0,0)</tt>. <b>Note:</b>
 	 * This is equivalent to calling <tt>Vector3D()</tt>.
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the initialization vector.
 	 */
-	public MutableVector3D(MutableVector3D v) {
+	public MutableVector3D(final MutableVector3D v) {
 		assign(v);
 	}
 
@@ -179,10 +119,10 @@ public final class MutableVector3D {
 	 * Creates a new {@link MutableVector3D} instance that is initialized with
 	 * the coordinates values of the provided {@link Vector3D}.
 	 */
-	public MutableVector3D(Vector3D vector3d) {
-		this.x = vector3d.getX();
-		this.y = vector3d.getY();
-		this.z = vector3d.getZ();
+	public MutableVector3D(final Vector3D vector3d) {
+		x = vector3d.getX();
+		y = vector3d.getY();
+		z = vector3d.getZ();
 	}
 
 	/**
@@ -194,21 +134,15 @@ public final class MutableVector3D {
 	 * <li><tt>v1.add(0,0,0) = (-1,2,6)</tt>.
 	 * </ul>
 	 * 
-	 * @param x
-	 *            the <tt>x</tt> component.
-	 * @param y
-	 *            the <tt>y</tt> component.
-	 * @param z
-	 *            the <tt>y</tt> component.
 	 */
-	public void add(double x, double y, double z) {
+	public void add(final double x, final double y, final double z) {
 		this.x = this.x + x;
 		this.y = this.y + y;
 		this.z = this.z + z;
 	}
 
 	/**
-	 * Adds the given vector's components to this vector.
+	 * Adds the given MutableVector3D components to this MutableVector3D.
 	 * <p>
 	 * A <tt>null</tt> vector is treated as a (0,0,0) vector such that no
 	 * addition occurs.
@@ -219,11 +153,11 @@ public final class MutableVector3D {
 	 * <tt>v1.add(v2) = (-1+1,2-1,6-1) = (0,1,5)</tt>.
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.add(v2) = (-1,2,6)</tt>.
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to be added.
 	 */
-	public void add(MutableVector3D v) {
+	public void add(final MutableVector3D v) {
 		x = x + v.x;
 		y = y + v.y;
 		z = z + v.z;
@@ -232,17 +166,17 @@ public final class MutableVector3D {
 	/**
 	 * Adds the given {@link Vector3D} components to this vector.
 	 */
-	public void add(Vector3D v) {
+	public void add(final Vector3D v) {
 		x = x + v.getX();
 		y = y + v.getY();
 		z = z + v.getZ();
 	}
 
 	/**
-	 * Scales and then adds the given vector.
-	 * 
-	 * Aadding a vector scaled by 'zero' results in a (0,0,0) vector such that
-	 * no effective scaling or addition occurs.
+	 * Scales and then adds the given MutableVector3D.
+	 *
+	 * Adding a vector scaled by 'zero' results in a (0,0,0) vector such that no
+	 * effective scaling or addition occurs.
 	 * <p>
 	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>
 	 * <ul>
@@ -255,26 +189,36 @@ public final class MutableVector3D {
 	 * </ul>
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.addScaled(v2,5) = (-1,2,6)</tt>.
 	 * </ul>
-	 * 
-	 * @param v
-	 *            the vector to be added.
-	 * @param s
-	 *            the magnitude of the scale.
 	 */
-	public void addScaled(MutableVector3D v, double scalar) {
-		x = x + scalar * v.x;
-		y = y + scalar * v.y;
-		z = z + scalar * v.z;
+	public void addScaled(final MutableVector3D v, final double scalar) {
+		x = x + (scalar * v.x);
+		y = y + (scalar * v.y);
+		z = z + (scalar * v.z);
 	}
 
 	/**
 	 * Adds the given {@link Vector3D} scaled by the scalar to this
 	 * {@link MutableVector3D}
+	 * 
+	 * Adding a vector scaled by 'zero' results in a (0,0,0) vector such that no
+	 * effective scaling or addition occurs.
+	 * <p>
+	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>
+	 * <ul>
+	 * <li><tt>v2 = (1,-1,-1)</tt>:
+	 * <ul>
+	 * <li>
+	 * <tt>v1.addScaled(v2,5) = (-1+5*(1),2+5*(-1),6+5*(-1)) = (-1+5,2-5,6-5) = (4,-3,1)</tt>.
+	 * <li>
+	 * <tt>v1.addScaled(v2,0) = (-1+0*(1),2+0*(-1),6+0*(-1)) = (-1+0,2+0,6+0) = (-1,2,6)</tt>.
+	 * </ul>
+	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.addScaled(v2,5) = (-1,2,6)</tt>.
+	 * </ul>
 	 */
-	public void addScaled(Vector3D v, double scalar) {
-		x = x + scalar * v.getX();
-		y = y + scalar * v.getY();
-		z = z + scalar * v.getZ();
+	public void addScaled(final Vector3D v, final double scalar) {
+		x = x + (scalar * v.getX());
+		y = y + (scalar * v.getY());
+		z = z + (scalar * v.getZ());
 	}
 
 	/**
@@ -295,36 +239,32 @@ public final class MutableVector3D {
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.angleInRadians(v2) = NaN</tt>
 	 * <li><tt>v1.angleInRadians(v1) = 0.0</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Dot_product#Geometric_definition">http://en.wikipedia.org/wiki/Dot_product#Geometric_definition</a>
 	 * @see <a href=
 	 *      "http://mathworld.wolfram.com/DotProduct.html">http://mathworld.wolfram.com/DotProduct.html</a>
-	 * 
-	 * @param v
-	 *            the vector to find the angle between.
-	 * @return the angle in radians
 	 */
-	public double angle(MutableVector3D v) {
-		return FastMath.acos(crunch(this.dot(v) / (this.length() * v.length())));
+	public double angle(final MutableVector3D v) {
+		return FastMath.acos(crunch(this.dot(v) / (length() * v.length())));
 	}
 
 	/**
-	 * Returns the angle in radians from this muta
+	 * Returns the angle in radians from this {@link MutableVector3D} to the given {@link Vector3D}
 	 */
-	public double angle(Vector3D v) {
-		return FastMath.acos(crunch(this.dot(v) / (this.length() * v.length())));
+	public double angle(final Vector3D v) {
+		return FastMath.acos(crunch(this.dot(v) / (length() * v.length())));
 	}
 
 	/**
-	 * Assigns this vector with the component values of (x,y,z).
+	 * Assigns this {@link MutableVector3D} with the component values of (x,y,z).
 	 * <p>
 	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>:
 	 * <ul>
 	 * <li><tt>v1.assign(1,-1,-1) = (1,-1,-1)</tt>
 	 * <li><tt>v1.assign(0,0,0) = (0,0,0)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param x
 	 *            the <tt>x</tt> component to be added.
 	 * @param y
@@ -332,7 +272,7 @@ public final class MutableVector3D {
 	 * @param z
 	 *            the <tt>y</tt> component to be added.
 	 */
-	public void assign(double x, double y, double z) {
+	public void assign(final double x, final double y, final double z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -349,11 +289,11 @@ public final class MutableVector3D {
 	 * <li><tt>v2 = (1,-1,-1)</tt>: <tt>v1.assign(v2) = (1,-1,-1)</tt>.
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.assign(v2)</tt> = (0,0,0)</tt>.
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector values to be assigned.
 	 */
-	public void assign(MutableVector3D v) {
+	public void assign(final MutableVector3D v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;
@@ -361,9 +301,9 @@ public final class MutableVector3D {
 
 	/**
 	 * Assigns this vector with the coordinates values of the provided vector.
-	 * 
+	 *
 	 */
-	public void assign(Vector3D v) {
+	public void assign(final Vector3D v) {
 		x = v.getX();
 		y = v.getY();
 		z = v.getZ();
@@ -384,20 +324,20 @@ public final class MutableVector3D {
 	 * vector for purposes of calculating the cross product.
 	 * <p>
 	 * The cross product, <tt>v1 X v2</tt>, formulation is therefore,
-	 * 
+	 *
 	 * <pre>
 	 * <tt>v1.cross(v2)</tt>
-	 * 
+	 *
 	 * = Norm[v1]Norm[v2]Sin[Alpha]
-	 * 
+	 *
 	 *        { i ,  j ,  k }
 	 * = Det[ {v1x, v1y, v1z} ]
 	 *        {v2x, v2y, v2z}
-	 * 
+	 *
 	 *   {  0 , -v1z,  v1y}    {v2x}
 	 * = { v1z,   0 , -v1x} ] [{v2y}]
 	 *   {-v1y,  v1z,   0 }    {v2z)
-	 * 
+	 *
 	 *     {(-v1z)(v2y) + (v1y)(v2z)}
 	 * = [ {(v1z)(v2x)  - (v1x)(v2z)}  ]
 	 *     {(-v1y)(v2x) + (v1z)(v2y)}
@@ -417,19 +357,19 @@ public final class MutableVector3D {
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.cross(v2) = (0,0,0)</tt>.
 	 * <li><tt>v1.cross(v1) = (0,0,0)</tt>.
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Cross_product">http://en.wikipedia.org/wiki/Cross_product</a>
 	 * @see <a href=
 	 *      "http://mathworld.wolfram.com/CrossProduct.html">http://mathworld.wolfram.com/CrossProduct.html</a>
-	 * 
+	 *
 	 * @param v
 	 *            the 'right' cross vector.
 	 */
-	public void cross(MutableVector3D v) {
-		double crossx = y * v.z - v.y * z;
-		double crossy = v.x * z - x * v.z;
-		double crossz = x * v.y - v.x * y;
+	public void cross(final MutableVector3D v) {
+		final double crossx = (y * v.z) - (v.y * z);
+		final double crossy = (v.x * z) - (x * v.z);
+		final double crossz = (x * v.y) - (v.x * y);
 		assign(crossx, crossy, crossz);
 	}
 
@@ -437,10 +377,10 @@ public final class MutableVector3D {
 	 * Assigns this vector as the right handed cross product of this
 	 * {@link MutableVector3D} and the given {@link Vector3D}
 	 */
-	public void cross(Vector3D v) {
-		double crossx = y * v.getZ() - v.getY() * z;
-		double crossy = v.getX() * z - x * v.getZ();
-		double crossz = x * v.getY() - v.getX() * y;
+	public void cross(final Vector3D v) {
+		final double crossx = (y * v.getZ()) - (v.getY() * z);
+		final double crossy = (v.getX() * z) - (x * v.getZ());
+		final double crossz = (x * v.getY()) - (v.getX() * y);
 		assign(crossx, crossy, crossz);
 	}
 
@@ -455,23 +395,23 @@ public final class MutableVector3D {
 	 * <li><tt>v2 = (1,-1,-1)</tt>:
 	 * <tt>v1.distanceTo(v2) = 7.874007874011811</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Euclidean_vector#Length">http://en.wikipedia.org/wiki/Euclidean_vector#Length</a>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to find the distance to.
-	 * 
+	 *
 	 * @return the distance between this vector and the given vector.
 	 */
-	public double distanceTo(MutableVector3D v) {
+	public double distanceTo(final MutableVector3D v) {
 		return FastMath.sqrt(sqr(v.x - x) + sqr(v.y - y) + sqr(v.z - z));
 	}
-	
+
 	/**
 	 * Returns the distance between this vector and the given vector.
 	 */
-	public double distanceTo(Vector3D v) {
+	public double distanceTo(final Vector3D v) {
 		return FastMath.sqrt(sqr(v.getX() - x) + sqr(v.getY() - y) + sqr(v.getZ() - z));
 	}
 
@@ -482,41 +422,42 @@ public final class MutableVector3D {
 	 * Product".
 	 * <p>
 	 * The dot product, <tt>v1.v2</tt>, formulation is therefore,
-	 * 
+	 *
 	 * <pre>
 	 * <tt>v1.dot(v2)</tt>
-	 * 
+	 *
 	 * = Norm[v1]Norm[v2]Sin[Alpha]
-	 * 
+	 *
 	 * = Transpose[v1]*v2
-	 * 
+	 *
 	 * = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z)
 	 * </pre>
-	 * 
+	 *
 	 * <b>Examples:</b> <tt>v1 = (-1,2,6)</tt>:
 	 * <ul>
 	 * <li><tt>v2 = (1,-1,-1)</tt>: <tt>v1.dot(v2) = -9.0</tt>
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.dot(v2) = 0.0</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Dot_product">http://en.wikipedia.org/wiki/Dot_product</a>
 	 * @see <a href=
 	 *      "http://mathworld.wolfram.com/DotProduct.html">http://mathworld.wolfram.com/DotProduct.html</a>
-	 * 
+	 *
 	 * @param v
 	 *            the vector for the dot product.
 	 * @return the dot product
 	 */
-	public double dot(MutableVector3D v) {
-		return x * v.x + y * v.y + z * v.z;
+	public double dot(final MutableVector3D v) {
+		return (x * v.x) + (y * v.y) + (z * v.z);
 	}
-	
+
 	/**
-	 * Returns the dot product of this {@link MutableVector3D} and the given {@link Vector3D}.
+	 * Returns the dot product of this {@link MutableVector3D} and the given
+	 * {@link Vector3D}.
 	 */
-	public double dot(Vector3D v) {
-		return x * v.getX() + y * v.getY() + z * v.getZ();
+	public double dot(final Vector3D v) {
+		return (x * v.getX()) + (y * v.getY()) + (z * v.getZ());
 	}
 
 	/**
@@ -526,7 +467,7 @@ public final class MutableVector3D {
 	 * This is done to give a more intuitive meaning of equals.
 	 */
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -536,7 +477,7 @@ public final class MutableVector3D {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		MutableVector3D other = (MutableVector3D) obj;
+		final MutableVector3D other = (MutableVector3D) obj;
 		if (toLongBits(x) != toLongBits(other.x)) {
 			return false;
 		}
@@ -550,6 +491,43 @@ public final class MutableVector3D {
 	}
 
 	/**
+	 * Returns the value at the given index: 0->x, 1->y, 2->z
+	 */
+	public double get(final int index) {
+		switch (index) {
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		default:
+			throw new RuntimeException("index out of bounds " + index);
+		}
+	}
+
+	/**
+	 * Returns the x component of this vector
+	 */
+	public double getX() {
+		return x;
+	}
+
+	/**
+	 * Returns the y component of this vector
+	 */
+	public double getY() {
+		return y;
+	}
+
+	/**
+	 * Returns the z component of this vector
+	 */
+	public double getZ() {
+		return z;
+	}
+
+	/**
 	 * Default generated hash code.
 	 */
 	@Override
@@ -558,18 +536,29 @@ public final class MutableVector3D {
 		int result = 1;
 		long temp;
 		temp = toLongBits(x);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		temp = toLongBits(y);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		temp = toLongBits(z);
-		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = (prime * result) + (int) (temp ^ (temp >>> 32));
 		return result;
+	}
+
+	/**
+	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
+	 * 'Not a Number') and is not infinite.
+	 *
+	 * @return <tt>true</tt> if the vector is not NaN (i.e. 'Not a Number') and
+	 *         is not infinite.
+	 */
+	public boolean isFinite() {
+		return !isNaN() && !isInfinite();
 	}
 
 	/**
 	 * Returns <tt>true</tt> if any of the vector components are positive or
 	 * negative infinity.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the vector is infinite.
 	 */
 	public boolean isInfinite() {
@@ -579,7 +568,7 @@ public final class MutableVector3D {
 	/**
 	 * Returns <tt>true</tt> if any of the vector components are NaN 'Not a
 	 * Number'.
-	 * 
+	 *
 	 * @return <tt>true</tt> if the vector is NaN 'Not a Number'.
 	 */
 	public boolean isNaN() {
@@ -587,14 +576,12 @@ public final class MutableVector3D {
 	}
 
 	/**
-	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
-	 * 'Not a Number') and is not infinite.
-	 * 
-	 * @return <tt>true</tt> if the vector is not NaN (i.e. 'Not a Number') and
-	 *         is not infinite.
+	 * Returns true if and only if this vector is finite and has a length within
+	 * {@link MutableVector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
 	 */
-	public boolean isFinite() {
-		return !isNaN() && !isInfinite();
+	public boolean isNormal() {
+		final double len = length();
+		return Double.isFinite(len) && (FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE);
 	}
 
 	/**
@@ -608,16 +595,16 @@ public final class MutableVector3D {
 	 * <tt>v1.norm() = SQRT[41] = 6.4031242374328485</tt>
 	 * <li><tt>v1 = (0,0,0)</tt>: <tt>v1.norm() = SQRT[0] = 0.0</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Euclidean_vector#Length">http://en.wikipedia.org/wiki/Euclidean_vector#Length</a>
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm">http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm</a>
-	 * 
+	 *
 	 * @return the norm of the vector
 	 */
 	public double length() {
-		return FastMath.sqrt(x * x + y * y + z * z);
+		return FastMath.sqrt((x * x) + (y * y) + (z * z));
 	}
 
 	/**
@@ -632,34 +619,12 @@ public final class MutableVector3D {
 	 * <tt>v1.normalize() = (-0.15617376188860607, 0.31234752377721214, 0.9370425713316364)</tt>
 	 * <li><tt>v1 = (0,0,0)</tt>: <tt>v1.normalize() = (NaN, NaN, NaN)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @see <a href=
 	 *      "http://en.wikipedia.org/wiki/Normalized_vector">http://en.wikipedia.org/wiki/Normalized_vector</a>
 	 */
 	public void normalize() {
 		scale(1.0 / length());
-	}
-
-	/**
-	 * Returns the length of the vector squared.
-	 * <p>
-	 * This is vector norm squared (e.g. x^2 + y^2 + z^2).
-	 * <p>
-	 * <b>Examples:</b>
-	 * <ul>
-	 * <li><tt>v1 = (-1,2,6)</tt>: <tt>v1.normSquared() = 41</tt>
-	 * <li><tt>v1 = (0,0,0)</tt>: <tt>v1.normSquared() = 0</tt>
-	 * </ul>
-	 * 
-	 * @see <a href=
-	 *      "http://en.wikipedia.org/wiki/Euclidean_vector#Length">http://en.wikipedia.org/wiki/Euclidean_vector#Length</a>
-	 * @see <a href=
-	 *      "http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm">http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm</a>
-	 * 
-	 * @return the norm of the vector
-	 */
-	public double squareLength() {
-		return x * x + y * y + z * z;
 	}
 
 	/**
@@ -704,34 +669,34 @@ public final class MutableVector3D {
 	 * <tt>theta = Math.PI = 3.141592653589793</tt>,
 	 * <tt>v1.rotate(v2, theta)</tt> -> <tt>(0,0,0)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to rotate about.
 	 * @param theta
 	 *            the angle of rotation according to a right hand coordinate
 	 *            system (i.e. counter-clockwise).
 	 */
-	public void rotateAbout(MutableVector3D v, double theta) {
+	public void rotateAbout(final MutableVector3D v, final double theta) {
 		// Normalize the vector
-		MutableVector3D normalizedRotator = new MutableVector3D(v);
+		final MutableVector3D normalizedRotator = new MutableVector3D(v);
 		normalizedRotator.normalize();
 
 		// parallelProjection is the part of this vector that lies in the
 		// direction of the rotator
-		MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
+		final MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
 		parallelProjection.scale(dot(normalizedRotator));
 
 		// x_perpendicularProjection is the part of this vector that is
 		// perpendicular to the rotator. It is the projection of self onto the
 		// plane perpendicular to the rotator.
-		MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
+		final MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
 		x_perpendicularProjection.sub(parallelProjection);
 
 		// y_perpendicularProjection is the vector that is both in the plane
 		// perpendicular to the rotator AND perpendicular to the
 		// x_perpendicularProjection
 
-		MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
+		final MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
 		y_perpendicularProjection.cross(x_perpendicularProjection);
 
 		// Note: y_perpendicularProjection and x_perpendicularProjection
@@ -748,32 +713,32 @@ public final class MutableVector3D {
 		// result that is off the plane
 		add(parallelProjection);
 	}
-	
+
 	/**
 	 * Rotates this vector about the given vector at the given angle according
-	 * to a right hand coordinate system (i.e. counter-clockwise).	
+	 * to a right hand coordinate system (i.e. counter-clockwise).
 	 */
-	public void rotateAbout(Vector3D v, double theta) {
+	public void rotateAbout(final Vector3D v, final double theta) {
 		// Normalize the vector
-		MutableVector3D normalizedRotator = new MutableVector3D(v);
+		final MutableVector3D normalizedRotator = new MutableVector3D(v);
 		normalizedRotator.normalize();
 
 		// parallelProjection is the part of this vector that lies in the
 		// direction of the rotator
-		MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
+		final MutableVector3D parallelProjection = new MutableVector3D(normalizedRotator);
 		parallelProjection.scale(dot(normalizedRotator));
 
 		// x_perpendicularProjection is the part of this vector that is
 		// perpendicular to the rotator. It is the projection of self onto the
 		// plane perpendicular to the rotator.
-		MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
+		final MutableVector3D x_perpendicularProjection = new MutableVector3D(this);
 		x_perpendicularProjection.sub(parallelProjection);
 
 		// y_perpendicularProjection is the vector that is both in the plane
 		// perpendicular to the rotator AND perpendicular to the
 		// x_perpendicularProjection
 
-		MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
+		final MutableVector3D y_perpendicularProjection = new MutableVector3D(normalizedRotator);
 		y_perpendicularProjection.cross(x_perpendicularProjection);
 
 		// Note: y_perpendicularProjection and x_perpendicularProjection
@@ -818,25 +783,25 @@ public final class MutableVector3D {
 	 * <tt>v1.rotate(v2, theta)</tt> -> <tt>(NaN, NaN, NaN)</tt>
 	 * </ul>
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to rotate toward.
 	 * @param theta
 	 *            the angle of rotation according to a right hand coordinate
 	 *            system (i.e. counter-clockwise).
 	 */
-	public void rotateToward(MutableVector3D v, double theta) {
-		MutableVector3D perp = new MutableVector3D(this);
+	public void rotateToward(final MutableVector3D v, final double theta) {
+		final MutableVector3D perp = new MutableVector3D(this);
 		perp.cross(v);
 		rotateAbout(perp, theta);
 	}
-	
+
 	/**
 	 * Rotates this vector toward the given vector at the given angle according
-	 * to a right hand coordinate system (i.e. counter-clockwise).	
+	 * to a right hand coordinate system (i.e. counter-clockwise).
 	 */
-	public void rotateToward(Vector3D v, double theta) {
-		MutableVector3D perp = new MutableVector3D(this);
+	public void rotateToward(final Vector3D v, final double theta) {
+		final MutableVector3D perp = new MutableVector3D(this);
 		perp.cross(v);
 		rotateAbout(perp, theta);
 	}
@@ -852,24 +817,45 @@ public final class MutableVector3D {
 	 * <li><tt>v1.scale(1) = (-1,2,6)</tt>
 	 * <li><tt>v1.scale(0) = (0,0,0)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param m
 	 *            the magnitude, e.g. scaling factor.
 	 */
-	public void scale(double m) {
+	public void scale(final double m) {
 		x *= m;
 		y *= m;
 		z *= m;
 	}
 
 	/**
+	 * Sets the x component of this vector
+	 */
+	public void setX(final double x) {
+		this.x = x;
+	}
+
+	/**
+	 * Sets the y component of this vector
+	 */
+	public void setY(final double y) {
+		this.y = y;
+	}
+
+	/**
+	 * Sets the z component of this vector
+	 */
+	public void setZ(final double z) {
+		this.z = z;
+	}
+
+	/**
 	 * Squares the provided value.
-	 * 
+	 *
 	 * @param value
 	 *            to be squared
 	 * @return the value squared
 	 */
-	private double sqr(double value) {
+	private double sqr(final double value) {
 		return value * value;
 	}
 
@@ -883,20 +869,42 @@ public final class MutableVector3D {
 	 * <ul>
 	 * <li><tt>v2 = (1,-1,-1)</tt>: <tt>v1.squareDistanceTo(v2) = 62.0</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to find the distance to.
 	 * @return the square of the distance to the vector provided.
 	 */
-	public double squareDistanceTo(MutableVector3D v) {
-		return (v.x - x) * (v.x - x) + (v.y - y) * (v.y - y) + (v.z - z) * (v.z - z);
+	public double squareDistanceTo(final MutableVector3D v) {
+		return ((v.x - x) * (v.x - x)) + ((v.y - y) * (v.y - y)) + ((v.z - z) * (v.z - z));
 	}
-	
+
 	/**
-	 * Returns the square of the distance to the vector provided.	 
+	 * Returns the square of the distance to the vector provided.
 	 */
-	public double squareDistanceTo(Vector3D v) {
-		return (v.getX() - x) * (v.getX() - x) + (v.getY() - y) * (v.getY() - y) + (v.getZ() - z) * (v.getZ() - z);
+	public double squareDistanceTo(final Vector3D v) {
+		return ((v.getX() - x) * (v.getX() - x)) + ((v.getY() - y) * (v.getY() - y)) + ((v.getZ() - z) * (v.getZ() - z));
+	}
+
+	/**
+	 * Returns the length of the vector squared.
+	 * <p>
+	 * This is vector norm squared (e.g. x^2 + y^2 + z^2).
+	 * <p>
+	 * <b>Examples:</b>
+	 * <ul>
+	 * <li><tt>v1 = (-1,2,6)</tt>: <tt>v1.normSquared() = 41</tt>
+	 * <li><tt>v1 = (0,0,0)</tt>: <tt>v1.normSquared() = 0</tt>
+	 * </ul>
+	 *
+	 * @see <a href=
+	 *      "http://en.wikipedia.org/wiki/Euclidean_vector#Length">http://en.wikipedia.org/wiki/Euclidean_vector#Length</a>
+	 * @see <a href=
+	 *      "http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm">http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm</a>
+	 *
+	 * @return the norm of the vector
+	 */
+	public double squareLength() {
+		return (x * x) + (y * y) + (z * z);
 	}
 
 	/**
@@ -907,7 +915,7 @@ public final class MutableVector3D {
 	 * <li><tt>v1.sub(1,-1,-1) = (-1-1,2-(-1),6-(-1)) = (-2,3,7)</tt>
 	 * <li><tt>v1.sub(0,0,0) = (-1,2,6)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param x
 	 *            the <tt>x</tt> component.
 	 * @param y
@@ -915,7 +923,7 @@ public final class MutableVector3D {
 	 * @param z
 	 *            the <tt>y</tt> component.
 	 */
-	public void sub(double x, double y, double z) {
+	public void sub(final double x, final double y, final double z) {
 		this.x = this.x - x;
 		this.y = this.y - y;
 		this.z = this.z - z;
@@ -933,11 +941,11 @@ public final class MutableVector3D {
 	 * <tt>v1.sub(v2) = (-1-1,2-(-1),6-(-1)) = (-2,3,7)</tt>
 	 * <li><tt>v2 = (0,0,0)</tt>: <tt>v1.sub(v2) = (-1,2,6)</tt>
 	 * </ul>
-	 * 
+	 *
 	 * @param v
 	 *            the vector to be added.
 	 */
-	public void sub(MutableVector3D v) {
+	public void sub(final MutableVector3D v) {
 		x = x - v.x;
 		y = y - v.y;
 		z = z - v.z;
@@ -945,13 +953,14 @@ public final class MutableVector3D {
 
 	/**
 	 * Subtracts the given vector's components from this vector.
-	 * 
+	 *
 	 */
-	public void sub(Vector3D v) {
+	public void sub(final Vector3D v) {
 		x = x - v.getX();
 		y = y - v.getY();
 		z = z - v.getZ();
 	}
+
 	/**
 	 * Returns a length 3 array of double [x,y,z]
 	 */
@@ -961,7 +970,7 @@ public final class MutableVector3D {
 
 	/**
 	 * Returns the string representation in the form
-	 * 
+	 *
 	 * Vector3D [x=2.57,y=-34.1,z=8.73]
 	 */
 	@Override
@@ -975,16 +984,5 @@ public final class MutableVector3D {
 	 */
 	public void zero() {
 		assign(0, 0, 0);
-	}
-
-	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
-
-	/**
-	 * Returns true if and only if this vector is finite and has a length within
-	 * {@link MutableVector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
-	 */
-	public boolean isNormal() {
-		double len = length();
-		return Double.isFinite(len) && FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE;
 	}
 }

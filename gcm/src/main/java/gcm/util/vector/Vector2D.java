@@ -16,7 +16,9 @@ import net.jcip.annotations.Immutable;
 @Source(status = TestStatus.REQUIRED)
 public final class Vector2D {
 
-	private static final long zeroLongBits = Double.doubleToLongBits(0);
+	private static final long ZERO_LONG_BITS = Double.doubleToLongBits(0);
+
+	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
 
 	/*
 	 * corrects a value that should be in the interval [-1,1]
@@ -38,7 +40,7 @@ public final class Vector2D {
 	 */
 	private static long toLongBits(final double value) {
 		if (value == 0) {
-			return zeroLongBits;
+			return ZERO_LONG_BITS;
 		} else {
 			return Double.doubleToLongBits(value);
 		}
@@ -52,8 +54,8 @@ public final class Vector2D {
 	 * Constructs a {@link Vector2D} where x and y are zero
 	 */
 	public Vector2D() {
-		this.x = 0;
-		this.y = 0;
+		x = 0;
+		y = 0;
 	}
 
 	/**
@@ -65,28 +67,39 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Constructs a {@link Vector2D} from another Vector2D
-	 * 
+	 * Constructs a {@link Vector2D} from another {@link MutableVector2D}
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
-	public Vector2D(final Vector2D v) {
+	public Vector2D(final MutableVector2D v) {
 		x = v.getX();
 		y = v.getY();
 	}
 
 	/**
-	 * Adds the given x and y values to the corresponding values of this
-	 * {@link Vector2D}
+	 * Constructs a {@link Vector2D} from another {@link Vector2D}
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
+	 */
+	public Vector2D(final Vector2D v) {
+		x = v.x;
+		y = v.y;
+	}
+
+	/**
+	 * Returns a new {@link Vector2D} instance that is the component-wise sum of
+	 * this {@link Vector2D} and the given values. {@link Vector2D}
 	 */
 	public Vector2D add(final double x, final double y) {
 		return new Vector2D(this.x + x, this.y + y);
 	}
 
 	/**
-	 * Adds the x and y of the given {@link Vector2D} to the corresponding
-	 * values of this {@link Vector2D}
-	 * 
+	 * Returns a new {@link Vector2D} instance that is the component-wise sum of
+	 * this {@link Vector2D} and the given {@link Vector2D}.
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -95,20 +108,23 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Add the given {@link Vector2D} as scaled by the scalar to this
-	 * {@link Vector2D}
-	 * 
-	 * For example, if v=(5,7) and w = (2,3), then v.addScaled(w,10) would yield
-	 * v=(25,37)
-	 * 
+	 * Returns a new {@link Vector2D} instance that is the component-wise sum of
+	 * this {@link Vector2D} and the scalar multiple of the given
+	 * {@link Vector2D}.
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public Vector2D addScaled(final Vector2D v, final double scalar) {
-		return new Vector2D(x + v.getX() * scalar, y + v.getY() * scalar);
+		return new Vector2D(x + (v.x * scalar), y + (v.y * scalar));
 	}
 
 	/**
 	 * Returns the angle in radians between this {@link Vector2D} and the given
 	 * {@link Vector2D}
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public double angle(final Vector2D v) {
 		final double value = dot(v) / (v.length() * length());
@@ -119,6 +135,9 @@ public final class Vector2D {
 	 * Returns 1 if the acute angle from this {@link Vector2D} to the given
 	 * Vector2D is clockwise and -1 if it is counter clockwise. Returns 0 if the
 	 * angle is zero.
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public int cross(final Vector2D v) {
 		final double direction = (x * v.y) - (v.x * y);
@@ -133,6 +152,9 @@ public final class Vector2D {
 
 	/**
 	 * Returns the distance between this {@link Vector2D} and the given Vector2D
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public double distanceTo(final Vector2D v) {
 		return FastMath.sqrt(((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y)));
@@ -140,6 +162,9 @@ public final class Vector2D {
 
 	/**
 	 * Returns the dot product of this {@link Vector2D} and the given Vector2D
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public double dot(final Vector2D v) {
 		return (x * v.x) + (y * v.y);
@@ -234,6 +259,15 @@ public final class Vector2D {
 	}
 
 	/**
+	 * Returns true if and only if this {@link Vector2D} is finite and has a
+	 * length within {@link Vector2D#NORMAL_LENGTH_TOLERANCE} of unit length.
+	 */
+	public boolean isNormal() {
+		final double len = length();
+		return Double.isFinite(len) && (FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE);
+	}
+
+	/**
 	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
 	 * 'Not a Number') and not infinite.
 	 */
@@ -249,7 +283,8 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Scales this {@link Vector2D} so that its length is 1.
+	 * Returns a new {@link Vector2D} instance that if equal to this
+	 * {@link Vector2D} scaled to unit length.
 	 */
 	public Vector2D normalize() {
 		final double len = length();
@@ -257,17 +292,21 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Assigns this {@link Vector2D} to the values of the given {@link Vector2D}
-	 * under either a clockwise or counter clockwise rotation.
+	 * Returns a new {@link Vector2D} instance that has the same length as this
+	 * {link Vector2D} and is perpendicular the this {link Vector2D} under
+	 * either a clockwise or counter clockwise rotation.
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public Vector2D perpTo(final Vector2D v, final boolean clockwise) {
 		double newx, newy;
 		if (clockwise) {
-			newx = v.getY();
-			newy = -v.getX();
+			newx = v.y;
+			newy = -v.x;
 		} else {
-			newx = -v.getY();
-			newy = v.getX();
+			newx = -v.y;
+			newy = v.x;
 		}
 		return new Vector2D(newx, newy);
 	}
@@ -281,25 +320,34 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Rotates this {@link Vector2D} about the origin by the given angle in
-	 * radians in a counter clockwise(right handed) manner.
+	 * Returns a new {@link Vector2D} instance that has the same length as this
+	 * {link Vector2D} and is clockwise rotated by the given angle in radians.
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public Vector2D rotate(final double theta) {
-		double sinTheta = FastMath.sin(theta);
-		double cosTheta = FastMath.cos(theta);
-		return new Vector2D(x * cosTheta - y * sinTheta, y * cosTheta + x * sinTheta);
+		final double sinTheta = FastMath.sin(theta);
+		final double cosTheta = FastMath.cos(theta);
+		return new Vector2D((x * cosTheta) - (y * sinTheta), (y * cosTheta) + (x * sinTheta));
 	}
 
 	/**
-	 * Rotates this {@link Vector2D} about the origin through the acute angle to
-	 * the given {@link Vector2D} by the given angle in radians.
+	 * Returns a new {@link Vector2D} instance that has the same length as this
+	 * {link Vector2D} and is rotated toward the given {@link Vector2D} by the
+	 * given angle in radians.
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public Vector2D rotateToward(final Vector2D v, final double theta) {
 		return rotate(cross(v) * theta);
 	}
 
 	/**
-	 * Scales this {@link Vector2D} by the scalar
+	 * Returns a new {@link Vector2D} instance that is the scaled values of this
+	 * {@link Vector2D}.
+	 *
 	 */
 	public Vector2D scale(final double scalar) {
 		return new Vector2D(x * scalar, y * scalar);
@@ -308,6 +356,9 @@ public final class Vector2D {
 	/**
 	 * Returns the square distance between this {@link Vector2D} and the given
 	 * Vector2D
+	 *
+	 * @throws NullPointerException
+	 *             <li>if v is null
 	 */
 	public double squareDistanceTo(final Vector2D v) {
 		return ((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y));
@@ -321,22 +372,23 @@ public final class Vector2D {
 	}
 
 	/**
-	 * Subtracts the given x and y values from the corresponding values of this
-	 * {@link Vector2D}
+	 * Returns a new {@link Vector2D} instance that is the component-wise
+	 * difference of this {@link Vector2D} and the given values.
 	 */
 	public Vector2D sub(final double x, final double y) {
 		return new Vector2D(this.x - x, this.y - y);
 	}
 
 	/**
-	 * Subtracts the x and y of the given {@link Vector2D} from the
-	 * corresponding values of this {@link Vector2D}
-	 * 
+	 * Returns a new {@link Vector2D} instance that is the component-wise
+	 * difference of this {@link Vector2D} and the given {@link Vector2D}.
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
+	 *
 	 */
 	public Vector2D sub(final Vector2D v) {
-		return new Vector2D(x - v.getX(), y - v.getY());
+		return new Vector2D(x - v.x, y - v.y);
 	}
 
 	/**
@@ -348,12 +400,12 @@ public final class Vector2D {
 
 	/**
 	 * Returns the string representation in the form
-	 * 
+	 *
 	 * Vector2D [x=2.57,y=-34.1]
 	 */
 	@Override
 	public String toString() {
 		return "Vector2D [x=" + x + ", y=" + y + "]";
 	}
-	
+
 }

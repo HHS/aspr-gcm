@@ -1,6 +1,5 @@
 package gcm.util.vector;
 
-
 import org.apache.commons.math3.util.FastMath;
 
 /**
@@ -11,7 +10,9 @@ import org.apache.commons.math3.util.FastMath;
  */
 public final class MutableVector2D {
 
-	private static final long zeroLongBits = Double.doubleToLongBits(0);
+	private static final long ZERO_LONG_BITS = Double.doubleToLongBits(0);
+
+	public final static double NORMAL_LENGTH_TOLERANCE = 1E-13;
 
 	/*
 	 * corrects a value that should be in the interval [-1,1]
@@ -33,7 +34,7 @@ public final class MutableVector2D {
 	 */
 	private static long toLongBits(final double value) {
 		if (value == 0) {
-			return zeroLongBits;
+			return ZERO_LONG_BITS;
 		} else {
 			return Double.doubleToLongBits(value);
 		}
@@ -59,7 +60,7 @@ public final class MutableVector2D {
 
 	/**
 	 * Constructs a {@link MutableVector2D} from another {@link MutableVector2D}
-	 * 
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -67,10 +68,10 @@ public final class MutableVector2D {
 		x = v.getX();
 		y = v.getY();
 	}
-		
+
 	/**
 	 * Constructs a {@link MutableVector2D} from another {@link Vector2D}
-	 * 
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -89,9 +90,9 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Adds the x and y of the given {@link MutableVector2D} to the corresponding
-	 * values of this {@link MutableVector2D}
-	 * 
+	 * Adds the x and y of the given {@link MutableVector2D} to the
+	 * corresponding values of this {@link MutableVector2D}
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -99,11 +100,11 @@ public final class MutableVector2D {
 		x += v.getX();
 		y += v.getY();
 	}
-	
+
 	/**
-	 * Adds the x and y of the given {@link MutableVector2D} to the corresponding
-	 * values of this {@link Vector2D}
-	 * 
+	 * Adds the x and y of the given {@link MutableVector2D} to the
+	 * corresponding values of this {@link Vector2D}
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -115,10 +116,10 @@ public final class MutableVector2D {
 	/**
 	 * Add the given {@link MutableVector2D} as scaled by the scalar to this
 	 * {@link MutableVector2D}
-	 * 
+	 *
 	 * For example, if v=(5,7) and w = (2,3), then v.addScaled(w,10) would yield
 	 * v=(25,37)
-	 * 
+	 *
 	 */
 	public void addScaled(final MutableVector2D v, final double scalar) {
 		x += v.getX() * scalar;
@@ -128,10 +129,10 @@ public final class MutableVector2D {
 	/**
 	 * Add the given {@link Vector2D} as scaled by the scalar to this
 	 * {@link MutableVector2D}
-	 * 
+	 *
 	 * For example, if v=(5,7) and w = (2,3), then v.addScaled(w,10) would yield
 	 * v=(25,37)
-	 * 
+	 *
 	 */
 	public void addScaled(final Vector2D v, final double scalar) {
 		x += v.getX() * scalar;
@@ -139,23 +140,23 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Returns the angle in radians between this {@link MutableVector2D} and the given
-	 * {@link MutableVector2D}
+	 * Returns the angle in radians between this {@link MutableVector2D} and the
+	 * given {@link MutableVector2D}
 	 */
 	public double angle(final MutableVector2D v) {
 		final double value = dot(v) / (v.length() * length());
 		return FastMath.acos(crunch(value));
 	}
-	
+
 	/**
-	 * Returns the angle in radians between this {@link MutableVector2D} and the given
-	 * {@link Vector2D}
+	 * Returns the angle in radians between this {@link MutableVector2D} and the
+	 * given {@link Vector2D}
 	 */
 	public double angle(final Vector2D v) {
 		final double value = dot(v) / (v.length() * length());
 		return FastMath.acos(crunch(value));
 	}
-	
+
 	/**
 	 * Assign the given values to this {@link MutableVector2D}
 	 */
@@ -166,15 +167,17 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Assign the values of the given {@link MutableVector2D} to this {@link MutableVector2D}
+	 * Assign the values of the given {@link MutableVector2D} to this
+	 * {@link MutableVector2D}
 	 */
 	public void assign(final MutableVector2D v) {
 		x = v.getX();
 		y = v.getY();
 	}
-	
+
 	/**
-	 * Assign the values of the given {@link Vector2D} to this {@link MutableVector2D}
+	 * Assign the values of the given {@link Vector2D} to this
+	 * {@link MutableVector2D}
 	 */
 	public void assign(final Vector2D v) {
 		x = v.getX();
@@ -182,9 +185,9 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Returns 1 if the acute angle from this {@link MutableVector2D} to the given
-	 * {@link MutableVector2D} is clockwise and -1 if it is counter clockwise. Returns 0 if the
-	 * angle is zero.
+	 * Returns 1 if the acute angle from this {@link MutableVector2D} to the
+	 * given {@link MutableVector2D} is clockwise and -1 if it is counter
+	 * clockwise. Returns 0 if the angle is zero.
 	 */
 	public int cross(final MutableVector2D v) {
 		final double direction = (x * v.y) - (v.x * y);
@@ -196,11 +199,11 @@ public final class MutableVector2D {
 		}
 		return 0;
 	}
-	
+
 	/**
-	 * Returns 1 if the acute angle from this {@link MutableVector2D} to the given
-	 * {@link Vector2D} is clockwise and -1 if it is counter clockwise. Returns 0 if the
-	 * angle is zero.
+	 * Returns 1 if the acute angle from this {@link MutableVector2D} to the
+	 * given {@link Vector2D} is clockwise and -1 if it is counter clockwise.
+	 * Returns 0 if the angle is zero.
 	 */
 	public int cross(final Vector2D v) {
 		final double direction = (x * v.getY()) - (v.getX() * y);
@@ -214,38 +217,42 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Returns the distance between this {@link MutableVector2D} and the given {@link MutableVector2D}
+	 * Returns the distance between this {@link MutableVector2D} and the given
+	 * {@link MutableVector2D}
 	 */
 	public double distanceTo(final MutableVector2D v) {
 		return FastMath.sqrt(((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y)));
 	}
-	
+
 	/**
-	 * Returns the distance between this {@link MutableVector2D} and the given {@link Vector2D}
+	 * Returns the distance between this {@link MutableVector2D} and the given
+	 * {@link Vector2D}
 	 */
 	public double distanceTo(final Vector2D v) {
 		return FastMath.sqrt(((x - v.getX()) * (x - v.getX())) + ((y - v.getY()) * (y - v.getY())));
 	}
 
 	/**
-	 * Returns the dot product of this {@link MutableVector2D} and the given {@link MutableVector2D}
+	 * Returns the dot product of this {@link MutableVector2D} and the given
+	 * {@link MutableVector2D}
 	 */
 	public double dot(final MutableVector2D v) {
 		return (x * v.x) + (y * v.y);
 	}
-	
+
 	/**
-	 * Returns the dot product of this {@link MutableVector2D} and the given {@link Vector2D}
+	 * Returns the dot product of this {@link MutableVector2D} and the given
+	 * {@link Vector2D}
 	 */
 	public double dot(final Vector2D v) {
 		return (x * v.getX()) + (y * v.getY());
 	}
 
 	/**
-	 * Equals contract of {@link MutableVector2D}. Two vectors a and b are equal if
-	 * their x and y values convert to long bits in the same way. An exception
-	 * is made for -0, which is calculated as if its long bits were representing
-	 * +0. This is done to give a more intuitive meaning of equals.
+	 * Equals contract of {@link MutableVector2D}. Two vectors a and b are equal
+	 * if their x and y values convert to long bits in the same way. An
+	 * exception is made for -0, which is calculated as if its long bits were
+	 * representing +0. This is done to give a more intuitive meaning of equals.
 	 */
 	@Override
 	public boolean equals(final Object obj) {
@@ -330,6 +337,16 @@ public final class MutableVector2D {
 	}
 
 	/**
+	 * Returns true if and only if this {@link MutableVector2D} is finite and
+	 * has a length within {@link MutableVector2D#NORMAL_LENGTH_TOLERANCE} of
+	 * unit length.
+	 */
+	public boolean isNormal() {
+		final double len = length();
+		return Double.isFinite(len) && (FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE);
+	}
+
+	/**
 	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
 	 * 'Not a Number') and not infinite.
 	 */
@@ -354,8 +371,9 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Assigns this {@link MutableVector2D} to the values of the given {@link MutableVector2D}
-	 * under either a clockwise or counter clockwise rotation.
+	 * Assigns this {@link MutableVector2D} to the values of the given
+	 * {@link MutableVector2D} under either a clockwise or counter clockwise
+	 * rotation.
 	 */
 	public void perpTo(final MutableVector2D v, final boolean clockwise) {
 		double newx, newy;
@@ -369,10 +387,10 @@ public final class MutableVector2D {
 		x = newx;
 		y = newy;
 	}
-	
+
 	/**
-	 * Assigns this {@link MutableVector2D} to the values of the given {@link Vector2D}
-	 * under either a clockwise or counter clockwise rotation.
+	 * Assigns this {@link MutableVector2D} to the values of the given
+	 * {@link Vector2D} under either a clockwise or counter clockwise rotation.
 	 */
 	public void perpTo(final Vector2D v, final boolean clockwise) {
 		double newx, newy;
@@ -397,8 +415,8 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Rotates this {@link MutableVector2D} about the origin by the given angle in
-	 * radians in a counter clockwise(right handed) manner.
+	 * Rotates this {@link MutableVector2D} about the origin by the given angle
+	 * in radians in a counter clockwise(right handed) manner.
 	 */
 	public void rotate(final double theta) {
 		final MutableVector2D v = new MutableVector2D(-y, x);
@@ -408,16 +426,16 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Rotates this {@link MutableVector2D} about the origin through the acute angle to
-	 * the given {@link MutableVector2D} by the given angle in radians.
+	 * Rotates this {@link MutableVector2D} about the origin through the acute
+	 * angle to the given {@link MutableVector2D} by the given angle in radians.
 	 */
 	public void rotateToward(final MutableVector2D v, final double theta) {
 		rotate(cross(v) * theta);
 	}
-	
+
 	/**
-	 * Rotates this {@link MutableVector2D} about the origin through the acute angle to
-	 * the given {@link Vector2D} by the given angle in radians.
+	 * Rotates this {@link MutableVector2D} about the origin through the acute
+	 * angle to the given {@link Vector2D} by the given angle in radians.
 	 */
 	public void rotateToward(final Vector2D v, final double theta) {
 		rotate(cross(v) * theta);
@@ -446,14 +464,16 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Returns the square distance between this {@link MutableVector2D} and the given {@link MutableVector2D}
+	 * Returns the square distance between this {@link MutableVector2D} and the
+	 * given {@link MutableVector2D}
 	 */
 	public double squareDistanceTo(final MutableVector2D v) {
 		return ((x - v.x) * (x - v.x)) + ((y - v.y) * (y - v.y));
 	}
-	
+
 	/**
-	 * Returns the square distance between this {@link MutableVector2D} and the given {@link Vector2D}
+	 * Returns the square distance between this {@link MutableVector2D} and the
+	 * given {@link Vector2D}
 	 */
 	public double squareDistanceTo(final Vector2D v) {
 		return ((x - v.getX()) * (x - v.getX())) + ((y - v.getY()) * (y - v.getY()));
@@ -461,7 +481,7 @@ public final class MutableVector2D {
 
 	/**
 	 * Returns the square length of this {@link MutableVector2D}
-	 */	
+	 */
 	public double squareLength() {
 		return (x * x) + (y * y);
 	}
@@ -476,9 +496,9 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Subtracts the x and y of the given {@link MutableVector2D} from the corresponding
-	 * values of this {@link MutableVector2D}
-	 * 
+	 * Subtracts the x and y of the given {@link MutableVector2D} from the
+	 * corresponding values of this {@link MutableVector2D}
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -486,11 +506,11 @@ public final class MutableVector2D {
 		x -= v.x;
 		y -= v.y;
 	}
-	
+
 	/**
-	 * Subtracts the x and y of the given {@link MutableVector2D} from the corresponding
-	 * values of this {@link Vector2D}
-	 * 
+	 * Subtracts the x and y of the given {@link MutableVector2D} from the
+	 * corresponding values of this {@link Vector2D}
+	 *
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
@@ -508,7 +528,7 @@ public final class MutableVector2D {
 
 	/**
 	 * Returns the string representation in the form
-	 * 
+	 *
 	 * Vector2D [x=2.57,y=-34.1]
 	 */
 	@Override
@@ -516,9 +536,9 @@ public final class MutableVector2D {
 		return "Vector2D [x=" + x + ", y=" + y + "]";
 	}
 
-	/**	  
-	 * Sets each component of this {@link MutableVector2D} to zero. <b>Note:</b> This is the
-	 * same as calling <tt>v.assign(0,0)</tt>.
+	/**
+	 * Sets each component of this {@link MutableVector2D} to zero. <b>Note:</b>
+	 * This is the same as calling <tt>v.assign(0,0)</tt>.
 	 */
 	public void zero() {
 		x = 0;

@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.junit.runners.Suite.SuiteClasses;
 
-import gcm.simulation.PopulationIndexEfficiencyWarning;
 import gcm.test.script.SourceClassRec;
 import gcm.test.script.SourceFileInvestigator;
 import gcm.test.script.SourceMethodRec;

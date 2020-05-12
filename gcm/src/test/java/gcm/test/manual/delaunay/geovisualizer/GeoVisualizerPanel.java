@@ -30,7 +30,6 @@ import javax.swing.Timer;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
-import gcm.util.delaunay.GeoCoordinate;
 import gcm.util.dimensiontree.DimensionTree;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
@@ -107,20 +106,20 @@ public class GeoVisualizerPanel extends JPanel {
 
 	}
 
-	private <T extends GeoCoordinate> void buildDataModel(Earth earth, List<T> geoCoordinates, List<Pair<T, T>> links) {
+	private <T> void buildDataModel(Earth earth, Map<T,LatLon> dataMap, List<Pair<T, T>> links) {
 		dataModel = new Model();
 
 		Map<T, Integer> map = new LinkedHashMap<>();
 
-		geoCoordinates.forEach(geoCoordinate -> map.put(geoCoordinate, map.size()));
+		for(T t : dataMap.keySet()) {
+			map.put(t,map.size());
+		}		
 
-		geoCoordinates.forEach(geoCoordinate -> {
-			LatLon latLon = new LatLon(geoCoordinate.getLatitude(), geoCoordinate.getLongitude());
+		for(T t : dataMap.keySet()) {
+			LatLon latLon = dataMap.get(t);
 			Vector3D v = earth.getECCFromLatLon(latLon);
 			dataModel.positions.add(v);
-		});
-		
-		
+		}
 		
 		links.forEach(pair -> {
 			Integer index1 = map.get(pair.getFirst());
@@ -145,12 +144,12 @@ public class GeoVisualizerPanel extends JPanel {
 
 	private PathManager pathManager;
 
-	public <T extends GeoCoordinate> GeoVisualizerPanel(List<T> geoCoordinates, List<Pair<T, T>> links) {
+	public <T> GeoVisualizerPanel(Map<T,LatLon> dataMap, List<Pair<T, T>> links) {
 		earth = Earth.fromMeanRadius();
 
 		buildWorldGridModel(earth);
 
-		buildDataModel(earth, geoCoordinates, links);
+		buildDataModel(earth, dataMap, links);
 
 		MutableVector3D initialCameraPosition = new MutableVector3D();
 

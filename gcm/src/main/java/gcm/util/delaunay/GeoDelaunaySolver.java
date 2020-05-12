@@ -11,80 +11,82 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.dimensiontree.VolumetricDimensionTree;
+import gcm.util.earth.LatLon;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
-public class GeoDelaunaySolver<T extends GeoCoordinate> {
+public class GeoDelaunaySolver<T> {
 
-	private static class Rec<T extends GeoCoordinate> implements Comparable<Rec<T>>{
-		T geoCoordinate;
-		Vector3D v;		
+	/*
+	 * Utility record used by the spiralizer algorithm	 
+	 */
+	private static class SpiralizerRec<T> implements Comparable<SpiralizerRec<T>> {
+		T t;
+		Vector3D v;
 		double angleToCentroid;
 		double azimuthAngle;
 		int step;
+
 		@Override
-		public int compareTo(Rec<T> other) {
+		public int compareTo(SpiralizerRec<T> other) {
 			int result = Integer.compare(step, other.step);
-			if(result == 0) {
+			if (result == 0) {
 				result = Double.compare(azimuthAngle, other.azimuthAngle);
 			}
 			return result;
-		}		
+		}
 	}
-	
-	
-	private List<T> spiralize(List<T> geoCoordinates) {
-		
-		Rec<T> centroid = new Rec<>();
+
+	private List<T> spiralize(Map<T,LatLon> itemLocationMap) {
+
+		SpiralizerRec<T> centroid = new SpiralizerRec<>();
 		MutableVector3D centroidVector = new MutableVector3D();
-		List<Rec<T>> list = new ArrayList<>();
-		geoCoordinates.forEach(geoCoordinate -> {
-			Rec<T> rec = new Rec<>();
-			rec.geoCoordinate = geoCoordinate;			
-			rec.v = getPositionFromGeoCoordinate(rec.geoCoordinate);			
+		List<SpiralizerRec<T>> list = new ArrayList<>();
+		for(T t : itemLocationMap.keySet()) {		
+			SpiralizerRec<T> rec = new SpiralizerRec<>();
+			rec.t = t;
+			LatLon latLon = itemLocationMap.get(t);
+			rec.v = getPositionFromGeoCoordinate(latLon);
 			list.add(rec);
 			centroidVector.add(rec.v);
-		});
+		}
 
-		
 		centroidVector.normalize();
 		centroid.v = new Vector3D(centroidVector);
-		
-		MutableVector3D north  = new MutableVector3D(0,0,1);
+
+		MutableVector3D north = new MutableVector3D(0, 0, 1);
 		MutableVector3D northTangent = new MutableVector3D(centroid.v);
-		northTangent.rotateToward(north, FastMath.PI/2);
-		
+		northTangent.rotateToward(north, FastMath.PI / 2);
+
 		double maxGroundRange = Double.NEGATIVE_INFINITY;
-		for (Rec<T> rec : list) {			
+		for (SpiralizerRec<T> rec : list) {
 			rec.angleToCentroid = centroid.v.angle(rec.v);
 			MutableVector3D tangent = new MutableVector3D(centroid.v);
-			tangent.rotateToward(rec.v, FastMath.PI/2);
+			tangent.rotateToward(rec.v, FastMath.PI / 2);
 			rec.azimuthAngle = northTangent.angle(tangent);
 			tangent.cross(northTangent);
-			if(tangent.dot(centroid.v)<0) {
-				rec.azimuthAngle *=-1;
-			}			
+			if (tangent.dot(centroid.v) < 0) {
+				rec.azimuthAngle *= -1;
+			}
 			maxGroundRange = FastMath.max(maxGroundRange, rec.angleToCentroid);
 		}
-		
-		
-		double area = 2*FastMath.PI*(1-FastMath.cos(maxGroundRange));
-		
-		double stepDistance = FastMath.sqrt(area/list.size());
-		for (Rec<T> rec : list) {
-			rec.step = (int)(rec.angleToCentroid/stepDistance);
-		}	
-		
-		Collections.sort(list);
-		
-		List<T> result = new ArrayList<>();
-		for(Rec<T> rec : list) {
-			result.add(rec.geoCoordinate);
+
+		double area = 2 * FastMath.PI * (1 - FastMath.cos(maxGroundRange));
+
+		double stepDistance = FastMath.sqrt(area / list.size());
+		for (SpiralizerRec<T> rec : list) {
+			rec.step = (int) (rec.angleToCentroid / stepDistance);
 		}
 
+		Collections.sort(list);
+
+		List<T> result = new ArrayList<>();
+		for (SpiralizerRec<T> rec : list) {
+			result.add(rec.t);
+		}
 		return result;
 	}
-	
+
 	private static class Edge {
 		int[] vertexIds;
 		boolean markedForRemoval;
@@ -131,26 +133,26 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		private boolean markedForRemoval;
 	}
 
-	private static class Vertex<T extends GeoCoordinate> {
+	private static class Vertex<T> {
 		int id;
 		Vector3D position;
-		T geoCoordinate;
+		T t;
 
 		public Vertex(final int id, final Vector3D position, T geoCoordinate) {
 			super();
 			this.id = id;
 			this.position = position;
-			this.geoCoordinate = geoCoordinate;
+			this.t = geoCoordinate;
 		}
 	}
 
-	public static <T extends GeoCoordinate> List<Pair<T, T>> solve(List<T> points) {
-		return new GeoDelaunaySolver<>(points).solve();
+	public static <T> List<Pair<T,T>> solve(Map<T,LatLon> itemLocationMap) {
+		return new GeoDelaunaySolver<>(itemLocationMap).solve();
 	}
 
 	private final int scaffoldCount = 3;
-	
-	private List<T> points;
+
+	private Map<T,LatLon> itemLocationMap;
 
 	private final Map<Triangle, List<Edge>> triangleToEdgeMap = new LinkedHashMap<>();
 
@@ -160,8 +162,8 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 
 	private VolumetricDimensionTree<Triangle> searchTree;
 
-	private GeoDelaunaySolver(List<T> points) {
-		 this.points = points;
+	private GeoDelaunaySolver(Map<T,LatLon> itemLocationMap) {
+		this.itemLocationMap = itemLocationMap;
 	}
 
 	private void addTriangle(final int id1, final int id2, final int id3) {
@@ -182,7 +184,7 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		final boolean leftHanded = perp.dot(v2) < 0;
 
 		Vector3D midPoint = new Vector3D(v0).add(v1);
-		
+
 		final MutableVector3D c = new MutableVector3D(v0);
 		c.cross(v1);
 		c.cross(midPoint);
@@ -293,17 +295,17 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		return result;
 	}
 
-	private Vector3D getPositionFromGeoCoordinate(GeoCoordinate geoCoordinate) {
-		double coslat = FastMath.cos(FastMath.toRadians(geoCoordinate.getLatitude()));
-		double coslon = FastMath.cos(FastMath.toRadians(geoCoordinate.getLongitude()));
-		double sinlat = FastMath.sin(FastMath.toRadians(geoCoordinate.getLatitude()));
-		double sinlon = FastMath.sin(FastMath.toRadians(geoCoordinate.getLongitude()));
+	private Vector3D getPositionFromGeoCoordinate(LatLon latLon) {
+		double coslat = FastMath.cos(FastMath.toRadians(latLon.getLatitude()));
+		double coslon = FastMath.cos(FastMath.toRadians(latLon.getLongitude()));
+		double sinlat = FastMath.sin(FastMath.toRadians(latLon.getLatitude()));
+		double sinlon = FastMath.sin(FastMath.toRadians(latLon.getLongitude()));
 		return new Vector3D(coslat * coslon, coslat * sinlon, sinlat);
 	}
-	
+
 	private void initialize() {
-		points = spiralize(points);
-		
+		List<T> points = spiralize(itemLocationMap);
+
 		/*
 		 * Add three vertexes for the boundary
 		 */
@@ -317,11 +319,12 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 		 */
 		final MutableVector3D centroid = new MutableVector3D();
 		int n = points.size();
-		for (int i = 0; i < n; i++) {			
-			T geoCoordinate = points.get(i);
-			final Vector3D v = getPositionFromGeoCoordinate(geoCoordinate);
+		for (int i = 0; i < n; i++) {
+			T t = points.get(i);
+			LatLon latLon = itemLocationMap.get(t);
+			final Vector3D v = getPositionFromGeoCoordinate(latLon);
 			centroid.add(v);
-			vertexes.add(new Vertex<>(i + scaffoldCount, v, geoCoordinate));
+			vertexes.add(new Vertex<>(i + scaffoldCount, v, t));
 		}
 		centroid.normalize();
 
@@ -379,7 +382,7 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 			scaffoldPoint.normalize();
 
 			Vertex<T> vertex = vertexes.get(i);
-			vertex.position = new Vector3D(scaffoldPoint);			
+			vertex.position = new Vector3D(scaffoldPoint);
 		}
 
 		/*
@@ -426,17 +429,16 @@ public class GeoDelaunaySolver<T extends GeoCoordinate> {
 			addTriangles(vertex, hullEdges);
 		}
 
-
-		List<Pair<T,T>> result = new ArrayList<>();
+		List<Pair<T, T>> result = new ArrayList<>();
 		edgeToTriangleMap.keySet().forEach(edge -> {
 			Vertex<T> vertex0 = vertexes.get(edge.vertexIds[0]);
-			if(vertex0.geoCoordinate!=null) {
+			if (vertex0.t != null) {
 				Vertex<T> vertex1 = vertexes.get(edge.vertexIds[1]);
-				Pair<T,T> pair = new Pair<>(vertex0.geoCoordinate,vertex1.geoCoordinate);
+				Pair<T, T> pair = new Pair<>(vertex0.t, vertex1.t);
 				result.add(pair);
-			}			
+			}
 		});
-		
+
 		return result;
 	}
 

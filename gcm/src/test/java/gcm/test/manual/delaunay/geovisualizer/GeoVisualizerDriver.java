@@ -4,14 +4,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.util.Pair;
 
 import gcm.util.TimeElapser;
 import gcm.util.delaunay.GeoDelaunaySolver;
-import gcm.util.delaunay.SimpleGeoCoordinate;
+import gcm.util.earth.LatLon;
 
 public class GeoVisualizerDriver {
 
@@ -19,14 +20,13 @@ public class GeoVisualizerDriver {
 
 	}
 
-	public static final class ClientGeoCoordinate extends SimpleGeoCoordinate {
+	public static final class ClientData {
 
 		private final String id;
 
 		private final int population;
 
-		public ClientGeoCoordinate(String id, double latitude, double longitude, int population) {
-			super(latitude, longitude);
+		public ClientData(String id, int population) {			
 			this.id = id;
 			this.population = population;
 		}
@@ -46,7 +46,7 @@ public class GeoVisualizerDriver {
 
 		Path tractsFile = Paths.get(args[0]);
 
-		List<ClientGeoCoordinate> geoCoordinates = new ArrayList<>();
+		Map<ClientData,LatLon> dataMap = new LinkedHashMap<>();
 
 		Files.readAllLines(tractsFile).stream().skip(1).forEach(line -> {
 			String[] strings = line.split(",");
@@ -54,17 +54,18 @@ public class GeoVisualizerDriver {
 			double lon = Double.parseDouble(strings[1]);
 			double lat = Double.parseDouble(strings[2]);
 			int population = Integer.parseInt(strings[3]);
-			ClientGeoCoordinate clientGeoCoordinate = new ClientGeoCoordinate(id, lat, lon, population);
-			geoCoordinates.add(clientGeoCoordinate);
+			ClientData clientData = new ClientData(id, population);
+			LatLon latLon = new LatLon(lat,lon);
+			dataMap.put(clientData,latLon);
 		});
 
 		TimeElapser timeElapser = new TimeElapser();
 
-		List<Pair<ClientGeoCoordinate, ClientGeoCoordinate>> pairs = GeoDelaunaySolver.solve(geoCoordinates);
+		List<Pair<ClientData, ClientData>> pairs = GeoDelaunaySolver.solve(dataMap);
 
 		System.out.println("Solver time = " + timeElapser.getElapsedSeconds() + " seconds");
 
-		new GeoVisualzerFrame(geoCoordinates,pairs);
+		new GeoVisualzerFrame(dataMap,pairs);
 	}
 
 }

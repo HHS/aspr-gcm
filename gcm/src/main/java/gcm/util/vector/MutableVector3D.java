@@ -990,7 +990,7 @@ public final class MutableVector3D {
 	
 	/**
 	 * Returns true if and only if this {@link MutableVector3D} is perpendicular to the
-	 * given {@link Vector3D} within the
+	 * given {@link MutableVector3D} within the
 	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(MutableVector3D v) {
@@ -1004,7 +1004,5 @@ public final class MutableVector3D {
 	 */
 	public boolean isPerpendicularTo(Vector3D v) {
 		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
-	}
-
-	
+	}	
 }

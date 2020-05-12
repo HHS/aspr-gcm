@@ -14,6 +14,8 @@ import org.junit.Test;
 import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.vector.MutableVector2D;
+import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector2D;
 
 /**
  * Test class for {@link MutableVector2D}
@@ -38,7 +40,7 @@ public class AT_MutableVector2D {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_Vector2D.class.getSimpleName() + " " +
+		// System.out.println(AT_MutableVector2D.class.getSimpleName() + " " +
 		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
@@ -968,6 +970,104 @@ public class AT_MutableVector2D {
 			assertEquals(-1, v2.cross(v1));
 
 		}
+	}
+
+	/**
+	 * Tests {@linkplain MutableVector2D#isNormal()}
+	 */
+	@Test
+	public void testisNormal() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(31);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		int activeTestCount = 0;
+		for (int i = 0; i < 100; i++) {
+			double x = randomGenerator.nextDouble() * 1000 - 500;
+			double y = randomGenerator.nextDouble() * 1000 - 500;
+			
+
+			MutableVector2D v = new MutableVector2D(x, y);
+
+			if (FastMath.abs(v.length() - 1) > MutableVector3D.NORMAL_LENGTH_TOLERANCE) {
+				v.normalize();
+				assertTrue(v.isNormal());
+				activeTestCount++;
+
+				MutableVector2D u = new MutableVector2D(v);
+				u.scale(1 - 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				assertFalse(u.isNormal());
+
+				u = new MutableVector2D(v);
+				u.scale(1 + 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				assertFalse(u.isNormal());
+			}
+		}
+		assertTrue(activeTestCount > 90);
+	}
+
+	/**
+	 * Tests {@linkplain MutableVector2D#isPerpendicularTo(Vector2D)}
+	 * Tests {@linkplain MutableVector2D#isPerpendicularTo(MutableVector2D)}
+	 */
+	@Test
+	public void testIsPerpendicularTo() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(32);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v1 = new MutableVector2D(x1, y1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v2 = new MutableVector2D(x2, y2);
+
+			MutableVector2D v3 = new MutableVector2D(v1);
+			v3.rotateToward(v2, FastMath.toRadians(90));
+
+			assertTrue(v1.isPerpendicularTo(v3));
+
+			v3 = new MutableVector2D(v1);
+			v3.rotateToward(v2, FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+
+			v3 = new MutableVector2D(v1);
+			v3.rotateToward(v2, FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+		}
+		
+		for (int i = 0; i < 100; i++) {
+
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v1 = new MutableVector2D(x1, y1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v2 = new MutableVector2D(x2, y2);
+
+			Vector2D v3 = new Vector2D(v1);
+			v3 = v3.rotateToward(new Vector2D(v2), FastMath.toRadians(90));
+
+			assertTrue(v1.isPerpendicularTo(v3));
+
+			v3 = new Vector2D(v1);
+			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+
+			v3 = new Vector2D(v1);
+			v3 = v3.rotateToward(new Vector2D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+		}
+
 	}
 
 }

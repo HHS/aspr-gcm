@@ -17,6 +17,8 @@ import gcm.simulation.FilterInfo.GroupsForPersonAndGroupTypeFilterInfo;
 import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A distillation of the values, types and other relevant data used by a filter.
@@ -24,6 +26,7 @@ import gcm.simulation.FilterInfo.ResourceFilterInfo;
  * person or its relationships to just those population indexes that may be
  * effected.
  */
+@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
 public final class Trigger {
 	private final Context context;
 

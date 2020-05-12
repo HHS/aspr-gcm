@@ -14,6 +14,7 @@ import org.junit.Test;
 import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * Test class for {@link MutableVector3D}
@@ -38,7 +39,8 @@ public class AT_MutableVector3D {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(AT_Vector3D.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_MutableVector3D.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -892,6 +894,108 @@ public class AT_MutableVector3D {
 	}
 
 	/**
+	 * Tests {@linkplain MutableVector3D#isNormal()}
+	 */
+	@Test
+	public void testisNormal() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(32);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		int activeTestCount = 0;
+		for (int i = 0; i < 100; i++) {
+			double x = randomGenerator.nextDouble() * 1000 - 500;
+			double y = randomGenerator.nextDouble() * 1000 - 500;
+			double z = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector3D v = new MutableVector3D(x, y, z);
+
+			if (FastMath.abs(v.length() - 1) > MutableVector3D.NORMAL_LENGTH_TOLERANCE) {
+				v.normalize();
+				assertTrue(v.isNormal());
+				activeTestCount++;
+
+				MutableVector3D u = new MutableVector3D(v);
+				u.scale(1 - 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				assertFalse(u.isNormal());
+
+				u = new MutableVector3D(v);
+				u.scale(1 + 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				assertFalse(u.isNormal());
+			}
+		}
+		assertTrue(activeTestCount > 90);
+	}
+
+	/**
+	 * Tests {@linkplain MutableVector3D#isPerpendicularTo(MutableVector3D)}
+	 * Tests {@linkplain MutableVector3D#isPerpendicularTo(Vector3D)}
+	 */
+	@Test
+	public void testIsPerpendicularTo() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(33);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+			double z1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+			double z2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+
+			MutableVector3D v3 = new MutableVector3D(v1);
+			v3.rotateToward(v2, FastMath.toRadians(90));
+
+			assertTrue(v1.isPerpendicularTo(v3));
+
+			v3 = new MutableVector3D(v1);
+			v3.rotateToward(v2, FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+
+			v3 = new MutableVector3D(v1);
+			v3.rotateToward(v2, FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+		}
+		
+		for (int i = 0; i < 100; i++) {
+
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+			double z1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+			double z2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+
+			Vector3D v3 = new Vector3D(v1);
+			v3.rotateToward(new Vector3D(v2), FastMath.toRadians(90));
+
+			assertTrue(v1.isPerpendicularTo(v3));
+
+			v3 = new Vector3D(v1);
+			v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+
+			v3 = new Vector3D(v1);
+			v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			assertFalse(v1.isPerpendicularTo(v3));
+		}
+
+	}
+
+	/**
 	 * Tests {@linkplain MutableVector3D#equals()}
 	 */
 	@Test
@@ -987,7 +1091,8 @@ public class AT_MutableVector3D {
 
 		for (int i = 0; i < 100; i++) {
 
-			//v1 will be used as a rotator, so we ensure that it has a reasonable length
+			// v1 will be used as a rotator, so we ensure that it has a
+			// reasonable length
 			MutableVector3D v1 = new MutableVector3D();
 			while (v1.length() < 0.0000001) {
 				double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -995,7 +1100,6 @@ public class AT_MutableVector3D {
 				double z1 = randomGenerator.nextDouble() * 1000 - 500;
 				v1 = new MutableVector3D(x1, y1, z1);
 			}
-			
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
@@ -1023,7 +1127,7 @@ public class AT_MutableVector3D {
 
 		}
 	}
-	
+
 	/**
 	 * Tests {@linkplain MutableVector3D#rotateToward(MutableVector3D, double)}
 	 */
@@ -1034,9 +1138,9 @@ public class AT_MutableVector3D {
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		for (int i = 0; i < 100; i++) {
-			
 
-			//v1 will be used as a rotator, so we ensure that it has a reasonable length
+			// v1 will be used as a rotator, so we ensure that it has a
+			// reasonable length
 			MutableVector3D v1 = new MutableVector3D();
 			while (v1.length() < 0.0000001) {
 				double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -1044,11 +1148,10 @@ public class AT_MutableVector3D {
 				double z1 = randomGenerator.nextDouble() * 1000 - 500;
 				v1 = new MutableVector3D(x1, y1, z1);
 			}
-			
 
-			double x2 =  randomGenerator.nextDouble() * 1000 - 500;
-			double y2 =  randomGenerator.nextDouble() * 1000 - 500;
-			double z2 =  randomGenerator.nextDouble() * 1000 - 500;
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
 			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
 
@@ -1063,39 +1166,39 @@ public class AT_MutableVector3D {
 			assertEquals(v2.length(), v.length(), TOLERANCE);
 
 			// v2 under rotation should have its angle to v1 changed by theta
-			double expectedAngle  = theta-angle;
-			while (expectedAngle<0){
-				expectedAngle+=FastMath.PI*2;
+			double expectedAngle = theta - angle;
+			while (expectedAngle < 0) {
+				expectedAngle += FastMath.PI * 2;
 			}
-			while (expectedAngle>2*FastMath.PI){
-				expectedAngle-=2*FastMath.PI;
+			while (expectedAngle > 2 * FastMath.PI) {
+				expectedAngle -= 2 * FastMath.PI;
 			}
-			while (expectedAngle>FastMath.PI){
-				expectedAngle = 2*FastMath.PI-expectedAngle;
+			while (expectedAngle > FastMath.PI) {
+				expectedAngle = 2 * FastMath.PI - expectedAngle;
 			}
-			
+
 			double actualAngle = v.angle(v1);
-			
+
 			assertEquals(expectedAngle, actualAngle, TOLERANCE);
 
 			// v2 when rotated back should return to its original position
 			MutableVector3D a = new MutableVector3D(v2);
 			a.cross(v1);
-			
+
 			MutableVector3D b = new MutableVector3D(v);
 			b.cross(v1);
 
-			if(a.dot(b)>0) {
-				v.rotateToward(v1, -theta);	
-			}else {
+			if (a.dot(b) > 0) {
+				v.rotateToward(v1, -theta);
+			} else {
 				v.rotateToward(v1, theta);
 			}
-			
+
 			assertEquals(v2.getX(), v.getX(), TOLERANCE);
 			assertEquals(v2.getY(), v.getY(), TOLERANCE);
 			assertEquals(v2.getZ(), v.getZ(), TOLERANCE);
 
 		}
 	}
-	
+
 }

@@ -201,7 +201,7 @@ public class TestPlanScript {
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
 			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED) {
 				if (sourceClassRec.getTestClassRecs().size() == 0) {
-					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has no test classes");
+					testReport.addWarning(sourceClassRec.getSourceClass().getSimpleName() + " has no test classes");
 				}
 			}
 		}
@@ -397,7 +397,7 @@ public class TestPlanScript {
 	}
 
 	private void testSourceMethodCoverage(SourceClassRec sourceClassRec, TestReport testReport) {
-		for (SourceMethodRec sourceMethodRec : sourceClassRec.getSourceMethodRecs()) {
+		for (SourceMethodRec sourceMethodRec : sourceClassRec.getSourceMethodRecs()) {			
 			String sourceMethodName = sourceMethodRec.getName();
 			String testMethodName = "test" + sourceMethodName.substring(0, 1).toUpperCase();
 			testMethodName += sourceMethodName.substring(1, sourceMethodName.length());
@@ -436,10 +436,13 @@ public class TestPlanScript {
 	}
 
 	private void demonstrateEachSourceMethodHasATestMethod() {
-		TestReport testReport = new TestReport("Does each source method of a source class that requires a test have a test method?", "All source methods that require a test have test methods");
+		TestReport testReport = new TestReport("Does each source method of a source class that requires a test and has at least one test class have a test method?", "All source methods that are associated with at least one test class that require a test have test methods");
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
 			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED) {
-				testSourceMethodCoverage(sourceClassRec, testReport);
+				//if there are no test classes, then leave that to another test
+				if(sourceClassRec.getTestClassRecs().size()>0) {				
+					testSourceMethodCoverage(sourceClassRec, testReport);	
+				}				
 			}
 		}
 		testReport.print();

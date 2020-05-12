@@ -12,71 +12,70 @@ import org.apache.commons.math3.util.Pair;
 
 import gcm.util.dimensiontree.VolumetricDimensionTree;
 import gcm.util.vector.MutableVector2D;
+import gcm.util.vector.Vector2D;
 
-public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
+public class PlanarDelaunaySolver<T> {
 
-	private static class Rec<T extends PlanarCoordinate> implements Comparable<Rec<T>>{
-		T planarCoordinate;
-		MutableVector2D v;		
+	private static class Rec<T> implements Comparable<Rec<T>> {
+		T t;
+		MutableVector2D v;
 		double distanceToCentroid;
 		double angle;
 		int step;
+
 		@Override
 		public int compareTo(Rec<T> other) {
 			int result = Integer.compare(step, other.step);
-			if(result == 0) {
+			if (result == 0) {
 				result = Double.compare(angle, other.angle);
 			}
 			return result;
-		}		
+		}
 	}
-	
-	
-	private List<T> spiralize(List<T> planarCoordinates) {
-		
+
+	private List<T> spiralize(Map<T, Vector2D> itemLocationMap) {
+
 		MutableVector2D centroid = new MutableVector2D();
-		
+
 		List<Rec<T>> list = new ArrayList<>();
-		planarCoordinates.forEach(planarCoordinate -> {
+		for (T t : itemLocationMap.keySet()) {
 			Rec<T> rec = new Rec<>();
-			rec.planarCoordinate = planarCoordinate;			
-			rec.v = new MutableVector2D(planarCoordinate.getX(),planarCoordinate.getY());			
+			rec.t = t;
+			rec.v = new MutableVector2D(itemLocationMap.get(t));
 			list.add(rec);
 			centroid.add(rec.v);
-		});
-		
-		centroid.scale(1.0/list.size());
-		
-		MutableVector2D xAxis  = new MutableVector2D(1,0);
+		}
+
+		centroid.scale(1.0 / list.size());
+
+		MutableVector2D xAxis = new MutableVector2D(1, 0);
 		double maxDistance = Double.NEGATIVE_INFINITY;
-			
+
 		MutableVector2D v = new MutableVector2D();
 		for (Rec<T> rec : list) {
 			rec.distanceToCentroid = centroid.distanceTo(rec.v);
 			v.assign(rec.v);
-			v.sub(centroid);			
-			rec.angle =  v.angle(xAxis)*v.cross(xAxis);
+			v.sub(centroid);
+			rec.angle = v.angle(xAxis) * v.cross(xAxis);
 			maxDistance = FastMath.max(maxDistance, rec.distanceToCentroid);
 		}
-		
-		
-		double area = 2*FastMath.PI*maxDistance*maxDistance;		
-		double stepDistance = FastMath.sqrt(area/list.size());
-		
+
+		double area = 2 * FastMath.PI * maxDistance * maxDistance;
+		double stepDistance = FastMath.sqrt(area / list.size());
+
 		for (Rec<T> rec : list) {
-			rec.step = (int)(rec.distanceToCentroid/stepDistance);
-		}	
-		
-		Collections.sort(list);
-		
-		List<T> result = new ArrayList<>();
-		for(Rec<T> rec : list) {
-			result.add(rec.planarCoordinate);
+			rec.step = (int) (rec.distanceToCentroid / stepDistance);
 		}
 
+		Collections.sort(list);
+
+		List<T> result = new ArrayList<>();
+		for (Rec<T> rec : list) {
+			result.add(rec.t);
+		}
 		return result;
 	}
-	
+
 	private static class Edge {
 		int[] vertexIds;
 		boolean markedForRemoval;
@@ -123,26 +122,26 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		private boolean markedForRemoval;
 	}
 
-	private static class Vertex<T extends PlanarCoordinate> {
+	private static class Vertex<T> {
 		int id;
 		MutableVector2D position;
-		T planarCoordinate;
+		T t;
 
-		public Vertex(final int id, final MutableVector2D position, T planarCoordinate) {
+		public Vertex(final int id, final MutableVector2D position, T t) {
 			super();
 			this.id = id;
 			this.position = position;
-			this.planarCoordinate = planarCoordinate;
+			this.t = t;
 		}
 	}
 
-	public static <T extends PlanarCoordinate> List<Pair<T, T>> solve(List<T> points) {
-		return new PlanarDelaunaySolver<>(points).solve();
+	public static <T> List<Pair<T, T>> solve(Map<T, Vector2D> itemLocationMap) {
+		return new PlanarDelaunaySolver<>(itemLocationMap).solve();
 	}
 
 	private final int scaffoldCount = 4;
-	
-	private List<T> points;
+
+	private Map<T, Vector2D> itemLocationMap;
 
 	private final Map<Triangle, List<Edge>> triangleToEdgeMap = new LinkedHashMap<>();
 
@@ -152,8 +151,8 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 
 	private VolumetricDimensionTree<Triangle> searchTree;
 
-	private PlanarDelaunaySolver(List<T> points) {
-		 this.points = points;
+	private PlanarDelaunaySolver(Map<T, Vector2D> itemLocationMap) {
+		this.itemLocationMap = itemLocationMap;
 	}
 
 	private void addTriangle(final int id1, final int id2, final int id3) {
@@ -196,7 +195,6 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		center.add(m1);
 
 		double radius = center.distanceTo(a);
-		
 
 		Triangle triangle = new Triangle(radius);
 
@@ -207,7 +205,7 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		List<Triangle> list = edgeToTriangleMap.get(edge1);
 		if (list == null) {
 			list = new ArrayList<>();
-			edgeToTriangleMap.put(edge1, list);			
+			edgeToTriangleMap.put(edge1, list);
 		}
 		list.add(triangle);
 
@@ -218,7 +216,7 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		list = edgeToTriangleMap.get(edge2);
 		if (list == null) {
 			list = new ArrayList<>();
-			edgeToTriangleMap.put(edge2, list);			
+			edgeToTriangleMap.put(edge2, list);
 		}
 		list.add(triangle);
 
@@ -229,7 +227,7 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		list = edgeToTriangleMap.get(edge3);
 		if (list == null) {
 			list = new ArrayList<>();
-			edgeToTriangleMap.put(edge3, list);			
+			edgeToTriangleMap.put(edge3, list);
 		}
 		list.add(triangle);
 
@@ -292,22 +290,21 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		});
 		return result;
 	}
-	
+
 	private void initialize() {
-		points = spiralize(points);
-		
-		
-		
+		List<T> points = spiralize(itemLocationMap);
+
 		double maxX = Double.NEGATIVE_INFINITY;
 		double minX = Double.POSITIVE_INFINITY;
 		double maxY = Double.NEGATIVE_INFINITY;
 		double minY = Double.POSITIVE_INFINITY;
 
-		for (PlanarCoordinate planarCoordinate : points) {
-			maxX = FastMath.max(maxX, planarCoordinate.getX());
-			minX = FastMath.min(minX, planarCoordinate.getX());
-			maxY = FastMath.max(maxY, planarCoordinate.getY());
-			minY = FastMath.min(minY, planarCoordinate.getY());
+		for (T t : itemLocationMap.keySet()) {
+			Vector2D v = itemLocationMap.get(t);
+			maxX = FastMath.max(maxX, v.getX());
+			minX = FastMath.min(minX, v.getX());
+			maxY = FastMath.max(maxY, v.getY());
+			minY = FastMath.min(minY, v.getY());
 		}
 		double[] lowerBounds = { minX, minY };
 		double[] upperBounds = { maxX, maxY };
@@ -329,30 +326,30 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 		minY -= padY;
 		maxY += padY;
 
-		Vertex<T> vertex0 = new Vertex<>(0, new MutableVector2D(minX, minY),null);
+		Vertex<T> vertex0 = new Vertex<>(0, new MutableVector2D(minX, minY), null);
 		vertexes.add(vertex0);
 
-		Vertex<T> vertex1 = new Vertex<>(1, new MutableVector2D(minX, maxY),null);
+		Vertex<T> vertex1 = new Vertex<>(1, new MutableVector2D(minX, maxY), null);
 		vertexes.add(vertex1);
 
-		Vertex<T> vertex2 = new Vertex<>(2, new MutableVector2D(maxX, minY),null);
+		Vertex<T> vertex2 = new Vertex<>(2, new MutableVector2D(maxX, minY), null);
 		vertexes.add(vertex2);
 
-		Vertex<T> vertex3 = new Vertex<>(3, new MutableVector2D(maxX, maxY),null);
+		Vertex<T> vertex3 = new Vertex<>(3, new MutableVector2D(maxX, maxY), null);
 		vertexes.add(vertex3);
-		
+
 		int n = points.size();
-		for (int i = 0; i < n; i++) {			
-			T planarCoordinate = points.get(i);
-			MutableVector2D v = new MutableVector2D(planarCoordinate.getX(),planarCoordinate.getY());			
-			vertexes.add(new Vertex<>(i + scaffoldCount, v, planarCoordinate));
+		for (int i = 0; i < n; i++) {
+			T t = points.get(i);
+			Vector2D v = itemLocationMap.get(t);			
+			MutableVector2D m = new MutableVector2D(v);
+			vertexes.add(new Vertex<>(i + scaffoldCount, m, t));
 		}
-		
 
 		addTriangle(vertex0.id, vertex1.id, vertex2.id);
 
 		addTriangle(vertex1.id, vertex2.id, vertex3.id);
-		
+
 	}
 
 	private void removeEdges(final List<Edge> edgesToRemove) {
@@ -384,17 +381,16 @@ public class PlanarDelaunaySolver<T extends PlanarCoordinate> {
 			addTriangles(vertex, hullEdges);
 		}
 
-
-		List<Pair<T,T>> result = new ArrayList<>();
+		List<Pair<T, T>> result = new ArrayList<>();
 		edgeToTriangleMap.keySet().forEach(edge -> {
 			Vertex<T> vertex0 = vertexes.get(edge.vertexIds[0]);
-			if(vertex0.planarCoordinate!=null) {
+			if (vertex0.t != null) {
 				Vertex<T> vertex1 = vertexes.get(edge.vertexIds[1]);
-				Pair<T,T> pair = new Pair<>(vertex0.planarCoordinate,vertex1.planarCoordinate);
+				Pair<T, T> pair = new Pair<>(vertex0.t, vertex1.t);
 				result.add(pair);
-			}			
+			}
 		});
-		
+
 		return result;
 	}
 

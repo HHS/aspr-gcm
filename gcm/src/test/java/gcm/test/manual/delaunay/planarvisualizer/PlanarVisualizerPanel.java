@@ -20,8 +20,8 @@ import javax.swing.Timer;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
-import gcm.util.delaunay.PlanarCoordinate;
 import gcm.util.vector.MutableVector2D;
+import gcm.util.vector.Vector2D;
 
 public class PlanarVisualizerPanel extends JPanel {
 	private static final long serialVersionUID = -8746718644903555611L;
@@ -31,9 +31,9 @@ public class PlanarVisualizerPanel extends JPanel {
 
 	private final PointModelProvider<?> pointModelProvider;
 
-	public <T extends PlanarCoordinate> PlanarVisualizerPanel(List<T> planarCoordinates, List<Pair<T, T>> links) {
+	public <T> PlanarVisualizerPanel(Map<T, Vector2D> dataMap, List<Pair<T, T>> links) {
 
-		pointModelProvider = new PointModelProvider<>(planarCoordinates, links);
+		pointModelProvider = new PointModelProvider<>(dataMap, links);
 
 		addMouseListener(new MouseListenerImpl());
 
@@ -74,19 +74,19 @@ public class PlanarVisualizerPanel extends JPanel {
 
 	}
 
-	private class PointModelProvider<T extends PlanarCoordinate> {
-		private final List<T> planarCoordinates;
+	private class PointModelProvider<T> {
+		private final Map<T, Vector2D> dataMap;
 		private List<Point> points;		
 		private int lastWidth;
 		private int lastHeight;
 		private List<Link> links = new ArrayList<>();
 
-		public PointModelProvider(List<T> planarCoordinates, List<Pair<T, T>> links) {
-			this.planarCoordinates = planarCoordinates;
+		public PointModelProvider(Map<T, Vector2D> dataMap, List<Pair<T, T>> links) {
+			this.dataMap = dataMap;
 
 			Map<T, Integer> map = new LinkedHashMap<>();
-			for (T planarCoordinate : planarCoordinates) {
-				map.put(planarCoordinate, map.size());
+			for (T t : dataMap.keySet()) {
+				map.put(t, map.size());
 			}
 			for (Pair<T, T> pair : links) {
 				this.links.add(new Link(map.get(pair.getFirst()), map.get(pair.getSecond())));
@@ -114,22 +114,24 @@ public class PlanarVisualizerPanel extends JPanel {
 			MutableVector2D upperLeftDataPosition = new MutableVector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 			MutableVector2D lowerRightDataPosition = new MutableVector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-			planarCoordinates.forEach(p -> {
-				if (p.getX() < upperLeftDataPosition.getX()) {
-					upperLeftDataPosition.setX(p.getX());
+			for(T t : dataMap.keySet()) {
+				Vector2D v = dataMap.get(t);
+				
+				if (v.getX() < upperLeftDataPosition.getX()) {
+					upperLeftDataPosition.setX(v.getX());
 				}
 
-				if (p.getY() < upperLeftDataPosition.getY()) {
-					upperLeftDataPosition.setY(p.getY());
+				if (v.getY() < upperLeftDataPosition.getY()) {
+					upperLeftDataPosition.setY(v.getY());
 				}
 
-				if (p.getX() > lowerRightDataPosition.getX()) {
-					lowerRightDataPosition.setX(p.getX());
+				if (v.getX() > lowerRightDataPosition.getX()) {
+					lowerRightDataPosition.setX(v.getX());
 				}
-				if (p.getY() > lowerRightDataPosition.getY()) {
-					lowerRightDataPosition.setY(p.getY());
+				if (v.getY() > lowerRightDataPosition.getY()) {
+					lowerRightDataPosition.setY(v.getY());
 				}
-			});
+			}
 
 			double deltaX = lowerRightDataPosition.getX() - upperLeftDataPosition.getX();
 			double deltaY = lowerRightDataPosition.getY() - upperLeftDataPosition.getY();
@@ -162,15 +164,14 @@ public class PlanarVisualizerPanel extends JPanel {
 			 * projection takes data center to screen center.
 			 */
 			points = new ArrayList<>();
-			for (PlanarCoordinate p : planarCoordinates) {
-				MutableVector2D v = new MutableVector2D(p.getX(), p.getY());
+			for(T t : dataMap.keySet()) {				
+				MutableVector2D v = new MutableVector2D(dataMap.get(t));
 				v.sub(dataCenter);
 				v.scale(scalar);
 				v.add(screenCenter);
 				Point point = new Point((int) v.getX(), (int) v.getY());
 				points.add(point);
 			}			
-
 		}
 
 	}

@@ -20,6 +20,8 @@ import gcm.simulation.FilterInfo.NegateFilterInfo;
 import gcm.simulation.FilterInfo.OrFilterInfo;
 import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A static utility class for determining which people match a filter. This is
@@ -28,6 +30,7 @@ import gcm.simulation.FilterInfo.RegionFilterInfo;
  * @author Shawn Hatch
  *
  */
+@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
 public class FilterPopulationMatcher {
 	private static interface PersonIdSupplier {
 		public List<PersonId> supply();

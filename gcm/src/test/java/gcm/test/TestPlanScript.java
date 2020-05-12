@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.junit.runners.Suite.SuiteClasses;
 
+import gcm.simulation.PopulationIndexEfficiencyWarning;
 import gcm.test.script.SourceClassRec;
 import gcm.test.script.SourceFileInvestigator;
 import gcm.test.script.SourceMethodRec;
@@ -301,13 +302,14 @@ public class TestPlanScript {
 		}
 
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
+			
 			if (sourceClassRec.getTestStatus() == TestStatus.PROXY) {
 				SourceClassRec s = sourceClassRec;
 				Set<SourceClassRec> visitedSourceClassRecs = new LinkedHashSet<>();
 				visitedSourceClassRecs.add(s);
 				boolean circularProxies = false;
 				while (s != null && s.getTestStatus() == TestStatus.PROXY && !circularProxies) {
-					s = map.get(sourceClassRec.getProxyClass());
+					s = map.get(s.getProxyClass());
 					if (s == null) {
 						testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has unresolved proxy linkage ending in a non-source class");
 					} else {

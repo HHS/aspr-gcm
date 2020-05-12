@@ -21,6 +21,8 @@ import gcm.simulation.FilterInfo.OrFilterInfo;
 import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A utility class that evaluates a FilterInfo against the current state of the
@@ -29,7 +31,7 @@ import gcm.simulation.FilterInfo.ResourceFilterInfo;
  * @author Shawn Hatch
  *
  */
-
+@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
 public abstract class FilterEvaluator {
 
 	private FilterEvaluator() {

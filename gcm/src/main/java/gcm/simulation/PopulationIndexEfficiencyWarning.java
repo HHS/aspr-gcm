@@ -3,6 +3,10 @@ package gcm.simulation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+
+@Source(status = TestStatus.PROXY, proxy = IndexedPopulationManagerImpl.class)
 public final class PopulationIndexEfficiencyWarning {
 
 	private final Object populationIndexId;

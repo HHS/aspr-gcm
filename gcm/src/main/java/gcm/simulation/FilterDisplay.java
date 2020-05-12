@@ -12,6 +12,8 @@ import gcm.simulation.FilterInfo.OrFilterInfo;
 import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A static utility class for creating a string representation of a
@@ -21,6 +23,7 @@ import gcm.simulation.FilterInfo.ResourceFilterInfo;
  * @author Shawn Hatch
  *
  */
+@Source(status = TestStatus.UNEXPECTED)
 public class FilterDisplay {
 
 	private static String getTabString(final int n) {

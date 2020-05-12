@@ -25,6 +25,8 @@ import gcm.simulation.Filter.OrFilter;
 import gcm.simulation.Filter.PropertyFilter;
 import gcm.simulation.Filter.RegionFilter;
 import gcm.simulation.Filter.ResourceFilter;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A utility class that mirrors the Filter class, publishes the internal data
@@ -34,7 +36,7 @@ import gcm.simulation.Filter.ResourceFilter;
  * @author Shawn Hatch
  *
  */
-
+@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
 public abstract class FilterInfo {
 
 	public abstract FilterInfoType getFilterInfoType();

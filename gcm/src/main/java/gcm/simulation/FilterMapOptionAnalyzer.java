@@ -12,6 +12,8 @@ import gcm.simulation.FilterInfo.NegateFilterInfo;
 import gcm.simulation.FilterInfo.OrFilterInfo;
 import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A static utility class for determining which attributes of a filter could
@@ -20,6 +22,7 @@ import gcm.simulation.FilterInfo.RegionFilterInfo;
  * @author Shawn Hatch
  *
  */
+@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
 public class FilterMapOptionAnalyzer {
 
 	private List<Object> execute() {

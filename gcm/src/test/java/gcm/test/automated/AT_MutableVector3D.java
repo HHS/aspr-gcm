@@ -980,16 +980,16 @@ public class AT_MutableVector3D {
 			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
 
 			Vector3D v3 = new Vector3D(v1);
-			v3.rotateToward(new Vector3D(v2), FastMath.toRadians(90));
+			v3 = v3.rotateToward(new Vector3D(v2), FastMath.toRadians(90));
 
 			assertTrue(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector3D(v1);
-			v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector3D(v1);
-			v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 		}
 

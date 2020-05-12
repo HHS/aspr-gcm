@@ -3,7 +3,6 @@ package gcm.util.spherical;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.vector.MutableVector3D;
-import gcm.util.vector.NonNormalVectorException;
 import gcm.util.vector.Vector3D;
 import net.jcip.annotations.Immutable;
 
@@ -15,162 +14,47 @@ import net.jcip.annotations.Immutable;
  *
  */
 @Immutable
-@Source(status = TestStatus.REQUIRED)	
+@Source(status = TestStatus.REQUIRED)
 public final class SphericalPoint {
 
-	/*
-	 * Hidden constructor.
-	 *
-	 * @throws NonNormalVectorException
+	/**
+	 * Creates a new {@link SphericalPoint} from the given {@link Vector3D}
+	 * 
+	 * @throws MalformedSphericalPointException
+	 *             <li>if the given {@link Vector3D} is not normalizable
+	 * @throws NullPointerException
+	 *             <li>if the given {@link Vector3D} is null
+	 * 
 	 */
-	private SphericalPoint(Scaffold scaffold) {
-		this.coordinates = scaffold.coordinates;
+	public SphericalPoint(Vector3D v) {
 
-		MutableVector3D v = new MutableVector3D(scaffold.coordinates[0], scaffold.coordinates[1], scaffold.coordinates[2]);
-		v.normalize();
+		position = v.normalize();
 
+		if (!position.isNormal()) {
+			throw new MalformedSphericalPointException("data cannot be normalized onto the unit sphere");
+		}
+
+	}
+
+	/**
+	 * Creates a new {@link SphericalPoint} from the given {@link muVector3D}
+	 * 
+	 * @throws MalformedSphericalPointException
+	 */
+	public SphericalPoint(MutableVector3D v) {
+		position = new Vector3D(v).normalize();
 		if (!v.isNormal()) {
-			throw new NonNormalVectorException("data cannot be normalized onto the unit sphere");
+			throw new MalformedSphericalPointException("data cannot be normalized onto the unit sphere");
 		}
-
-		coordinates[0] = v.getX();
-		coordinates[1] = v.getY();
-		coordinates[2] = v.getZ();
 	}
 
-	/*
-	 * static class for containing contributed values
-	 */
-	private static class Scaffold {
-		double[] coordinates = new double[3];
-	}
-
-	private final double[] coordinates;
-
-	/**
-	 * Returns the coordinate value of the given index. Valid values are 0,1,2
-	 */
-	public double getCoordinate(int index) {
-		return coordinates[index];
-	}
-
-	/**
-	 * Returns a new builder instance for {@link SphericalPoint}
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	/**
-	 * Builder class for {@link SphericalPoint}
-	 */
-	public static class Builder {
-
-		/*
-		 * Hidden constructor
-		 */
-		private Builder() {
-
-		}
-
-		private Scaffold scaffold = new Scaffold();
-
-		/**
-		 * Builds the {@link SphericalPoint} from the contributed values.
-		 * 
-		 * @throws NonNormalVectorException
-		 *             <li>if the contributed data cannot be normalized to a
-		 *             unit vector
-		 */
-		public SphericalPoint build() {
-			try {
-				return new SphericalPoint(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
-		}
-
-		/**
-		 * Set the coordinate value for the given index. Coordinate values are
-		 * used in the build process via unit normalization, so any non-zero
-		 * vector may be used to build by coordinates.
-		 * 
-		 * @param index
-		 * @param value
-		 */
-		public Builder setCoordinate(int index, double value) {
-			scaffold.coordinates[index] = value;
-			return this;
-		}
-
-		/**
-		 * Sets the values of the coordinates of the {@link SphericalPoint} from
-		 * the {@link MutableVector3D} in x, y, z order.
-		 */
-		public Builder fromVector3D(MutableVector3D vector3d) {
-			scaffold.coordinates[0] = vector3d.getX();
-			scaffold.coordinates[1] = vector3d.getY();
-			scaffold.coordinates[2] = vector3d.getZ();
-			return this;
-		}
-
-		/**
-		 * Sets the values of the coordinates of the {@link SphericalPoint} from
-		 * the {@link Vector3D} in x, y, z order.
-		 */
-		public Builder fromECC(Vector3D ecc) {
-			scaffold.coordinates[0] = ecc.getX();
-			scaffold.coordinates[1] = ecc.getY();
-			scaffold.coordinates[2] = ecc.getZ();
-			return this;
-		}
-
-	}
+	private final Vector3D position;
 
 	/**
 	 * Returns this {@link SphericalPoint} as a {@link MutableVector3D}
 	 */
-	public MutableVector3D toVector3D() {
-		return new MutableVector3D(coordinates[0], coordinates[1], coordinates[2]);
-	}
-	
-	/**
-	 * Returns this {@link SphericalPoint} as an array
-	 */
-	public double[] toArray() {
-		return new double[] {coordinates[0], coordinates[1], coordinates[2]};
-	}
-
-	/**
-	 * Returns true if and only if the corresponding
-	 * {@link MutableVector3D#isInfinite()} is true.
-	 */
-	public boolean isInfinite() {
-		return Double.isInfinite(coordinates[0]) || Double.isInfinite(coordinates[1]) || Double.isInfinite(coordinates[2]);
-	}
-
-	/**
-	 * Returns true if and only if the corresponding {@link MutableVector3D#isNaN()} is
-	 * true.
-	 */
-	public boolean isNaN() {
-		return Double.isNaN(coordinates[0]) || Double.isNaN(coordinates[1]) || Double.isNaN(coordinates[2]);
-	}
-
-	/**
-	 * Returns true if and only if the corresponding {@link MutableVector3D#isFinite()}
-	 * is true.
-	 */
-	public boolean isFinite() {
-		return toVector3D().isFinite();
-	}
-
-	/**
-	 * Returns true if and only if the corresponding {@link MutableVector3D#isNormal()}
-	 * is normal.
-	 */
-	public boolean isNormal() {
-		return toVector3D().isNormal();
+	public Vector3D getPosition() {
+		return position;
 	}
 
 }

@@ -167,8 +167,8 @@ public class AT_LatLonBox {
 		/*
 		 * Each point should fall into one of the the triangles
 		 */
-		for (LatLon latLon : points) {
-			SphericalPoint sphericalPoint = SphericalPoint.builder().fromECC(earth.getECCFromLatLon(latLon)).build();
+		for (LatLon latLon : points) {			
+			SphericalPoint sphericalPoint = new SphericalPoint(earth.getECCFromLatLon(latLon));
 			boolean pointContained = false;
 			for (SphericalTriangle sphericalTriangle : triangles) {
 				if (sphericalTriangle.contains(sphericalPoint)) {
@@ -277,22 +277,22 @@ public class AT_LatLonBox {
 		Vector3D sw = earth.getECCFromLatLon(new LatLon(latLonBox.getSouthLatitude(), latLonBox.getWestLongitude()));
 		Vector3D nw = earth.getECCFromLatLon(new LatLon(latLonBox.getNorthLatitude(), latLonBox.getWestLongitude()));
 
-		SphericalPoint neSphericalPoint = SphericalPoint.builder().fromECC(ne).build();
-		SphericalPoint seSphericalPoint = SphericalPoint.builder().fromECC(se).build();
-		SphericalPoint swSphericalPoint = SphericalPoint.builder().fromECC(sw).build();
-		SphericalPoint nwSphericalPoint = SphericalPoint.builder().fromECC(nw).build();
+		SphericalPoint neSphericalPoint = new SphericalPoint(ne);
+		SphericalPoint seSphericalPoint = new SphericalPoint(se);
+		SphericalPoint swSphericalPoint = new SphericalPoint(sw);
+		SphericalPoint nwSphericalPoint = new SphericalPoint(nw);
 
-		result.add(SphericalTriangle.builder()//
-									.setSphericalPoint(0, neSphericalPoint)//
-									.setSphericalPoint(1, nwSphericalPoint)//
-									.setSphericalPoint(2, swSphericalPoint)//
-									.build());//
+		result.add(new SphericalTriangle(
+									neSphericalPoint,
+									nwSphericalPoint,
+									swSphericalPoint
+									));//
 
-		result.add(SphericalTriangle.builder()//
-									.setSphericalPoint(0, neSphericalPoint)//
-									.setSphericalPoint(1, swSphericalPoint)//
-									.setSphericalPoint(2, seSphericalPoint)//
-									.build());//
+		result.add(new SphericalTriangle(
+									neSphericalPoint,
+									swSphericalPoint,
+									seSphericalPoint
+									));//
 
 		return result;
 

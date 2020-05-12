@@ -5,6 +5,7 @@ import org.apache.commons.math3.util.FastMath;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -19,123 +20,62 @@ import net.jcip.annotations.Immutable;
 @Source(status = TestStatus.REQUIRED)
 public class SphericalArc {
 
-	/*
+	/**
 	 * Hidden constructor
 	 * 
-	 * @throws NullPointerException <li> if not all vertexes of the arc were
-	 * contributed to the builder
-	 */
-	private SphericalArc(Scaffold scaffold) {
-
-		for(SphericalPoint sphericalPoint: scaffold.sphericalPoints) {
-			if(sphericalPoint==null) {
-				throw new NullPointerException("null/no spherical point contributed to build of spherical arc");
-			}
-		}
-
-		sphericalPoints = scaffold.sphericalPoints;
-
-		for (int i = 0; i < 3; i++) {
-			int j = (i + 1) % 3;
-			int k = (i + 2) % 3;
-			double value = sphericalPoints[0].getCoordinate(j) * sphericalPoints[1].getCoordinate(k) - sphericalPoints[0].getCoordinate(k) * sphericalPoints[1].getCoordinate(j);
-			perp[i] = value;
-		}
-		double value = 0;
-		for (int i = 0; i < 3; i++) {
-			value += sphericalPoints[0].getCoordinate(i) * sphericalPoints[1].getCoordinate(i);
-		}
-		value = FastMath.min(value, 1);
-		value = FastMath.max(value, -1);
-		length = FastMath.acos(value);
-	}
-
-	/**
-	 * Builder class for {@link SphericalArc}
+	 * @throws MalformedSphericalArcException
+	 *             <li>if the two {@link SphericalPoint} values are too close
+	 *             together to properly form a normal vector.
 	 * 
-	 * @author Shawn Hatch
-	 *
+	 * @throws NullPointerException
+	 *             <li>if either {@link SphericalPoint} is null
 	 */
-	public static class Builder {
+	public SphericalArc(SphericalPoint sphericalPoint1, SphericalPoint sphericalPoint2) {
 
-		/*
-		 * Hidden constructor
-		 */
-		private Builder() {
-
+		if (sphericalPoint1 == null) {
+			throw new NullPointerException("null spherical point contributed to build of spherical arc");
 		}
 
-		/**
-		 * Sets the {@link SphericalPoint} for the given index.
-		 */
-		public Builder setSphereicalPoint(int index, SphericalPoint sphericalPoint) {
-			scaffold.sphericalPoints[index] = sphericalPoint;
-			return this;
+		if (sphericalPoint2 == null) {
+			throw new NullPointerException("null spherical point contributed to build of spherical arc");
 		}
 
-		private Scaffold scaffold = new Scaffold();
-
-		/**
-		 * Returns the {@link SphericalArc} from the contributed
-		 * {@link SphericalPoint} values
-		 * 
-		 * @throws NullPointerException
-		 *             <li>if not all {@link SphericalPoint} values were
-		 *             contributed or were null
-		 * 
-		 */
-		public SphericalArc build() {
-			try {
-				return new SphericalArc(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
+		sphericalPoints = new SphericalPoint[] { sphericalPoint1, sphericalPoint2 };
+		perp = sphericalPoint1.getPosition().cross(sphericalPoint2.getPosition()).normalize();
+		if (!perp.isNormal()) {
+			throw new NullPointerException("spherical points too similar to form arc");
 		}
-	}
-
-	/**
-	 * Returns a new builder instance for {@link SphericalArc}
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	/**
-	 * Static class for containing client contributed values for the builder
-	 * 
-	 * @author Shawn Hatch
-	 *
-	 */
-	private static class Scaffold {
-		SphericalPoint[] sphericalPoints = new SphericalPoint[2];
+		if (!perp.isPerpendicularTo(sphericalPoint1.getPosition())) {
+			throw new NullPointerException("spherical points too similar to form arc");
+		}
+		if (!perp.isPerpendicularTo(sphericalPoint2.getPosition())) {
+			throw new NullPointerException("spherical points too similar to form arc");
+		}
+		length = sphericalPoint1.getPosition().angle(sphericalPoint2.getPosition());
 	}
 
 	private final SphericalPoint[] sphericalPoints;
-	
-	
 
 	/**
-	 * Returns the spin of a SphericalPoint relative to this SphericalArc in the
-	 * natural order of its SphericalPoints.
+	 * Returns the {@link Chirality} of a SphericalPoint relative to this
+	 * SphericalArc in the natural order of its SphericalPoints.
 	 * 
 	 * @param sphericalPoint
 	 * @return
 	 */
-	public Spin getSpin(SphericalPoint sphericalPoint) {
+	public Chirality getChirality(SphericalPoint sphericalPoint) {
 
-		double dot = 0;
-		for (int i = 0; i < 3; i++) {
-			dot += perp[i] * sphericalPoint.getCoordinate(i);
-		}
+		double dot = perp.dot(sphericalPoint.getPosition());
+
 		if (dot >= 0) {
-			return Spin.RIGHT_HANDED;
+			return Chirality.RIGHT_HANDED;
 		}
-		return Spin.LEFT_HANDED;
+		return Chirality.LEFT_HANDED;
 	}
 
 	private final double length;
 
-	private final double[] perp = new double[3];
+	private final Vector3D perp;
 
 	/**
 	 * Returns true if and only if this SphericalArc intersects the given
@@ -145,11 +85,11 @@ public class SphericalArc {
 	 * @return
 	 */
 	public boolean intersectsArc(SphericalArc arc) {
-		Spin spin1 = getSpin(arc.getSphericalPoint(0));
-		Spin spin2 = getSpin(arc.getSphericalPoint(1));
-		Spin spin3 = arc.getSpin(getSphericalPoint(0));
-		Spin spin4 = arc.getSpin(getSphericalPoint(1));
-		return (spin1 != spin2) && (spin3 != spin4);
+		Chirality chirality1 = getChirality(arc.getSphericalPoint(0));
+		Chirality chirality2 = getChirality(arc.getSphericalPoint(1));
+		Chirality chirality3 = arc.getChirality(getSphericalPoint(0));
+		Chirality chirality4 = arc.getChirality(getSphericalPoint(1));
+		return (chirality1 != chirality2) && (chirality3 != chirality4);
 	}
 
 	/**
@@ -157,8 +97,8 @@ public class SphericalArc {
 	 * 
 	 * @param index
 	 *            Values may be 0 or 1
-	 * @return
-	 * @throws RuntimeException
+	 * 
+	 * @throws IndexOutOfBoundsException
 	 *             if any other index is used
 	 */
 	public SphericalPoint getSphericalPoint(int index) {
@@ -183,30 +123,16 @@ public class SphericalArc {
 	 */
 	public SphericalPoint getInterSection(SphericalArc arc) {
 
-		MutableVector3D a = new MutableVector3D();
-		a.setX(sphericalPoints[0].getCoordinate(0));
-		a.setY(sphericalPoints[0].getCoordinate(1));
-		a.setZ(sphericalPoints[0].getCoordinate(2));
+		Vector3D a = sphericalPoints[0].getPosition();
+		Vector3D b = sphericalPoints[1].getPosition();
 
-		MutableVector3D b = new MutableVector3D();
-		b.setX(sphericalPoints[1].getCoordinate(0));
-		b.setY(sphericalPoints[1].getCoordinate(1));
-		b.setZ(sphericalPoints[1].getCoordinate(2));
-
-		MutableVector3D c = new MutableVector3D();
-		c.setX(arc.getSphericalPoint(0).getCoordinate(0));
-		c.setY(arc.getSphericalPoint(0).getCoordinate(1));
-		c.setZ(arc.getSphericalPoint(0).getCoordinate(2));
-
-		MutableVector3D d = new MutableVector3D();
-		d.setX(arc.getSphericalPoint(1).getCoordinate(0));
-		d.setY(arc.getSphericalPoint(1).getCoordinate(1));
-		d.setZ(arc.getSphericalPoint(1).getCoordinate(2));
+		Vector3D c = arc.getSphericalPoint(0).getPosition();
+		Vector3D d = arc.getSphericalPoint(0).getPosition();
 
 		MutableVector3D p = new MutableVector3D(a);
 		p.cross(b);
 
-		// po(a+sb) = po(c+td)
+		// p o(a+sb) = p o(c+td)
 
 		double k = -p.dot(c) / p.dot(d);
 		if ((k < 0) || (k > 1)) {
@@ -238,11 +164,7 @@ public class SphericalArc {
 			azimuth *= -1;
 		}
 
-		SphericalPoint.Builder sphericalPointBuilder = SphericalPoint.builder();
-		sphericalPointBuilder.setCoordinate(0, FastMath.cos(polar) * FastMath.cos(azimuth));
-		sphericalPointBuilder.setCoordinate(1, FastMath.cos(polar) * FastMath.sin(azimuth));
-		sphericalPointBuilder.setCoordinate(2, FastMath.sin(polar));
-		return sphericalPointBuilder.build();
+		return new SphericalPoint(new Vector3D(FastMath.cos(polar) * FastMath.cos(azimuth), FastMath.cos(polar) * FastMath.sin(azimuth), FastMath.sin(polar)));
 	}
 
 	/**
@@ -250,8 +172,8 @@ public class SphericalArc {
 	 * {@linkplain SphericalArc}
 	 */
 	public double distanceTo(SphericalPoint sphericalPoint) {
-		MutableVector3D a = sphericalPoints[0].toVector3D();
-		MutableVector3D b = sphericalPoints[1].toVector3D();
+		Vector3D a = sphericalPoints[0].getPosition();
+		Vector3D b = sphericalPoints[1].getPosition();
 
 		/*
 		 * Create a normal to the plane containing the two end points --
@@ -262,7 +184,7 @@ public class SphericalArc {
 		/*
 		 * Create a vector3D for the input
 		 */
-		MutableVector3D q = sphericalPoint.toVector3D();
+		MutableVector3D q = new MutableVector3D(sphericalPoint.getPosition());
 
 		/*
 		 * Calculate the angle to rotate toward p such that q will move onto the

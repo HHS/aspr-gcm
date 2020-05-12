@@ -108,16 +108,16 @@ public class SphericalPolygon {
 
 	private final List<SphericalTriangle> sphericalTriangles;
 
-	private final Spin spin;
+	private final Chirality chirality;
 
 	private final VolumetricDimensionTree<SphericalTriangle> searchTree;
 
 	/**
-	 * Returns the spin of this {@link SphericalPolygon} relative to the natural
+	 * Returns the {@link Chirality} of this {@link SphericalPolygon} relative to the natural
 	 * order of its SphericalPoints.
 	 */
-	public Spin getSpin() {
-		return spin;
+	public Chirality getChirality() {
+		return chirality;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class SphericalPolygon {
 				}
 			}
 		} else {
-			List<SphericalTriangle> membersInSphere = searchTree.getMembersInSphere(0, sphericalPoint.toArray());
+			List<SphericalTriangle> membersInSphere = searchTree.getMembersInSphere(0, sphericalPoint.getPosition().toArray());
 			for (SphericalTriangle sphericalTriangle : membersInSphere) {
 				if (sphericalTriangle.contains(sphericalPoint)) {
 					return true;
@@ -193,19 +193,18 @@ public class SphericalPolygon {
 		return false;
 	}
 
-	private static SphericalTriangle popEar(int index, List<SphericalPoint> points, Spin spin) {
-		// form the triangle from the index
-		SphericalTriangle.Builder sphericalTriangleBuilder = SphericalTriangle.builder();
-		for (int i = 0; i < 3; i++) {
-			sphericalTriangleBuilder.setSphericalPoint(i, points.get((index + i) % 3));
-		}
-		SphericalTriangle t = sphericalTriangleBuilder.build();
+	private static SphericalTriangle popEar(int index, List<SphericalPoint> points, Chirality chirality) {
+		// form the triangle from the index		
+		SphericalTriangle t = new SphericalTriangle(
+				points.get((index + 0) % 3),
+				points.get((index + 1) % 3),
+				points.get((index + 2) % 3)
+				);
 
 		/*
-		 * if the triangle does not agree with spin then we are done
-		 * 
+		 * if the triangle does not agree with chirality then we are done 
 		 */
-		if (t.getSpin() != spin) {
+		if (t.getChirality() != chirality) {
 			return null;
 		}
 		/*
@@ -219,13 +218,11 @@ public class SphericalPolygon {
 		int nextArcIndex = (index + 1) % points.size();
 
 		SphericalArc sphericalArcFormedByTriangle = t.getSphericalArc(2);
-		SphericalArc.Builder sphereicalArcBuilder = SphericalArc.builder();
+		
 		for (int i = 0; i < index; i++) {
 			if ((i != previousArcIndex) && (i != nextArcIndex)) {
 				int j = (i + 1) % points.size();
-				sphereicalArcBuilder.setSphereicalPoint(0, points.get(i));
-				sphereicalArcBuilder.setSphereicalPoint(1, points.get(j));
-				SphericalArc potentiallyIntersectingArc = sphereicalArcBuilder.build();
+				SphericalArc potentiallyIntersectingArc = new SphericalArc(points.get(i),points.get(j));
 				if (sphericalArcFormedByTriangle.intersectsArc(potentiallyIntersectingArc)) {
 					return null;
 				}
@@ -247,7 +244,7 @@ public class SphericalPolygon {
 		return t;
 	}
 
-	private static List<SphericalTriangle> triangulate(List<SphericalPoint> sphericalPoints, Spin spin) {
+	private static List<SphericalTriangle> triangulate(List<SphericalPoint> sphericalPoints, Chirality chirality) {
 
 		/*
 		 * We will attempt to remove nodes from the list one by one by popping
@@ -271,7 +268,7 @@ public class SphericalPolygon {
 		int index = 0;
 		int failurecount = 0;
 		while ((points.size() > 0) && (failurecount < points.size())) {
-			SphericalTriangle sphericalTriangle = popEar(index, points, spin);
+			SphericalTriangle sphericalTriangle = popEar(index, points, chirality);
 			if (sphericalTriangle != null) {
 				result.add(sphericalTriangle);
 				failurecount = 0;
@@ -305,27 +302,25 @@ public class SphericalPolygon {
 			}
 		}
 
-		Spin spin = Spin.RIGHT_HANDED;
-		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Spin.RIGHT_HANDED);
+		Chirality chirality = Chirality.RIGHT_HANDED;
+		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
 		if (triangles.size() == 0) {
-			triangles = triangulate(scaffold.sphericalPoints, Spin.LEFT_HANDED);
-			spin = Spin.RIGHT_HANDED;
+			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);
+			chirality = Chirality.RIGHT_HANDED;
 		}
 
 		if (triangles.size() == 0) {
 			throw new MalformedSphericalPolygonException("the spherical points form a crossing polygon");
 		}
 
-		this.spin = spin;
+		this.chirality = chirality;
 		sphericalTriangles = triangles;
 
 		sphericalPoints = scaffold.sphericalPoints;
-		SphericalArc.Builder sphereicalArcBuilder = SphericalArc.builder();
+		
 		for (int i = 0; i < scaffold.sphericalPoints.size(); i++) {
-			int j = (i + 1) % scaffold.sphericalPoints.size();
-			sphereicalArcBuilder.setSphereicalPoint(0, scaffold.sphericalPoints.get(i));
-			sphereicalArcBuilder.setSphereicalPoint(1, scaffold.sphericalPoints.get(j));
-			sphericalArcs.add(sphereicalArcBuilder.build());
+			int j = (i + 1) % scaffold.sphericalPoints.size();			
+			sphericalArcs.add(new SphericalArc(scaffold.sphericalPoints.get(i),scaffold.sphericalPoints.get(j)));
 		}
 
 		if (sphericalTriangles.size() > SEARCH_TREE_THRESHOLD && scaffold.useSearchTree) {

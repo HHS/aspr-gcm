@@ -20,48 +20,6 @@ import net.jcip.annotations.Immutable;
 public class SphericalTriangle {
 
 	/**
-	 * Static builder class for {@link SphericalArc}
-	 * 
-	 * @author Shawn Hatch
-	 *
-	 */
-	public static class Builder {
-		/*
-		 * Hidden constructor
-		 */
-		private Builder() {
-
-		}
-
-		private Scaffold scaffold = new Scaffold();
-
-		/**
-		 * Sets the {@link SphericalArc} for the given index.
-		 */
-		public Builder setSphericalPoint(int index, SphericalPoint sphericalPoint) {
-			scaffold.sphericalPoints[index] = sphericalPoint;
-			return this;
-		}
-
-		/**
-		 * Returns the {@link SphericalTriangle} from the contributed
-		 * {@link SphericalPoint} values
-		 * 
-		 * @throws NullPointerException
-		 *             <li>if not all {@link SphericalPoint} values were
-		 *             contributed or were null
-		 * 
-		 */
-		public SphericalTriangle build() {
-			try {
-				return new SphericalTriangle(scaffold);
-			} finally {
-				scaffold = new Scaffold();
-			}
-		}
-	}
-
-	/**
 	 * Returns the shortest distance from the point to this triangle. Points on
 	 * the inside of the triangle will return 0.
 	 */
@@ -77,7 +35,7 @@ public class SphericalTriangle {
 		return result;
 	}
 
-	private static double getTangentialAngle(MutableVector3D v1, MutableVector3D v2, MutableVector3D v3) {
+	private static double getTangentialAngle(Vector3D v1, Vector3D v2, Vector3D v3) {
 		MutableVector3D p = new MutableVector3D();
 		p.assign(v1);
 		p.cross(v2);
@@ -91,31 +49,39 @@ public class SphericalTriangle {
 		return p.angle(q);
 	}
 
-	/*
-	 * Hidden constructor
+	/**
+	 * Constructs a {@link SphericalTriangle} from the given
+	 * {@link SphericalPoint} values.
 	 */
-	private SphericalTriangle(Scaffold scaffold) {
+	public SphericalTriangle(SphericalPoint xa, SphericalPoint xb, SphericalPoint xc) {
 
-		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
-			if (sphericalPoint == null) {
-				throw new NullPointerException("null/no spherical point contributed to build of spherical triangle");
-			}
+		if (xa == null) {
+			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
 		}
-		sphericalPoints = scaffold.sphericalPoints;
+
+		if (xb == null) {
+			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
+		}
+
+		if (xc == null) {
+			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
+		}
+
+		sphericalPoints = new SphericalPoint[] { xa, xb, xc };
+
 		sphericalArcs = new SphericalArc[3];
 
-		SphericalArc.Builder sphereicalArcBuilder = SphericalArc.builder();
 		for (int i = 0; i < 3; i++) {
-			sphereicalArcBuilder.setSphereicalPoint(0, sphericalPoints[i]);
-			sphereicalArcBuilder.setSphereicalPoint(1, sphericalPoints[(i + 1) % 3]);
-			sphericalArcs[i] = sphereicalArcBuilder.build();
+			SphericalPoint p1 = sphericalPoints[i];
+			SphericalPoint p2 = sphericalPoints[(i + 1) % 3];
+			sphericalArcs[i] = new SphericalArc(p1, p2);
 		}
 
-		spin = sphericalArcs[0].getSpin(sphericalPoints[2]);
+		chirality = sphericalArcs[0].getChirality(sphericalPoints[2]);
 
-		final MutableVector3D v0 = sphericalPoints[0].toVector3D();
-		final MutableVector3D v1 = sphericalPoints[1].toVector3D();
-		final MutableVector3D v2 = sphericalPoints[2].toVector3D();
+		final Vector3D v0 = sphericalPoints[0].getPosition();
+		final Vector3D v1 = sphericalPoints[1].getPosition();
+		final Vector3D v2 = sphericalPoints[2].getPosition();
 
 		final MutableVector3D perp = new MutableVector3D(v0);
 		perp.cross(v1);
@@ -140,7 +106,7 @@ public class SphericalTriangle {
 			c.reverse();
 		}
 		radius = c.distanceTo(v0);
-		
+
 		centroid = new Vector3D(c);
 
 		double alpha = getTangentialAngle(v0, v1, v2);
@@ -149,17 +115,6 @@ public class SphericalTriangle {
 
 		area = (alpha + beta + gamma) - FastMath.PI;
 
-	}
-
-	/**
-	 * Returns a new builder instance for {@link SphericalTriangle}
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-
-	private static class Scaffold {
-		SphericalPoint[] sphericalPoints = new SphericalPoint[3];
 	}
 
 	private final SphericalArc[] sphericalArcs;
@@ -172,16 +127,15 @@ public class SphericalTriangle {
 
 	private final double area;
 
-	private final Spin spin;
-	
-	
+	private final Chirality chirality;
+
 	/**
 	 * Returns true if and only if the given {@link SphericalPoint} is in the
 	 * interior or the arcs of this {@link SphericalTriangle}
 	 */
 	public boolean contains(SphericalPoint sphericalPoint) {
 		for (int i = 0; i < 3; i++) {
-			if (sphericalArcs[i].getSpin(sphericalPoint) != spin) {
+			if (sphericalArcs[i].getChirality(sphericalPoint) != chirality) {
 				return false;
 			}
 		}
@@ -211,11 +165,11 @@ public class SphericalTriangle {
 	}
 
 	/**
-	 * Returns the spin of this {@link SphericalTriangle} relative to the
+	 * Returns the {@link Chirality} of this {@link SphericalTriangle} relative to the
 	 * natural order of its SphericalPoints.
 	 */
-	public Spin getSpin() {
-		return spin;
+	public Chirality getChirality() {
+		return chirality;
 	}
 
 	/**
@@ -256,6 +210,11 @@ public class SphericalTriangle {
 	 * Point[0] and Point[1]. Arc[1] is formed(in order) from Point[1] and
 	 * Point[2]. Arc[2] is formed(in order) from Point[2] and Point[0].
 	 * 
+	 * @param index
+	 *            Values may be 0, 1 or 2
+	 * 
+	 * @throws IndexOutOfBoundsException
+	 *             if any other index is used
 	 */
 	public SphericalArc getSphericalArc(int index) {
 		return sphericalArcs[index];
@@ -264,6 +223,13 @@ public class SphericalTriangle {
 	/**
 	 * Returns the {@link SphericalPoint} that corresponds to the index and was
 	 * used to construct this {@link SphericalTriangle}
+	 * 
+	 * @param index
+	 *            Values may be 0, 1 or 2
+	 * 
+	 * @throws IndexOutOfBoundsException
+	 *             if any other index is used
+	 * 
 	 */
 	public SphericalPoint getSphericalpoint(int index) {
 		return sphericalPoints[index];

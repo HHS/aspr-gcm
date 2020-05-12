@@ -1,5 +1,8 @@
 package gcm.util.graph;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+
 /**
  * 
  * An enumeration of the three types of graph connectedness.
@@ -23,7 +26,7 @@ package gcm.util.graph;
  * @author Shawn Hatch
  * 
  */
-
+@Source(status = TestStatus.UNREQUIRED)
 public enum Connectedness {
 	STRONGLYCONNECTED, WEAKLYCONNECTED, DISCONNECTED
 }

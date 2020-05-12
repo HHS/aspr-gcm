@@ -20,7 +20,7 @@ import gcm.util.annotations.UnitTest;
 import gcm.util.dimensiontree.DimensionTree;
 
 /**
- * Test class for {@link DimensionTree }
+ * Test class for {@link DimensionTree}
  * 
  * @author Shawn Hatch
  *

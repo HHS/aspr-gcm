@@ -1,11 +1,10 @@
 package gcm.util.dimensiontree.internal;
 
-import java.awt.Dimension;
-
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.dimensiontree.DimensionTree;
 
-@Source(status = TestStatus.PROXY, proxy = Dimension.class)
+@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class Sphere implements Shape {
 
 	private final double radius;

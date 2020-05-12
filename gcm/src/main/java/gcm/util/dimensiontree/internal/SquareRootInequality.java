@@ -1,5 +1,10 @@
 package gcm.util.dimensiontree.internal;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import gcm.util.dimensiontree.DimensionTree;
+
+@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public final class SquareRootInequality {
 
 	private SquareRootInequality() {

@@ -1,6 +1,5 @@
 package gcm.util.dimensiontree.internal;
 
-import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,8 +7,9 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.dimensiontree.DimensionTree;
 
-@Source(status = TestStatus.PROXY, proxy = Dimension.class)
+@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class Node<T> {
 
 	public Node<T> parent = null;

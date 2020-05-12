@@ -1,9 +1,8 @@
 package gcm.util.dimensiontree.internal;
 
-import java.awt.Dimension;
-
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.dimensiontree.DimensionTree;
 
 /**
  * The common parameters shared by all nodes that takes up less memory than
@@ -12,7 +11,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = Dimension.class)
+@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class CommonState {
 
 	public final int leafSize;

@@ -403,15 +403,6 @@ public final class DimensionTree<T> {
 		return result;
 	}
 
-	public List<T> getAll_NEW() {
-		List<T> result = new ArrayList<>();
-		if (groupMap != null) {
-			result.addAll(groupMap.keySet());
-		} else {
-			root.getAllMembers(result);
-		}
-		return result;
-	}
 
 	/**
 	 * Retrieves all of the objects stored in the tree within the

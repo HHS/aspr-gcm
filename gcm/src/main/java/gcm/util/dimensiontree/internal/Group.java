@@ -1,7 +1,11 @@
 package gcm.util.dimensiontree.internal;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * Represent the members that are associated with a single position. Rather than
@@ -10,6 +14,7 @@ import java.util.List;
  * the same position. This is done to prevent infinite branching when there are
  * too many members at the same position.
  */
+@Source(status = TestStatus.PROXY, proxy = Dimension.class)
 public class Group<T> {
 
 	public Node<T> node;

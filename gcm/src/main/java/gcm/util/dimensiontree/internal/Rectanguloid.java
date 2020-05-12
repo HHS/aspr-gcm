@@ -1,7 +1,13 @@
 package gcm.util.dimensiontree.internal;
 
+import java.awt.Dimension;
+
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+
+@Source(status = TestStatus.PROXY, proxy = Dimension.class)
 public class Rectanguloid implements Shape {
 
 	private double[] position = new double[0];

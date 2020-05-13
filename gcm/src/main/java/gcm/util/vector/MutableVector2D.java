@@ -2,6 +2,8 @@ package gcm.util.vector;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.spherical.Chirality;
+
 /**
  * A mutable 2-dimensional vector class supporting common 2D transforms.
  *
@@ -350,7 +352,7 @@ public final class MutableVector2D {
 	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
 	 * 'Not a Number') and not infinite.
 	 */
-	public boolean isRealValued() {
+	public boolean isFinite() {
 		return !isNaN() && !isInfinite();
 	}
 
@@ -375,9 +377,9 @@ public final class MutableVector2D {
 	 * {@link MutableVector2D} under either a clockwise or counter clockwise
 	 * rotation.
 	 */
-	public void perpTo(final MutableVector2D v, final boolean clockwise) {
+	public void perpTo(final MutableVector2D v, final Chirality chirality) {
 		double newx, newy;
-		if (clockwise) {
+		if (chirality == Chirality.LEFT_HANDED) {
 			newx = v.y;
 			newy = -v.x;
 		} else {
@@ -392,9 +394,9 @@ public final class MutableVector2D {
 	 * Assigns this {@link MutableVector2D} to the values of the given
 	 * {@link Vector2D} under either a clockwise or counter clockwise rotation.
 	 */
-	public void perpTo(final Vector2D v, final boolean clockwise) {
+	public void perpTo(final Vector2D v, final Chirality chirality) {
 		double newx, newy;
-		if (clockwise) {
+		if (chirality == Chirality.LEFT_HANDED) {
 			newx = v.getY();
 			newy = -v.getX();
 		} else {
@@ -555,10 +557,10 @@ public final class MutableVector2D {
 	public boolean isPerpendicularTo(MutableVector2D v) {
 		return FastMath.abs(angle(v) - FastMath.PI / 2) < PERPENDICUALR_ANGLE_TOLERANCE;
 	}
-	
+
 	/**
-	 * Returns true if and only if this {@link Vector2D} is perpendicular
-	 * to the given {@link Vector2D} within the
+	 * Returns true if and only if this {@link Vector2D} is perpendicular to the
+	 * given {@link Vector2D} within the
 	 * {@link Vector3D#PERPENDICUALR_ANGLE_TOLERANCE}
 	 */
 	public boolean isPerpendicularTo(Vector2D v) {

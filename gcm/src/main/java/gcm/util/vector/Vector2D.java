@@ -4,6 +4,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.spherical.Chirality;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -271,7 +272,7 @@ public final class Vector2D {
 	 * Returns <tt>true</tt> if any of the vector components are not NaN (i.e.
 	 * 'Not a Number') and not infinite.
 	 */
-	public boolean isRealValued() {
+	public boolean isFinite() {
 		return !isNaN() && !isInfinite();
 	}
 
@@ -299,9 +300,9 @@ public final class Vector2D {
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
-	public Vector2D perpTo(final Vector2D v, final boolean clockwise) {
+	public Vector2D perpTo(final Vector2D v, final Chirality chirality) {
 		double newx, newy;
-		if (clockwise) {
+		if (chirality == Chirality.LEFT_HANDED) {
 			newx = v.y;
 			newy = -v.x;
 		} else {

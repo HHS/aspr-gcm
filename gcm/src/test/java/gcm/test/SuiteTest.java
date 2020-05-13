@@ -63,6 +63,8 @@ import gcm.test.automated.AT_StochasticPersonSelection;
 import gcm.test.automated.AT_StructuredScenarioBuilder;
 import gcm.test.automated.AT_TimeTrackingPolicy;
 import gcm.test.automated.AT_UnstructuredScenarioBuilder;
+import gcm.test.automated.AT_Vector2D;
+import gcm.test.automated.AT_Vector3D;
 import gcm.test.automated.AT_MutableVector2D;
 import gcm.test.automated.AT_MutableVector3D;
 
@@ -140,7 +142,9 @@ import gcm.test.automated.AT_MutableVector3D;
 	AT_LatLonBox.class,
 	AT_Earth.class,
 	AT_MutableVector3D.class,
-	AT_MutableVector2D.class
+	AT_MutableVector2D.class,
+	AT_Vector2D.class,
+	AT_Vector3D.class
 	})
 
 public class SuiteTest {

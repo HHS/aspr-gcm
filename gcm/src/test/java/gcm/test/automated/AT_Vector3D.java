@@ -24,7 +24,7 @@ import gcm.util.vector.Vector3D;
  */
 @UnitTest(target = Vector3D.class)
 public class AT_Vector3D {
-	
+
 	private static SeedProvider SEED_PROVIDER;
 
 	private static final double TOLERANCE = 0.000001;
@@ -40,7 +40,7 @@ public class AT_Vector3D {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		 System.out.println(AT_Vector3D.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		System.out.println(AT_Vector3D.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -67,7 +67,7 @@ public class AT_Vector3D {
 			Vector3D v2 = new Vector3D(x2, y2, z2);
 			v1 = v1.add(v2);
 
-			//Tests {@linkplain MutableVector3D#add(MutableVector3D)}
+			// Tests {@linkplain MutableVector3D#add(MutableVector3D)}
 			assertEquals(x1 + x2, v1.getX(), 0);
 			assertEquals(y1 + y2, v1.getY(), 0);
 			assertEquals(z1 + z2, v1.getZ(), 0);
@@ -75,16 +75,16 @@ public class AT_Vector3D {
 			v1 = new Vector3D(x1, y1, z1);
 			v1 = v1.add(x2, y2, z2);
 
-			//Tests {@linkplain Vector3D#add(double, double, double)}
+			// Tests {@linkplain Vector3D#add(double, double, double)}
 			assertEquals(x1 + x2, v1.getX(), 0);
 			assertEquals(y1 + y2, v1.getY(), 0);
 			assertEquals(z1 + z2, v1.getZ(), 0);
-			
+
 			v1 = new Vector3D(x1, y1, z1);
 			Vector3D v3 = new Vector3D(x2, y2, z2);
 			v1 = v1.add(v3);
 
-			//Tests {@linkplain Vector3D#add(Vector3D)}
+			// Tests {@linkplain Vector3D#add(Vector3D)}
 			assertEquals(x1 + x2, v1.getX(), 0);
 			assertEquals(y1 + y2, v1.getY(), 0);
 			assertEquals(z1 + z2, v1.getZ(), 0);
@@ -111,8 +111,8 @@ public class AT_Vector3D {
 		for (int i = 0; i < 100; i++) {
 
 			Vector3D v = new Vector3D();
-			
-			//Tests {@linkplain Vector3D#Vector3D()}
+
+			// Tests {@linkplain Vector3D#Vector3D()}
 			assertEquals(0, v.getX(), 0);
 			assertEquals(0, v.getY(), 0);
 			assertEquals(0, v.getZ(), 0);
@@ -123,22 +123,21 @@ public class AT_Vector3D {
 
 			v = new Vector3D(x, y, z);
 
-			//Tests {@linkplain Vector3D#Vector3D(double, double, double)}
+			// Tests {@linkplain Vector3D#Vector3D(double, double, double)}
 			assertEquals(x, v.getX(), 0);
 			assertEquals(y, v.getY(), 0);
 			assertEquals(z, v.getZ(), 0);
-			
+
 			MutableVector3D v2 = new MutableVector3D(v);
 
-			//Tests {@linkplain Vector3D#Vector3D(MutableVector3D)}
+			// Tests {@linkplain Vector3D#Vector3D(MutableVector3D)}
 			assertEquals(v.getX(), v2.getX(), 0);
 			assertEquals(v.getY(), v2.getY(), 0);
 			assertEquals(v.getZ(), v2.getZ(), 0);
-			
-			
+
 			Vector3D v3 = new Vector3D(v);
 
-			//Tests {@linkplain Vector3D#Vector3D(Vector3D)}
+			// Tests {@linkplain Vector3D#Vector3D(Vector3D)}
 			assertEquals(v.getX(), v3.getX(), 0);
 			assertEquals(v.getY(), v3.getY(), 0);
 			assertEquals(v.getZ(), v3.getZ(), 0);
@@ -146,9 +145,9 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#addScaled(MutableVector3D, double)}
+	 * Tests {@linkplain Vector3D#addScaled(MutableVector3D, double)}
 	 * 
-	 * Tests {@linkplain MutableVector3D#addScaled(Vector3D, double)}
+	 * Tests {@linkplain Vector3D#addScaled(Vector3D, double)}
 	 * 
 	 */
 	@Test
@@ -173,18 +172,17 @@ public class AT_Vector3D {
 
 			v1.addScaled(v2, scale);
 
-			//Tests {@linkplain MutableVector3D#addScaled(MutableVector3D, double)}
+			// Tests {@linkplain Vector3D#addScaled(MutableVector3D, double)}
 			assertEquals(x1 + x2 * scale, v1.getX(), 0);
 			assertEquals(y1 + y2 * scale, v1.getY(), 0);
 			assertEquals(z1 + z2 * scale, v1.getZ(), 0);
-			
-			
-			v1.assign(x1,y1,z1);
+
+			v1.assign(x1, y1, z1);
 			Vector3D v3 = new Vector3D(x2, y2, z2);
 			scale = randomGenerator.nextDouble() * 1000 - 500;
 			v1.addScaled(v3, scale);
-			
-			//Tests {@linkplain MutableVector3D#addScaled(Vector3D, double)}
+
+			// Tests {@linkplain Vector3D#addScaled(Vector3D, double)}
 			assertEquals(x1 + x2 * scale, v1.getX(), 0);
 			assertEquals(y1 + y2 * scale, v1.getY(), 0);
 			assertEquals(z1 + z2 * scale, v1.getZ(), 0);
@@ -192,9 +190,8 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#angle(MutableVector3D)}
 	 * 
-	 * Tests {@linkplain MutableVector3D#angle(Vector3D)}
+	 * Tests {@linkplain Vector3D#angle(Vector3D)}
 	 * 
 	 */
 	@Test
@@ -209,13 +206,13 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double length1 = FastMath.sqrt(x1 * x1 + y1 * y1 + z1 * z1);
 			double length2 = FastMath.sqrt(x2 * x2 + y2 * y2 + z2 * z2);
@@ -227,75 +224,11 @@ public class AT_Vector3D {
 
 			assertEquals(expectedValue, actualValue, TOLERANCE);
 
-			Vector3D v3 = new Vector3D(x2, y2, z2);
-			actualValue = v1.angle(v3);
-			assertEquals(expectedValue, actualValue, TOLERANCE);
-			
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#assign(MutableVector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#assign(double, double, double)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#assign(Vector3D)}
-	 * 
-	 */
-	@Test
-	public void testAssign() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(4);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (int i = 0; i < 100; i++) {
-
-			double x1 = randomGenerator.nextDouble() * 1000 - 500;
-			double y1 = randomGenerator.nextDouble() * 1000 - 500;
-			double z1 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
-
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-			double z2 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
-			v2.assign(v1);
-
-			//Tests {@linkplain MutableVector3D#assign(MutableVector3D)}
-			assertEquals(x1, v2.getX(), TOLERANCE);
-			assertEquals(y1, v2.getY(), TOLERANCE);
-			assertEquals(z1, v2.getZ(), TOLERANCE);
-
-			double x3 = randomGenerator.nextDouble() * 1000 - 500;
-			double y3 = randomGenerator.nextDouble() * 1000 - 500;
-			double z3 = randomGenerator.nextDouble() * 1000 - 500;
-
-			v2.assign(x3, y3, z3);
-
-			//Tests {@linkplain MutableVector3D#assign(double, double, double)}
-			assertEquals(x3, v2.getX(), TOLERANCE);
-			assertEquals(y3, v2.getY(), TOLERANCE);
-			assertEquals(z3, v2.getZ(), TOLERANCE);
-			
-			double x4 = randomGenerator.nextDouble() * 1000 - 500;
-			double y4 = randomGenerator.nextDouble() * 1000 - 500;
-			double z4 = randomGenerator.nextDouble() * 1000 - 500;
-			Vector3D v3 = new Vector3D(x4, y4, z4);
-			v2.assign(v3);
-
-			//Tests {@linkplain MutableVector3D#assign(Vector3D)}
-			assertEquals(x4, v2.getX(), TOLERANCE);
-			assertEquals(y4, v2.getY(), TOLERANCE);
-			assertEquals(z4, v2.getZ(), TOLERANCE);
-		}
-	}
-
-	/**
-	 * Tests {@linkplain MutableVector3D#cross(MutableVector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#cross(Vector3D))}
+	 * Tests {@linkplain Vector3D#cross(Vector3D))}
 	 */
 	@Test
 	public void testCross() {
@@ -309,7 +242,7 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
@@ -322,28 +255,14 @@ public class AT_Vector3D {
 			double y3 = x1 * z2 - x2 * z1;
 			double z3 = x2 * y1 - x1 * y2;
 
-			//Tests {@linkplain MutableVector3D#cross(MutableVector3D)}
 			assertEquals(x3, v2.getX(), TOLERANCE);
 			assertEquals(y3, v2.getY(), TOLERANCE);
 			assertEquals(z3, v2.getZ(), TOLERANCE);
-			
-			
-			v2.assign(x2,y2,z2);
-			Vector3D v3 = new Vector3D(x1, y1, z1);
-			v2.cross(v3);
-			
-			//Tests {@linkplain MutableVector3D#cross(Vector3D))}
-			assertEquals(x3, v2.getX(), TOLERANCE);
-			assertEquals(y3, v2.getY(), TOLERANCE);
-			assertEquals(z3, v2.getZ(), TOLERANCE);
-
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#distanceTo(MutableVector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#distanceTo(Vector3D)}
+	 * Tests {@linkplain Vector3D#distanceTo(Vector3D)}
 	 */
 	@Test
 	public void testDistanceTo() {
@@ -357,34 +276,25 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double expected = FastMath.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2));
 
 			double actual = v2.distanceTo(v1);
 
-			//Tests {@linkplain MutableVector3D#distanceTo(MutableVector3D)}
+			// Tests {@linkplain MutableVector3D#distanceTo(MutableVector3D)}
 			assertEquals(expected, actual, TOLERANCE);
-			
-			Vector3D v3 = new Vector3D(x1, y1, z1);
-			actual = v2.distanceTo(v3);
-			
-			//Tests {@linkplain MutableVector3D#distanceTo(Vector3D)}
-			assertEquals(expected, actual, TOLERANCE);
-
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#dot(MutableVector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#dot(Vector3D)}
+	 * Tests {@linkplain Vector3D#dot(Vector3D)}
 	 */
 	@Test
 	public void testDot() {
@@ -398,61 +308,24 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double expected = x1 * x2 + y1 * y2 + z1 * z2;
 
 			double actual = v2.dot(v1);
 
-			//Tests {@linkplain MutableVector3D#dot(MutableVector3D)}
-			assertEquals(expected, actual, TOLERANCE);
-			
-			Vector3D v3 = new Vector3D(v1);
-			actual = v2.dot(v3);
-			
-			//Tests {@linkplain MutableVector3D#dot(Vector3D)}
 			assertEquals(expected, actual, TOLERANCE);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#zero()}
-	 */
-	@Test
-	public void testZero() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(8);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (int i = 0; i < 100; i++) {
-
-			double x = randomGenerator.nextDouble() * 1000 - 500;
-			double y = randomGenerator.nextDouble() * 1000 - 500;
-			double z = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v = new MutableVector3D(x, y, z);
-
-			assertEquals(x, v.getX(), 0);
-			assertEquals(y, v.getY(), 0);
-			assertEquals(z, v.getZ(), 0);
-
-			v.zero();
-
-			assertEquals(0, v.getX(), 0);
-			assertEquals(0, v.getY(), 0);
-			assertEquals(0, v.getZ(), 0);
-
-		}
-	}
-
-	/**
-	 * Tests {@linkplain MutableVector3D#get(int)}
+	 * Tests {@linkplain Vector3D#get(int)}
 	 */
 	@Test
 	public void testGet() {
@@ -466,7 +339,7 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
 			assertEquals(x, v.get(0), 0);
 			assertEquals(y, v.get(1), 0);
@@ -476,7 +349,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#getX()}
+	 * Tests {@linkplain Vector3D#getX()}
 	 */
 	@Test
 	public void testGetX() {
@@ -490,14 +363,14 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
 			assertEquals(x, v.getX(), 0);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#getY()}
+	 * Tests {@linkplain Vector3D#getY()}
 	 */
 	@Test
 	public void testGetY() {
@@ -511,14 +384,14 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
 			assertEquals(y, v.getY(), 0);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#getZ()}
+	 * Tests {@linkplain Vector3D#getZ()}
 	 */
 	@Test
 	public void testGetZ() {
@@ -532,14 +405,14 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
 			assertEquals(z, v.getZ(), 0);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#scale(double)}
+	 * Tests {@linkplain Vector3D#scale(double)}
 	 */
 	@Test
 	public void testScale() {
@@ -553,10 +426,10 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			double scalar = randomGenerator.nextDouble() * 1000 - 500;
 
-			v.scale(scalar);
+			v = v.scale(scalar);
 
 			assertEquals(x * scalar, v.getX(), 0);
 			assertEquals(y * scalar, v.getY(), 0);
@@ -565,94 +438,9 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#setX(double)}
-	 */
-	@Test
-	public void testSetX() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(14);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (int i = 0; i < 100; i++) {
-
-			double x = randomGenerator.nextDouble() * 1000 - 500;
-			double y = randomGenerator.nextDouble() * 1000 - 500;
-			double z = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v = new MutableVector3D(x, y, z);
-
-			double newX = randomGenerator.nextDouble() * 1000 - 500;
-
-			v.setX(newX);
-
-			assertEquals(newX, v.getX(), 0);
-			assertEquals(y, v.getY(), 0);
-			assertEquals(z, v.getZ(), 0);
-		}
-	}
-
-	/**
-	 * Tests {@linkplain MutableVector3D#setY(double)}
-	 */
-	@Test
-	public void testSetY() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(15);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (int i = 0; i < 100; i++) {
-
-			double x = randomGenerator.nextDouble() * 1000 - 500;
-			double y = randomGenerator.nextDouble() * 1000 - 500;
-			double z = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v = new MutableVector3D(x, y, z);
-
-			double newY = randomGenerator.nextDouble() * 1000 - 500;
-
-			v.setY(newY);
-
-			assertEquals(x, v.getX(), 0);
-			assertEquals(newY, v.getY(), 0);
-			assertEquals(z, v.getZ(), 0);
-
-		}
-	}
-
-	/**
-	 * Tests {@linkplain MutableVector3D#setZ(double)}
-	 */
-	@Test
-	public void testSetZ() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(16);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (int i = 0; i < 100; i++) {
-
-			double x = randomGenerator.nextDouble() * 1000 - 500;
-			double y = randomGenerator.nextDouble() * 1000 - 500;
-			double z = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v = new MutableVector3D(x, y, z);
-
-			double newZ = randomGenerator.nextDouble() * 1000 - 500;
-
-			v.setZ(newZ);
-
-			assertEquals(x, v.getX(), 0);
-			assertEquals(y, v.getY(), 0);
-			assertEquals(newZ, v.getZ(), 0);
-
-		}
-	}
-
-	/**
-	 * Tests {@linkplain MutableVector3D#sub(MutableVector3D)} 
+	 * Tests {@linkplain Vector3D#sub(Vector3D)}
 	 * 
-	 * Tests {@linkplain MutableVector3D#sub(Vector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#sub(double, double, double)}
+	 * Tests {@linkplain Vector3D#sub(double, double, double)}
 	 */
 	@Test
 	public void testSub() {
@@ -664,44 +452,34 @@ public class AT_Vector3D {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
-			v1.sub(v2);
+			v1 = v1.sub(v2);
 
-			//Tests {@linkplain MutableVector3D#sub(MutableVector3D)}
+			// Tests {@linkplain Vector3D#sub(MutableVector3D)}
 			assertEquals(x1 - x2, v1.getX(), 0);
 			assertEquals(y1 - y2, v1.getY(), 0);
 			assertEquals(z1 - z2, v1.getZ(), 0);
 
-			v1 = new MutableVector3D(x1, y1, z1);
-			v1.sub(x2, y2, z2);
+			v1 = new Vector3D(x1, y1, z1);
+			v1 = v1.sub(x2, y2, z2);
 
-			//Tests {@linkplain MutableVector3D#sub(double, double, double)}
+			// Tests {@linkplain Vector3D#sub(double, double, double)}
 			assertEquals(x1 - x2, v1.getX(), 0);
 			assertEquals(y1 - y2, v1.getY(), 0);
 			assertEquals(z1 - z2, v1.getZ(), 0);
-			
-			v1 = new MutableVector3D(x1, y1, z1);
-			Vector3D v3 = new Vector3D(v2);			
-			v1.sub(v3);
-			
-			//Tests {@linkplain MutableVector3D#sub(Vector3D)}
-			assertEquals(x1 - x2, v1.getX(), 0);
-			assertEquals(y1 - y2, v1.getY(), 0);
-			assertEquals(z1 - z2, v1.getZ(), 0);
-
 
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#isInfinite()}
+	 * Tests {@linkplain Vector3D#isInfinite()}
 	 * 
 	 */
 	@Test
@@ -714,44 +492,32 @@ public class AT_Vector3D {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
-			MutableVector3D v = new MutableVector3D();
 
-			v.assign(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			assertFalse(v.isInfinite());
-			v.setX(Double.POSITIVE_INFINITY);
+
+			v = new Vector3D(Double.POSITIVE_INFINITY, y, z);
 			assertTrue(v.isInfinite());
 
-			v.assign(x, y, z);
-			assertFalse(v.isInfinite());
-			v.setX(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(Double.NEGATIVE_INFINITY, y, z);
 			assertTrue(v.isInfinite());
 
-			v.assign(x, y, z);
-			assertFalse(v.isInfinite());
-			v.setY(Double.POSITIVE_INFINITY);
+			v = new Vector3D(x, Double.POSITIVE_INFINITY, z);
 			assertTrue(v.isInfinite());
 
-			v.assign(x, y, z);
-			assertFalse(v.isInfinite());
-			v.setY(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(x, Double.NEGATIVE_INFINITY, z);
 			assertTrue(v.isInfinite());
 
-			v.assign(x, y, z);
-			assertFalse(v.isInfinite());
-			v.setZ(Double.POSITIVE_INFINITY);
+			v = new Vector3D(x, y, Double.POSITIVE_INFINITY);
 			assertTrue(v.isInfinite());
 
-			v.assign(x, y, z);
-			assertFalse(v.isInfinite());
-			v.setZ(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(x, y, Double.NEGATIVE_INFINITY);
 			assertTrue(v.isInfinite());
-
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#isNaN()}
-	 * 
+	 * Tests {@linkplain Vector3D#isNaN()}
 	 */
 	@Test
 	public void testIsNaN() {
@@ -763,28 +529,22 @@ public class AT_Vector3D {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
-			MutableVector3D v = new MutableVector3D();
-
-			v.assign(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			assertFalse(v.isNaN());
-			v.setX(Double.NaN);
+
+			v = new Vector3D(Double.NaN, y, z);
 			assertTrue(v.isNaN());
 
-			v.assign(x, y, z);
-			assertFalse(v.isNaN());
-			v.setY(Double.NaN);
+			v = new Vector3D(x, Double.NaN, z);
 			assertTrue(v.isNaN());
 
-			v.assign(x, y, z);
-			assertFalse(v.isNaN());
-			v.setZ(Double.NaN);
+			v = new Vector3D(x, y, Double.NaN);
 			assertTrue(v.isNaN());
-
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#isFinite()}
+	 * Tests {@linkplain Vector3D#isFinite()}
 	 * 
 	 */
 	@Test
@@ -797,60 +557,42 @@ public class AT_Vector3D {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
-			MutableVector3D v = new MutableVector3D();
 
-			v.assign(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			assertTrue(v.isFinite());
-			v.setX(Double.NaN);
+
+			v = new Vector3D(Double.NaN, y, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setX(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(Double.NEGATIVE_INFINITY, y, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setX(Double.POSITIVE_INFINITY);
+			v = new Vector3D(Double.POSITIVE_INFINITY, y, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setY(Double.NaN);
+			v = new Vector3D(x, Double.NaN, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setY(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(x, Double.NEGATIVE_INFINITY, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setY(Double.POSITIVE_INFINITY);
+			v = new Vector3D(x, Double.POSITIVE_INFINITY, z);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setZ(Double.NaN);
+			v = new Vector3D(x, y, Double.NaN);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setZ(Double.NEGATIVE_INFINITY);
+			v = new Vector3D(x, y, Double.NEGATIVE_INFINITY);
 			assertFalse(v.isFinite());
 
-			v.assign(x, y, z);
-			assertTrue(v.isFinite());
-			v.setZ(Double.POSITIVE_INFINITY);
+			v = new Vector3D(x, y, Double.POSITIVE_INFINITY);
 			assertFalse(v.isFinite());
 
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#squareDistanceTo(MutableVector3D)}
-	 * 
-	 * Tests {@linkplain MutableVector3D#squareDistanceTo(Vector3D)}
+	 * Tests {@linkplain Vector3D#squareDistanceTo(Vector3D)}
 	 */
 	@Test
 	public void testSquareDistanceTo() {
@@ -864,31 +606,27 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double expected = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2) + (z1 - z2) * (z1 - z2);
 
 			double actual = v2.squareDistanceTo(v1);
 
-			//Tests {@linkplain MutableVector3D#squareDistanceTo(MutableVector3D)}
-			assertEquals(expected, actual, 0);
 			
-			Vector3D v3 = new Vector3D(v2);
-			actual = v1.squareDistanceTo(v3);
-
-			//Tests {@linkplain MutableVector3D#squareDistanceTo(Vector3D)}
 			assertEquals(expected, actual, 0);
+
+			
 		}
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#reverse()}
+	 * Tests {@linkplain Vector3D#reverse()}
 	 */
 	@Test
 	public void testReverse() {
@@ -902,8 +640,8 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
-			v.reverse();
+			Vector3D v = new Vector3D(x, y, z);
+			v = v.reverse();
 
 			assertEquals(-x, v.getX(), 0);
 			assertEquals(-y, v.getY(), 0);
@@ -912,7 +650,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#length()}
+	 * Tests {@linkplain Vector3D#length()}
 	 */
 	@Test
 	public void testLength() {
@@ -926,7 +664,7 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			double expectedLength = FastMath.sqrt(x * x + y * y + z * z);
 			double actualLength = v.length();
 
@@ -935,7 +673,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#squareLength()}
+	 * Tests {@linkplain Vector3D#squareLength()}
 	 */
 	@Test
 	public void testSquareLength() {
@@ -949,7 +687,7 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			double expectedLength = x * x + y * y + z * z;
 			double actualLength = v.squareLength();
 
@@ -958,7 +696,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#toArray()}
+	 * Tests {@linkplain Vector3D#toArray()}
 	 */
 	@Test
 	public void testToArray() {
@@ -972,7 +710,7 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 			double[] array = v.toArray();
 
 			assertEquals(v.getX(), array[0], 0);
@@ -982,7 +720,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#normalize()}
+	 * Tests {@linkplain Vector3D#normalize()}
 	 */
 	@Test
 	public void testNormalize() {
@@ -996,8 +734,8 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
-			v.normalize();
+			Vector3D v = new Vector3D(x, y, z);
+			v=v.normalize();
 
 			assertEquals(1, v.length(), TOLERANCE);
 
@@ -1005,7 +743,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#isNormal()}
+	 * Tests {@linkplain Vector3D#isNormal()}
 	 */
 	@Test
 	public void testisNormal() {
@@ -1019,19 +757,19 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
-			if (FastMath.abs(v.length() - 1) > MutableVector3D.NORMAL_LENGTH_TOLERANCE) {
-				v.normalize();
+			if (FastMath.abs(v.length() - 1) > Vector3D.NORMAL_LENGTH_TOLERANCE) {
+				v=v.normalize();
 				assertTrue(v.isNormal());
 				activeTestCount++;
 
-				MutableVector3D u = new MutableVector3D(v);
-				u.scale(1 - 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				Vector3D u = new Vector3D(v);
+				u=u.scale(1 - 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
 				assertFalse(u.isNormal());
 
-				u = new MutableVector3D(v);
-				u.scale(1 + 2 * MutableVector3D.NORMAL_LENGTH_TOLERANCE);
+				u = new Vector3D(v);
+				u=u.scale(1 + 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
 				assertFalse(u.isNormal());
 			}
 		}
@@ -1039,8 +777,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#isPerpendicularTo(MutableVector3D)}
-	 * Tests {@linkplain MutableVector3D#isPerpendicularTo(Vector3D)}
+	 * Tests {@linkplain Vector3D#isPerpendicularTo(Vector3D)}
 	 */
 	@Test
 	public void testIsPerpendicularTo() {
@@ -1054,41 +791,13 @@ public class AT_Vector3D {
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
 			double z1 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
+			Vector3D v1 = new Vector3D(x1, y1, z1);
 
 			double x2 = randomGenerator.nextDouble() * 1000 - 500;
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
-
-			MutableVector3D v3 = new MutableVector3D(v1);
-			v3.rotateToward(v2, FastMath.toRadians(90));
-
-			assertTrue(v1.isPerpendicularTo(v3));
-
-			v3 = new MutableVector3D(v1);
-			v3.rotateToward(v2, FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
-			assertFalse(v1.isPerpendicularTo(v3));
-
-			v3 = new MutableVector3D(v1);
-			v3.rotateToward(v2, FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
-			assertFalse(v1.isPerpendicularTo(v3));
-		}
-		
-		for (int i = 0; i < 100; i++) {
-
-			double x1 = randomGenerator.nextDouble() * 1000 - 500;
-			double y1 = randomGenerator.nextDouble() * 1000 - 500;
-			double z1 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v1 = new MutableVector3D(x1, y1, z1);
-
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-			double z2 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			Vector3D v3 = new Vector3D(v1);
 			v3 = v3.rotateToward(new Vector3D(v2), FastMath.toRadians(90));
@@ -1096,18 +805,18 @@ public class AT_Vector3D {
 			assertTrue(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector3D(v1);
-			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 - 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 - 2 * Vector3D.PERPENDICUALR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 
 			v3 = new Vector3D(v1);
-			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 + 2 * MutableVector3D.PERPENDICUALR_ANGLE_TOLERANCE);
+			v3 = v3.rotateToward(new Vector3D(v2), FastMath.PI / 2 + 2 * Vector3D.PERPENDICUALR_ANGLE_TOLERANCE);
 			assertFalse(v1.isPerpendicularTo(v3));
 		}
 
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#equals()}
+	 * Tests {@linkplain Vector3D#equals()}
 	 */
 	@Test
 	public void testEquals() {
@@ -1121,11 +830,11 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x, y, z);
+			Vector3D v1 = new Vector3D(x, y, z);
 
-			MutableVector3D v2 = new MutableVector3D(x, y, z);
+			Vector3D v2 = new Vector3D(x, y, z);
 
-			MutableVector3D v3 = new MutableVector3D(x, y, z);
+			Vector3D v3 = new Vector3D(x, y, z);
 
 			// reflexive
 			assertEquals(v1, v1);
@@ -1143,7 +852,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#hashCode()}
+	 * Tests {@linkplain Vector3D#hashCode()}
 	 */
 	@Test
 	public void testHashCode() {
@@ -1157,9 +866,9 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v1 = new MutableVector3D(x, y, z);
+			Vector3D v1 = new Vector3D(x, y, z);
 
-			MutableVector3D v2 = new MutableVector3D(x, y, z);
+			Vector3D v2 = new Vector3D(x, y, z);
 
 			assertEquals(v1.hashCode(), v2.hashCode());
 
@@ -1167,7 +876,7 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#toString()}
+	 * Tests {@linkplain Vector3D#toString()}
 	 */
 	@Test
 	public void testToString() {
@@ -1181,7 +890,7 @@ public class AT_Vector3D {
 			double y = randomGenerator.nextDouble() * 1000 - 500;
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v = new MutableVector3D(x, y, z);
+			Vector3D v = new Vector3D(x, y, z);
 
 			String expected = "Vector3D [x=" + x + ", y=" + y + ", z=" + z + "]";
 
@@ -1192,55 +901,17 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#rotateAbout(MutableVector3D, double)}
+	 * Tests {@linkplain Vector3D#rotateAbout(Vector3D, double)}
 	 * 
-	 * Tests {@linkplain MutableVector3D#rotateAbout(Vector3D, double)}
 	 */
 	@Test
 	public void testRotateAbout() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(30);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		//Tests {@linkplain MutableVector3D#rotateAbout(MutableVector3D, double)}
-		for (int i = 0; i < 100; i++) {
 
-			// v1 will be used as a rotator, so we ensure that it has a
-			// reasonable length
-			MutableVector3D v1 = new MutableVector3D();
-			while (v1.length() < 0.0000001) {
-				double x1 = randomGenerator.nextDouble() * 1000 - 500;
-				double y1 = randomGenerator.nextDouble() * 1000 - 500;
-				double z1 = randomGenerator.nextDouble() * 1000 - 500;
-				v1 = new MutableVector3D(x1, y1, z1);
-			}
 
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-			double z2 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
-
-			double theta = randomGenerator.nextDouble() * 2 * FastMath.PI;
-
-			MutableVector3D v = new MutableVector3D(v2);
-
-			v.rotateAbout(v1, theta);
-
-			// v2 under rotation should have its length preserved
-			assertEquals(v2.length(), v.length(), TOLERANCE);
-
-			// v2 under rotation should have its angle to v1 preserved
-			assertEquals(v2.angle(v1), v.angle(v1), TOLERANCE);
-
-			// v2 when rotated back should return to its original position
-			v.rotateAbout(v1, -theta);
-			assertEquals(v2.getX(), v.getX(), TOLERANCE);
-			assertEquals(v2.getY(), v.getY(), TOLERANCE);
-			assertEquals(v2.getZ(), v.getZ(), TOLERANCE);
-
-		}
 		
-		//Tests {@linkplain MutableVector3D#rotateAbout(Vector3D, double)}
 		for (int i = 0; i < 100; i++) {
 
 			// v1 will be used as a rotator, so we ensure that it has a
@@ -1257,13 +928,13 @@ public class AT_Vector3D {
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double theta = randomGenerator.nextDouble() * 2 * FastMath.PI;
 
-			MutableVector3D v = new MutableVector3D(v2);
+			Vector3D v = new Vector3D(v2);
 
-			v.rotateAbout(v1, theta);
+			v=v.rotateAbout(v1, theta);
 
 			// v2 under rotation should have its length preserved
 			assertEquals(v2.length(), v.length(), TOLERANCE);
@@ -1272,7 +943,7 @@ public class AT_Vector3D {
 			assertEquals(v2.angle(v1), v.angle(v1), TOLERANCE);
 
 			// v2 when rotated back should return to its original position
-			v.rotateAbout(v1, -theta);
+			v=v.rotateAbout(v1, -theta);
 			assertEquals(v2.getX(), v.getX(), TOLERANCE);
 			assertEquals(v2.getY(), v.getY(), TOLERANCE);
 			assertEquals(v2.getZ(), v.getZ(), TOLERANCE);
@@ -1281,82 +952,15 @@ public class AT_Vector3D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector3D#rotateToward(MutableVector3D, double)}
 	 * 
-	 * Tests {@linkplain MutableVector3D#rotateToward(Vector3D, double)}
+	 * Tests {@linkplain Vector3D#rotateToward(Vector3D, double)}
 	 */
 	@Test
 	public void testRotateToward() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(31);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		
-		
-		//Tests {@linkplain MutableVector3D#rotateToward(MutableVector3D, double)}
-		for (int i = 0; i < 100; i++) {
-
-			// v1 will be used as a rotator, so we ensure that it has a
-			// reasonable length
-			MutableVector3D v1 = new MutableVector3D();
-			while (v1.length() < 0.0000001) {
-				double x1 = randomGenerator.nextDouble() * 1000 - 500;
-				double y1 = randomGenerator.nextDouble() * 1000 - 500;
-				double z1 = randomGenerator.nextDouble() * 1000 - 500;
-				v1 = new MutableVector3D(x1, y1, z1);
-			}
-
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-			double z2 = randomGenerator.nextDouble() * 1000 - 500;
-
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
-
-			double theta = randomGenerator.nextDouble() * 2 * FastMath.PI;
-
-			MutableVector3D v = new MutableVector3D(v2);
-
-			v.rotateToward(v1, theta);
-			double angle = v1.angle(v2);
-
-			// v2 under rotation should have its length preserved
-			assertEquals(v2.length(), v.length(), TOLERANCE);
-
-			// v2 under rotation should have its angle to v1 changed by theta
-			double expectedAngle = theta - angle;
-			while (expectedAngle < 0) {
-				expectedAngle += FastMath.PI * 2;
-			}
-			while (expectedAngle > 2 * FastMath.PI) {
-				expectedAngle -= 2 * FastMath.PI;
-			}
-			while (expectedAngle > FastMath.PI) {
-				expectedAngle = 2 * FastMath.PI - expectedAngle;
-			}
-
-			double actualAngle = v.angle(v1);
-
-			assertEquals(expectedAngle, actualAngle, TOLERANCE);
-
-			// v2 when rotated back should return to its original position
-			MutableVector3D a = new MutableVector3D(v2);
-			a.cross(v1);
-
-			MutableVector3D b = new MutableVector3D(v);
-			b.cross(v1);
-
-			if (a.dot(b) > 0) {
-				v.rotateToward(v1, -theta);
-			} else {
-				v.rotateToward(v1, theta);
-			}
-
-			assertEquals(v2.getX(), v.getX(), TOLERANCE);
-			assertEquals(v2.getY(), v.getY(), TOLERANCE);
-			assertEquals(v2.getZ(), v.getZ(), TOLERANCE);
-
-		}
-		
-		//Tests {@linkplain MutableVector3D#rotateToward(Vector3D, double)}
+	
 		for (int i = 0; i < 100; i++) {
 
 			// v1 will be used as a rotator, so we ensure that it has a
@@ -1373,13 +977,13 @@ public class AT_Vector3D {
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			double z2 = randomGenerator.nextDouble() * 1000 - 500;
 
-			MutableVector3D v2 = new MutableVector3D(x2, y2, z2);
+			Vector3D v2 = new Vector3D(x2, y2, z2);
 
 			double theta = randomGenerator.nextDouble() * 2 * FastMath.PI;
 
-			MutableVector3D v = new MutableVector3D(v2);
+			Vector3D v = new Vector3D(v2);
 
-			v.rotateToward(v1, theta);
+			v = v.rotateToward(v1, theta);
 			double angle = v2.angle(v1);
 
 			// v2 under rotation should have its length preserved
@@ -1402,16 +1006,16 @@ public class AT_Vector3D {
 			assertEquals(expectedAngle, actualAngle, TOLERANCE);
 
 			// v2 when rotated back should return to its original position
-			MutableVector3D a = new MutableVector3D(v2);
-			a.cross(v1);
+			Vector3D a = new Vector3D(v2);
+			a = a.cross(v1);
 
-			MutableVector3D b = new MutableVector3D(v);
-			b.cross(v1);
+			Vector3D b = new Vector3D(v);
+			b = b.cross(v1);
 
 			if (a.dot(b) > 0) {
-				v.rotateToward(v1, -theta);
+				v = v.rotateToward(v1, -theta);
 			} else {
-				v.rotateToward(v1, theta);
+				v = v.rotateToward(v1, theta);
 			}
 
 			assertEquals(v2.getX(), v.getX(), TOLERANCE);

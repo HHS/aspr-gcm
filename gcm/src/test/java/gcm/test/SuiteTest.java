@@ -51,6 +51,8 @@ import gcm.test.automated.AT_MemoryPartition;
 import gcm.test.automated.AT_MemoryReportItem;
 import gcm.test.automated.AT_MultiKey;
 import gcm.test.automated.AT_MutableStat;
+import gcm.test.automated.AT_MutableVector2D;
+import gcm.test.automated.AT_MutableVector3D;
 import gcm.test.automated.AT_ObjectValueContainer;
 import gcm.test.automated.AT_PlanningQueueReportItem;
 import gcm.test.automated.AT_PropertyDefinition;
@@ -58,6 +60,9 @@ import gcm.test.automated.AT_ReplicationImpl;
 import gcm.test.automated.AT_ReportPeriod;
 import gcm.test.automated.AT_Simulation;
 import gcm.test.automated.AT_SimulationErrorType;
+import gcm.test.automated.AT_SphericalArc;
+import gcm.test.automated.AT_SphericalPoint;
+import gcm.test.automated.AT_SphericalTriangle;
 import gcm.test.automated.AT_StateChange;
 import gcm.test.automated.AT_StochasticPersonSelection;
 import gcm.test.automated.AT_StructuredScenarioBuilder;
@@ -65,8 +70,6 @@ import gcm.test.automated.AT_TimeTrackingPolicy;
 import gcm.test.automated.AT_UnstructuredScenarioBuilder;
 import gcm.test.automated.AT_Vector2D;
 import gcm.test.automated.AT_Vector3D;
-import gcm.test.automated.AT_MutableVector2D;
-import gcm.test.automated.AT_MutableVector3D;
 
 /**
  * This class executes automated JUnit tests for GCM. Automated tests are noted
@@ -144,7 +147,10 @@ import gcm.test.automated.AT_MutableVector3D;
 	AT_MutableVector3D.class,
 	AT_MutableVector2D.class,
 	AT_Vector2D.class,
-	AT_Vector3D.class
+	AT_Vector3D.class,
+	AT_SphericalPoint.class,
+	AT_SphericalArc.class,
+	AT_SphericalTriangle.class
 	})
 
 public class SuiteTest {

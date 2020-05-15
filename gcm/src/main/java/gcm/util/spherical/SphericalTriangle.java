@@ -53,21 +53,21 @@ public class SphericalTriangle {
 	 * Constructs a {@link SphericalTriangle} from the given
 	 * {@link SphericalPoint} values.
 	 */
-	public SphericalTriangle(SphericalPoint xa, SphericalPoint xb, SphericalPoint xc) {
+	public SphericalTriangle(SphericalPoint sphericalPoint1, SphericalPoint sphericalPoint2, SphericalPoint sphericalPoint3) {
 
-		if (xa == null) {
+		if (sphericalPoint1 == null) {
 			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
 		}
 
-		if (xb == null) {
+		if (sphericalPoint2 == null) {
 			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
 		}
 
-		if (xc == null) {
+		if (sphericalPoint3 == null) {
 			throw new MalformedSphericalTriangleException("null/no spherical point contributed to build of spherical triangle");
 		}
 
-		sphericalPoints = new SphericalPoint[] { xa, xb, xc };
+		sphericalPoints = new SphericalPoint[] { sphericalPoint1, sphericalPoint2, sphericalPoint3 };
 
 		sphericalArcs = new SphericalArc[3];
 
@@ -105,7 +105,7 @@ public class SphericalTriangle {
 		if (leftHanded) {
 			c.reverse();
 		}
-		radius = c.distanceTo(v0);
+		radius = c.angle(v0);
 
 		centroid = new Vector3D(c);
 
@@ -150,7 +150,7 @@ public class SphericalTriangle {
 	}
 
 	/**
-	 * Returns the centroid point of this {@link SphericalTriangle}
+	 * Returns the centroid point (a unit vector) of this {@link SphericalTriangle}
 	 */
 	public Vector3D getCentroid() {
 		return centroid;
@@ -178,10 +178,10 @@ public class SphericalTriangle {
 	 */
 	public boolean intersects(SphericalTriangle sphericalTriangle) {
 		for (int i = 0; i < 3; i++) {
-			if (contains(sphericalTriangle.getSphericalpoint(i))) {
+			if (contains(sphericalTriangle.getSphericalPoint(i))) {
 				return true;
 			}
-			if (sphericalTriangle.contains(getSphericalpoint(i))) {
+			if (sphericalTriangle.contains(getSphericalPoint(i))) {
 				return true;
 			}
 		}
@@ -231,7 +231,7 @@ public class SphericalTriangle {
 	 *             if any other index is used
 	 * 
 	 */
-	public SphericalPoint getSphericalpoint(int index) {
+	public SphericalPoint getSphericalPoint(int index) {
 		return sphericalPoints[index];
 	}
 

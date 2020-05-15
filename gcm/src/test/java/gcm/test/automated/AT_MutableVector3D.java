@@ -31,7 +31,7 @@ public class AT_MutableVector3D {
 
 	@BeforeClass
 	public static void beforeClass() {
-		SEED_PROVIDER = new SeedProvider(45624564585678567L);
+		SEED_PROVIDER = new SeedProvider(12342345345L);
 	}
 
 	/**

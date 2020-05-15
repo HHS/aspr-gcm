@@ -32,7 +32,7 @@ public class AT_Vector2D {
 
 	@BeforeClass
 	public static void beforeClass() {
-		SEED_PROVIDER = new SeedProvider(45624564585678567L);
+		SEED_PROVIDER = new SeedProvider(346345534578886785L);
 	}
 
 	/**

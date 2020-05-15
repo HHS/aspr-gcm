@@ -43,7 +43,7 @@ public final class SphericalPoint {
 	 */
 	public SphericalPoint(MutableVector3D v) {
 		position = new Vector3D(v).normalize();
-		if (!v.isNormal()) {
+		if (!position.isNormal()) {
 			throw new MalformedSphericalPointException("data cannot be normalized onto the unit sphere");
 		}
 	}
@@ -57,4 +57,14 @@ public final class SphericalPoint {
 		return position;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SphericalPoint [position=");
+		builder.append(position);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
 }

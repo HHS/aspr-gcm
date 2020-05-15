@@ -28,7 +28,7 @@ public class AT_LatLon {
 
 	@BeforeClass
 	public static void beforeClass() {
-		SEED_PROVIDER = new SeedProvider(45624564585678567L);
+		SEED_PROVIDER = new SeedProvider(3478756697899L);
 	}
 
 	/**

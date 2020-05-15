@@ -1,5 +1,7 @@
 package gcm.util.spherical;
 
+import java.util.Arrays;
+
 import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
@@ -43,13 +45,13 @@ public class SphericalArc {
 		sphericalPoints = new SphericalPoint[] { sphericalPoint1, sphericalPoint2 };
 		perp = sphericalPoint1.getPosition().cross(sphericalPoint2.getPosition()).normalize();
 		if (!perp.isNormal()) {
-			throw new NullPointerException("spherical points too similar to form arc");
+			throw new MalformedSphericalArcException("spherical points too similar to form arc");
 		}
 		if (!perp.isPerpendicularTo(sphericalPoint1.getPosition())) {
-			throw new NullPointerException("spherical points too similar to form arc");
+			throw new MalformedSphericalArcException("spherical points too similar to form arc");
 		}
 		if (!perp.isPerpendicularTo(sphericalPoint2.getPosition())) {
-			throw new NullPointerException("spherical points too similar to form arc");
+			throw new MalformedSphericalArcException("spherical points too similar to form arc");
 		}
 		length = sphericalPoint1.getPosition().angle(sphericalPoint2.getPosition());
 	}
@@ -59,6 +61,9 @@ public class SphericalArc {
 	/**
 	 * Returns the {@link Chirality} of a SphericalPoint relative to this
 	 * SphericalArc in the natural order of its SphericalPoints.
+	 * 
+	 * @throws NullPointerException
+	 * <li> if the given {@link SphericalPoint} is null
 	 * 
 	 * @param sphericalPoint
 	 * @return
@@ -80,6 +85,9 @@ public class SphericalArc {
 	/**
 	 * Returns true if and only if this SphericalArc intersects the given
 	 * SphericalArc at a point
+	 * 
+	 * @throws NullPointerException
+	 *             <li>if the given arc is null
 	 * 
 	 * @param arc
 	 * @return
@@ -123,81 +131,68 @@ public class SphericalArc {
 	 */
 	public SphericalPoint getInterSection(SphericalArc arc) {
 
+		if (!intersectsArc(arc)) {
+			return null;
+		}
+		// we know the arcs intersect
 		Vector3D a = sphericalPoints[0].getPosition();
 		Vector3D b = sphericalPoints[1].getPosition();
 
-		Vector3D c = arc.getSphericalPoint(0).getPosition();
-		Vector3D d = arc.getSphericalPoint(0).getPosition();
+		
+		/*
+		 * The normal vector to each arc's plane will be perpendicular to the
+		 * solution, thus the solution is the cross product of these two
+		 * normals, or their reverse.
+		 */
+		Vector3D solution = perp.cross(arc.perp);
 
-		MutableVector3D p = new MutableVector3D(a);
-		p.cross(b);
-
-		// p o(a+sb) = p o(c+td)
-
-		double k = -p.dot(c) / p.dot(d);
-		if ((k < 0) || (k > 1)) {
-			return null;
+		/*
+		 * Does the solution lie on the first arc? It will lie on the arc's
+		 * plane. Thus, if we can show that the intersection lies between the
+		 * arc's end points then the solution is correct. Otherwise, the
+		 * solution must be reversed.
+		 * 
+		 */
+		boolean containedOnArc = a.cross(solution).dot(perp)>=0 && b.cross(solution).dot(perp)<=0;
+		if(!containedOnArc) {
+			solution = solution.reverse();
 		}
 
-		p.assign(c);
-		p.cross(d);
-
-		k = -p.dot(a) / p.dot(b);
-		if ((k < 0) || (k > 1)) {
-			return null;
-		}
-
-		b.scale(k);
-		b.add(a);
-		b.normalize();
-
-		double polar = FastMath.asin(b.getZ());
-		double cosPolar = FastMath.sqrt(1 - b.getZ() * b.getZ());
-		double cosAzimuth = b.getX() / cosPolar;
-		cosAzimuth = FastMath.min(1, cosAzimuth);
-		cosAzimuth = FastMath.max(-1, cosAzimuth);
-		double sinAzimuth = b.getY() / cosPolar;
-		sinAzimuth = FastMath.min(1, sinAzimuth);
-		sinAzimuth = FastMath.max(-1, sinAzimuth);
-		double azimuth = FastMath.acos(cosAzimuth);
-		if (FastMath.asin(sinAzimuth) < 0) {
-			azimuth *= -1;
-		}
-
-		return new SphericalPoint(new Vector3D(FastMath.cos(polar) * FastMath.cos(azimuth), FastMath.cos(polar) * FastMath.sin(azimuth), FastMath.sin(polar)));
+		return new SphericalPoint(solution);
 	}
 
 	/**
 	 * Returns the distance from the given {@linkplain SphericalPoint} to this
-	 * {@linkplain SphericalArc}
+	 * 
+	 * @throws NullPointerException
+	 *             <li>if the given {@link SphericalPoint} is null
 	 */
 	public double distanceTo(SphericalPoint sphericalPoint) {
 		Vector3D a = sphericalPoints[0].getPosition();
 		Vector3D b = sphericalPoints[1].getPosition();
 
 		/*
-		 * Create a normal to the plane containing the two end points --
+		 * Create a normal unit vector to the plane containing the two end
+		 * points --
 		 */
 		MutableVector3D p = new MutableVector3D(a);
 		p.cross(b);
+		p.normalize();
 
 		/*
-		 * Create a vector3D for the input
+		 * Create a vector for the input
 		 */
 		MutableVector3D q = new MutableVector3D(sphericalPoint.getPosition());
 
-		/*
-		 * Calculate the angle to rotate toward p such that q will move onto the
-		 * plane containing the end points
-		 */
-		double angle = q.angle(p) - FastMath.PI / 2;
+		// Create a new vector that is q's image in the plane of this arc
+		MutableVector3D qOnPlane = new MutableVector3D(p);
+		qOnPlane.scale(-p.dot(q));
+		qOnPlane.add(q);
 
 		/*
-		 * Create a new vector3D that is q rotated onto the plane containing the
-		 * end points
+		 * Calculate the angle from q to its image on the plane
 		 */
-		MutableVector3D qOnPlane = new MutableVector3D(q);
-		qOnPlane.rotateToward(p, angle);
+		double angle = q.angle(qOnPlane);
 
 		/*
 		 * If q lies between the end points, then return angle, otherwise return
@@ -216,8 +211,7 @@ public class SphericalArc {
 				 * qOnPlane, from the perspective of the normal, is CCW from A
 				 * and CW from B, so it lies between them
 				 */
-
-				return -angle;
+				return angle;
 			}
 		}
 
@@ -228,5 +222,16 @@ public class SphericalArc {
 		return FastMath.min(q.angle(a), q.angle(b));
 
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("SphericalArc [sphericalPoints=");
+		builder.append(Arrays.toString(sphericalPoints));
+		builder.append("]");
+		return builder.toString();
+	}
+	
+	
 
 }

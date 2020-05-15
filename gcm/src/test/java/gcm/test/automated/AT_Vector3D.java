@@ -40,7 +40,8 @@ public class AT_Vector3D {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_Vector3D.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_Vector3D.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -618,10 +619,8 @@ public class AT_Vector3D {
 
 			double actual = v2.squareDistanceTo(v1);
 
-			
 			assertEquals(expected, actual, 0);
 
-			
 		}
 	}
 
@@ -735,7 +734,7 @@ public class AT_Vector3D {
 			double z = randomGenerator.nextDouble() * 1000 - 500;
 
 			Vector3D v = new Vector3D(x, y, z);
-			v=v.normalize();
+			v = v.normalize();
 
 			assertEquals(1, v.length(), TOLERANCE);
 
@@ -748,7 +747,7 @@ public class AT_Vector3D {
 	@Test
 	public void testisNormal() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(32);
+		final long seed = SEED_PROVIDER.getSeedValue(8);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		int activeTestCount = 0;
@@ -760,16 +759,16 @@ public class AT_Vector3D {
 			Vector3D v = new Vector3D(x, y, z);
 
 			if (FastMath.abs(v.length() - 1) > Vector3D.NORMAL_LENGTH_TOLERANCE) {
-				v=v.normalize();
+				v = v.normalize();
 				assertTrue(v.isNormal());
 				activeTestCount++;
 
 				Vector3D u = new Vector3D(v);
-				u=u.scale(1 - 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
+				u = u.scale(1 - 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
 				assertFalse(u.isNormal());
 
 				u = new Vector3D(v);
-				u=u.scale(1 + 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
+				u = u.scale(1 + 2 * Vector3D.NORMAL_LENGTH_TOLERANCE);
 				assertFalse(u.isNormal());
 			}
 		}
@@ -782,7 +781,7 @@ public class AT_Vector3D {
 	@Test
 	public void testIsPerpendicularTo() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(33);
+		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		for (int i = 0; i < 100; i++) {
@@ -881,7 +880,7 @@ public class AT_Vector3D {
 	@Test
 	public void testToString() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(29);
+		final long seed = SEED_PROVIDER.getSeedValue(16);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		for (int i = 0; i < 100; i++) {
@@ -907,11 +906,9 @@ public class AT_Vector3D {
 	@Test
 	public void testRotateAbout() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(30);
+		final long seed = SEED_PROVIDER.getSeedValue(15);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-
-		
 		for (int i = 0; i < 100; i++) {
 
 			// v1 will be used as a rotator, so we ensure that it has a
@@ -934,7 +931,7 @@ public class AT_Vector3D {
 
 			Vector3D v = new Vector3D(v2);
 
-			v=v.rotateAbout(v1, theta);
+			v = v.rotateAbout(v1, theta);
 
 			// v2 under rotation should have its length preserved
 			assertEquals(v2.length(), v.length(), TOLERANCE);
@@ -943,7 +940,7 @@ public class AT_Vector3D {
 			assertEquals(v2.angle(v1), v.angle(v1), TOLERANCE);
 
 			// v2 when rotated back should return to its original position
-			v=v.rotateAbout(v1, -theta);
+			v = v.rotateAbout(v1, -theta);
 			assertEquals(v2.getX(), v.getX(), TOLERANCE);
 			assertEquals(v2.getY(), v.getY(), TOLERANCE);
 			assertEquals(v2.getZ(), v.getZ(), TOLERANCE);
@@ -958,9 +955,9 @@ public class AT_Vector3D {
 	@Test
 	public void testRotateToward() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(31);
+		final long seed = SEED_PROVIDER.getSeedValue(14);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-	
+
 		for (int i = 0; i < 100; i++) {
 
 			// v1 will be used as a rotator, so we ensure that it has a

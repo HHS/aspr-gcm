@@ -150,7 +150,8 @@ public class SphericalTriangle {
 	}
 
 	/**
-	 * Returns the centroid point (a unit vector) of this {@link SphericalTriangle}
+	 * Returns the centroid point (a unit vector) of this
+	 * {@link SphericalTriangle}
 	 */
 	public Vector3D getCentroid() {
 		return centroid;
@@ -165,8 +166,8 @@ public class SphericalTriangle {
 	}
 
 	/**
-	 * Returns the {@link Chirality} of this {@link SphericalTriangle} relative to the
-	 * natural order of its SphericalPoints.
+	 * Returns the {@link Chirality} of this {@link SphericalTriangle} relative
+	 * to the natural order of its SphericalPoints.
 	 */
 	public Chirality getChirality() {
 		return chirality;
@@ -187,19 +188,11 @@ public class SphericalTriangle {
 		}
 
 		for (int i = 0; i < 3; i++) {
-			SphericalArc proximalArc =
-
-					getSphericalArc(i);
-
-			for (int j = 0; j < 3; i++) {
-				SphericalArc distalArc = getSphericalArc(i);
-				if (proximalArc.intersectsArc(distalArc)) {
-					return true;
-				}
-
+			if (intersects(sphericalTriangle.getSphericalArc(i))) {
+				return true;
 			}
-
 		}
+
 		return false;
 	}
 

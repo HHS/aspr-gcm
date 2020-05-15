@@ -1,9 +1,9 @@
 package gcm.test.automated;
 
 import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.test.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
@@ -18,9 +18,7 @@ import gcm.util.spherical.MalformedSphericalTriangleException;
 import gcm.util.spherical.SphericalArc;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalTriangle;
-import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
-import static gcm.test.support.ExceptionAssertion.*;
 
 /**
  * Test class for {@link SphericalTriangle}
@@ -163,7 +161,68 @@ public class AT_SphericalTriangle {
 	@Test
 	public void testDistanceTo() {
 
-		fail();
+		final long seed = SEED_PROVIDER.getSeedValue(8);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		int containsCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			// Generate a randomized spherical triangle
+			double x1 = randomGenerator.nextDouble() * 2 - 1;
+			double y1 = randomGenerator.nextDouble() * 2 - 1;
+			double z1 = randomGenerator.nextDouble() * 2 - 1;
+
+			SphericalPoint sphericalPoint1 = new SphericalPoint(new Vector3D(x1, y1, z1));
+
+			double x2 = randomGenerator.nextDouble() * 2 - 1;
+			double y2 = randomGenerator.nextDouble() * 2 - 1;
+			double z2 = randomGenerator.nextDouble() * 2 - 1;
+
+			SphericalPoint sphericalPoint2 = new SphericalPoint(new Vector3D(x2, y2, z2));
+
+			double x3 = randomGenerator.nextDouble() * 2 - 1;
+			double y3 = randomGenerator.nextDouble() * 2 - 1;
+			double z3 = randomGenerator.nextDouble() * 2 - 1;
+
+			SphericalPoint sphericalPoint3 = new SphericalPoint(new Vector3D(x3, y3, z3));
+
+			SphericalTriangle sphericalTriangle = new SphericalTriangle(sphericalPoint1, sphericalPoint2, sphericalPoint3);
+
+			/*
+			 * Find the center of the triangle and use the triangle's radius to
+			 * generate a point that is nearby, but may be either inside or
+			 * outside the triangle.
+			 */
+
+			Vector3D centroid = sphericalTriangle.getCentroid();
+
+			double radius = sphericalTriangle.getRadius();
+
+			Vector3D north = new Vector3D(0, 0, 1);
+
+			Vector3D v = north.rotateAbout(centroid, randomGenerator.nextDouble() * 2 * FastMath.PI);
+
+			v = centroid.rotateToward(v, randomGenerator.nextDouble() * radius * 2);
+
+			SphericalPoint testPoint = new SphericalPoint(v);
+
+			double expectedDistance = 0;
+			if (!sphericalTriangle.contains(testPoint)) {
+				expectedDistance = Double.POSITIVE_INFINITY;
+				expectedDistance = FastMath.min(expectedDistance, sphericalTriangle.getSphericalArc(0).distanceTo(testPoint));
+				expectedDistance = FastMath.min(expectedDistance, sphericalTriangle.getSphericalArc(1).distanceTo(testPoint));
+				expectedDistance = FastMath.min(expectedDistance, sphericalTriangle.getSphericalArc(2).distanceTo(testPoint));
+			} else {
+				containsCount++;
+			}
+			double actualDistance = sphericalTriangle.distanceTo(testPoint);
+
+			assertEquals(expectedDistance, actualDistance, 1E-10);
+
+		}
+		/*
+		 * We show that there are at least a few hits and misses
+		 */
+		assertTrue(containsCount > 100);
+		assertTrue(containsCount < 900);
 
 	}
 
@@ -291,7 +350,42 @@ public class AT_SphericalTriangle {
 	 */
 	@Test
 	public void testGetChirality() {
-		fail();
+		final long seed = SEED_PROVIDER.getSeedValue(7);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+			// Generate a randomized spherical triangle
+			double x1 = randomGenerator.nextDouble() * 2 - 1;
+			double y1 = randomGenerator.nextDouble() * 2 - 1;
+			double z1 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v1 = new Vector3D(x1, y1, z1);
+			SphericalPoint sphericalPoint1 = new SphericalPoint(v1);
+
+			double x2 = randomGenerator.nextDouble() * 2 - 1;
+			double y2 = randomGenerator.nextDouble() * 2 - 1;
+			double z2 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v2 = new Vector3D(x2, y2, z2);
+			SphericalPoint sphericalPoint2 = new SphericalPoint(v2);
+
+			double x3 = randomGenerator.nextDouble() * 2 - 1;
+			double y3 = randomGenerator.nextDouble() * 2 - 1;
+			double z3 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v3 = new Vector3D(x3, y3, z3);
+			SphericalPoint sphericalPoint3 = new SphericalPoint(v3);
+
+			SphericalTriangle sphericalTriangle = new SphericalTriangle(sphericalPoint1, sphericalPoint2, sphericalPoint3);
+
+			SphericalArc sphericalArc = new SphericalArc(sphericalPoint1, sphericalPoint2);
+			Chirality expectedChirality = sphericalArc.getChirality(sphericalPoint3);
+
+			Chirality actualChirality = sphericalTriangle.getChirality();
+
+			assertEquals(expectedChirality, actualChirality);
+
+		}
 	}
 
 	/**
@@ -438,6 +532,159 @@ public class AT_SphericalTriangle {
 	 */
 	@Test
 	public void testIntersects() {
-		fail();
+		testIntersectsArc();
+		testIntersectsTriangle();
+	}
+
+	private void testIntersectsTriangle() {
+		final long seed = SEED_PROVIDER.getSeedValue(9);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		int intersectionCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			// Generate two randomized spherical triangles
+
+			double x0 = randomGenerator.nextDouble() * 2 - 1;
+			double y0 = randomGenerator.nextDouble() * 2 - 1;
+			double z0 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v0 = new Vector3D(x0, y0, z0);
+			SphericalPoint sphericalPoint0 = new SphericalPoint(v0);
+
+			double x1 = randomGenerator.nextDouble() * 2 - 1;
+			double y1 = randomGenerator.nextDouble() * 2 - 1;
+			double z1 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v1 = new Vector3D(x1, y1, z1);
+			SphericalPoint sphericalPoint1 = new SphericalPoint(v1);
+
+			double x2 = randomGenerator.nextDouble() * 2 - 1;
+			double y2 = randomGenerator.nextDouble() * 2 - 1;
+			double z2 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v2 = new Vector3D(x2, y2, z2);
+			SphericalPoint sphericalPoint2 = new SphericalPoint(v2);
+
+			SphericalTriangle sphericalTriangle1 = new SphericalTriangle(sphericalPoint0, sphericalPoint1, sphericalPoint2);
+
+			double x3 = randomGenerator.nextDouble() * 2 - 1;
+			double y3 = randomGenerator.nextDouble() * 2 - 1;
+			double z3 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v3 = new Vector3D(x3, y3, z3);
+			SphericalPoint sphericalPoint3 = new SphericalPoint(v3);
+
+			double x4 = randomGenerator.nextDouble() * 2 - 1;
+			double y4 = randomGenerator.nextDouble() * 2 - 1;
+			double z4 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v4 = new Vector3D(x4, y4, z4);
+			SphericalPoint sphericalPoint4 = new SphericalPoint(v4);
+
+			double x5 = randomGenerator.nextDouble() * 2 - 1;
+			double y5 = randomGenerator.nextDouble() * 2 - 1;
+			double z5 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v5 = new Vector3D(x5, y5, z5);
+			SphericalPoint sphericalPoint5 = new SphericalPoint(v5);
+
+			SphericalTriangle sphericalTriangle2 = new SphericalTriangle(sphericalPoint3, sphericalPoint4, sphericalPoint5);
+
+			// Does any point of either triangle lie inside the other triangle?
+			boolean expected = false;
+			for (int j = 0; j < 3; j++) {
+				expected |= sphericalTriangle1.contains(sphericalTriangle2.getSphericalPoint(j));
+				expected |= sphericalTriangle2.contains(sphericalTriangle1.getSphericalPoint(j));
+			}
+
+			// Does any arc of either triangle cross the other triangles
+			for (int j = 0; j < 3; j++) {
+				expected |= sphericalTriangle1.intersects(sphericalTriangle2.getSphericalArc(j));
+				expected |= sphericalTriangle2.intersects(sphericalTriangle1.getSphericalArc(j));
+			}
+			if(expected) {
+				intersectionCount++;
+			}
+
+			boolean actual = sphericalTriangle1.intersects(sphericalTriangle2);
+
+			assertEquals(expected, actual);
+
+		}
+		
+		assertTrue(intersectionCount>100);
+		assertTrue(intersectionCount<900);
+	}
+	
+	private void testIntersectsArc() {
+		final long seed = SEED_PROVIDER.getSeedValue(10);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		int intersectionCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			// Generate a randomized spherical triangle and a randomize spherical arc
+
+			double x0 = randomGenerator.nextDouble() * 2 - 1;
+			double y0 = randomGenerator.nextDouble() * 2 - 1;
+			double z0 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v0 = new Vector3D(x0, y0, z0);
+			SphericalPoint sphericalPoint0 = new SphericalPoint(v0);
+
+			double x1 = randomGenerator.nextDouble() * 2 - 1;
+			double y1 = randomGenerator.nextDouble() * 2 - 1;
+			double z1 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v1 = new Vector3D(x1, y1, z1);
+			SphericalPoint sphericalPoint1 = new SphericalPoint(v1);
+
+			double x2 = randomGenerator.nextDouble() * 2 - 1;
+			double y2 = randomGenerator.nextDouble() * 2 - 1;
+			double z2 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v2 = new Vector3D(x2, y2, z2);
+			SphericalPoint sphericalPoint2 = new SphericalPoint(v2);
+
+			SphericalTriangle sphericalTriangle = new SphericalTriangle(sphericalPoint0, sphericalPoint1, sphericalPoint2);
+
+			double x3 = randomGenerator.nextDouble() * 2 - 1;
+			double y3 = randomGenerator.nextDouble() * 2 - 1;
+			double z3 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v3 = new Vector3D(x3, y3, z3);
+			SphericalPoint sphericalPoint3 = new SphericalPoint(v3);
+
+			double x4 = randomGenerator.nextDouble() * 2 - 1;
+			double y4 = randomGenerator.nextDouble() * 2 - 1;
+			double z4 = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v4 = new Vector3D(x4, y4, z4);
+			SphericalPoint sphericalPoint4 = new SphericalPoint(v4);
+
+			
+
+			SphericalArc sphericalArc = new SphericalArc(sphericalPoint3, sphericalPoint4);
+
+			// Does any point of the arc lie inside the triangle?
+			boolean expected = false;
+			for (int j = 0; j < 2; j++) {
+				expected |= sphericalTriangle.contains(sphericalArc.getSphericalPoint(j));				
+			}
+
+			// Does any arc of the triangle cross the arc?
+			for (int j = 0; j < 3; j++) {
+				expected |= sphericalTriangle.getSphericalArc(j).intersectsArc(sphericalArc);				
+			}
+			if(expected) {
+				intersectionCount++;
+			}
+
+			boolean actual = sphericalTriangle.intersects(sphericalArc);
+
+			assertEquals(expected, actual);
+
+		}
+		assertTrue(intersectionCount>100);
+		assertTrue(intersectionCount<900);
 	}
 }

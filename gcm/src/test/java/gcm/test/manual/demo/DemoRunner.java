@@ -214,7 +214,7 @@ public class DemoRunner {
 
 		// add console output
 		experimentExecutor.setProduceSimulationStatusOutput(true);
-		experimentExecutor.setLogItemHandler(localLogItemHandler);
+		//experimentExecutor.setLogItemHandler(localLogItemHandler);
 		
 		// add profile data reports
 		// experimentExecutor.setProfileReport(outputdirectory.resolve("profile

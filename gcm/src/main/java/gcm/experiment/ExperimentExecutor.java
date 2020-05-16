@@ -226,11 +226,12 @@ public final class ExperimentExecutor {
 	 */
 	public void execute() {
 
-		if (scaffold.produceSimulationStatusOutput) {
-			if (scaffold.logItemHandler == null) {
-				scaffold.logItemHandler = new ConsoleLogItemHandler();
-			}
-			addOutputItemHandler(scaffold.logItemHandler);
+		if (scaffold.logItemHandler == null) {
+			scaffold.logItemHandler = new ConsoleLogItemHandler();
+		}
+		addOutputItemHandler(scaffold.logItemHandler);
+		
+		if (scaffold.produceSimulationStatusOutput) {			
 			addOutputItemHandler(new SimulationOutuptItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount, scaffold.logItemHandler));
 		}
 

@@ -18,9 +18,9 @@ import java.util.concurrent.Executors;
 
 import gcm.experiment.ExperimentProgressLog.ExperimentProgressLogBuilder;
 import gcm.output.OutputItemHandler;
+import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
 import gcm.output.reports.Report;
 import gcm.output.reports.ReportPeriod;
-import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
 import gcm.output.reports.commonreports.BatchStatusReport;
 import gcm.output.reports.commonreports.CompartmentPopulationReport;
 import gcm.output.reports.commonreports.CompartmentPropertyReport;
@@ -28,23 +28,25 @@ import gcm.output.reports.commonreports.CompartmentTransferReport;
 import gcm.output.reports.commonreports.GlobalPropertyReport;
 import gcm.output.reports.commonreports.GroupPopulationReport;
 import gcm.output.reports.commonreports.GroupPropertyReport;
+import gcm.output.reports.commonreports.GroupPropertyReport.GroupPropertyReportSettings;
 import gcm.output.reports.commonreports.MaterialsProducerPropertyReport;
 import gcm.output.reports.commonreports.MaterialsProducerResourceReport;
 import gcm.output.reports.commonreports.PersonPropertyInteractionReport;
 import gcm.output.reports.commonreports.PersonPropertyReport;
 import gcm.output.reports.commonreports.PersonResourceReport;
+import gcm.output.reports.commonreports.PersonResourceReport.PersonResourceReportOption;
 import gcm.output.reports.commonreports.RegionPropertyReport;
 import gcm.output.reports.commonreports.RegionTransferReport;
 import gcm.output.reports.commonreports.ResourcePropertyReport;
 import gcm.output.reports.commonreports.ResourceReport;
 import gcm.output.reports.commonreports.StageReport;
-import gcm.output.reports.commonreports.GroupPropertyReport.GroupPropertyReportSettings;
-import gcm.output.reports.commonreports.PersonResourceReport.PersonResourceReportOption;
-import gcm.output.simstate.ConsoleSimulationOutuptItemHandler;
+import gcm.output.simstate.ConsoleLogItemHandler;
+import gcm.output.simstate.LogItem;
 import gcm.output.simstate.NIOExperimentProgressLogger;
 import gcm.output.simstate.NIOMemoryReportItemHandler;
 import gcm.output.simstate.NIOPlanningQueueReportItemHandler;
 import gcm.output.simstate.NIOProfileItemHandler;
+import gcm.output.simstate.SimulationOutuptItemHandler;
 import gcm.replication.Replication;
 import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.PersonPropertyId;
@@ -78,7 +80,8 @@ public final class ExperimentExecutor {
 		private int replicationCount = 1;
 		private long seed;
 		private int threadCount;
-		boolean produceConsoleOutput;
+		private boolean produceSimulationStatusOutput;
+		private OutputItemHandler logItemHandler;
 		private Path profileReportPath;
 		private Path experimentProgressLogPath;
 		private ExperimentProgressLog experimentProgressLog = new ExperimentProgressLogBuilder().build();
@@ -223,8 +226,12 @@ public final class ExperimentExecutor {
 	 */
 	public void execute() {
 
-		if (scaffold.produceConsoleOutput) {
-			addOutputItemHandler(new ConsoleSimulationOutuptItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount));
+		if (scaffold.produceSimulationStatusOutput) {
+			if (scaffold.logItemHandler == null) {
+				scaffold.logItemHandler = new ConsoleLogItemHandler();
+			}
+			addOutputItemHandler(scaffold.logItemHandler);
+			addOutputItemHandler(new SimulationOutuptItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount, scaffold.logItemHandler));
 		}
 
 		if (scaffold.profileReportPath != null) {
@@ -281,34 +288,37 @@ public final class ExperimentExecutor {
 		}
 	}
 
-	private static class ScenarioCacheBlock{
+	private static class ScenarioCacheBlock {
 		private final Scenario scenario;
 		private int replicationCount;
-		public ScenarioCacheBlock(Scenario scenario){
+
+		public ScenarioCacheBlock(Scenario scenario) {
 			this.scenario = scenario;
 		}
 	}
-	
+
 	/*
 	 * A cache for scenarios to cut down on scenario generation costs.
-	 */	
+	 */
 	private static class ScenarioCache {
 		private final int replicationCount;
 		private final Experiment experiment;
-		private Map<Integer,ScenarioCacheBlock> cache = new LinkedHashMap<>();	
+		private Map<Integer, ScenarioCacheBlock> cache = new LinkedHashMap<>();
+
 		public ScenarioCache(int replicationCount, Experiment experiment) {
 			this.replicationCount = replicationCount;
 			this.experiment = experiment;
 		}
+
 		public Scenario getScenario(int scenarioIndex) {
 			ScenarioCacheBlock scenarioCacheBlock = cache.get(scenarioIndex);
-			if(scenarioCacheBlock == null) {
+			if (scenarioCacheBlock == null) {
 				Scenario scenario = experiment.getScenario(scenarioIndex);
 				scenarioCacheBlock = new ScenarioCacheBlock(scenario);
 				cache.put(scenarioIndex, scenarioCacheBlock);
 			}
 			scenarioCacheBlock.replicationCount++;
-			if(scenarioCacheBlock.replicationCount>=replicationCount) {
+			if (scenarioCacheBlock.replicationCount >= replicationCount) {
 				cache.remove(scenarioIndex);
 			}
 			return scenarioCacheBlock.scenario;
@@ -334,7 +344,7 @@ public final class ExperimentExecutor {
 			/*
 			 * Get the replications
 			 */
-			
+
 			ScenarioCache scenarioCache = new ScenarioCache(scaffold.replicationCount, scaffold.experiment);
 
 			final List<Replication> replications = Replication.getReplications(scaffold.replicationCount, scaffold.seed);
@@ -381,7 +391,8 @@ public final class ExperimentExecutor {
 				 */
 				while (jobIndex < Math.min(scaffold.threadCount, jobs.size()) - 1) {
 					Job job = jobs.get(jobIndex);
-					//Scenario scenario = scaffold.experiment.getScenario(job.scenarioIndex);
+					// Scenario scenario =
+					// scaffold.experiment.getScenario(job.scenarioIndex);
 					Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
 					Replication replication = replications.get(job.replicationIndex);
 					completionService.submit(new SimulationCallable(scenario, replication, scaffold.outputItemHandlers));
@@ -398,7 +409,8 @@ public final class ExperimentExecutor {
 				while (jobCompletionCount < jobs.size()) {
 					if (jobIndex < jobs.size()) {
 						Job job = jobs.get(jobIndex);
-						//Scenario scenario = scaffold.experiment.getScenario(job.scenarioIndex);
+						// Scenario scenario =
+						// scaffold.experiment.getScenario(job.scenarioIndex);
 						Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
 						Replication replication = replications.get(job.replicationIndex);
 						completionService.submit(new SimulationCallable(scenario, replication, scaffold.outputItemHandlers));
@@ -581,8 +593,16 @@ public final class ExperimentExecutor {
 	 * @param produceConsoleOutput
 	 *            turns on/off production of the experiment progress reporting
 	 */
-	public void setConsoleOutput(boolean produceConsoleOutput) {
-		scaffold.produceConsoleOutput = produceConsoleOutput;
+	public void setProduceSimulationStatusOutput(boolean produceSimulationStatusOutput) {
+		scaffold.produceSimulationStatusOutput = produceSimulationStatusOutput;
+	}
+
+	/**
+	 * Sets the {@link LogItem} handler for the experiment. Defaulted to null --
+	 * no logging.
+	 */
+	public void setLogItemHandler(OutputItemHandler logItemHandler) {
+		scaffold.logItemHandler = logItemHandler;
 	}
 
 	/**

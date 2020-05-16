@@ -17,7 +17,8 @@ import net.jcip.annotations.ThreadSafe;
 
 /**
  * An {@link OutputItemHandler} implementor that handles
- * {@link SimulationStatusItem} objects and displays them in a aggregated
+ * {@link SimulationStatusItem} and {@link SimulationWarningItem} objects and
+ * converts them into {@link LogItem} objects in an aggregated manner to log the
  * completion status for the experiment.
  * 
  * @author Shawn Hatch
@@ -26,7 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
 @Source(status = TestStatus.UNEXPECTED)
-public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandler {
+public final class SimulationOutuptItemHandler implements OutputItemHandler {
 	/*
 	 * Internal state guarded by this
 	 */
@@ -35,6 +36,8 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 	 * The size of the experiment = scenario count times replication count.
 	 */
 	private int experimentCount;
+
+	private OutputItemHandler logItemHandler;
 
 	/*
 	 * The number of successful simulation executions accumulated in the current
@@ -69,15 +72,16 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 	private List<SimulationStatusItem> failedSimulationStatusItems = new ArrayList<>();
 
 	/**
-	 * Constructor for {@link ConsoleSimulationOutuptItemHandler}
+	 * Constructor for {@link SimulationOutuptItemHandler}
 	 * 
 	 * @param scenarioCount
 	 *            the number of scenarios in the experiment
 	 * @param replicationCount
 	 *            the number of replications in the experiment
 	 */
-	public ConsoleSimulationOutuptItemHandler(int scenarioCount, int replicationCount) {
+	public SimulationOutuptItemHandler(int scenarioCount, int replicationCount, OutputItemHandler logItemHandler) {
 		experimentCount = scenarioCount * replicationCount;
+		this.logItemHandler = logItemHandler;
 	}
 
 	@Override
@@ -109,11 +113,40 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 
 		return h + ":" + getBase60String(m) + ":" + getBase60String(s);
 	}
+	
+	private OutputItem sourceOutputItem;
+	private final ScenarioId defaultScenarioId = new ScenarioId(0);
+	private final ReplicationId defaultReplicationId = new ReplicationId(0); 
+
+	private void log(LogStatus logStatus,String message) {
+		ReplicationId replicationId;
+		ScenarioId scenarioId;
+		if(sourceOutputItem != null) {
+			scenarioId = sourceOutputItem.getScenarioId();
+			replicationId = sourceOutputItem.getReplicationId();
+		}else {
+			scenarioId = defaultScenarioId;
+			replicationId = defaultReplicationId;
+		}
+		logItemHandler.handle(new LogItem(scenarioId, replicationId, logStatus, message));
+	}	
+	
+	private void logInfo(String message) {		
+		log(LogStatus.INFO, message);		
+	}
+
+	private void logError(String message) {
+		log(LogStatus.ERROR, message);		
+	}
+
+	private void logWarning(String message) {
+		log(LogStatus.WARNING, message);
+	}
 
 	@Override
 	public synchronized void closeExperiment() {
 		String timeExpression = getTimeExpression(timeElapser.getElapsedSeconds());
-		System.out.println();
+
 		int totalSuccessCount = previousProgressCount + successCount;
 		String experimentCompletionMessage;
 		if (previousProgressCount == 0) {
@@ -123,30 +156,32 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 					+ " scenario replications successfully completed in " + timeExpression;
 		}
 		if (totalSuccessCount != experimentCount) {
-			System.err.println(experimentCompletionMessage);
+			logError(experimentCompletionMessage);
 		} else {
-			System.out.println(experimentCompletionMessage);
+			logInfo(experimentCompletionMessage);
 		}
 		if (failedSimulationStatusItems.size() > 0) {
-			System.err.println("Failed simulations");
+			logError("Failed simulations");
 			int count = Math.min(100, failedSimulationStatusItems.size());
 			for (int i = 0; i < count; i++) {
 				SimulationStatusItem simulationStatusItem = failedSimulationStatusItems.get(i);
-				System.err.println("\t" + "Scenario " + simulationStatusItem.getScenarioId() + " Replication " + simulationStatusItem.getReplicationId());
+				logError("\t" + "Scenario " + simulationStatusItem.getScenarioId() + " Replication " + simulationStatusItem.getReplicationId());
 			}
 			if (failedSimulationStatusItems.size() > 100) {
-				System.err.println("\t...");
+				logError("\t...");
 			}
 		}
 	}
 
 	@Override
 	public synchronized void handle(OutputItem outputItem) {
+		sourceOutputItem = outputItem;
 		if (outputItem instanceof SimulationStatusItem) {
 			handleSimulationStatusItem((SimulationStatusItem) outputItem);
 		} else {
 			handleSimulationWarningItem((SimulationWarningItem) outputItem);
 		}
+		sourceOutputItem = null;
 	}
 
 	private final static int maxWarningCount = 20;
@@ -154,9 +189,8 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 
 	private void handleSimulationWarningItem(SimulationWarningItem simulationWarningItem) {
 		if (warningCount < maxWarningCount) {
-			warningCount++;
-			System.out.println("Simulation Warning for scenario " + simulationWarningItem.getScenarioId() + " replication " + simulationWarningItem.getReplicationId());
-			System.out.println(simulationWarningItem.getWarning());
+			warningCount++;			
+			logWarning(simulationWarningItem.getWarning());
 		}
 	}
 
@@ -178,7 +212,7 @@ public final class ConsoleSimulationOutuptItemHandler implements OutputItemHandl
 			int remainingExecutions = experimentCount - successCount - previousProgressCount - failedSimulationStatusItems.size();
 			double expectedRemainingTime = Math.round(averageTimePerExecution * remainingExecutions);
 			String timeExpression = getTimeExpression(expectedRemainingTime);
-			System.out.println(completionCount + " of " + experimentCount + " scenario replications, " + percentComplete + "% complete. Expected experiment completion in " + timeExpression);
+			logInfo(completionCount + " of " + experimentCount + " scenario replications, " + percentComplete + "% complete. Expected experiment completion in " + timeExpression);
 		}
 
 	}

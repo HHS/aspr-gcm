@@ -36,7 +36,7 @@ public class PopulationLoader extends AbstractComponent {
 			regionMap.put(regionId.toString(), regionId);
 		}
 
-		System.out.println("region map preparation " + timeElapser.getElapsedMilliSeconds());
+//		System.out.println("region map preparation " + timeElapser.getElapsedMilliSeconds());
 		timeElapser.reset();
 
 		Map<String, GroupId> homeIds = new LinkedHashMap<>();
@@ -100,7 +100,7 @@ public class PopulationLoader extends AbstractComponent {
 			throw new RuntimeException(e);
 		}
 
-		System.out.println("population and group loading " + timeElapser.getElapsedMilliSeconds());
+//		System.out.println("population and group loading " + timeElapser.getElapsedMilliSeconds());
 		timeElapser.reset();
 
 		environment.getRegionIds().stream().forEach(regionId -> {
@@ -111,30 +111,32 @@ public class PopulationLoader extends AbstractComponent {
 
 		double indexLoadingTime = timeElapser.getElapsedMilliSeconds();
 
-		System.out.println("index loading time " + indexLoadingTime);
+//		System.out.println("index loading time " + indexLoadingTime);
+		@SuppressWarnings("unused")
 		double averageTimeToLoadIndex = indexLoadingTime;
 		averageTimeToLoadIndex /= environment.getRegionIds().size();
-		System.out.println("time to load per index " + averageTimeToLoadIndex);
+//		System.out.println("time to load per index " + averageTimeToLoadIndex);
 
 		timeElapser.reset();
 
 		// Some more stats of interest
-		System.out.println("total population = " + environment.getPopulationCount());
-		System.out.println("total homes = " + environment.getGroupCountForGroupType(GroupType.HOME));
-		System.out.println("total schools = " + environment.getGroupCountForGroupType(GroupType.SCHOOL));
+		//System.out.println("total population = " + environment.getPopulationCount());
+		//System.out.println("total homes = " + environment.getGroupCountForGroupType(GroupType.HOME));
+		//System.out.println("total schools = " + environment.getGroupCountForGroupType(GroupType.SCHOOL));
 		int workPlaceCount = environment.getGroupCountForGroupType(GroupType.WORK);
-		System.out.println("total work places = " + workPlaceCount);
-		System.out.println("total regions = " + environment.getRegionIds().size());
+		//System.out.println("total work places = " + workPlaceCount);
+		//System.out.println("total regions = " + environment.getRegionIds().size());
 
 		long workingPeople = environment.getPeople()//
 										.stream()//
 										.filter(personId -> environment.getGroupCountForGroupTypeAndPerson(GroupType.WORK, personId) > 0)//
 										.count();//
 
-		System.out.println("number of people working = " + workingPeople);
+		//System.out.println("number of people working = " + workingPeople);
+		@SuppressWarnings("unused")
 		double averageNumberofWorkersPerWorkPlace = workingPeople;
 		averageNumberofWorkersPerWorkPlace /= workPlaceCount;
-		System.out.println("average number of workers per workplace = " + averageNumberofWorkersPerWorkPlace);
+		//System.out.println("average number of workers per workplace = " + averageNumberofWorkersPerWorkPlace);
 
 	}
 

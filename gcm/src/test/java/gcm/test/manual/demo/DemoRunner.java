@@ -113,10 +113,10 @@ public class DemoRunner {
 
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_PATH, populationPath);
 		experimentBuilder.addCompartmentPropertyValue(Compartment.INFECTED, CompartmentProperty.WEIGHT_THRESHOLD, 5d);
-		
-//		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 3.7);
-//		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 4.2);
-//		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 5.1);
+
+		// experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 3.7);
+		// experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 4.2);
+		// experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 5.1);
 
 	}
 
@@ -167,7 +167,7 @@ public class DemoRunner {
 	private void workWithTriggers(ExperimentBuilder experimentBuilder, List<String> regionNames) {
 
 		TriggerContainer.Builder builder = TriggerContainer.builder();
-		
+
 		for (String regionName : regionNames) {
 
 			TractId tractId = new TractId(regionName);
@@ -213,8 +213,9 @@ public class DemoRunner {
 		experimentExecutor.setReplicationCount(1);
 
 		// add console output
-		experimentExecutor.setConsoleOutput(true);
-
+		experimentExecutor.setProduceSimulationStatusOutput(true);
+		//experimentExecutor.setLogItemHandler(null);
+		
 		// add profile data reports
 		// experimentExecutor.setProfileReport(outputdirectory.resolve("profile
 		// report.xls"));

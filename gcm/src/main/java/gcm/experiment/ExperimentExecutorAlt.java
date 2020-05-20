@@ -313,7 +313,7 @@ public final class ExperimentExecutorAlt {
 		}
 		
 		
-		public void asdf(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {			
+		public void addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {			
 			scaffold.outputItemHandlers.addAll(outputItemHandlerSupplier.get());
 		}
 	}

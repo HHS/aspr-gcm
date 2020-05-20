@@ -41,7 +41,7 @@ public class AT_SphericalTriangle {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_SphericalTriangle.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		//System.out.println(AT_SphericalTriangle.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**

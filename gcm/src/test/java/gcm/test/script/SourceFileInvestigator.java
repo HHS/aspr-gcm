@@ -1,6 +1,7 @@
 package gcm.test.script;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,8 +39,9 @@ public final class SourceFileInvestigator {
 
 			
 			if (FileClassUtil.isJavaFile(file)) {
-				Class<?> c = FileClassUtil.getClassFromFile(sourcePath, file);
-				if (!c.isAnnotation() && !c.isInterface() ) {
+				Class<?> c = FileClassUtil.getClassFromFile(sourcePath, file);	
+				
+				if (!c.isAnnotation() && !c.isInterface()) {
 					Source source = c.getAnnotation(Source.class);					
 					SourceClassRec sourceClassRec = new SourceClassRec(c, source);
 					sourceClassRecs.add(sourceClassRec);

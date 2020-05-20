@@ -8,7 +8,11 @@ import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
-
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import net.jcip.annotations.ThreadSafe;
+@ThreadSafe
+@Source(status = TestStatus.UNEXPECTED)
 public class ConsoleLogItemHandler implements OutputItemHandler {
 
 	@Override

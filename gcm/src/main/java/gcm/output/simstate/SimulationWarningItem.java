@@ -1,8 +1,14 @@
 package gcm.output.simstate;
 
 import gcm.scenario.ReplicationId;
-import gcm.scenario.ScenarioId;
 
+import gcm.scenario.ScenarioId;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import net.jcip.annotations.Immutable;
+
+@Immutable
+@Source(status = TestStatus.UNEXPECTED)
 public class SimulationWarningItem implements SimulationOutputItem {
 
 	private final String warning;
@@ -14,17 +20,17 @@ public class SimulationWarningItem implements SimulationOutputItem {
 		private ScenarioId scenarioId;
 		private ReplicationId replicationId;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
 
 	public static class Builder {
-		
+
 		private Builder() {
-			
+
 		}
-		
+
 		private Scaffold scaffold = new Scaffold();
 
 		public SimulationWarningItem build() {
@@ -34,24 +40,22 @@ public class SimulationWarningItem implements SimulationOutputItem {
 				scaffold = new Scaffold();
 			}
 		}
-		
+
 		public Builder setScenarioId(ScenarioId scenarioId) {
 			scaffold.scenarioId = scenarioId;
 			return this;
 		}
 
-		
-		public Builder setReplicationId(ReplicationId replicationId) {		
+		public Builder setReplicationId(ReplicationId replicationId) {
 			scaffold.replicationId = replicationId;
 			return this;
 		}
 
-		
-		public Builder setWarning(String warning) {		
+		public Builder setWarning(String warning) {
 			scaffold.warning = warning;
 			return this;
 		}
-		
+
 	}
 
 	private SimulationWarningItem(Scaffold scaffold) {
@@ -66,12 +70,11 @@ public class SimulationWarningItem implements SimulationOutputItem {
 	}
 
 	@Override
-	public ReplicationId getReplicationId() {		
+	public ReplicationId getReplicationId() {
 		return replicationId;
 	}
 
-	
-	public String getWarning() {		
+	public String getWarning() {
 		return warning;
 	}
 

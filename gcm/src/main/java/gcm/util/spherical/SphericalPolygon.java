@@ -18,7 +18,6 @@ import net.jcip.annotations.Immutable;
 
 @Immutable
 @Source(status = TestStatus.REQUIRED)
-
 public class SphericalPolygon {
 
 	private final static int SEARCH_TREE_THRESHOLD = 30;
@@ -193,6 +192,7 @@ public class SphericalPolygon {
 		return false;
 	}
 
+	
 	private static SphericalTriangle popEar(int index, List<SphericalPoint> points, Chirality chirality) {
 		// form the triangle from the index		
 		SphericalTriangle t = new SphericalTriangle(
@@ -244,6 +244,7 @@ public class SphericalPolygon {
 		return t;
 	}
 
+	
 	private static List<SphericalTriangle> triangulate(List<SphericalPoint> sphericalPoints, Chirality chirality) {
 
 		/*
@@ -267,12 +268,12 @@ public class SphericalPolygon {
 
 		int index = 0;
 		int failurecount = 0;
-		while ((points.size() > 0) && (failurecount < points.size())) {
+		while ((points.size() > 2) && (failurecount < points.size())) {
 			SphericalTriangle sphericalTriangle = popEar(index, points, chirality);
 			if (sphericalTriangle != null) {
+				points.remove(index);
 				result.add(sphericalTriangle);
 				failurecount = 0;
-
 			} else {
 				failurecount++;
 				index++;
@@ -284,7 +285,7 @@ public class SphericalPolygon {
 		// then return false and clear out any triangles
 		// that were formed
 
-		if (points.size() > 0) {
+		if (points.size() > 2) {
 			result.clear();
 		}
 		return result;
@@ -306,7 +307,7 @@ public class SphericalPolygon {
 		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
 		if (triangles.size() == 0) {
 			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);
-			chirality = Chirality.RIGHT_HANDED;
+			chirality = Chirality.LEFT_HANDED;
 		}
 
 		if (triangles.size() == 0) {

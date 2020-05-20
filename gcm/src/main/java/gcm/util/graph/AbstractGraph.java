@@ -1,6 +1,9 @@
 package gcm.util.graph;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
+@Source(status = TestStatus.UNREQUIRED)
 public abstract class AbstractGraph<N, E> implements Graph<N, E> {
 	
 	@Override

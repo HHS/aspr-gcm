@@ -2,12 +2,8 @@ package gcm.test.automated;
 
 import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.test.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,15 +12,10 @@ import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
-import gcm.util.spherical.Chirality;
 import gcm.util.spherical.MalformedSphericalPolygonException;
-import gcm.util.spherical.MalformedSphericalTriangleException;
-import gcm.util.spherical.SphericalArc;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalPolygon;
 import gcm.util.spherical.SphericalPolygon.Builder;
-import gcm.util.spherical.SphericalTriangle;
-import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
 /**

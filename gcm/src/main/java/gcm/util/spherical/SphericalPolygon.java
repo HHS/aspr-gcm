@@ -47,12 +47,13 @@ public class SphericalPolygon {
 		public void addSphericalPoint(SphericalPoint sphericalPoint) {
 			scaffold.sphericalPoints.add(sphericalPoint);
 		}
-		
+
 		/**
-		 * Sets the useSearchTree policy for the {@link SphericalPolygon}.  Default is true;
+		 * Sets the useSearchTree policy for the {@link SphericalPolygon}.
+		 * Default is true;
 		 */
 		public void setUseSearchTree(boolean useSearchTree) {
-			scaffold.useSearchTree = useSearchTree;			
+			scaffold.useSearchTree = useSearchTree;
 		}
 
 		private Scaffold scaffold = new Scaffold();
@@ -112,8 +113,8 @@ public class SphericalPolygon {
 	private final VolumetricDimensionTree<SphericalTriangle> searchTree;
 
 	/**
-	 * Returns the {@link Chirality} of this {@link SphericalPolygon} relative to the natural
-	 * order of its SphericalPoints.
+	 * Returns the {@link Chirality} of this {@link SphericalPolygon} relative
+	 * to the natural order of its SphericalPoints.
 	 */
 	public Chirality getChirality() {
 		return chirality;
@@ -192,17 +193,12 @@ public class SphericalPolygon {
 		return false;
 	}
 
-	
 	private static SphericalTriangle popEar(int index, List<SphericalPoint> points, Chirality chirality) {
-		// form the triangle from the index		
-		SphericalTriangle t = new SphericalTriangle(
-				points.get((index + 0) % 3),
-				points.get((index + 1) % 3),
-				points.get((index + 2) % 3)
-				);
+		// form the triangle from the index
+		SphericalTriangle t = new SphericalTriangle(points.get((index + -1 + points.size()) % points.size()), points.get(index), points.get((index + 1) % points.size()));
 
 		/*
-		 * if the triangle does not agree with chirality then we are done 
+		 * if the triangle does not agree with chirality then we are done
 		 */
 		if (t.getChirality() != chirality) {
 			return null;
@@ -214,15 +210,17 @@ public class SphericalPolygon {
 
 		// here are the indices of the attached legs. We will not attempt to
 		// intersect them with the newly formed arc
-		int previousArcIndex = (index - 2 + points.size()) % points.size();
-		int nextArcIndex = (index + 1) % points.size();
+		int excludedIndex1 = (index - 2 + points.size()) % points.size();
+		int excludedIndex2 = (index - 1 + points.size()) % points.size();
+		int excludedIndex3 = index;
+		int excludedIndex4 = (index + 1) % points.size();
 
 		SphericalArc sphericalArcFormedByTriangle = t.getSphericalArc(2);
-		
-		for (int i = 0; i < index; i++) {
-			if ((i != previousArcIndex) && (i != nextArcIndex)) {
+
+		for (int i = 0; i < points.size(); i++) {
+			if (i != excludedIndex1 && i != excludedIndex2 && i != excludedIndex3 && i != excludedIndex4) {
 				int j = (i + 1) % points.size();
-				SphericalArc potentiallyIntersectingArc = new SphericalArc(points.get(i),points.get(j));
+				SphericalArc potentiallyIntersectingArc = new SphericalArc(points.get(i), points.get(j));
 				if (sphericalArcFormedByTriangle.intersectsArc(potentiallyIntersectingArc)) {
 					return null;
 				}
@@ -230,10 +228,8 @@ public class SphericalPolygon {
 		}
 
 		// if any of the other nodes are in the triangle, then we are done
-		int previousPointIndex = (index - 1 + points.size()) % points.size();
-		int nexPointIndex = (index + 1) % points.size();
 		for (int i = 0; i < points.size(); i++) {
-			if ((i != previousPointIndex) && (i != index) && (i != nexPointIndex)) {
+			if (i != excludedIndex2 && i != excludedIndex3 && i != excludedIndex4) {
 				if (t.contains(points.get(i))) {
 					return null;
 				}
@@ -244,7 +240,6 @@ public class SphericalPolygon {
 		return t;
 	}
 
-	
 	private static List<SphericalTriangle> triangulate(List<SphericalPoint> sphericalPoints, Chirality chirality) {
 
 		/*
@@ -272,11 +267,11 @@ public class SphericalPolygon {
 			SphericalTriangle sphericalTriangle = popEar(index, points, chirality);
 			if (sphericalTriangle != null) {
 				points.remove(index);
+				index = index % points.size();
 				result.add(sphericalTriangle);
 				failurecount = 0;
 			} else {
 				failurecount++;
-				index++;
 				index = (index + 1) % points.size();
 			}
 		}
@@ -306,8 +301,8 @@ public class SphericalPolygon {
 		Chirality chirality = Chirality.RIGHT_HANDED;
 		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
 		if (triangles.size() == 0) {
-			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);
 			chirality = Chirality.LEFT_HANDED;
+			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);			
 		}
 
 		if (triangles.size() == 0) {
@@ -318,10 +313,10 @@ public class SphericalPolygon {
 		sphericalTriangles = triangles;
 
 		sphericalPoints = scaffold.sphericalPoints;
-		
+
 		for (int i = 0; i < scaffold.sphericalPoints.size(); i++) {
-			int j = (i + 1) % scaffold.sphericalPoints.size();			
-			sphericalArcs.add(new SphericalArc(scaffold.sphericalPoints.get(i),scaffold.sphericalPoints.get(j)));
+			int j = (i + 1) % scaffold.sphericalPoints.size();
+			sphericalArcs.add(new SphericalArc(scaffold.sphericalPoints.get(i), scaffold.sphericalPoints.get(j)));
 		}
 
 		if (sphericalTriangles.size() > SEARCH_TREE_THRESHOLD && scaffold.useSearchTree) {

@@ -2,8 +2,16 @@ package gcm.test.automated;
 
 import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.test.support.ExceptionAssertion.assertException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.util.FastMath;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,10 +20,13 @@ import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
+import gcm.util.spherical.Chirality;
 import gcm.util.spherical.MalformedSphericalPolygonException;
+import gcm.util.spherical.SphericalArc;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalPolygon;
 import gcm.util.spherical.SphericalPolygon.Builder;
+import gcm.util.spherical.SphericalTriangle;
 import gcm.util.vector.Vector3D;
 
 /**
@@ -71,7 +82,8 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#builder()}
 	 */
 	@Test
-	public void testConstructor() {		
+	public void testConstructor() {
+
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -108,33 +120,200 @@ public class AT_SphericalPolygon {
 											.build(),
 				MalformedSphericalPolygonException.class);
 	}
-	
-	
-//	/**
-//	 * Tests {@link SphericalPolygon#containsPosition()}
-//	 */
-//	@Test
-//	public void testContainsPosition() {
-//		
-//		
-//		localBuilder()//
-//		.add(36.6591574,53.6229713)
-//		.add(30.03587393,59.19600684)
-//		.add(31.16669935,53.46610146)
-//		
-//		.add(39.04872969,50.23589786)
-//		.add(38.22818039,55.08000036)
-//		
-////		.add(42.77050381,54.07717149)
-////		.add(39.9151851,56.58807296)
-////		.add(38.32998873,59.72780507)
-////		.add(32.69372616,58.51280131)
-//		.build();		
-//
-//		
-//	}	
-	// getChirality()
-	// getSphericalArcs()
+
+	private SphericalPolygon generateSphericalPolygon(RandomGenerator randomGenerator, Chirality chirality) {
+
+		switch (chirality) {
+		case RIGHT_HANDED:
+			return localBuilder()//
+									.add(38.69724712, -101.5135275)//
+									.add(37.92632876, -99.96309844)//
+									.add(37.96933031, -97.32288686)//
+									.add(39.35733124, -95.45661273)//
+									.add(38.35690025, -98.8421335)//
+									.add(39.46582205, -98.42992687)//
+									.add(39.16371461, -97.35415071)//
+									.add(39.66032273, -96.34105164)//
+									.add(40.80930453, -96.82301542)//
+									.add(40.53524646, -99.62446993)//
+									.add(39.72191785, -101.7482263)//
+									.build();//
+		case LEFT_HANDED:
+			return localBuilder()//
+									.add(39.72191785, -101.7482263)//
+									.add(40.53524646, -99.62446993)//
+									.add(40.80930453, -96.82301542)//
+									.add(39.66032273, -96.34105164)//
+									.add(39.16371461, -97.35415071)//
+									.add(39.46582205, -98.42992687)//
+									.add(38.35690025, -98.8421335)//
+									.add(39.35733124, -95.45661273)//
+									.add(37.96933031, -97.32288686)//
+									.add(37.92632876, -99.96309844)//
+									.add(38.69724712, -101.5135275)//
+									.build();//
+		default:
+			throw new RuntimeException("unhandled case");
+		}
+
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#containsPosition()}
+	 */
+	@Test
+	public void testContainsPosition() {
+		final long seed = SEED_PROVIDER.getSeedValue(1);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		// Determine the centroid of the points of the polygon
+		List<SphericalTriangle> sphericalTriangles = sphericalPolygon.getSphericalTriangles();
+
+		Vector3D centroid = new Vector3D();
+		for (SphericalPoint sphericalPoint : sphericalPolygon.getSphericalPoints()) {
+			centroid = centroid.add(sphericalPoint.getPosition());
+		}
+		centroid.normalize();
+
+		// Determine the largest angle to the vertices from the centroid
+		double maxAngle = 0;
+		for (SphericalPoint sphericalPoint : sphericalPolygon.getSphericalPoints()) {
+			maxAngle = FastMath.max(maxAngle, centroid.angle(sphericalPoint.getPosition()));
+		}
+
+		/*
+		 * Generate a large cluster of points in the general region of the
+		 * polygon. For each test point, compare the result of the polygon
+		 * intersection with the target point with the intersection of the
+		 * polygon's triangles with the target point.
+		 */
+		Vector3D north = new Vector3D(0, 0, 1);
+		int testCount = 10000;
+		int hitCount = 0;
+		for (int i = 0; i < testCount; i++) {
+			double radiusAngle = FastMath.sqrt(randomGenerator.nextDouble()) * maxAngle;
+			double rotationAngle = randomGenerator.nextDouble() * 2 * FastMath.PI;
+			Vector3D v = centroid.rotateToward(north, radiusAngle).rotateAbout(centroid, rotationAngle);
+
+			SphericalPoint sphericalPoint = new SphericalPoint(v);
+
+			boolean actual = sphericalPolygon.containsPosition(sphericalPoint);
+			boolean expected = false;
+			for (SphericalTriangle sphericalTriangle : sphericalTriangles) {
+				expected |= sphericalTriangle.contains(sphericalPoint);
+			}
+			if (expected) {
+				hitCount++;
+			}
+			assertEquals(expected, actual);
+		}
+
+		/*
+		 * Show that a reasonable number of the test points fell inside the
+		 * polygon and outside the polygon.
+		 */
+		assertTrue(hitCount > testCount / 10);
+		assertTrue(hitCount < 9 * testCount / 10);
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#getChirality()}
+	 */
+	@Test
+	public void testGetChirality() {
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (Chirality chirality : Chirality.values()) {
+			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
+			assertEquals(chirality, sphericalPolygon.getChirality());
+		}
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#getSphericalArcs()}
+	 */
+	@Test
+	public void testGetSphericalArcs() {
+		final long seed = SEED_PROVIDER.getSeedValue(3);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		// Get the spherical points from the polygon
+		List<SphericalPoint> sphericalPoints = sphericalPolygon.getSphericalPoints();
+
+		/*
+		 * Generate arcs from the points and wrap them so that they can be
+		 * compared to the arcs from the polygon. Note that SphericalArc does
+		 * not provide an equals() implementation.
+		 */
+		Set<SphericalArcWrapper> expected = new LinkedHashSet<>();
+		for (int i = 0; i < sphericalPoints.size(); i++) {
+			int j = (i + 1) % sphericalPoints.size();
+			SphericalPoint sphericalPoint1 = sphericalPoints.get(i);
+			SphericalPoint sphericalPoint2 = sphericalPoints.get(j);
+			SphericalArc sphericalArc = new SphericalArc(sphericalPoint1, sphericalPoint2);
+			expected.add(new SphericalArcWrapper(sphericalArc));
+		}
+
+		Set<SphericalArcWrapper> actual = sphericalPolygon.getSphericalArcs().stream().map(arc -> new SphericalArcWrapper(arc)).collect(Collectors.toSet());
+
+		assertEquals(expected, actual);
+	}
+
+	private static class SphericalArcWrapper {
+		private final Vector3D position1;
+		private final Vector3D position2;
+
+		public SphericalArcWrapper(SphericalArc sphericalArc) {
+			position1 = sphericalArc.getSphericalPoint(0).getPosition();
+			position2 = sphericalArc.getSphericalPoint(1).getPosition();
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((position1 == null) ? 0 : position1.hashCode());
+			result = prime * result + ((position2 == null) ? 0 : position2.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof SphericalArcWrapper)) {
+				return false;
+			}
+			SphericalArcWrapper other = (SphericalArcWrapper) obj;
+			if (position1 == null) {
+				if (other.position1 != null) {
+					return false;
+				}
+			} else if (!position1.equals(other.position1)) {
+				return false;
+			}
+			if (position2 == null) {
+				if (other.position2 != null) {
+					return false;
+				}
+			} else if (!position2.equals(other.position2)) {
+				return false;
+			}
+			return true;
+		}
+	}
+
+
+
 	// getSphericalPoints()
 	// getSphericalTriangles()
 	// intersects(SphericalArc)

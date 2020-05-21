@@ -62,6 +62,7 @@ import gcm.test.automated.AT_Simulation;
 import gcm.test.automated.AT_SimulationErrorType;
 import gcm.test.automated.AT_SphericalArc;
 import gcm.test.automated.AT_SphericalPoint;
+import gcm.test.automated.AT_SphericalPolygon;
 import gcm.test.automated.AT_SphericalTriangle;
 import gcm.test.automated.AT_StateChange;
 import gcm.test.automated.AT_StochasticPersonSelection;
@@ -150,7 +151,8 @@ import gcm.test.automated.AT_Vector3D;
 	AT_Vector3D.class,
 	AT_SphericalPoint.class,
 	AT_SphericalArc.class,
-	AT_SphericalTriangle.class
+	AT_SphericalTriangle.class,
+	AT_SphericalPolygon.class
 	})
 
 public class SuiteTest {

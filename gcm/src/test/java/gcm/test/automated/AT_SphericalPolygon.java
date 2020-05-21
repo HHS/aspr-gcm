@@ -50,7 +50,7 @@ public class AT_SphericalPolygon {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_SphericalPolygon.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		//System.out.println(AT_SphericalPolygon.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static SphericalPoint generateRandomizedSphericalPoint(RandomGenerator randomGenerator) {

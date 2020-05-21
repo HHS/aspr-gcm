@@ -5,7 +5,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
 import gcm.scenario.ReplicationId;
@@ -27,7 +27,7 @@ import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
 @Source(status = TestStatus.UNEXPECTED)
-public final class SimulationOutuptItemHandler implements OutputItemHandler {
+public final class SimulationStatusItemHandler implements OutputItemHandler {
 	/*
 	 * Internal state guarded by this
 	 */
@@ -72,14 +72,14 @@ public final class SimulationOutuptItemHandler implements OutputItemHandler {
 	private List<SimulationStatusItem> failedSimulationStatusItems = new ArrayList<>();
 
 	/**
-	 * Constructor for {@link SimulationOutuptItemHandler}
+	 * Constructor for {@link SimulationStatusItemHandler}
 	 * 
 	 * @param scenarioCount
 	 *            the number of scenarios in the experiment
 	 * @param replicationCount
 	 *            the number of replications in the experiment
 	 */
-	public SimulationOutuptItemHandler(int scenarioCount, int replicationCount, OutputItemHandler logItemHandler) {
+	public SimulationStatusItemHandler(int scenarioCount, int replicationCount, OutputItemHandler logItemHandler) {
 		experimentCount = scenarioCount * replicationCount;
 		this.logItemHandler = logItemHandler;
 	}

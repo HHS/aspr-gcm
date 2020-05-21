@@ -1,4 +1,4 @@
-package gcm.output.simstate;
+package gcm.experiment.progress;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,9 +12,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import gcm.experiment.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
+import gcm.output.simstate.SimulationStatusItem;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
@@ -38,7 +38,7 @@ import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
 @Source(status = TestStatus.UNEXPECTED)
-public final class NIOExperimentProgressLogger implements OutputItemHandler {
+public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 
 	private static final String lineSeparator = System.getProperty("line.separator");
 
@@ -54,7 +54,7 @@ public final class NIOExperimentProgressLogger implements OutputItemHandler {
 	@GuardedBy("this")
 	private final Path progressLogFile;
 
-	public NIOExperimentProgressLogger(final Path progressLogFile) {
+	public NIOExperimentProgressLogWriter(final Path progressLogFile) {
 		this.progressLogFile = progressLogFile;
 	}
 

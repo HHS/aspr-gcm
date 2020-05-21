@@ -16,7 +16,9 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import gcm.experiment.ExperimentProgressLog.ExperimentProgressLogBuilder;
+import gcm.experiment.progress.ExperimentProgressLog;
+import gcm.experiment.progress.NIOExperimentProgressLogReader;
+import gcm.experiment.progress.NIOExperimentProgressLogWriter;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
 import gcm.output.reports.Report;
@@ -42,11 +44,10 @@ import gcm.output.reports.commonreports.ResourceReport;
 import gcm.output.reports.commonreports.StageReport;
 import gcm.output.simstate.ConsoleLogItemHandler;
 import gcm.output.simstate.LogItem;
-import gcm.output.simstate.NIOExperimentProgressLogger;
 import gcm.output.simstate.NIOMemoryReportItemHandler;
 import gcm.output.simstate.NIOPlanningQueueReportItemHandler;
 import gcm.output.simstate.NIOProfileItemHandler;
-import gcm.output.simstate.SimulationOutuptItemHandler;
+import gcm.output.simstate.SimulationStatusItemHandler;
 import gcm.replication.Replication;
 import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.PersonPropertyId;
@@ -84,7 +85,7 @@ public final class ExperimentExecutor {
 		private OutputItemHandler logItemHandler;
 		private Path profileReportPath;
 		private Path experimentProgressLogPath;
-		private ExperimentProgressLog experimentProgressLog = new ExperimentProgressLogBuilder().build();
+		private ExperimentProgressLog experimentProgressLog = ExperimentProgressLog.builder().build();
 		private Path memoryReportPath;
 		private double memoryReportInterval;
 		private Path planningQueueReportPath;
@@ -232,7 +233,7 @@ public final class ExperimentExecutor {
 		addOutputItemHandler(scaffold.logItemHandler);
 		
 		if (scaffold.produceSimulationStatusOutput) {			
-			addOutputItemHandler(new SimulationOutuptItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount, scaffold.logItemHandler));
+			addOutputItemHandler(new SimulationStatusItemHandler(scaffold.experiment.getScenarioCount(), scaffold.replicationCount, scaffold.logItemHandler));
 		}
 
 		if (scaffold.profileReportPath != null) {
@@ -241,7 +242,7 @@ public final class ExperimentExecutor {
 
 		if (scaffold.experimentProgressLogPath != null) {
 			scaffold.experimentProgressLog = NIOExperimentProgressLogReader.read(scaffold.experimentProgressLogPath);
-			addOutputItemHandler(new NIOExperimentProgressLogger(scaffold.experimentProgressLogPath));
+			addOutputItemHandler(new NIOExperimentProgressLogWriter(scaffold.experimentProgressLogPath));
 		}
 
 		if (scaffold.memoryReportPath != null) {

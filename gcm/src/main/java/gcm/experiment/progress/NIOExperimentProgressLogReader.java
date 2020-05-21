@@ -1,4 +1,4 @@
-package gcm.experiment;
+package gcm.experiment.progress;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -6,7 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import gcm.experiment.ExperimentProgressLog.ExperimentProgressLogBuilder;
+import gcm.experiment.progress.ExperimentProgressLog.Builder;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
@@ -52,7 +52,7 @@ public final class NIOExperimentProgressLogReader {
 		 * ExperimentProgressLogBuilder. If any line is corrupt, ignore it and
 		 * return just the content that was already read in.
 		 */
-		ExperimentProgressLogBuilder experimentProgressLogBuilder = new ExperimentProgressLogBuilder();
+		Builder builder = ExperimentProgressLog.builder();
 
 		for (String line : lines) {
 			try {
@@ -61,11 +61,11 @@ public final class NIOExperimentProgressLogReader {
 				int replication = Integer.parseInt(ids[1]);
 				ScenarioId scenarioId = new ScenarioId(scenario);
 				ReplicationId replicationId = new ReplicationId(replication);
-				experimentProgressLogBuilder.add(scenarioId, replicationId);
+				builder.add(scenarioId, replicationId);
 			} catch (Exception e) {
 				break;
 			}
 		}
-		return experimentProgressLogBuilder.build();
+		return builder.build();
 	}
 }

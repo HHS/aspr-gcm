@@ -1,4 +1,4 @@
-package gcm.experiment;
+package gcm.experiment.progress;
 
 import java.util.LinkedHashMap;
 
@@ -56,6 +56,10 @@ public final class ExperimentProgressLog {
 	private static class Scaffold {
 		Map<ScenarioId, Set<ReplicationId>> map = new LinkedHashMap<>();
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/**
 	 * A builder class for {@link ExperimentProgressLog}
@@ -63,7 +67,11 @@ public final class ExperimentProgressLog {
 	 * @author Shawn Hatch
 	 *
 	 */
-	public static class ExperimentProgressLogBuilder {
+	public static class Builder {
+		
+		private Builder() {
+			
+		}
 		/*
 		 * Data structure for holding client inputs. Is refreshed on each
 		 * invocation of build().
@@ -85,7 +93,7 @@ public final class ExperimentProgressLog {
 		 *             if either entry is null
 		 * 
 		 */
-		public void add(ScenarioId scenarioId, ReplicationId replicationId) {
+		public Builder add(ScenarioId scenarioId, ReplicationId replicationId) {
 
 			if (scenarioId == null) {
 				throw new RuntimeException("null scenario id");
@@ -102,6 +110,7 @@ public final class ExperimentProgressLog {
 				scaffold.map.put(scenarioId, set);
 			}
 			set.add(replicationId);
+			return this;
 		}
 
 		/**

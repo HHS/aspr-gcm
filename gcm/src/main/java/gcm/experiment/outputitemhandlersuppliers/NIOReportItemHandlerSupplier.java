@@ -1,4 +1,4 @@
-package gcm.experiment;
+package gcm.experiment.outputitemhandlersuppliers;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+import gcm.experiment.Experiment;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
 import gcm.output.reports.Report;
@@ -47,7 +48,7 @@ import gcm.util.annotations.TestStatus;
  */
 
 @Source(status = TestStatus.UNEXPECTED)
-public final class NIOExperimentOutputSupplier implements Supplier<List<OutputItemHandler>> {
+public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputItemHandler>> {
 	/*
 	 * A data class for holding the inputs to this builder from its client.
 	 */
@@ -62,7 +63,7 @@ public final class NIOExperimentOutputSupplier implements Supplier<List<OutputIt
 	/*
 	 * Hidden constructor
 	 */
-	private NIOExperimentOutputSupplier(Scaffold scaffold) {
+	private NIOReportItemHandlerSupplier(Scaffold scaffold) {
 		this.outputItemHandlers = new ArrayList<>(scaffold.outputItemHandlers);
 
 	}
@@ -77,14 +78,14 @@ public final class NIOExperimentOutputSupplier implements Supplier<List<OutputIt
 		}
 
 		
-		public NIOExperimentOutputSupplier build() {
+		public NIOReportItemHandlerSupplier build() {
 			try {
 			if (scaffold.experiment == null) {
 				throw new RuntimeException("null experiment");
 			}
 			scaffold.nioReportItemHandlerBuilder.setRegularExperiment(scaffold.experiment);
 			scaffold.outputItemHandlers.add(scaffold.nioReportItemHandlerBuilder.build());
-			return new NIOExperimentOutputSupplier(scaffold);
+			return new NIOReportItemHandlerSupplier(scaffold);
 			}finally {
 				scaffold = new Scaffold();
 			}

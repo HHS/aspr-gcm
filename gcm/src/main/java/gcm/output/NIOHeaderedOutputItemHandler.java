@@ -12,7 +12,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;

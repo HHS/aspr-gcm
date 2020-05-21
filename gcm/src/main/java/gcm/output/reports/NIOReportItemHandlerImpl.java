@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.experiment.Experiment;
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.NIOHeaderedOutputItemHandler;
 import gcm.output.OutputItem;
 import gcm.scenario.ReplicationId;

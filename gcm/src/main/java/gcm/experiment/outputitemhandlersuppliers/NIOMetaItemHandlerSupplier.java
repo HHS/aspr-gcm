@@ -1,19 +1,20 @@
-package gcm.experiment;
+package gcm.experiment.outputitemhandlersuppliers;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import gcm.experiment.ExperimentProgressLog.ExperimentProgressLogBuilder;
+import gcm.experiment.progress.ExperimentProgressLog;
+import gcm.experiment.progress.NIOExperimentProgressLogReader;
+import gcm.experiment.progress.NIOExperimentProgressLogWriter;
 import gcm.output.OutputItemHandler;
 import gcm.output.simstate.ConsoleLogItemHandler;
 import gcm.output.simstate.LogItem;
-import gcm.output.simstate.NIOExperimentProgressLogger;
 import gcm.output.simstate.NIOMemoryReportItemHandler;
 import gcm.output.simstate.NIOPlanningQueueReportItemHandler;
 import gcm.output.simstate.NIOProfileItemHandler;
-import gcm.output.simstate.SimulationOutuptItemHandler;
+import gcm.output.simstate.SimulationStatusItemHandler;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
@@ -26,13 +27,13 @@ import gcm.util.annotations.TestStatus;
  */
 
 @Source(status = TestStatus.UNEXPECTED)
-public final class NIOExperimentMetaOutputSupplier implements Supplier<List<OutputItemHandler>>{
+public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputItemHandler>>{
 	private final List<OutputItemHandler> outputItemHandlers;
 
 	/*
 	 * Hidden constructor
 	 */
-	private NIOExperimentMetaOutputSupplier(Scaffold scaffold) {
+	private NIOMetaItemHandlerSupplier(Scaffold scaffold) {
 		this.outputItemHandlers = new ArrayList<>(scaffold.outputItemHandlers);
 	}
 
@@ -53,7 +54,7 @@ public final class NIOExperimentMetaOutputSupplier implements Supplier<List<Outp
 		private boolean produceSimulationStatusOutput;
 		
 		private Path experimentProgressLogPath;
-		private ExperimentProgressLog experimentProgressLog = new ExperimentProgressLogBuilder().build();
+		private ExperimentProgressLog experimentProgressLog = ExperimentProgressLog.builder().build();
 
 	}
 
@@ -85,12 +86,12 @@ public final class NIOExperimentMetaOutputSupplier implements Supplier<List<Outp
 		/**
 		 * Builds the supplier
 		 */
-		public NIOExperimentMetaOutputSupplier build() {
+		public NIOMetaItemHandlerSupplier build() {
 
 			try {
 				if (scaffold.experimentProgressLogPath != null) {
 					scaffold.experimentProgressLog = NIOExperimentProgressLogReader.read(scaffold.experimentProgressLogPath);
-					addOutputItemHandler(new NIOExperimentProgressLogger(scaffold.experimentProgressLogPath));
+					addOutputItemHandler(new NIOExperimentProgressLogWriter(scaffold.experimentProgressLogPath));
 				}
 
 				if (scaffold.logItemHandler == null) {
@@ -99,7 +100,7 @@ public final class NIOExperimentMetaOutputSupplier implements Supplier<List<Outp
 				addOutputItemHandler(scaffold.logItemHandler);
 
 				if (scaffold.produceSimulationStatusOutput) {
-					addOutputItemHandler(new SimulationOutuptItemHandler(scaffold.scenarioCount, scaffold.replicationCount, scaffold.logItemHandler));
+					addOutputItemHandler(new SimulationStatusItemHandler(scaffold.scenarioCount, scaffold.replicationCount, scaffold.logItemHandler));
 				}
 
 				if (scaffold.profileReportPath != null) {
@@ -113,7 +114,7 @@ public final class NIOExperimentMetaOutputSupplier implements Supplier<List<Outp
 				if (scaffold.planningQueueReportPath != null) {
 					addOutputItemHandler(new NIOPlanningQueueReportItemHandler(scaffold.planningQueueReportPath, scaffold.planningQueueReportThreshold));
 				}
-				return new NIOExperimentMetaOutputSupplier(scaffold);
+				return new NIOMetaItemHandlerSupplier(scaffold);
 
 			} finally {
 				scaffold = new Scaffold();

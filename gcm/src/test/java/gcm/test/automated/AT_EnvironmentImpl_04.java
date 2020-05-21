@@ -27,7 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.components.Component;
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.ReportHeader;

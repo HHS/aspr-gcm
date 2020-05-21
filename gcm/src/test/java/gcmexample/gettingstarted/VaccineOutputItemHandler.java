@@ -3,7 +3,7 @@ package gcmexample.gettingstarted;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
 import gcm.scenario.ReplicationId;

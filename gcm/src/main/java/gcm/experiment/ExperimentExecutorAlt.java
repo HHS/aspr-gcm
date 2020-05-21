@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItemHandler;
 import gcm.replication.Replication;
 import gcm.scenario.ReplicationId;

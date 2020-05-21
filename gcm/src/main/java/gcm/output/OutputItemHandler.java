@@ -2,7 +2,7 @@ package gcm.output;
 
 import java.util.Set;
 
-import gcm.experiment.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;

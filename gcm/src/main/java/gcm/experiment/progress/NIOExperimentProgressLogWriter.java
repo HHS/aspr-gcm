@@ -124,5 +124,4 @@ public final class NIOExperimentProgressLogWriter implements OutputItemHandler {
 		// do nothing
 
 	}
-
 }

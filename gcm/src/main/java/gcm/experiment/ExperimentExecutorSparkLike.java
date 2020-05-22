@@ -1,9 +1,7 @@
 package gcm.experiment;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
@@ -31,44 +29,6 @@ import gcm.util.annotations.TestStatus;
 
 @Source(status = TestStatus.UNEXPECTED)
 public final class ExperimentExecutorSparkLike {
-	private static class ScenarioCacheBlock {
-		private final Scenario scenario;
-		private int replicationCount;
-
-		public ScenarioCacheBlock(Scenario scenario) {
-			this.scenario = scenario;
-		}
-	}
-
-	/*
-	 * A cache for scenarios to cut down on scenario generation costs.
-	 */
-	private static class ScenarioCache {
-		private final int replicationCount;
-		private final Experiment experiment;
-		private Map<Integer, ScenarioCacheBlock> cache = new LinkedHashMap<>();
-
-		public ScenarioCache(int replicationCount, Experiment experiment) {
-			this.replicationCount = replicationCount;
-			this.experiment = experiment;
-		}
-
-		public Scenario getScenario(int scenarioIndex) {
-			ScenarioCacheBlock scenarioCacheBlock = cache.get(scenarioIndex);
-			if (scenarioCacheBlock == null) {
-				Scenario scenario = experiment.getScenario(scenarioIndex);
-				scenarioCacheBlock = new ScenarioCacheBlock(scenario);
-				cache.put(scenarioIndex, scenarioCacheBlock);
-			}
-			scenarioCacheBlock.replicationCount++;
-			if (scenarioCacheBlock.replicationCount >= replicationCount) {
-				cache.remove(scenarioIndex);
-			}
-			return scenarioCacheBlock.scenario;
-		}
-
-	}
-
 	/*
 	 * Utility class used for executing the experiment in a multi-threaded mode.
 	 * Represents the scenario/replication pair. Allows for sorting where
@@ -240,12 +200,6 @@ public final class ExperimentExecutorSparkLike {
 		}
 
 		/*
-		 * Build a scenario cache. This will help hold down on excessive
-		 * scenario constructions.
-		 */
-		ScenarioCache scenarioCache = new ScenarioCache(scaffold.replicationCount, scaffold.experiment);
-
-		/*
 		 * Establish the set of replications
 		 */
 		final List<Replication> replications = Replication.getReplications(scaffold.replicationCount, scaffold.seed);
@@ -277,9 +231,10 @@ public final class ExperimentExecutorSparkLike {
 		threadCount = FastMath.min(Runtime.getRuntime().availableProcessors(),threadCount);
 		
 		try {
+			//TODO produce a map of (scenario,replication)->boolean
 			new ForkJoinPool(threadCount).submit(() -> {			
 				jobs.parallelStream().forEach(job -> {
-					Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
+					Scenario scenario = scaffold.experiment.getScenario(job.scenarioIndex);
 					Replication replication = replications.get(job.replicationIndex);
 
 					final Simulation simulation = new Simulation();

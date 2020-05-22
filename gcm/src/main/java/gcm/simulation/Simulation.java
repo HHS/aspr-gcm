@@ -1,7 +1,7 @@
 package gcm.simulation;
 
 import gcm.output.OutputItemHandler;
-import gcm.output.reports.NIOReportItemHandler;
+import gcm.output.reports.ReportItemHandler;
 import gcm.output.simstate.SimulationStatusItem;
 import gcm.output.simstate.SimulationStatusItem.SimulationStatusItemBuilder;
 import gcm.replication.Replication;
@@ -19,7 +19,7 @@ import net.jcip.annotations.NotThreadSafe;
  * random seed for stochastics. The Components (global components, regions,
  * compartments and materials producers) execute modeler-derived business rules
  * and are derived from the scenario. Reports are provided via the
- * {@link NIOReportItemHandler} and act as passive listeners to various events
+ * {@link ReportItemHandler} and act as passive listeners to various events
  * and translate those events into Report Items which are processed by the
  * handler.
  *
@@ -75,7 +75,7 @@ import net.jcip.annotations.NotThreadSafe;
  *
  * Reports map these observations, often in an aggregate manner, to ReportItems
  * which are thread safe immutable objects. The report items are in turn sent to
- * a {@link NIOReportItemHandler} which ushers the report items into files
+ * a {@link ReportItemHandler} which ushers the report items into files
  * chosen by the Modeler.
  *
  * @author Shawn Hatch

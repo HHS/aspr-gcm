@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 
 import gcm.experiment.Experiment;
 import gcm.output.OutputItemHandler;
-import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
+import gcm.output.reports.NIOReportItemHandler;
 import gcm.output.reports.Report;
 import gcm.output.reports.ReportPeriod;
 import gcm.output.reports.commonreports.BatchStatusReport;
@@ -55,7 +55,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 	private static class Scaffold {
 		private Experiment experiment;
 		private final List<OutputItemHandler> outputItemHandlers = new ArrayList<>();
-		private NIOReportItemHandlerBuilder nioReportItemHandlerBuilder = new NIOReportItemHandlerBuilder();
+		private NIOReportItemHandler.Builder nioReportItemHandlerBuilder = NIOReportItemHandler.builder();
 	}
 
 	private final List<OutputItemHandler> outputItemHandlers;

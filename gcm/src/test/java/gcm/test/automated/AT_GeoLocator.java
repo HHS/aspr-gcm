@@ -37,7 +37,7 @@ public class AT_GeoLocator {
 
 	private static SeedProvider SEED_PROVIDER;
 
-	private static final double TOLERANCE = 0.000001;
+	
 
 	@BeforeClass
 	public static void beforeClass() {

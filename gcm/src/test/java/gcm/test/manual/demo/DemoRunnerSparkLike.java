@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 
 import gcm.experiment.Experiment;
 import gcm.experiment.ExperimentExecutorSparkLike;
-import gcm.experiment.outputitemhandlersuppliers.NIOMetaItemHandlerSupplier;
 import gcm.experiment.outputitemhandlersuppliers.NIOReportItemHandlerSupplier;
+import gcm.experiment.outputitemhandlersuppliers.SparkLikeMetaItemHandlerSupplier;
 import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
@@ -228,6 +228,8 @@ public class DemoRunnerSparkLike {
 			return result;
 		}}
 	
+	
+	
 	private static class CustomSimulationStatusItemHandler implements OutputItemHandler{
 
 		@Override
@@ -268,7 +270,7 @@ public class DemoRunnerSparkLike {
 		@Override
 		public List<OutputItemHandler> get() {
 			List<OutputItemHandler> result= new ArrayList<>();
-			result.add(new CustomSimulationStatusItemHandler());
+			result.add(new CustomSimulationStatusItemHandler());				
 			return result;
 		}
 		
@@ -280,6 +282,7 @@ public class DemoRunnerSparkLike {
 				
 
 		// build the experiment
+		//TODO -- simplify experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		experimentBuilder.setBaseScenarioId(100);
 		experimentBuilder.setRegionMapOption(MapOption.ARRAY);
@@ -293,6 +296,7 @@ public class DemoRunnerSparkLike {
 		
 		
 		// build the reports
+		//TODO -- replace all NIO-based capabilty
 		NIOReportItemHandlerSupplier nioReportItemHandlerSupplier = NIOReportItemHandlerSupplier.builder()//
 			.addGlobalPropertyReport(outputdirectory.resolve("global property report.xls"),GlobalProperty.POPULATION_PATH)//		
 			.addRegionPropertyReport(outputdirectory.resolve("region property report.xls"))//
@@ -304,8 +308,8 @@ public class DemoRunnerSparkLike {
 		//set the replication count
 		int replicationCount = 10;
 		
-		//build meta level reporting
-		NIOMetaItemHandlerSupplier nioMetaItemHandlerSupplier = NIOMetaItemHandlerSupplier.builder()//
+		//build meta level reporting		
+		SparkLikeMetaItemHandlerSupplier sparkLikeMetaItemHandlerSupplier = SparkLikeMetaItemHandlerSupplier.builder()//
 			.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
 			//.setLogItemHandler(new CustomLogItemHandler())
 			.build();//		
@@ -318,7 +322,7 @@ public class DemoRunnerSparkLike {
 			.setReplicationCount(replicationCount)//
 			.setThreadCount(6)//
 			.addOuputItemSupplier(nioReportItemHandlerSupplier)//
-			.addOuputItemSupplier(nioMetaItemHandlerSupplier)//	
+			.addOuputItemSupplier(sparkLikeMetaItemHandlerSupplier)//	
 			//.addOuputItemSupplier(new CustomOutputItemHandlerSupplier())//			
 			.build();//
 		

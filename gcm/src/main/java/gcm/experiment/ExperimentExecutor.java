@@ -20,7 +20,8 @@ import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.experiment.progress.NIOExperimentProgressLogReader;
 import gcm.experiment.progress.NIOExperimentProgressLogWriter;
 import gcm.output.OutputItemHandler;
-import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
+import gcm.output.reports.NIOReportItemHandler.Builder;
+import gcm.output.reports.NIOReportItemHandler;
 import gcm.output.reports.Report;
 import gcm.output.reports.ReportPeriod;
 import gcm.output.reports.commonreports.BatchStatusReport;
@@ -90,7 +91,7 @@ public final class ExperimentExecutor {
 		private double memoryReportInterval;
 		private Path planningQueueReportPath;
 		private long planningQueueReportThreshold;
-		private NIOReportItemHandlerBuilder nioReportItemHandlerBuilder = new NIOReportItemHandlerBuilder();
+		private Builder nioReportItemHandlerBuilder = NIOReportItemHandler.builder();
 	}
 
 	/*

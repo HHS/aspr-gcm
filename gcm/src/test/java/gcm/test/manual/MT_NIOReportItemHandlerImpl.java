@@ -6,10 +6,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import gcm.output.OutputItemHandler;
+import gcm.output.reports.ReportItemHandler;
 import gcm.output.reports.NIOReportItemHandler;
 import gcm.output.reports.ReportHeader;
 import gcm.output.reports.ReportItem;
-import gcm.output.reports.NIOReportItemHandlerImpl.NIOReportItemHandlerBuilder;
+import gcm.output.reports.NIOReportItemHandler.Builder;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
 import gcm.output.reports.commonreports.CompartmentPopulationReport;
@@ -32,10 +33,10 @@ public final class MT_NIOReportItemHandlerImpl {
 		
 		Path path = Paths.get(args[0]);		
 
-		NIOReportItemHandlerBuilder nioReportItemHandlerBuilder = new NIOReportItemHandlerBuilder();
+		Builder nioReportItemHandlerBuilder = NIOReportItemHandler.builder();
 		Set<Object> initialData = new LinkedHashSet<>();
 		nioReportItemHandlerBuilder.addReport(path, CompartmentPopulationReport.class, initialData);
-		NIOReportItemHandler nioReportItemHandler = nioReportItemHandlerBuilder.build();
+		ReportItemHandler nioReportItemHandler = nioReportItemHandlerBuilder.build();
 
 		ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
 		reportHeaderBuilder.add("Alpha");
@@ -74,10 +75,10 @@ public final class MT_NIOReportItemHandlerImpl {
 	private static class Runner implements Runnable {
 		private final ReportHeader reportHeader;
 		private final Integer index;
-		private final NIOReportItemHandler nioReportItemHandler;
+		private final ReportItemHandler nioReportItemHandler;
 		private final JobCompletionCounter jobCompletionCounter;
 
-		public Runner(ReportHeader reportHeader, Integer index, NIOReportItemHandler nioReportItemHandler, JobCompletionCounter jobCompletionCounter) {
+		public Runner(ReportHeader reportHeader, Integer index, ReportItemHandler nioReportItemHandler, JobCompletionCounter jobCompletionCounter) {
 			this.reportHeader = reportHeader;
 			this.index = index;
 			this.nioReportItemHandler = nioReportItemHandler;

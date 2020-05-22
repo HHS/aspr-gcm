@@ -8,7 +8,7 @@ import java.util.Set;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.BatchInfo;
 import gcm.output.reports.GroupInfo;
-import gcm.output.reports.NIOReportItemHandler;
+import gcm.output.reports.ReportItemHandler;
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.Report;
 import gcm.output.reports.StageInfo;
@@ -56,14 +56,14 @@ public final class ReportsManagerImpl extends BaseElement implements ReportsMana
 		// Establish that there is an NIOReportItemHandler listening for
 		// ReportItems. If there is none, then there is no point in setting up
 		// the reports.
-		NIOReportItemHandler nioReportItemHandler = null;
+		ReportItemHandler reportItemHandler = null;
 		for (OutputItemHandler outputItemHandler : context.getOutputItemHandlers()) {
-			if (outputItemHandler instanceof NIOReportItemHandler) {
-				nioReportItemHandler = (NIOReportItemHandler) outputItemHandler;
+			if (outputItemHandler instanceof ReportItemHandler) {
+				reportItemHandler = (ReportItemHandler) outputItemHandler;
 			}
 		}
 
-		if (nioReportItemHandler == null) {
+		if (reportItemHandler == null) {
 			return;
 		}
 
@@ -74,14 +74,14 @@ public final class ReportsManagerImpl extends BaseElement implements ReportsMana
 		 */
 		if (context.produceProfileItems()) {
 			ProfileManager profileManager = context.getProfileManager();
-			for (Report report : nioReportItemHandler.getReports()) {
+			for (Report report : reportItemHandler.getReports()) {
 				Report profiledProxyReport = profileManager.getProfiledProxy(report);
-				Set<Object> initializationData = nioReportItemHandler.getInitializationData(report);
+				Set<Object> initializationData = reportItemHandler.getInitializationData(report);
 				reports.put(profiledProxyReport, initializationData);
 			}
 		} else {
-			for (Report report : nioReportItemHandler.getReports()) {
-				Set<Object> initializationData = nioReportItemHandler.getInitializationData(report);
+			for (Report report : reportItemHandler.getReports()) {
+				Set<Object> initializationData = reportItemHandler.getInitializationData(report);
 				reports.put(report, initializationData);
 			}
 		}

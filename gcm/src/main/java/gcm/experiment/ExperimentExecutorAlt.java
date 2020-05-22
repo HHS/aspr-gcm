@@ -250,11 +250,12 @@ public final class ExperimentExecutorAlt {
 		 * Adds the given scenarios to the experiment
 		 *
 		 */
-		public void setExperiment(final Experiment experiment) {
+		public Builder setExperiment(final Experiment experiment) {
 			if (experiment == null) {
 				throw new RuntimeException("null experiment");
 			}
 			scaffold.experiment = experiment;
+			return this;
 		}
 
 		/**
@@ -265,11 +266,12 @@ public final class ExperimentExecutorAlt {
 		 * @throws RuntimeException
 		 *             if the replication count < 0
 		 */
-		public void setReplicationCount(final int replicationCount) {
+		public Builder setReplicationCount(final int replicationCount) {
 			if (replicationCount < 1) {
 				throw new RuntimeException("non-positive replication count");
 			}
 			scaffold.replicationCount = replicationCount;
+			return this;
 		}
 
 		/**
@@ -277,8 +279,9 @@ public final class ExperimentExecutorAlt {
 		 * replication
 		 *
 		 */
-		public void setSeed(final long seed) {
+		public Builder setSeed(final long seed) {
 			scaffold.seed = seed;
+			return this;
 		}
 
 		/**
@@ -293,23 +296,26 @@ public final class ExperimentExecutorAlt {
 		 *             if the thread count is negative
 		 * 
 		 */
-		public void setThreadCount(final int threadCount) {
+		public Builder setThreadCount(final int threadCount) {
 			if (threadCount < 0) {
 				throw new RuntimeException("negative thread count");
 			}
 			scaffold.threadCount = threadCount;
+			return this;
 		}
 
 		/**
 		 * Adds the {@link OutputItemHandler} objects from the given supplier.
 		 */
-		public void addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {
+		public Builder addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {
 			scaffold.outputItemHandlers.addAll(outputItemHandlerSupplier.get());
+			return this;
 		}
 		
 		
-		public void setExperimentProgressLogProvider(ExperimentProgressLogProvider experimentProgressLogProvider) {
+		public Builder setExperimentProgressLogProvider(ExperimentProgressLogProvider experimentProgressLogProvider) {
 			scaffold.experimentProgressLogProvider = experimentProgressLogProvider;
+			return this;
 		}
 	}
 
@@ -345,8 +351,14 @@ public final class ExperimentExecutorAlt {
 		/*
 		 * Let all the output item handlers know that the experiment is starting
 		 */
-		ExperimentProgressLog experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
-		scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
+		ExperimentProgressLog experimentProgressLog;
+		if(scaffold.experimentProgressLogProvider != null) {
+			experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
+			scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
+		}else {
+			experimentProgressLog = ExperimentProgressLog.builder().build();
+		}
+		
 		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
 			outputItemHandler.openExperiment(experimentProgressLog);
 		}
@@ -473,11 +485,12 @@ public final class ExperimentExecutorAlt {
 		 * Let all the output item handlers know that the experiment is starting
 		 */
 		
-		ExperimentProgressLog experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
-		scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
-
-		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.openExperiment(experimentProgressLog);
+		ExperimentProgressLog experimentProgressLog;
+		if(scaffold.experimentProgressLogProvider != null) {
+			experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
+			scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
+		}else {
+			experimentProgressLog = ExperimentProgressLog.builder().build();
 		}
 
 		/*

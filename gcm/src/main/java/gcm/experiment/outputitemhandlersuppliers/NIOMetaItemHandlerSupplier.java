@@ -120,10 +120,11 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		 *            turns on/off production of the experiment progress
 		 *            reporting
 		 */
-		public void setProduceSimulationStatusOutput(boolean produceSimulationStatusOutput, int scenarioCount, int replicationCount) {
+		public Builder setProduceSimulationStatusOutput(boolean produceSimulationStatusOutput, int scenarioCount, int replicationCount) {
 			scaffold.produceSimulationStatusOutput = produceSimulationStatusOutput;
 			scaffold.replicationCount = replicationCount;
 			scaffold.scenarioCount = scenarioCount;
+			return this;
 		}
 		
 
@@ -131,8 +132,9 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		 * Sets the {@link LogItem} handler for the experiment. Defaulted to
 		 * null -- no logging.
 		 */
-		public void setLogItemHandler(OutputItemHandler logItemHandler) {
+		public Builder setLogItemHandler(OutputItemHandler logItemHandler) {
 			scaffold.logItemHandler = logItemHandler;
+			return this;
 		}
 
 		/**
@@ -142,8 +144,9 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		 * @param path
 		 *            the {@link Path} where the report will be recorded
 		 */
-		public void setProfileReport(Path path) {
+		public Builder setProfileReport(Path path) {
 			scaffold.profileReportPath = path;
+			return this;
 		}
 
 		/**
@@ -160,7 +163,7 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		 *             if the path is non-null and the memory report interval is
 		 *             non-positive
 		 */
-		public void setMemoryReport(Path path, double memoryReportInterval) {
+		public Builder setMemoryReport(Path path, double memoryReportInterval) {
 
 			if (path != null) {
 				if (memoryReportInterval <= 0) {
@@ -172,6 +175,7 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 				scaffold.memoryReportPath = path;
 				scaffold.memoryReportInterval = 0;
 			}
+			return this;
 		}
 
 		/**
@@ -189,7 +193,7 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		 *             if the path is non-null and the planning queue report
 		 *             threshold is non-positive
 		 */
-		public void setPlanningQueueReport(Path path, long planningQueueReportThreshold) {
+		public Builder setPlanningQueueReport(Path path, long planningQueueReportThreshold) {
 
 			if (path != null) {
 				if (planningQueueReportThreshold < 1) {
@@ -201,6 +205,7 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 				scaffold.planningQueueReportPath = path;
 				scaffold.planningQueueReportThreshold = 0;
 			}
+			return this;
 		}
 	}
 	

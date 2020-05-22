@@ -103,8 +103,9 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *            turns on/off the display of the experiment columns in all
 		 *            reports
 		 */
-		public void setDisplayExperimentColumnsInReports(boolean displayExperimentColumnsInReports) {
+		public Builder setDisplayExperimentColumnsInReports(boolean displayExperimentColumnsInReports) {
 			scaffold.nioReportItemHandlerBuilder.setDisplayExperimentColumnsInReports(displayExperimentColumnsInReports);
+			return this;
 		}
 
 		/**
@@ -155,9 +156,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the initialization data is null
 		 *             <li>if any object in the initialization data is null
 		 */
-		public void addCustomReport(Path path, Class<? extends Report> reportClass, Collection<? extends Object> initializationData) {
+		public Builder addCustomReport(Path path, Class<? extends Report> reportClass, Collection<? extends Object> initializationData) {
 			Set<Object> initialData = new LinkedHashSet<>(initializationData);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, reportClass, initialData);
+			return this;
 		}
 
 		/**
@@ -168,8 +170,9 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @param path
 		 *            the {@link Path} where the report will be recorded
 		 */
-		public void addExperimentColumnReport(Path path) {
+		public Builder addExperimentColumnReport(Path path) {
 			scaffold.nioReportItemHandlerBuilder.setExperimentColumnReport(path);
+			return this;
 		}
 
 		/**
@@ -181,9 +184,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addBatchStatusReport(Path path) {
+		public Builder addBatchStatusReport(Path path) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			scaffold.nioReportItemHandlerBuilder.addReport(path, BatchStatusReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -198,10 +202,11 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the path is null
 		 *             <li>if the report period is null
 		 */
-		public void addCompartmentPopulationReport(Path path, ReportPeriod reportPeriod) {
+		public Builder addCompartmentPopulationReport(Path path, ReportPeriod reportPeriod) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, CompartmentPopulationReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -213,9 +218,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addCompartmentPropertyReport(Path path) {
+		public Builder addCompartmentPropertyReport(Path path) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			scaffold.nioReportItemHandlerBuilder.addReport(path, CompartmentPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -231,10 +237,11 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the path is null
 		 *             <li>if the report period is null
 		 */
-		public void addCompartmentTransferReport(Path path, ReportPeriod reportPeriod) {
+		public Builder addCompartmentTransferReport(Path path, ReportPeriod reportPeriod) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, CompartmentTransferReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -253,7 +260,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if member of the globalPropertyIds is null
 		 * 
 		 */
-		public void addGlobalPropertyReport(Path path, GlobalPropertyId... globalPropertyIds) {
+		public Builder addGlobalPropertyReport(Path path, GlobalPropertyId... globalPropertyIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 
 			if (globalPropertyIds == null) {
@@ -266,6 +273,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 				initialData.add(globalPropertyId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, GlobalPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -281,10 +289,11 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the path is null
 		 *             <li>if the report period is null
 		 */
-		public void addGroupPopulationReport(Path path, ReportPeriod reportPeriod) {
+		public Builder addGroupPopulationReport(Path path, ReportPeriod reportPeriod) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, GroupPopulationReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -305,11 +314,12 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the report period is null
 		 *             <li>if the groupPropertyReportSettings is null
 		 */
-		public void addGroupPropertyReport(Path path, ReportPeriod reportPeriod, GroupPropertyReportSettings groupPropertyReportSettings) {
+		public Builder addGroupPropertyReport(Path path, ReportPeriod reportPeriod, GroupPropertyReportSettings groupPropertyReportSettings) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			initialData.add(groupPropertyReportSettings);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, GroupPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -321,9 +331,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addMaterialsProducerPropertyReport(Path path) {
-			Set<Object> initialData = new LinkedHashSet<>();
+		public Builder addMaterialsProducerPropertyReport(Path path) {
+			Set<Object> initialData = new LinkedHashSet<>();			
 			scaffold.nioReportItemHandlerBuilder.addReport(path, MaterialsProducerPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -335,9 +346,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addMaterialsProducerResourceReport(Path path) {
+		public Builder addMaterialsProducerResourceReport(Path path) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			scaffold.nioReportItemHandlerBuilder.addReport(path, MaterialsProducerResourceReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -359,7 +371,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the personPropertyIds is null
 		 *             <li>if member of the personPropertyIds is null
 		 */
-		public void addPersonPropertyInteractionReport(Path path, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
+		public Builder addPersonPropertyInteractionReport(Path path, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			if (personPropertyIds == null) {
@@ -369,6 +381,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 				initialData.add(personPropertyId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, PersonPropertyInteractionReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -391,7 +404,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the personPropertyIds is null
 		 *             <li>if member of the personPropertyIds is null
 		 */
-		public void addPersonPropertyReport(Path path, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
+		public Builder addPersonPropertyReport(Path path, ReportPeriod reportPeriod, PersonPropertyId... personPropertyIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			if (personPropertyIds == null) {
@@ -404,6 +417,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 				initialData.add(personPropertyId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, PersonPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -433,7 +447,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the resourceIds is null
 		 *             <li>if member of the resourceIds is null
 		 */
-		public void addPersonResourceReport(Path path, ReportPeriod reportPeriod, boolean reportPeopleWithoutResources, boolean reportZeroPopulations, ResourceId... resourceIds) {
+		public Builder addPersonResourceReport(Path path, ReportPeriod reportPeriod, boolean reportPeopleWithoutResources, boolean reportZeroPopulations, ResourceId... resourceIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			if (reportPeopleWithoutResources) {
@@ -449,6 +463,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 				initialData.add(resourceId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, PersonResourceReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -467,7 +482,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if member of the regionPropertyIds is null
 		 * 
 		 */
-		public void addRegionPropertyReport(Path path, RegionPropertyId... regionPropertyIds) {
+		public Builder addRegionPropertyReport(Path path, RegionPropertyId... regionPropertyIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 
 			if (regionPropertyIds == null) {
@@ -480,6 +495,7 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 				initialData.add(regionPropertyId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, RegionPropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -495,11 +511,13 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the path is null
 		 *             <li>if the report period is null
 		 */
-		public void addRegionTransferReport(Path path, ReportPeriod reportPeriod) {
+		public Builder addRegionTransferReport(Path path, ReportPeriod reportPeriod) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			scaffold.nioReportItemHandlerBuilder.addReport(path, RegionTransferReport.class, initialData);
+			return this;
 		}
+		
 
 		/**
 		 * Adds a Resource Property Report.
@@ -511,9 +529,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addResourcePropertyReport(Path path) {
+		public Builder addResourcePropertyReport(Path path) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			scaffold.nioReportItemHandlerBuilder.addReport(path, ResourcePropertyReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -535,13 +554,14 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 *             <li>if the resourceIds is null
 		 *             <li>if member of the resourceIds is null
 		 */
-		public void addResourceReport(Path path, ReportPeriod reportPeriod, ResourceId... resourceIds) {
+		public Builder addResourceReport(Path path, ReportPeriod reportPeriod, ResourceId... resourceIds) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			initialData.add(reportPeriod);
 			for (ResourceId resourceId : resourceIds) {
 				initialData.add(resourceId);
 			}
 			scaffold.nioReportItemHandlerBuilder.addReport(path, ResourceReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -553,9 +573,10 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @throws RuntimeException
 		 *             <li>if the path is null
 		 */
-		public void addStageReport(Path path) {
+		public Builder addStageReport(Path path) {
 			Set<Object> initialData = new LinkedHashSet<>();
 			scaffold.nioReportItemHandlerBuilder.addReport(path, StageReport.class, initialData);
+			return this;
 		}
 
 		/**
@@ -564,11 +585,12 @@ public final class NIOReportItemHandlerSupplier implements Supplier<List<OutputI
 		 * @param experiment
 		 *            the experiment to be executed
 		 */
-		public void setExperiment(final Experiment experiment) {
+		public Builder setExperiment(final Experiment experiment) {
 			if (experiment == null) {
 				throw new RuntimeException("null experiment");
 			}
 			scaffold.experiment = experiment;
+			return this;
 		}
 	}
 

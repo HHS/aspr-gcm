@@ -6,18 +6,27 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import gcm.experiment.Experiment;
 import gcm.experiment.ExperimentExecutorSparkLike;
 import gcm.experiment.outputitemhandlersuppliers.NIOMetaItemHandlerSupplier;
 import gcm.experiment.outputitemhandlersuppliers.NIOReportItemHandlerSupplier;
+import gcm.experiment.progress.ExperimentProgressLog;
+import gcm.output.OutputItem;
+import gcm.output.OutputItemHandler;
 import gcm.output.reports.ReportPeriod;
+import gcm.output.simstate.LogItem;
+import gcm.output.simstate.SimulationStatusItem;
 import gcm.scenario.ExperimentBuilder;
 import gcm.scenario.GlobalComponentId;
 import gcm.scenario.MapOption;
+import gcm.scenario.ReplicationId;
+import gcm.scenario.ScenarioId;
 import gcm.test.manual.demo.components.DeadCompartment;
 import gcm.test.manual.demo.components.ExposedCompartment;
 import gcm.test.manual.demo.components.Immunizer;
@@ -112,7 +121,6 @@ public class DemoRunnerSparkLike {
 	}
 
 	private void addPropertyValues(ExperimentBuilder experimentBuilder) {
-
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_PATH, populationPath);
 		experimentBuilder.addCompartmentPropertyValue(Compartment.INFECTED, CompartmentProperty.WEIGHT_THRESHOLD, 5d);
 
@@ -121,9 +129,7 @@ public class DemoRunnerSparkLike {
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 5.1);
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 7.3);
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 9.4);
-		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 10.8);
-		
-
+		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 10.8);		
 	}
 
 	private List<String> addRegions(ExperimentBuilder experimentBuilder) throws IOException {
@@ -186,6 +192,87 @@ public class DemoRunnerSparkLike {
 		experimentBuilder.defineGlobalProperty(TriggerContainer.TRIGGER_CONTAINER, TriggerContainer.getTriggerContainerPropertyDefinition());
 		experimentBuilder.addGlobalPropertyValue(TriggerContainer.TRIGGER_CONTAINER, builder.build());
 	}
+	
+	@SuppressWarnings("unused")
+	private static class CustomLogItemHandler implements OutputItemHandler{
+
+		@Override
+		public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+			//do nothing
+		}
+
+		@Override
+		public void openExperiment(ExperimentProgressLog experimentProgressLog) {
+			//do nothing
+		}
+
+		@Override
+		public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+			//do nothing
+		}
+
+		@Override
+		public void closeExperiment() {
+			//do nothing
+		}
+
+		@Override
+		public void handle(OutputItem outputItem) {
+			System.err.println("custom log item handler :"+outputItem.toString());
+		}
+
+		@Override
+		public Set<Class<? extends OutputItem>> getHandledClasses() {
+			Set<Class<? extends OutputItem>> result = new LinkedHashSet<>();
+			result.add(LogItem.class);
+			return result;
+		}}
+	
+	private static class CustomSimulationStatusItemHandler implements OutputItemHandler{
+
+		@Override
+		public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+			//do nothing
+		}
+
+		@Override
+		public void openExperiment(ExperimentProgressLog experimentProgressLog) {
+			//do nothing
+		}
+
+		@Override
+		public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
+			//do nothing
+		}
+
+		@Override
+		public void closeExperiment() {
+			//do nothing
+		}
+
+		@Override
+		public void handle(OutputItem outputItem) {
+			System.err.println("custom simulation status handler :"+outputItem.toString());
+		}
+
+		@Override
+		public Set<Class<? extends OutputItem>> getHandledClasses() {
+			Set<Class<? extends OutputItem>> result = new LinkedHashSet<>();
+			result.add(SimulationStatusItem.class);
+			return result;
+		}}
+	
+	@SuppressWarnings("unused")
+	private static class CustomOutputItemHandlerSupplier implements Supplier<List<OutputItemHandler>>{
+
+		@Override
+		public List<OutputItemHandler> get() {
+			List<OutputItemHandler> result= new ArrayList<>();
+			result.add(new CustomSimulationStatusItemHandler());
+			return result;
+		}
+		
+	}
 
 	private void execute() throws IOException {
 		// select an output directory
@@ -220,6 +307,7 @@ public class DemoRunnerSparkLike {
 		//build meta level reporting
 		NIOMetaItemHandlerSupplier nioMetaItemHandlerSupplier = NIOMetaItemHandlerSupplier.builder()//
 			.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
+			//.setLogItemHandler(new CustomLogItemHandler())
 			.build();//		
 		
 		
@@ -227,9 +315,11 @@ public class DemoRunnerSparkLike {
 		ExperimentExecutorSparkLike experimentExecutor = ExperimentExecutorSparkLike.builder()//
 			.setSeed(1234123512345234L)//
 			.setExperiment(experiment)//
-			.setReplicationCount(replicationCount)//		
+			.setReplicationCount(replicationCount)//
+			.setThreadCount(6)//
 			.addOuputItemSupplier(nioReportItemHandlerSupplier)//
-			.addOuputItemSupplier(nioMetaItemHandlerSupplier)//		
+			.addOuputItemSupplier(nioMetaItemHandlerSupplier)//	
+			//.addOuputItemSupplier(new CustomOutputItemHandlerSupplier())//			
 			.build();//
 		
 
@@ -237,7 +327,7 @@ public class DemoRunnerSparkLike {
 		experimentExecutor.execute();
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException {	
 		Path tractsPath = Paths.get(args[0]);
 		Path populationPath = Paths.get(args[1]);
 		// Path tractsPath =

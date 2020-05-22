@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 import java.util.function.Supplier;
+
+import org.apache.commons.math3.util.FastMath;
 
 import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.experiment.progress.ExperimentProgressLogProvider;
@@ -100,6 +104,7 @@ public final class ExperimentExecutorSparkLike {
 		private Experiment experiment;
 		private int replicationCount = 1;
 		private long seed;
+		private int threadCount;
 		private ExperimentProgressLogProvider experimentProgressLogProvider;
 	}
 
@@ -166,6 +171,22 @@ public final class ExperimentExecutorSparkLike {
 		}
 
 		/**
+		 * Sets the number of scenarios that may run concurrently.
+		 * 
+		 * 
+		 * @throws RuntimeException
+		 *             if the thread count is negative
+		 * 
+		 */
+		public Builder setThreadCount(final int threadCount) {
+			if (threadCount < 0) {
+				throw new RuntimeException("negative thread count");
+			}
+			scaffold.threadCount = threadCount;
+			return this;
+		}
+		
+		/**
 		 * Adds the {@link OutputItemHandler} objects from the given supplier.
 		 */
 		public Builder addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {
@@ -189,11 +210,13 @@ public final class ExperimentExecutorSparkLike {
 	 * Executes the experiment using the information supplied via the various
 	 * mutation methods. Clears all collected data upon completion. Thus this
 	 * ExperimentExecutor returns to an empty and idle state.
+	 * @throws ExecutionException 
+	 * @throws InterruptedException 
 	 * 
 	 * @throws RuntimeException
 	 *             if the experiment was not set
 	 */
-	public void execute() {
+	public void execute()  {
 		/*
 		 * Initialize the experiment progress log. If a provider was
 		 * contributed, get the output item handler that will write the new
@@ -231,6 +254,7 @@ public final class ExperimentExecutorSparkLike {
 		 * Create the jobs. Only create the jobs that are not covered in the
 		 * experiment progress log.
 		 */
+			
 		List<Job> jobs = new ArrayList<>();
 		for (int i = 0; i < scaffold.experiment.getScenarioCount(); i++) {
 			for (int j = 0; j < replications.size(); j++) {
@@ -244,26 +268,37 @@ public final class ExperimentExecutorSparkLike {
 		}
 
 		/*
-		 * Execute the jobs
+		 * Execute the jobs.
 		 */
-		jobs.parallelStream().forEach(job -> {
-			Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
-			Replication replication = replications.get(job.replicationIndex);
+		
+		//Determine the number of threads to allocate to a ForkJoinPool.
+		int threadCount = scaffold.threadCount;
+		threadCount = FastMath.max(threadCount,1);
+		threadCount = FastMath.min(Runtime.getRuntime().availableProcessors(),threadCount);
+		
+		try {
+			new ForkJoinPool(threadCount).submit(() -> {			
+				jobs.parallelStream().forEach(job -> {
+					Scenario scenario = scenarioCache.getScenario(job.scenarioIndex);
+					Replication replication = replications.get(job.replicationIndex);
 
-			final Simulation simulation = new Simulation();
-			simulation.setScenario(scenario);
-			simulation.setReplication(replication);
-			for (OutputItemHandler outputItemHandler : job.outputItemHandlers) {
-				simulation.addOutputItemHandler(outputItemHandler);
-			}
-			try {
-				simulation.execute();
-
-			} catch (final Exception e) {
-				System.err.println("Simulation failure for scenario " + scenario.getScenarioId() + " and replication " + replication.getId());
-				e.printStackTrace();
-			}
-		});
+					final Simulation simulation = new Simulation();
+					simulation.setScenario(scenario);
+					simulation.setReplication(replication);
+					for (OutputItemHandler outputItemHandler : job.outputItemHandlers) {
+						simulation.addOutputItemHandler(outputItemHandler);
+					}
+					try {					
+						simulation.execute();
+					} catch (final Exception e) {
+						System.err.println("Simulation failure for scenario " + scenario.getScenarioId() + " and replication " + replication.getId());
+						e.printStackTrace();
+					}
+				});
+			}).get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 
 		/*
 		 * Let the output items handlers know that the experiment is

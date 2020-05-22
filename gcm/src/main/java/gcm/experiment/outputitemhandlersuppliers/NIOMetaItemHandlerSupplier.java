@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import gcm.experiment.progress.ExperimentProgressLog;
-import gcm.experiment.progress.NIOExperimentProgressLogReader;
-import gcm.experiment.progress.NIOExperimentProgressLogWriter;
 import gcm.output.OutputItemHandler;
 import gcm.output.simstate.ConsoleLogItemHandler;
 import gcm.output.simstate.LogItem;
@@ -52,10 +49,6 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		private Path planningQueueReportPath;
 		private long planningQueueReportThreshold;
 		private boolean produceSimulationStatusOutput;
-		
-		private Path experimentProgressLogPath;
-		private ExperimentProgressLog experimentProgressLog = ExperimentProgressLog.builder().build();
-
 	}
 
 	public static Builder builder() {
@@ -89,10 +82,6 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 		public NIOMetaItemHandlerSupplier build() {
 
 			try {
-				if (scaffold.experimentProgressLogPath != null) {
-					scaffold.experimentProgressLog = NIOExperimentProgressLogReader.read(scaffold.experimentProgressLogPath);
-					addOutputItemHandler(new NIOExperimentProgressLogWriter(scaffold.experimentProgressLogPath));
-				}
 
 				if (scaffold.logItemHandler == null) {
 					scaffold.logItemHandler = new ConsoleLogItemHandler();
@@ -137,16 +126,6 @@ public final class NIOMetaItemHandlerSupplier implements Supplier<List<OutputIte
 			scaffold.scenarioCount = scenarioCount;
 		}
 		
-		/**
-		 * Sets the path for experiment progress log. A null path turns off logging
-		 * and run resumption. Default value is null.
-		 * 
-		 * @param path
-		 *            the {@link Path} where the report will be recorded
-		 */
-		public void setExperimentProgressLog(Path path) {
-			scaffold.experimentProgressLogPath = path;
-		}
 
 		/**
 		 * Sets the {@link LogItem} handler for the experiment. Defaulted to

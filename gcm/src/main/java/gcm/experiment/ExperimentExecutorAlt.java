@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import gcm.experiment.progress.ExperimentProgressLog;
+import gcm.experiment.progress.ExperimentProgressLogProvider;
 import gcm.output.OutputItemHandler;
 import gcm.replication.Replication;
 import gcm.scenario.ReplicationId;
@@ -42,6 +43,7 @@ public final class ExperimentExecutorAlt {
 			this.scenario = scenario;
 		}
 	}
+
 	/*
 	 * A cache for scenarios to cut down on scenario generation costs.
 	 */
@@ -107,9 +109,8 @@ public final class ExperimentExecutorAlt {
 		private Experiment experiment;
 		private int replicationCount = 1;
 		private long seed;
-		private int threadCount;
-		private ExperimentProgressLog experimentProgressLog;
-
+		private int threadCount;		
+		private ExperimentProgressLogProvider experimentProgressLogProvider;
 	}
 
 	/*
@@ -232,8 +233,7 @@ public final class ExperimentExecutorAlt {
 
 		public ExperimentExecutorAlt build() {
 			try {
-				// ExperimentProgressLog experimentProgressLog
-
+				
 				if (scaffold.experiment == null) {
 					throw new RuntimeException("null experiment");
 				}
@@ -249,8 +249,6 @@ public final class ExperimentExecutorAlt {
 		/**
 		 * Adds the given scenarios to the experiment
 		 *
-		 * @param experiment
-		 *            the experiment to be executed
 		 */
 		public void setExperiment(final Experiment experiment) {
 			if (experiment == null) {
@@ -259,16 +257,10 @@ public final class ExperimentExecutorAlt {
 			scaffold.experiment = experiment;
 		}
 
-		
-
-
-
 		/**
 		 * Sets the number of replications that will be performed for each
 		 * scenario.
 		 *
-		 * @param replicationCount
-		 *            the number of replications
 		 * 
 		 * @throws RuntimeException
 		 *             if the replication count < 0
@@ -284,9 +276,6 @@ public final class ExperimentExecutorAlt {
 		 * Sets the seed value that will be used to generate the seeds for each
 		 * replication
 		 *
-		 * @param seed
-		 *            the seed value that is used to generate the seed values in
-		 *            the replications
 		 */
 		public void setSeed(final long seed) {
 			scaffold.seed = seed;
@@ -298,9 +287,7 @@ public final class ExperimentExecutorAlt {
 		 * on the machine that is running the experiment. Setting the thread
 		 * count to zero causes the simulations to execute in the calling thread
 		 * that invokes execute() on this ExperimentExecutor.
-		 *
-		 * @param threadCount
-		 *            -- The number of threads to use to run the experiment.
+		 * 
 		 * 
 		 * @throws RuntimeException
 		 *             if the thread count is negative
@@ -312,10 +299,17 @@ public final class ExperimentExecutorAlt {
 			}
 			scaffold.threadCount = threadCount;
 		}
-		
-		
-		public void addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {			
+
+		/**
+		 * Adds the {@link OutputItemHandler} objects from the given supplier.
+		 */
+		public void addOuputItemSupplier(final Supplier<List<OutputItemHandler>> outputItemHandlerSupplier) {
 			scaffold.outputItemHandlers.addAll(outputItemHandlerSupplier.get());
+		}
+		
+		
+		public void setExperimentProgressLogProvider(ExperimentProgressLogProvider experimentProgressLogProvider) {
+			scaffold.experimentProgressLogProvider = experimentProgressLogProvider;
 		}
 	}
 
@@ -328,7 +322,7 @@ public final class ExperimentExecutorAlt {
 	 *             if the experiment was not set
 	 */
 	public void execute() {
-		// ExperimentProgressLog experimentProgressLog
+		
 
 		if (scaffold.experiment == null) {
 			throw new RuntimeException("null experiment");
@@ -351,8 +345,10 @@ public final class ExperimentExecutorAlt {
 		/*
 		 * Let all the output item handlers know that the experiment is starting
 		 */
+		ExperimentProgressLog experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
+		scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
 		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
+			outputItemHandler.openExperiment(experimentProgressLog);
 		}
 
 		/*
@@ -373,7 +369,7 @@ public final class ExperimentExecutorAlt {
 			for (int j = 0; j < replications.size(); j++) {
 				ScenarioId scenarioId = scaffold.experiment.getScenarioId(i);
 				ReplicationId replicationId = replications.get(j).getId();
-				if (!scaffold.experimentProgressLog.contains(scenarioId, replicationId)) {
+				if (!experimentProgressLog.contains(scenarioId, replicationId)) {
 					Job job = new Job();
 					job.scenarioIndex = i;
 					job.replicationIndex = j;
@@ -476,8 +472,12 @@ public final class ExperimentExecutorAlt {
 		/*
 		 * Let all the output item handlers know that the experiment is starting
 		 */
+		
+		ExperimentProgressLog experimentProgressLog = scaffold.experimentProgressLogProvider.getExperimentProgressLog();
+		scaffold.outputItemHandlers.add(scaffold.experimentProgressLogProvider.getSimulationStatusItemHandler());
+
 		for (OutputItemHandler outputItemHandler : scaffold.outputItemHandlers) {
-			outputItemHandler.openExperiment(scaffold.experimentProgressLog);
+			outputItemHandler.openExperiment(experimentProgressLog);
 		}
 
 		/*
@@ -505,7 +505,7 @@ public final class ExperimentExecutorAlt {
 		for (int i = 0; i < scaffold.experiment.getScenarioCount(); i++) {
 			Scenario scenario = scaffold.experiment.getScenario(i);
 			for (final Replication replication : replications) {
-				if (!scaffold.experimentProgressLog.contains(scenario.getScenarioId(), replication.getId())) {
+				if (!experimentProgressLog.contains(scenario.getScenarioId(), replication.getId())) {
 					final Simulation simulation = new Simulation();
 					simulation.setReplication(replication);
 					simulation.setScenario(scenario);

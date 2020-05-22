@@ -11,6 +11,14 @@ public final class NIOExperimentProgressLogProvider implements ExperimentProgres
 	private final ExperimentProgressLog experimentProgressLog;
 	private final NIOExperimentProgressLogWriter nioExperimentProgressLogWriter;
 	
+	
+	/**
+	 * Constructs this provider with the given path for experiment progress log.
+	 * 
+	 * 
+	 * 
+	 */
+
 	public NIOExperimentProgressLogProvider(Path experimentProgressLogPath) {
 		experimentProgressLog = NIOExperimentProgressLogReader.read(experimentProgressLogPath);
 		nioExperimentProgressLogWriter = new NIOExperimentProgressLogWriter(experimentProgressLogPath);

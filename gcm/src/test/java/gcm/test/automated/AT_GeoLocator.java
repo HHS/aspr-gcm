@@ -2,15 +2,19 @@ package gcm.test.automated;
 
 import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,11 +37,7 @@ import gcm.util.vector.Vector3D;
 @UnitTest(target = GeoLocator.class)
 public class AT_GeoLocator {
 
-	
-
 	private static SeedProvider SEED_PROVIDER;
-
-	
 
 	@BeforeClass
 	public static void beforeClass() {
@@ -50,34 +50,35 @@ public class AT_GeoLocator {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_GeoLocator.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_GeoLocator.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static LatLon generateRandomizedLatLon(RandomGenerator randomGenerator, double lat, double lon, double radiusKilometers) {
 		Earth earth = Earth.fromMeanRadius();
-		Vector3D center = earth.getECCFromLatLon(new LatLon(lat,lon));
-		Vector3D north = new Vector3D(0,0,1);
-		double distance = FastMath.sqrt(randomGenerator.nextDouble())*radiusKilometers*1000;
-		double angle = distance/earth.getRadius();
-		double rotationAngle = randomGenerator.nextDouble()*2*FastMath.PI;
+		Vector3D center = earth.getECCFromLatLon(new LatLon(lat, lon));
+		Vector3D north = new Vector3D(0, 0, 1);
+		double distance = FastMath.sqrt(randomGenerator.nextDouble()) * radiusKilometers * 1000;
+		double angle = distance / earth.getRadius();
+		double rotationAngle = randomGenerator.nextDouble() * 2 * FastMath.PI;
 		Vector3D v = center.rotateToward(north, angle).rotateAbout(center, rotationAngle);
 		LatLonAlt latLonAlt = earth.getLatLonAlt(v);
-		return new LatLon(latLonAlt);		
+		return new LatLon(latLonAlt);
 	}
-	
-	private static List<LatLon> generateLocations(RandomGenerator randomGenerator, double lat, double lon, double radiusKilometers, int count) {		
+
+	private static List<LatLon> generateLocations(RandomGenerator randomGenerator, double lat, double lon, double radiusKilometers, int count) {
 		List<LatLon> result = new ArrayList<>();
 		for (int i = 0; i < count; i++) {
 			LatLon latLon = generateRandomizedLatLon(randomGenerator, lat, lon, radiusKilometers);
-			
+
 			result.add(latLon);
 		}
 		return result;
 	}
-	
-	private GeoLocator<LatLon> generateGeoLocator(List<LatLon> locations){
+
+	private GeoLocator<LatLon> generateGeoLocator(List<LatLon> locations) {
 		Builder<LatLon> builder = GeoLocator.builder();
-		locations.forEach(location->builder.addLocation(location.getLatitude(), location.getLongitude(), location));
+		locations.forEach(location -> builder.addLocation(location.getLatitude(), location.getLongitude(), location));
 		return builder.build();
 	}
 
@@ -94,8 +95,8 @@ public class AT_GeoLocator {
 	public void testConstructor() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		List<LatLon> locations = generateLocations(randomGenerator,35,128,50,100);		
-		generateGeoLocator(locations);		
+		List<LatLon> locations = generateLocations(randomGenerator, 35, 128, 50, 100);
+		generateGeoLocator(locations);
 	}
 
 	/**
@@ -105,33 +106,34 @@ public class AT_GeoLocator {
 	public void testGetLocations() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		
-		//Generate 100 random locations in a 50 kilometer radius region
+
+		// Generate 100 random locations in a 50 kilometer radius region
 		double lat = 35;
 		double lon = 128;
 		double radiusKilometers = 50;
-		List<LatLon> locations = generateLocations(randomGenerator,lat,lon,radiusKilometers,100);
-		
-		//Create a GeoLocator from the generated locations
+		List<LatLon> locations = generateLocations(randomGenerator, lat, lon, radiusKilometers, 100);
+
+		// Create a GeoLocator from the generated locations
 		GeoLocator<LatLon> geoLocator = generateGeoLocator(locations);
-		
+
 		int testCount = 100;
-		
-		//search random spots in that region with a 10 kilometer search radius
+
+		// search random spots in that region with a 10 kilometer search radius
 		double searchRadiusKilometers = 10;
 		Earth earth = Earth.fromMeanRadius();
-		for(int i = 0;i<testCount;i++) {
+		for (int i = 0; i < testCount; i++) {
 			LatLon latLon = generateRandomizedLatLon(randomGenerator, lat, lon, radiusKilometers);
-			
-			//Determine the expected locations that fall within the search radius
-			Set<LatLon> expectedLocations = locations.stream().filter(location->{
-				return earth.getGroundDistanceFromLatLon(latLon, location)<=searchRadiusKilometers*1000;				
-				}).collect(Collectors.toSet());
-			
-			//Get the locations from the GeoLocator
+
+			// Determine the expected locations that fall within the search
+			// radius
+			Set<LatLon> expectedLocations = locations.stream().filter(location -> {
+				return earth.getGroundDistanceFromLatLon(latLon, location) <= searchRadiusKilometers * 1000;
+			}).collect(Collectors.toSet());
+
+			// Get the locations from the GeoLocator
 			Set<LatLon> actualLocations = geoLocator.getLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toSet());
-			
-			//compare the two sets
+
+			// compare the two sets
 			assertEquals(expectedLocations, actualLocations);
 		}
 	}
@@ -141,7 +143,46 @@ public class AT_GeoLocator {
 	 */
 	@Test
 	public void testGetNearestLocation() {
-		fail();
+		final long seed = SEED_PROVIDER.getSeedValue(3);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		// Generate 100 random locations in a 50 kilometer radius region
+		double lat = 35;
+		double lon = 128;
+		double radiusKilometers = 50;
+		List<LatLon> locations = generateLocations(randomGenerator, lat, lon, radiusKilometers, 100);
+
+		// Create a GeoLocator from the generated locations
+		GeoLocator<LatLon> geoLocator = generateGeoLocator(locations);
+
+		int testCount = 100;
+
+		// search random spots in that region with a 10 kilometer search radius
+
+		Earth earth = Earth.fromMeanRadius();
+		for (int i = 0; i < testCount; i++) {
+			LatLon latLon = generateRandomizedLatLon(randomGenerator, lat, lon, radiusKilometers);
+
+			// Determine the expected locations that fall within the search
+			// radius
+			LatLon expectedLocation = null;
+			double lowestDistance = Double.POSITIVE_INFINITY;
+			for (LatLon location : locations) {
+				double distance = earth.getGroundDistanceFromLatLon(latLon, location);
+				if (distance < lowestDistance) {
+					lowestDistance = distance;
+					expectedLocation = location;
+				}
+			}
+
+			// Get the locations from the GeoLocator
+			Optional<LatLon> actual = geoLocator.getNearestLocation(latLon.getLatitude(), latLon.getLongitude());
+			assertTrue(actual.isPresent());
+			LatLon actualLocation = actual.get();
+
+			// compare the two sets
+			assertEquals(expectedLocation, actualLocation);
+		}
 	}
 
 	/**
@@ -149,6 +190,49 @@ public class AT_GeoLocator {
 	 */
 	@Test
 	public void testGetPrioritizedLocations() {
-		fail();
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		// Generate 100 random locations in a 50 kilometer radius region
+		double lat = 35;
+		double lon = 128;
+		double radiusKilometers = 50;
+		List<LatLon> locations = generateLocations(randomGenerator, lat, lon, radiusKilometers, 100);
+
+		// Create a GeoLocator from the generated locations
+		GeoLocator<LatLon> geoLocator = generateGeoLocator(locations);
+
+		int testCount = 100;
+
+		// search random spots in that region with a 10 kilometer search radius
+		double searchRadiusKilometers = 10;
+		Earth earth = Earth.fromMeanRadius();
+		for (int i = 0; i < testCount; i++) {
+			LatLon latLon = generateRandomizedLatLon(randomGenerator, lat, lon, radiusKilometers);
+
+			// Determine the expected locations that fall within the search
+			// radius
+			List<Pair<LatLon, Double>> expectedLocations = new ArrayList<>();
+			for (LatLon location : locations) {
+				double distance = earth.getGroundDistanceFromLatLon(latLon, location) / 1000;
+				if (distance <= searchRadiusKilometers) {
+					Pair<LatLon, Double> pair = new Pair<>(location, distance);
+					expectedLocations.add(pair);
+				}
+			}
+
+			Collections.sort(expectedLocations, new Comparator<Pair<LatLon, Double>>() {
+				@Override
+				public int compare(Pair<LatLon, Double> pair1, Pair<LatLon, Double> pair2) {
+					return Double.compare(pair1.getSecond(), pair2.getSecond());
+				}
+			});
+
+			// Get the locations from the GeoLocator
+			List<Pair<LatLon, Double>> actualLocations = geoLocator.getPrioritizedLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toList());
+
+			// compare the two sets
+			assertEquals(expectedLocations, actualLocations);
+		}
 	}
 }

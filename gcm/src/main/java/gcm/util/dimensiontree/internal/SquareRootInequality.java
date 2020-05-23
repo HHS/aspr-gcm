@@ -4,6 +4,13 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
 
+/**
+ * A utility class for determining if sqrt(a) + sqrt(b) < sqrt(c) without
+ * calculating square roots.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public final class SquareRootInequality {
 

@@ -6,6 +6,12 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
 
+/**
+ * Represents a rectangular box in the dimension of the tree.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class Rectanguloid implements Shape {
 
@@ -37,8 +43,8 @@ public class Rectanguloid implements Shape {
 	}
 
 	@Override
-	public<T> ShapeIntersectionType intersectsBox(Node<T> node) {
-		//double[] lowerBounds, double[] upperBounds
+	public <T> ShapeIntersectionType intersectsBox(Node<T> node) {
+		// double[] lowerBounds, double[] upperBounds
 		int containmentCount = 0;
 		for (int i = 0; i < position.length; i++) {
 			if (position[i] + bounds[i] < node.lowerBounds[i]) {

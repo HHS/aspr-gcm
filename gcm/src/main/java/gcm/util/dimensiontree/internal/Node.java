@@ -9,6 +9,12 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
 
+/**
+ * Represents a single node the in dimension tree.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class Node<T> {
 
@@ -31,8 +37,8 @@ public class Node<T> {
 	public int groupCount;
 
 	public int indexInParent = -1;
-	
-	//public int childWalkIndex;
+
+	// public int childWalkIndex;
 
 	public Node(CommonState commonState, double[] lowerBounds, double[] upperBounds) {
 
@@ -211,10 +217,10 @@ public class Node<T> {
 
 	public int getChildIndex(double[] position) {
 		/*
-		 * Rather than store an array of booleans for our analysis of child bounds,
-		 * we will use an index value that will be composed and then decomposed to
-		 * eliminate the cost of array construction and garbage collection which has
-		 * been shown in testing to be fairly expensive.
+		 * Rather than store an array of booleans for our analysis of child
+		 * bounds, we will use an index value that will be composed and then
+		 * decomposed to eliminate the cost of array construction and garbage
+		 * collection which has been shown in testing to be fairly expensive.
 		 */
 		int result = 0;
 		for (int i = 0; i < commonState.dimension; i++) {

@@ -3,7 +3,12 @@ package gcm.util.dimensiontree.internal;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
-
+/**
+ * Represents a sphere in the dimension of the tree.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class Sphere implements Shape {
 

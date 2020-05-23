@@ -336,11 +336,10 @@ public class GeoVisualizerPanel extends JPanel {
 		}
 
 		private void setPathSource(Vector3D position) {
-
-			Integer nearestMember = positionTree.getNearestMember(position.toArray());
-			if (nearestMember != null) {
-				if (pathSourceIndex != nearestMember) {
-					pathSourceIndex = nearestMember;
+			Optional<Integer> nearestMember = positionTree.getNearestMember(position.toArray());
+			if (nearestMember.isPresent()) {
+				if (pathSourceIndex != nearestMember.get()) {
+					pathSourceIndex = nearestMember.get();
 					recalcPath = true;
 				}
 			}
@@ -348,10 +347,10 @@ public class GeoVisualizerPanel extends JPanel {
 		}
 
 		private void setPathDestination(Vector3D position) {
-			Integer nearestMember = positionTree.getNearestMember(position.toArray());
-			if (nearestMember != null) {
-				if (pathDestinationIndex != nearestMember) {
-					pathDestinationIndex = nearestMember;
+			Optional<Integer> nearestMember = positionTree.getNearestMember(position.toArray());
+			if (nearestMember.isPresent()) {
+				if (pathDestinationIndex != nearestMember.get()) {
+					pathDestinationIndex = nearestMember.get();
 					recalcPath = true;
 				}
 			}

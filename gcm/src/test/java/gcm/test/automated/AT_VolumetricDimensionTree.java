@@ -3,6 +3,7 @@ package gcm.test.automated;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,17 +20,18 @@ import org.junit.Test;
 import gcm.util.TimeElapser;
 import gcm.util.annotations.UnitTest;
 import gcm.util.dimensiontree.DimensionTree;
+import gcm.util.dimensiontree.VolumetricDimensionTree;
 
 /**
- * Test class for {@link DimensionTree}
+ * Test class for {@link VolumetricDimensionTree}
  * 
  * @author Shawn Hatch
  *
  */
 
-@UnitTest(target = DimensionTree.class)
+@UnitTest(target = VolumetricDimensionTree.class)
 
-public class AT_DimensionTree {
+public class AT_VolumetricDimensionTree {
 
 	private static class Record {
 
@@ -82,17 +84,17 @@ public class AT_DimensionTree {
 	}
 
 	/**
-	 * Tests {@link DimensionTree#getMembersInSphere(double, double[])
+	 * Tests {@link VolumetricDimensionTree#getMembersInSphere(double, double[])
 	 */
 	@Test
 	public void testGetMembersInSphere() {
-
+		fail();
 		Random random = new Random(3245233257245L);
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
 								.setLowerBounds(new double[] { 0, 0 })//
-								.setUpperBounds(new double[] { 100, 100 })//								
+								.setUpperBounds(new double[] { 100, 100 })//
 								.build(); //
 
 		List<Record> records = new ArrayList<>();
@@ -109,14 +111,13 @@ public class AT_DimensionTree {
 
 		double searchRadius = 10;
 
-		
 		for (int i = 0; i < n; i++) {
 			double[] position = new double[2];
 			position[0] = random.nextDouble() * 120 - 10;
 			position[1] = random.nextDouble() * 120 - 10;
 
 			List<Record> list = new ArrayList<>();
-		
+
 			for (Record record : records) {
 				double deltaX = record.position[0] - position[0];
 				double deltaY = record.position[1] - position[1];
@@ -124,29 +125,25 @@ public class AT_DimensionTree {
 				if (distance < searchRadius) {
 					list.add(record);
 				}
-			}	
+			}
 
 			Set<Record> expectedRecords = new LinkedHashSet<>(list);
 
-		
 			list = tree.getMembersInSphere(searchRadius, position);
-			
-		
 
 			Set<Record> actualRecords = new LinkedHashSet<>(list);
 
 			assertEquals(expectedRecords, actualRecords);
 		}
 
-		
-
 	}
 
 	/**
-	 * Tests {@link DimensionTree#getNearestMember(double[])
+	 * Tests {@link VolumetricDimensionTree#getNearestMember(double[])
 	 */
 	@Test
 	public void testGetNearestMember() {
+		fail();
 
 		Random random = new Random(23412345234L);
 
@@ -194,84 +191,22 @@ public class AT_DimensionTree {
 	}
 
 	/**
-	 * Tests {@link DimensionTree#getMembersInRectanguloid(double[], double[])
-	 */
-	@Test
-	public void testGetMembersInRectanguloid() {
-
-		Random random = new Random(23412345234L);
-
-		DimensionTree<Record> tree = //
-				DimensionTree	.builder()//
-								.setLowerBounds(new double[] { 0, 0 })//
-								.setUpperBounds(new double[] { 1, 1 })//
-								.build(); //
-
-		List<Record> records = new ArrayList<>();
-
-		int n = 1000;
-		for (int i = 0; i < n; i++) {
-			Record record = new Record(i, random.nextDouble() * 100, random.nextDouble() * 100);
-			records.add(record);
-		}
-
-		for (Record record : records) {
-			tree.add(record.position, record);
-		}
-
-		// StopWatch bruteForceStopWatch = new StopWatch();
-		// StopWatch treeStopWatch = new StopWatch();
-		for (int i = 0; i < n; i++) {
-			double[] upperBounds = new double[2];
-			double[] lowerBounds = new double[2];
-			lowerBounds[0] = random.nextDouble() * 120 - 10;
-			lowerBounds[1] = random.nextDouble() * 120 - 10;
-			upperBounds[0] = lowerBounds[0] + random.nextDouble() * 10 + 1;
-			upperBounds[1] = lowerBounds[1] + random.nextDouble() * 10 + 1;
-
-			Set<Record> expectedRecords = new LinkedHashSet<>();
-			// bruteForceStopWatch.start();
-			for (Record record : records) {
-				boolean reject = false;
-				for (int j = 0; j < 2; j++) {
-					reject |= record.position[j] > upperBounds[j];
-					reject |= record.position[j] < lowerBounds[j];
-				}
-				if (!reject) {
-					expectedRecords.add(record);
-				}
-			}
-			// bruteForceStopWatch.stop();
-
-			// treeStopWatch.start();
-			Set<Record> actualRecords = tree.getMembersInRectanguloid(lowerBounds, upperBounds).stream().collect(Collectors.toSet());
-			// treeStopWatch.stop();
-
-			assertEquals(expectedRecords, actualRecords);
-
-		}
-		// System.out.println("brute force " +
-		// bruteForceStopWatch.getElapsedMilliSeconds());
-		// System.out.println("tree " + treeStopWatch.getElapsedMilliSeconds());
-
-	}
-
-	/**
-	 * Tests {@link DimensionTree#getAll()
+	 * Tests {@link VolumetricDimensionTree#getAll()
 	 */
 	@Test
 	public void testGetAll() {
+		fail();
 		/*
 		 * See test for add()
 		 */
 	}
 
 	/**
-	 * Tests {@link DimensionTree#add(double[], Object)
+	 * Tests {@link VolumetricDimensionTree#add(double[], double, Object)
 	 */
 	@Test
 	public void testAdd() {
-
+		fail();
 		Random random = new Random(3245233257245L);
 
 		DimensionTree<Record> tree = //
@@ -312,10 +247,11 @@ public class AT_DimensionTree {
 	}
 
 	/**
-	 * Tests {@link DimensionTree#contains(Object)
+	 * Tests {@link VolumetricDimensionTree#contains(Object)
 	 */
 	@Test
 	public void testContains() {
+		fail();
 		Random random = new Random(3245233257245L);
 
 		DimensionTree<Record> tree = //
@@ -347,10 +283,12 @@ public class AT_DimensionTree {
 	}
 
 	/**
-	 * Tests {@link DimensionTree#remove(Object)
+	 * Tests {@link VolumetricDimensionTree#remove(Object) Tests
+	 * {@link VolumetricDimensionTree#remove(double, Object)
 	 */
 	@Test
 	public void testRemove() {
+		fail();
 		Random random = new Random(3245233257245L);
 
 		DimensionTree<Record> tree = //
@@ -389,8 +327,9 @@ public class AT_DimensionTree {
 
 	}
 
-	//@Test
+	// @Test
 	public void testPerformance() {
+		fail();
 		Random random = new Random(3245233257245L);
 
 		DimensionTree<Record> tree = //

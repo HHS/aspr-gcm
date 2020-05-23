@@ -6,16 +6,21 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
 
+/**
+ * Represents the evolving answer to finding the nearest member to a given
+ * position.
+ * 
+ * @author Shawn Hatch
+ */
 @Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
 public class NearestMemberQuery<T> {
-	
+
 	public double bestSquareDistance = Double.POSITIVE_INFINITY;
-	
+
 	public T closestObject = null;
-	
+
 	public double[] position;
-	
-	
+
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -28,6 +33,5 @@ public class NearestMemberQuery<T> {
 		builder.append("]");
 		return builder.toString();
 	}
-	
-	
+
 }

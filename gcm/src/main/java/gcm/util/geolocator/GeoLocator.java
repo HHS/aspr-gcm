@@ -220,9 +220,9 @@ public class GeoLocator<T> {
 		Vector3D ecc = earth.getECCFromLatLonAlt(latLonAlt);
 		double[] positionArray = ecc.toArray();
 
-		LocationEccRecord<T> locationEccRecord = dimensionTree.getNearestMember(positionArray);
-		if (locationEccRecord != null) {
-			return Optional.of(locationEccRecord.location);
+		Optional<LocationEccRecord<T>> optional = dimensionTree.getNearestMember(positionArray);
+		if (optional.isPresent()) {
+			return Optional.of(optional.get().location);
 		}
 		return Optional.empty();
 	}

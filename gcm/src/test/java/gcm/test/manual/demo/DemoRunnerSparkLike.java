@@ -14,12 +14,10 @@ import java.util.stream.Collectors;
 
 import gcm.experiment.Experiment;
 import gcm.experiment.ExperimentExecutorSparkLike;
-import gcm.experiment.outputitemhandlersuppliers.NIOReportItemHandlerSupplier;
 import gcm.experiment.outputitemhandlersuppliers.SparkLikeMetaItemHandlerSupplier;
 import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
-import gcm.output.reports.ReportPeriod;
 import gcm.output.simstate.LogItem;
 import gcm.output.simstate.SimulationStatusItem;
 import gcm.scenario.ExperimentBuilder;
@@ -37,6 +35,9 @@ import gcm.test.manual.demo.components.ProducerBeta;
 import gcm.test.manual.demo.components.ProducerGamma;
 import gcm.test.manual.demo.components.StandardRegion;
 import gcm.test.manual.demo.components.SusceptibleCompartment;
+import gcm.test.manual.demo.datatypes.PopulationDescription;
+import gcm.test.manual.demo.datatypes.PopulationDescription.Builder;
+import gcm.test.manual.demo.datatypes.PopulationDescription.PopulationElement;
 import gcm.test.manual.demo.identifiers.Compartment;
 import gcm.test.manual.demo.identifiers.CompartmentProperty;
 import gcm.test.manual.demo.identifiers.GlobalComponent;
@@ -121,7 +122,24 @@ public class DemoRunnerSparkLike {
 	}
 
 	private void addPropertyValues(ExperimentBuilder experimentBuilder) {
-		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_PATH, populationPath);
+		
+		Builder builder = PopulationDescription.builder();
+		try {
+			Files.readAllLines(populationPath).stream().skip(1).forEach(line -> {			
+				String[] strings = line.split(",", -1);
+				int age = Integer.parseInt(strings[0]);
+				String homeId = strings[1];
+				String schoolId = strings[2];
+				String workPlaceId = strings[3];
+				PopulationElement populationElement = new PopulationElement(age,homeId,schoolId,workPlaceId); 
+				builder.addPopulationElement(populationElement);
+			});
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
+		PopulationDescription populationDescription = builder.build();
+		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_DESCRIPTION, populationDescription);
+		
 		experimentBuilder.addCompartmentPropertyValue(Compartment.INFECTED, CompartmentProperty.WEIGHT_THRESHOLD, 5d);
 
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 3.7);
@@ -192,33 +210,33 @@ public class DemoRunnerSparkLike {
 		experimentBuilder.defineGlobalProperty(TriggerContainer.TRIGGER_CONTAINER, TriggerContainer.getTriggerContainerPropertyDefinition());
 		experimentBuilder.addGlobalPropertyValue(TriggerContainer.TRIGGER_CONTAINER, builder.build());
 	}
-	
+
 	@SuppressWarnings("unused")
-	private static class CustomLogItemHandler implements OutputItemHandler{
+	private static class CustomLogItemHandler implements OutputItemHandler {
 
 		@Override
 		public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void openExperiment(ExperimentProgressLog experimentProgressLog) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void closeExperiment() {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void handle(OutputItem outputItem) {
-			System.err.println("custom log item handler :"+outputItem.toString());
+			System.err.println("custom log item handler :" + outputItem.toString());
 		}
 
 		@Override
@@ -226,35 +244,34 @@ public class DemoRunnerSparkLike {
 			Set<Class<? extends OutputItem>> result = new LinkedHashSet<>();
 			result.add(LogItem.class);
 			return result;
-		}}
-	
-	
-	
-	private static class CustomSimulationStatusItemHandler implements OutputItemHandler{
+		}
+	}
+
+	private static class CustomSimulationStatusItemHandler implements OutputItemHandler {
 
 		@Override
 		public void openSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void openExperiment(ExperimentProgressLog experimentProgressLog) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void closeSimulation(ScenarioId scenarioId, ReplicationId replicationId) {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void closeExperiment() {
-			//do nothing
+			// do nothing
 		}
 
 		@Override
 		public void handle(OutputItem outputItem) {
-			System.err.println("custom simulation status handler :"+outputItem.toString());
+			System.err.println("custom simulation status handler :" + outputItem.toString());
 		}
 
 		@Override
@@ -262,27 +279,25 @@ public class DemoRunnerSparkLike {
 			Set<Class<? extends OutputItem>> result = new LinkedHashSet<>();
 			result.add(SimulationStatusItem.class);
 			return result;
-		}}
-	
+		}
+	}
+
 	@SuppressWarnings("unused")
-	private static class CustomOutputItemHandlerSupplier implements Supplier<List<OutputItemHandler>>{
+	private static class CustomOutputItemHandlerSupplier implements Supplier<List<OutputItemHandler>> {
 
 		@Override
 		public List<OutputItemHandler> get() {
-			List<OutputItemHandler> result= new ArrayList<>();
-			result.add(new CustomSimulationStatusItemHandler());				
+			List<OutputItemHandler> result = new ArrayList<>();
+			result.add(new CustomSimulationStatusItemHandler());
 			return result;
 		}
-		
+
 	}
 
 	private void execute() throws IOException {
-		// select an output directory
-		Path outputdirectory =  Paths.get("c:\\temp\\gcm");
-				
 
 		// build the experiment
-		//TODO -- simplify experiment
+		// TODO -- simplify experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		experimentBuilder.setBaseScenarioId(100);
 		experimentBuilder.setRegionMapOption(MapOption.ARRAY);
@@ -290,55 +305,36 @@ public class DemoRunnerSparkLike {
 		defineProperties(experimentBuilder);
 		addIdentifiers(experimentBuilder);
 		addPropertyValues(experimentBuilder);
-		List<String> regionNames = addRegions(experimentBuilder);		
-		workWithTriggers(experimentBuilder,regionNames);
+		List<String> regionNames = addRegions(experimentBuilder);
+		workWithTriggers(experimentBuilder, regionNames);
 		Experiment experiment = experimentBuilder.build();
-		
-		
-		// build the reports
-		//TODO -- replace all NIO-based capabilty
-		NIOReportItemHandlerSupplier nioReportItemHandlerSupplier = NIOReportItemHandlerSupplier.builder()//
-			.addGlobalPropertyReport(outputdirectory.resolve("global property report.xls"),GlobalProperty.POPULATION_PATH)//		
-			.addRegionPropertyReport(outputdirectory.resolve("region property report.xls"))//
-			.addCompartmentPopulationReport(outputdirectory.resolve("compartment population report.xls"),ReportPeriod.DAILY)//
-			.setDisplayExperimentColumnsInReports(true)//
-			.setExperiment(experiment)//
-			.build();//
-		
-		//set the replication count
-		int replicationCount = 10;
-		
-		//build meta level reporting		
-		SparkLikeMetaItemHandlerSupplier sparkLikeMetaItemHandlerSupplier = SparkLikeMetaItemHandlerSupplier.builder()//
-			.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
-			//.setLogItemHandler(new CustomLogItemHandler())
-			.build();//		
-		
-		
-		//build the experiment executor
-		ExperimentExecutorSparkLike experimentExecutor = ExperimentExecutorSparkLike.builder()//
-			.setSeed(1234123512345234L)//
-			.setExperiment(experiment)//
-			.setReplicationCount(replicationCount)//
-			.setThreadCount(6)//
-			.addOuputItemSupplier(nioReportItemHandlerSupplier)//
-			.addOuputItemSupplier(sparkLikeMetaItemHandlerSupplier)//	
-			//.addOuputItemSupplier(new CustomOutputItemHandlerSupplier())//			
-			.build();//
-		
 
-		//run the experiment
+		// set the replication count
+		int replicationCount = 10;
+
+		// build meta level reporting
+		SparkLikeMetaItemHandlerSupplier sparkLikeMetaItemHandlerSupplier = SparkLikeMetaItemHandlerSupplier.builder()//
+																											.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
+																											// .setLogItemHandler(new
+																											// CustomLogItemHandler())
+																											.build();//
+
+		// build the experiment executor
+		ExperimentExecutorSparkLike experimentExecutor = ExperimentExecutorSparkLike.builder()//
+																					.setSeed(1234123512345234L)//
+																					.setExperiment(experiment)//
+																					.setReplicationCount(replicationCount)//
+																					.setThreadCount(6)//
+																					.addOuputItemSupplier(sparkLikeMetaItemHandlerSupplier)//
+																					.build();//
+
+		// run the experiment
 		experimentExecutor.execute();
 	}
 
-	public static void main(String[] args) throws IOException {	
+	public static void main(String[] args) throws IOException {
 		Path tractsPath = Paths.get(args[0]);
 		Path populationPath = Paths.get(args[1]);
-		// Path tractsPath =
-		// Paths.get("C:\\hhs-io\\hhs-core-flu\\input\\population\\tracts\\tract-ids.csv");
-		// Path populationPath =
-		// Paths.get("C:\\hhs-io\\hhs-core-flu\\input\\population\\dc.csv");
-
 		new DemoRunnerSparkLike(tractsPath, populationPath).execute();
 	}
 }

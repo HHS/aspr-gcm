@@ -373,39 +373,23 @@ public final class MutableVector2D {
 	}
 
 	/**
-	 * Assigns this {@link MutableVector2D} to the values of the given
-	 * {@link MutableVector2D} under either a clockwise or counter clockwise
-	 * rotation.
+	 * Rotates this {@link MutableVector2D} by 90 degrees under either a
+	 * clockwise(left handed) or counter clockwise(right handed) rotation.
 	 */
-	public void perpTo(final MutableVector2D v, final Chirality chirality) {
+	public void perpendicularRotation(final Chirality chirality) {
 		double newx, newy;
 		if (chirality == Chirality.LEFT_HANDED) {
-			newx = v.y;
-			newy = -v.x;
+			newx = y;
+			newy = -x;
 		} else {
-			newx = -v.y;
-			newy = v.x;
+			newx = -y;
+			newy = x;
 		}
 		x = newx;
 		y = newy;
 	}
 
-	/**
-	 * Assigns this {@link MutableVector2D} to the values of the given
-	 * {@link Vector2D} under either a clockwise or counter clockwise rotation.
-	 */
-	public void perpTo(final Vector2D v, final Chirality chirality) {
-		double newx, newy;
-		if (chirality == Chirality.LEFT_HANDED) {
-			newx = v.getY();
-			newy = -v.getX();
-		} else {
-			newx = -v.getY();
-			newy = v.getX();
-		}
-		x = newx;
-		y = newy;
-	}
+	
 
 	/**
 	 * Reverses the direction of the this Vector2D. This is equivalent to

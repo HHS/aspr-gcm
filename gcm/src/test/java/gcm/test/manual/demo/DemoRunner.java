@@ -26,6 +26,9 @@ import gcm.test.manual.demo.components.ProducerBeta;
 import gcm.test.manual.demo.components.ProducerGamma;
 import gcm.test.manual.demo.components.StandardRegion;
 import gcm.test.manual.demo.components.SusceptibleCompartment;
+import gcm.test.manual.demo.datatypes.PopulationDescription;
+import gcm.test.manual.demo.datatypes.PopulationDescription.Builder;
+import gcm.test.manual.demo.datatypes.PopulationDescription.PopulationElement;
 import gcm.test.manual.demo.identifiers.Compartment;
 import gcm.test.manual.demo.identifiers.CompartmentProperty;
 import gcm.test.manual.demo.identifiers.GlobalComponent;
@@ -111,7 +114,23 @@ public class DemoRunner {
 
 	private void addPropertyValues(ExperimentBuilder experimentBuilder) {
 
-		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_PATH, populationPath);
+		Builder builder = PopulationDescription.builder();
+		try {
+			Files.readAllLines(populationPath).stream().skip(1).forEach(line -> {			
+				String[] strings = line.split(",", -1);
+				int age = Integer.parseInt(strings[0]);
+				String homeId = strings[1];
+				String schoolId = strings[2];
+				String workPlaceId = strings[3];
+				PopulationElement populationElement = new PopulationElement(age,homeId,schoolId,workPlaceId); 
+				builder.addPopulationElement(populationElement);
+			});
+		} catch (IOException e) {
+			throw new RuntimeException();
+		}
+		PopulationDescription populationDescription = builder.build();
+		experimentBuilder.addGlobalPropertyValue(GlobalProperty.POPULATION_DESCRIPTION, populationDescription);
+
 		experimentBuilder.addCompartmentPropertyValue(Compartment.INFECTED, CompartmentProperty.WEIGHT_THRESHOLD, 5d);
 
 		// experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 3.7);
@@ -258,7 +277,7 @@ public class DemoRunner {
 
 		// execute the experiment
 		 
-		 experimentExecutor.addGlobalPropertyReport(outputdirectory.resolve("global property report.xls"),GlobalProperty.POPULATION_PATH);
+		// experimentExecutor.addGlobalPropertyReport(outputdirectory.resolve("global property report.xls"),GlobalProperty.POPULATION_PATH);
 
 		//experimentExecutor.setProfileReport(outputdirectory.resolve("profile report.xls"));
 		experimentExecutor.execute();

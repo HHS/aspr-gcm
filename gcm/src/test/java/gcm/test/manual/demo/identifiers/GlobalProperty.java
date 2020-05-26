@@ -1,12 +1,12 @@
 package gcm.test.manual.demo.identifiers;
 
-import java.nio.file.Path;
-
 import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.PropertyDefinition;
+import gcm.test.manual.demo.datatypes.PopulationDescription;
 
 public enum GlobalProperty implements GlobalPropertyId {
-	POPULATION_PATH(PropertyDefinition.builder().setType(Path.class).build()),
+	
+	POPULATION_DESCRIPTION(PropertyDefinition.builder().setType(PopulationDescription.class).build()),
 	ALPHA(PropertyDefinition.builder().setType(Double.class).setDefaultValue(0).setPropertyValueMutability(true).build());
 	
 		

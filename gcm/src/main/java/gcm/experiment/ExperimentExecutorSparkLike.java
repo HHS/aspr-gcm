@@ -2,11 +2,16 @@ package gcm.experiment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.util.FastMath;
+import org.apache.commons.math3.util.Pair;
 
 import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.experiment.progress.ExperimentProgressLogProvider;
@@ -47,7 +52,6 @@ public final class ExperimentExecutorSparkLike {
 			this.replicationIndex = replicationIndex;
 			this.outputItemHandlers = outputItemHandlers;
 		}
-
 	}
 
 	private final Scaffold scaffold;
@@ -145,7 +149,7 @@ public final class ExperimentExecutorSparkLike {
 			scaffold.threadCount = threadCount;
 			return this;
 		}
-		
+
 		/**
 		 * Adds the {@link OutputItemHandler} objects from the given supplier.
 		 */
@@ -170,13 +174,14 @@ public final class ExperimentExecutorSparkLike {
 	 * Executes the experiment using the information supplied via the various
 	 * mutation methods. Clears all collected data upon completion. Thus this
 	 * ExperimentExecutor returns to an empty and idle state.
-	 * @throws ExecutionException 
-	 * @throws InterruptedException 
+	 * 
+	 * @throws ExecutionException
+	 * @throws InterruptedException
 	 * 
 	 * @throws RuntimeException
 	 *             if the experiment was not set
 	 */
-	public void execute()  {
+	public void execute() {
 		/*
 		 * Initialize the experiment progress log. If a provider was
 		 * contributed, get the output item handler that will write the new
@@ -208,7 +213,7 @@ public final class ExperimentExecutorSparkLike {
 		 * Create the jobs. Only create the jobs that are not covered in the
 		 * experiment progress log.
 		 */
-			
+
 		List<Job> jobs = new ArrayList<>();
 		for (int i = 0; i < scaffold.experiment.getScenarioCount(); i++) {
 			for (int j = 0; j < replications.size(); j++) {
@@ -224,41 +229,67 @@ public final class ExperimentExecutorSparkLike {
 		/*
 		 * Execute the jobs.
 		 */
-		
-		//Determine the number of threads to allocate to a ForkJoinPool.
-		int threadCount = scaffold.threadCount;
-		threadCount = FastMath.max(threadCount,1);
-		threadCount = FastMath.min(Runtime.getRuntime().availableProcessors(),threadCount);
-		
-		try {
-			//TODO produce a map of (scenario,replication)->boolean
-			new ForkJoinPool(threadCount).submit(() -> {			
-				jobs.parallelStream().forEach(job -> {
-					Scenario scenario = scaffold.experiment.getScenario(job.scenarioIndex);
-					Replication replication = replications.get(job.replicationIndex);
 
-					final Simulation simulation = new Simulation();
-					simulation.setScenario(scenario);
-					simulation.setReplication(replication);
-					for (OutputItemHandler outputItemHandler : job.outputItemHandlers) {
-						simulation.addOutputItemHandler(outputItemHandler);
-					}
-					try {					
-						simulation.execute();
-					} catch (final Exception e) {
-						System.err.println("Simulation failure for scenario " + scenario.getScenarioId() + " and replication " + replication.getId());
-						e.printStackTrace();
-					}
-				});
-			}).get();
+		// Determine the number of threads to allocate to a ForkJoinPool.
+		int threadCount = scaffold.threadCount;
+		threadCount = FastMath.max(threadCount, 1);
+		threadCount = FastMath.min(Runtime.getRuntime().availableProcessors(), threadCount);
+
+		ForkJoinPool forkJoinPool = new ForkJoinPool(threadCount);
+		Task task = new Task(jobs, replications, scaffold.experiment);
+		ForkJoinTask<Map<Pair<Integer, Integer>, Boolean>> forkJoinTask = forkJoinPool.submit(task);
+		try {
+			System.out.println(forkJoinTask.get());
 		} catch (InterruptedException | ExecutionException e) {
 			throw new RuntimeException(e);
 		}
 
 		/*
-		 * Let the output items handlers know that the experiment is
-		 * finished.
+		 * Let the output items handlers know that the experiment is finished.
 		 */
 		scaffold.outputItemHandlers.stream().forEach(handler -> handler.closeExperiment());
 	}
+
+	private static class Task implements Callable<Map<Pair<Integer, Integer>, Boolean>> {
+		private final List<Job> jobs;
+		private final List<Replication> replications;
+		private final Experiment experiment;
+
+		public Task(List<Job> jobs, List<Replication> replications, Experiment experiment) {
+			this.jobs = jobs;
+			this.replications = replications;
+			this.experiment = experiment;
+		}
+
+		@Override
+		public Map<Pair<Integer, Integer>, Boolean> call() throws Exception {
+			Map<Pair<Integer, Integer>, Boolean> map = jobs.parallelStream().collect(Collectors.toMap(job -> {
+				Replication replication = replications.get(job.replicationIndex);
+				ScenarioId scenarioId = experiment.getScenarioId(job.scenarioIndex);
+				return new Pair<>(scenarioId.getValue(), replication.getId().getValue());
+			}, job -> {
+
+				Scenario scenario = experiment.getScenario(job.scenarioIndex);
+				Replication replication = replications.get(job.replicationIndex);
+
+				final Simulation simulation = new Simulation();
+				simulation.setScenario(scenario);
+				simulation.setReplication(replication);
+				for (OutputItemHandler outputItemHandler : job.outputItemHandlers) {
+					simulation.addOutputItemHandler(outputItemHandler);
+				}
+				boolean result = false;
+				try {
+					simulation.execute();
+					result = true;
+				} catch (final Exception e) {
+					System.err.println("Simulation failure for scenario " + scenario.getScenarioId() + " and replication " + replication.getId());
+					e.printStackTrace();
+				}
+				return result;
+			}));
+			return map;
+		}
+	}
+
 }

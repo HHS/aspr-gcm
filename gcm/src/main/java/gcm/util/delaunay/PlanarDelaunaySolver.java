@@ -175,7 +175,7 @@ public class PlanarDelaunaySolver<T> {
 
 		MutableVector2D p1 = new MutableVector2D(a);
 		p1.sub(b);
-		p1.perpTo(p1, Chirality.LEFT_HANDED);
+		p1.perpendicularRotation(Chirality.LEFT_HANDED);
 
 		MutableVector2D m2 = new MutableVector2D(b);
 		m2.add(c);
@@ -183,7 +183,7 @@ public class PlanarDelaunaySolver<T> {
 
 		MutableVector2D p2 = new MutableVector2D(b);
 		p2.sub(c);
-		p2.perpTo(p2, Chirality.LEFT_HANDED);
+		p2.perpendicularRotation(Chirality.LEFT_HANDED);
 
 		MutableVector2D q = new MutableVector2D(c);
 		q.sub(b);

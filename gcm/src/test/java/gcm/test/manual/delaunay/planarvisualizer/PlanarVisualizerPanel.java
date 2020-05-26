@@ -11,8 +11,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -76,21 +78,33 @@ public class PlanarVisualizerPanel extends JPanel {
 
 	private class PointModelProvider<T> {
 		private final Map<T, Vector2D> dataMap;
-		private List<Point> points;		
+		private List<Point> points;
 		private int lastWidth;
 		private int lastHeight;
 		private List<Link> links = new ArrayList<>();
+		private Set<Integer> linkIndices = new LinkedHashSet<>();
 
 		public PointModelProvider(Map<T, Vector2D> dataMap, List<Pair<T, T>> links) {
 			this.dataMap = dataMap;
 
 			Map<T, Integer> map = new LinkedHashMap<>();
+
 			for (T t : dataMap.keySet()) {
 				map.put(t, map.size());
 			}
+
 			for (Pair<T, T> pair : links) {
 				this.links.add(new Link(map.get(pair.getFirst()), map.get(pair.getSecond())));
 			}
+
+			for (Link link : this.links) {
+				linkIndices.add(link.first);
+				linkIndices.add(link.second);
+			}
+		}
+
+		public boolean isLinkIndex(int index) {
+			return linkIndices.contains(index);
 		}
 
 		public List<Point> getPoints() {
@@ -100,23 +114,22 @@ public class PlanarVisualizerPanel extends JPanel {
 				lastWidth = currentWidth;
 				lastHeight = currentHeight;
 				buildPoints();
-				
 			}
 			return points;
 		}
-		
-		public List<Link> getLinks(){
+
+		public List<Link> getLinks() {
 			return links;
 		}
-		
+
 		private void buildPoints() {
 
 			MutableVector2D upperLeftDataPosition = new MutableVector2D(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 			MutableVector2D lowerRightDataPosition = new MutableVector2D(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
-			for(T t : dataMap.keySet()) {
+			for (T t : dataMap.keySet()) {
 				Vector2D v = dataMap.get(t);
-				
+
 				if (v.getX() < upperLeftDataPosition.getX()) {
 					upperLeftDataPosition.setX(v.getX());
 				}
@@ -152,26 +165,26 @@ public class PlanarVisualizerPanel extends JPanel {
 			screenCenter.scale(0.5);
 
 			/*
-			 * dataCenter is the center of the box that bounds the data, rather than
-			 * the centroid of the data
+			 * dataCenter is the center of the box that bounds the data, rather
+			 * than the centroid of the data
 			 */
 			MutableVector2D dataCenter = new MutableVector2D(lowerRightDataPosition);
 			dataCenter.add(upperLeftDataPosition);
 			dataCenter.scale(0.5);
 
 			/*
-			 * Map each point in the data to the screen coordinates. Note that this
-			 * projection takes data center to screen center.
+			 * Map each point in the data to the screen coordinates. Note that
+			 * this projection takes data center to screen center.
 			 */
 			points = new ArrayList<>();
-			for(T t : dataMap.keySet()) {				
+			for (T t : dataMap.keySet()) {
 				MutableVector2D v = new MutableVector2D(dataMap.get(t));
 				v.sub(dataCenter);
 				v.scale(scalar);
 				v.add(screenCenter);
 				Point point = new Point((int) v.getX(), (int) v.getY());
 				points.add(point);
-			}			
+			}
 		}
 
 	}
@@ -197,21 +210,26 @@ public class PlanarVisualizerPanel extends JPanel {
 		nodeRadius = FastMath.min(nodeRadius, 10);
 
 		// paint the point links
-		g2.setColor(Color.yellow);
 		g2.setStroke(new BasicStroke(pathEdgeWidth));
-
+		g2.setColor(Color.yellow);
 		List<Link> links = pointModelProvider.getLinks();
-		
-		for(Link link : links) {
+		for (Link link : links) {
 			Point originPoint = points.get(link.first);
+			g2.fillOval(originPoint.x - nodeRadius, originPoint.y - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
+
 			Point destinationPoint = points.get(link.second);
+			g2.fillOval(destinationPoint.x - nodeRadius, destinationPoint.y - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
+
 			g2.drawLine(originPoint.x, originPoint.y, destinationPoint.x, destinationPoint.y);
 		}
 
 		// paint the nodes
 		g2.setColor(Color.red);
-		for (Point point : points) {
-			g2.fillOval(point.x - nodeRadius, point.y - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
+		for (int i = 0; i < points.size(); i++) {
+			if (!pointModelProvider.isLinkIndex(i)) {
+				Point point = points.get(i);
+				g2.fillOval(point.x - nodeRadius, point.y - nodeRadius, 2 * nodeRadius, 2 * nodeRadius);
+			}
 		}
 
 		// if (pointModel.pointCount() < 20) {

@@ -297,7 +297,6 @@ public class DemoRunnerSparkLike {
 	private void execute() throws IOException {
 
 		// build the experiment
-		// TODO -- simplify experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		experimentBuilder.setBaseScenarioId(100);
 		experimentBuilder.setRegionMapOption(MapOption.ARRAY);

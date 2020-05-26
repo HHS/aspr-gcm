@@ -891,7 +891,7 @@ public class AT_Vector2D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector2D#perpTo(Vector2D, boolean)}
+	 * Tests {@linkplain Vector2D#perpendicularRotation(Chirality)}
 	 */
 	@Test
 	public void testPerpTo() {
@@ -909,13 +909,13 @@ public class AT_Vector2D {
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			Vector2D v2 = new Vector2D(x2, y2);
 
-			v2 = v2.perpTo(v1, Chirality.LEFT_HANDED);
+			v2 = v1.perpendicularRotation(Chirality.LEFT_HANDED);
 			// v2 should be perpendicular to v1
 			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
 			// v2 is clockwise of v1, so the cross product points up
 			assertEquals(1, v2.cross(v1));
 
-			v2 = v2.perpTo(v1, Chirality.RIGHT_HANDED);
+			v2 = v1.perpendicularRotation(Chirality.RIGHT_HANDED);
 			// v2 should be perpendicular to v1
 			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
 			// v2 is clockwise of v1, so the cross product points down

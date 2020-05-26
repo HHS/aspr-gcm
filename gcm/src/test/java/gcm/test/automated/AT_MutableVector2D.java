@@ -1225,9 +1225,8 @@ public class AT_MutableVector2D {
 	}
 
 	/**
-	 * Tests {@linkplain MutableVector2D#perpTo(MutableVector2D, boolean)}
+	 * Tests {@linkplain MutableVector2D#perpendicularRotation(Chirality)}
 	 * 
-	 * Tests {@linkplain MutableVector2D#perpTo(Vector2D, boolean)}
 	 */
 	@Test
 	public void testPerpTo() {
@@ -1235,7 +1234,6 @@ public class AT_MutableVector2D {
 		final long seed = SEED_PROVIDER.getSeedValue(16);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		//Tests {@linkplain MutableVector2D#perpTo(MutableVector2D, boolean)}
 		for (int i = 0; i < 100; i++) {
 
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -1246,13 +1244,15 @@ public class AT_MutableVector2D {
 			double y2 = randomGenerator.nextDouble() * 1000 - 500;
 			MutableVector2D v2 = new MutableVector2D(x2, y2);
 
-			v2.perpTo(v1, Chirality.LEFT_HANDED);
+			v2.assign(v1);
+			v2.perpendicularRotation(Chirality.LEFT_HANDED);
 			// v2 should be perpendicular to v1
 			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
 			// v2 is clockwise of v1, so the cross product points up
 			assertEquals(1, v2.cross(v1));
 
-			v2.perpTo(v1, Chirality.RIGHT_HANDED);
+			v2.assign(v1);
+			v2.perpendicularRotation(Chirality.RIGHT_HANDED);
 			// v2 should be perpendicular to v1
 			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
 			// v2 is clockwise of v1, so the cross product points down
@@ -1260,30 +1260,7 @@ public class AT_MutableVector2D {
 
 		}
 		
-		//Tests {@linkplain MutableVector2D#perpTo(Vector2D, boolean)}
-		for (int i = 0; i < 100; i++) {
-
-			double x1 = randomGenerator.nextDouble() * 1000 - 500;
-			double y1 = randomGenerator.nextDouble() * 1000 - 500;
-		    Vector2D v1 = new Vector2D(x1, y1);
-
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-			MutableVector2D v2 = new MutableVector2D(x2, y2);
-
-			v2.perpTo(v1, Chirality.LEFT_HANDED);
-			// v2 should be perpendicular to v1
-			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
-			// v2 is clockwise of v1, so the cross product points up
-			assertEquals(1, v2.cross(v1));
-
-			v2.perpTo(v1, Chirality.RIGHT_HANDED);
-			// v2 should be perpendicular to v1
-			assertEquals(FastMath.PI / 2, v2.angle(v1), TOLERANCE);
-			// v2 is clockwise of v1, so the cross product points down
-			assertEquals(-1, v2.cross(v1));
-
-		}
+		
 
 	}
 

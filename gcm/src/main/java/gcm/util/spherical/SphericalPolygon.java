@@ -6,6 +6,7 @@ import java.util.List;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.VolumetricDimensionTree;
+import gcm.util.vector.MutableVector3D;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -109,6 +110,10 @@ public class SphericalPolygon {
 	private final List<SphericalTriangle> sphericalTriangles;
 
 	private final Chirality chirality;
+
+	private final SphericalPoint centroid;
+
+	private final double radius;
 
 	private final VolumetricDimensionTree<SphericalTriangle> searchTree;
 
@@ -298,11 +303,20 @@ public class SphericalPolygon {
 			}
 		}
 
+		MutableVector3D v = new MutableVector3D();
+		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+			v.add(sphericalPoint.getPosition());
+		}
+		
+		centroid = new SphericalPoint(v);
+
+		radius = centroid.getPosition().distanceTo(scaffold.sphericalPoints.get(0).getPosition());
+
 		Chirality chirality = Chirality.RIGHT_HANDED;
 		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
 		if (triangles.size() == 0) {
 			chirality = Chirality.LEFT_HANDED;
-			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);			
+			triangles = triangulate(scaffold.sphericalPoints, Chirality.LEFT_HANDED);
 		}
 
 		if (triangles.size() == 0) {
@@ -334,5 +348,21 @@ public class SphericalPolygon {
 			searchTree = null;
 		}
 
+	}
+
+	/**
+	 * Returns the radius of this {@link SphericalPolygon}. All vertices of this
+	 * polygon lie with the radius around the centroid.
+	 */
+	public double getRadius() {
+		return radius;
+	}
+
+	/**
+	 * Returns the center of this {@link SphericalPolygon}. All vertices of this
+	 * polygon lie with the radius around the centroid.
+	 */
+	public SphericalPoint getCentroid() {
+		return centroid;
 	}
 }

@@ -288,8 +288,7 @@ public final class Vector2D {
 	 * {@link Vector2D} scaled to unit length.
 	 */
 	public Vector2D normalize() {
-		final double len = length();
-		return new Vector2D(x / len, y / len);
+		return scale(1.0/length());		
 	}
 
 	/**
@@ -300,14 +299,14 @@ public final class Vector2D {
 	 * @throws NullPointerException
 	 *             <li>if v is null
 	 */
-	public Vector2D perpTo(final Vector2D v, final Chirality chirality) {
+	public Vector2D perpendicularRotation(final Chirality chirality) {
 		double newx, newy;
 		if (chirality == Chirality.LEFT_HANDED) {
-			newx = v.y;
-			newy = -v.x;
+			newx = y;
+			newy = -x;
 		} else {
-			newx = -v.y;
-			newy = v.x;
+			newx = -y;
+			newy = x;
 		}
 		return new Vector2D(newx, newy);
 	}

@@ -109,10 +109,12 @@ public class TestPlanScript {
 	}
 
 	public static void main(String[] args) {
-		// "C:\git_repos\gcm\gcm\src\main\java"
+		
+		// Should point to src/main/java
 		Path sourcePath = Paths.get(args[0]);
-
-		// "C:\git_repos\gcm\gcm\src\test\java"
+		
+		
+		// Should point to src/test/java
 		Path testPath = Paths.get(args[1]);
 
 		TestPlanScript testPlanScript = new TestPlanScript(sourcePath, testPath);

@@ -1,5 +1,6 @@
 package gcm.test.script;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -16,7 +17,7 @@ public final class FileClassUtil {
 	}
 
 	private static String getClassName(Path sourcePath, Path file) {
-		return file.toString().substring(sourcePath.toString().length() + 1, file.toString().length() - 5).replace("\\", ".");
+		return file.toString().substring(sourcePath.toString().length() + 1, file.toString().length() - 5).replace(File.separator, ".");
 	}
 
 	/**

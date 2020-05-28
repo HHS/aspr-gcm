@@ -10,11 +10,14 @@ import java.util.Map;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.VolumetricDimensionTree;
 import gcm.util.earth.LatLon;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
+@Source(status = TestStatus.REQUIRED)
 public class GeoDelaunaySolver<T> {
 
 	/*

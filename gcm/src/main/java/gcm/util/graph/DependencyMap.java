@@ -26,7 +26,7 @@ import java.util.Map;
  * 
  * @param <N>
  */
-public class DependencyMap<N> {
+public final class DependencyMap<N> {
 	
 	private DependencyMap() {
 		

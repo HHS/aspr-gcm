@@ -2,14 +2,18 @@ package gcm.util.graph;
 
 
 /**
- * Creates a Graph from a given graph that contains all the edges and nodes of
+ * A static class for creating a Graph from a given graph that contains all the edges and nodes of
  * the original graph with all edges in reverse direction from the original.
  * 
  * @author Shawn Hatch
  * 
  */
 
-public class GraphReversor {
+public final class GraphReversor {
+	
+	private GraphReversor() {
+		
+	}
 	
 	public static <N, E> Graph<N, E> reverseGraph(Graph<N, E> graph) {
 		

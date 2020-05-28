@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import gcm.util.graph.Path.Builder;
+
 /**
  * 
  * Solves a shortest path through a graph from an origin node to a destination
@@ -38,7 +40,7 @@ import java.util.Map;
  * @author Shawn Hatch
  * 
  */
-public class GraphPathSolver {
+public final class GraphPathSolver {
 	
 	public interface EdgeCostEvaluator<E> {
 		
@@ -70,14 +72,16 @@ public class GraphPathSolver {
 	}
 	
 	
-	public static <N,E> Path< E> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
+	public static <N,E> Path<E> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
 		
 		if (!graph.containsNode(originNode)) {			
-			return PathBuilder.buildEmptyPath();
+			Builder<E> builder = Path.builder();
+			return builder.build();
 		}
 		
 		if (!graph.containsNode(destinationNode)) {
-			return PathBuilder.buildEmptyPath();
+			Builder<E> builder = Path.builder();
+			return builder.build();
 		}
 		
 		final Map<N, Node<E>> map = new LinkedHashMap<>();
@@ -156,6 +160,9 @@ public class GraphPathSolver {
 		
 		Node<E> destination = map.get(destinationNode);
 		
+		
+		
+
 
 		List<E> edges = new ArrayList<>();
 		// assess whether we have a solution
@@ -180,7 +187,13 @@ public class GraphPathSolver {
 			}
 			Collections.reverse(edges);
 		}
-		return PathBuilder.build(edges);
+		
+		Builder<E> builder = Path.builder();
+		for(E edge : edges) {
+			builder.addEdge(edge);
+		}
+		
+		return builder.build();
 	}
 	
 }

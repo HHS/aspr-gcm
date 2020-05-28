@@ -1,7 +1,7 @@
 package gcm.util.graph;
 
 
-public class GenericGraph<N, E> extends AbstractGraph<N, E> {
+public final class GenericGraph<N, E> extends AbstractGraph<N, E> {
 	
 	private MutableGraph<N, E> mutableGraph;
 	

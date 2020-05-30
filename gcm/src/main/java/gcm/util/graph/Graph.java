@@ -1,47 +1,180 @@
 package gcm.util.graph;
 
-/**
- * Graph is a generics based interface for directed graphs. A graph is composed
- * of node objects and edge objects and acts as a non-null tolerant collection
- * over each of these types.
- * 
- * Each node in a graph is unique amongst the nodes. Formally, if nodes n1 and
- * n2 are two distinct returns from the getNodesIterator() iterator, then
- * n1.equals(n2) will always return false. Similarly, if edges e1 and e2 are two
- * distinct returns from the getEdgesIterator() iterator, then e1.equals(e2)
- * will always return false. While it may be rare to use the same class types
- * for both nodes and edges, it is permissible to do so. Uniqueness is not
- * enforced from nodes to edges, so it is possible and unambiguous to have an
- * object that is functioning as both a node and an edge.
- * 
- * Edges are uni-directional and are always associated with two nodes: an origin
- * node and a destination node, not necessarily distinct. Two nodes may be
- * connected by any number of distinct edges. Nodes may be associated with zero
- * to many edges.
- * 
- * @author Shawn Hatch
- * 
- * @param <N>
- * @param <E>
- */
-public interface Graph<N, E> {
+import java.util.List;
+
+public final class Graph<N, E> {
+
+		
+	private final MutableGraph<N, E> mutableGraph;
+
+	Graph(MutableGraph<N, E> mutableGraph) {
+		this.mutableGraph = mutableGraph;
+	}
 	
+	public static <N, E> Builder<N, E> builder(){
+		return new Builder<>();
+	}
+	public static class Builder<N, E>{
+		
+		private MutableGraph<N, E> mutableGraph = new MutableGraph<>();
+		
+		private Builder() {
+			
+		}
+		
+		public Graph<N,E> build(){
+			try {
+				return new Graph<>(mutableGraph);
+			}finally {
+				mutableGraph = new MutableGraph<>();
+			}
+		}
+		
+		/**
+		 * Adds the node to this graph.
+		 */
+		public Builder<N,E> addNode(N node) {
+			mutableGraph.addNode(node);
+			return this;
+		}
+		
+		/**
+		 * Adds the edge to this graph, possibly replacing the edge if it is already
+		 * in the graph. Adds the nodes if required.
+		 */
+		public Builder<N,E> addEdge(E edge, N originNode, N destinationNode) {
+			mutableGraph.addEdge(edge, originNode, destinationNode);
+			return this;
+		}
+		
+		/**
+		 * Adds the content of the given {@link Graph} to this {@link Graph}
+		 */
+		public Builder<N,E> addAll(Graph<N, E> graph) {
+			mutableGraph.addAll(graph);
+			return this;
+		}
+		
+		/**
+		 * Adds the content of the given {@link MutableGraph} to this
+		 * {@link MutableGraph}
+		 */
+		public Builder<N,E> addAll(MutableGraph<N, E> graph) {
+			mutableGraph.addAll(graph);
+			return this;
+		}
+		
+	}
+
 	/**
 	 * Returns true if and only if the node is contained in the graph.
 	 * 
 	 * @param node
 	 * @return
 	 */
-	public boolean containsNode(Object node);
-	
+	public boolean containsNode(Object node) {
+		return mutableGraph.containsNode(node);
+	}
+
 	/**
 	 * Returns true if and only if the edge is contained in the graph.
 	 * 
 	 * @param edge
 	 * @return
 	 */
-	public boolean containsEdge(Object edge);
-	
+	public boolean containsEdge(Object edge) {
+		return mutableGraph.containsEdge(edge);
+	}
+
+	/**
+	 * Returns the number of edges in this graph
+	 * 
+	 * @return
+	 */
+	public int edgeCount() {
+		return mutableGraph.edgeCount();
+	}
+
+	/**
+	 * Returns the destination node for the given edge.
+	 * 
+	 * @param edge
+	 * @return
+	 */
+	public N getDestinationNode(E edge) {
+		return mutableGraph.getDestinationNode(edge);
+	}
+
+	/**
+	 * Returns the origin node for the given edge.
+	 * 
+	 * @param edge
+	 * @return
+	 */
+	public N getOriginNode(E edge) {
+		return mutableGraph.getOriginNode(edge);
+	}
+
+	/**
+	 * Returns the number of edges that have the given node as their destination
+	 * node.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public int inboundEdgeCount(N node) {
+		return mutableGraph.inboundEdgeCount(node);
+	}
+
+	/**
+	 * Returns the number of nodes in this graph.
+	 * 
+	 * @return
+	 */
+	public int nodeCount() {
+		return mutableGraph.nodeCount();
+	}
+
+	/**
+	 * Returns the number of edges that have the given node as their origin
+	 * node.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public int outboundEdgeCount(N node) {
+		return mutableGraph.outboundEdgeCount(node);
+	}
+
+	/**
+	 * Returns true if and only if the nodeCount() is zero
+	 * 
+	 * @return
+	 */
+	public boolean isEmpty() {
+		return mutableGraph.isEmpty();
+	}
+
+	/**
+	 * Returns the number of edges going into the given node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public int getInboundEdgeCount(N node) {
+		return mutableGraph.getInboundEdgeCount(node);
+	}
+
+	/**
+	 * Returns the number of edges going into the given node
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public int getOutboundEdgeCount(N node) {
+		return mutableGraph.getOutboundEdgeCount(node);
+	}
+
 	/**
 	 * Returns true if and only if the given edge connects the given origin and
 	 * destination.
@@ -51,48 +184,19 @@ public interface Graph<N, E> {
 	 * @param destination
 	 * @return
 	 */
-	public boolean formsEdgeRelationship(Object edge, Object origin, Object destination);
-	
+	public boolean formsEdgeRelationship(Object edge, Object origin, Object destination) {
+		return mutableGraph.formsEdgeRelationship(edge, origin, destination);
+	}
+
 	/**
 	 * Supplies an iterator over all nodes in the graph.
 	 * 
 	 * @return
 	 */
-	public Iterable<N> getNodes();
-	
-	/**
-	 * Supplies an iterator over all edges in the graph.
-	 * 
-	 * @return
-	 */
-	public Iterable<E> getEdges();
-	
-	/**
-	 * Supplies an iterator over all edges in the graph that have node as their
-	 * destination.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public Iterable<E> getInboundEdges(N node);
-	
-	/**
-	 * Returns the number of edges going into the given node
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int getInboundEdgeCount(N node);
-	
-	/**
-	 * Supplies an iterator over all edges in the graph that have node as their
-	 * origin.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public Iterable<E> getOutboundEdges(N node);
-	
+	public List<N> getNodes() {
+		return mutableGraph.getNodes();
+	}
+
 	/**
 	 * Supplies an iterable over the edges from the origin node to the
 	 * destination node.
@@ -101,75 +205,49 @@ public interface Graph<N, E> {
 	 * @param destinationNode
 	 * @return
 	 */
-	public Iterable<E> getEdges(N originNode, N destinationNode);
+	public List<E> getEdges() {
+		return mutableGraph.getEdges();
+	}
+
+	/**
+	 * Supplies an iterator over all edges in the graph that have node as their
+	 * destination.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public List<E> getInboundEdges(N node) {
+		return mutableGraph.getInboundEdges(node);
+	}
+
+	/**
+	 * Supplies an iterator over all edges in the graph that have node as their
+	 * origin.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public List<E> getOutboundEdges(N node) {
+		return mutableGraph.getOutboundEdges(node);
+	}
+
+	/**
+	 * Supplies an iterator over all edges between the given nodes.
+	 * 
+	 * @return
+	 */
+	public List<E> getEdges(N originNode, N destinationNode) {
+		return mutableGraph.getEdges(originNode, destinationNode);
+	}
+
 	/**
 	 * Returns the number of edges in this graph from the origin node to the
 	 * destination node.
 	 * 
 	 * @return
 	 */
-	public int edgeCount(N originNode, N destinationNode);
-	/**
-	 * Returns the number of edges going into the given node
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int getOutboundEdgeCount(N node);
-	
-	/**
-	 * Returns the origin node for the given edge.
-	 * 
-	 * @param edge
-	 * @return
-	 */
-	public N getOriginNode(E edge);
-	
-	/**
-	 * Returns the destination node for the given edge.
-	 * 
-	 * @param edge
-	 * @return
-	 */
-	public N getDestinationNode(E edge);
-	
-	/**
-	 * Returns the number of edges in this graph.
-	 * 
-	 * @return
-	 */
-	public int edgeCount();
-	
-	/**
-	 * Returns the number of nodes in this graph.
-	 * 
-	 * @return
-	 */
-	public int nodeCount();
-	
-	/**
-	 * Returns the number of edges that have the given node as their destination
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int inboundEdgeCount(N node);
-	
-	/**
-	 * Returns the number of edges that have the given node as their origin
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int outboundEdgeCount(N node);
-	
-	/**
-	 * Returns true if and only if the nodeCount() is zero
-	 * 
-	 * @return
-	 */
-	public boolean isEmpty();
-	
+	public int edgeCount(N originNode, N destinationNode) {
+		return mutableGraph.edgeCount(originNode, destinationNode);
+	}
+
 }

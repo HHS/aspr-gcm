@@ -1,12 +1,13 @@
-package gcm.util.graph;
+package gcm.util.graph.path;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import gcm.util.graph.GraphPathSolver.EdgeCostEvaluator;
-import gcm.util.graph.GraphPathSolver.TravelCostEvaluator;
+import gcm.util.graph.Graph;
+import gcm.util.graph.path.PathSolver.EdgeCostEvaluator;
+import gcm.util.graph.path.PathSolver.TravelCostEvaluator;
 
 /**
  * Manages shortest path solutions for a given graph with reasonable efficiency.
@@ -79,7 +80,7 @@ public final class ArrayPathManager<N, E> {
 
 	private void solve(N origin, N destination) {
 
-		Path<E> path = GraphPathSolver.getPath(graph, origin, destination, edgeCostEvaluator, travelCostEvaluator);
+		Path<E> path = PathSolver.getPath(graph, origin, destination, edgeCostEvaluator, travelCostEvaluator);
 
 		if (path == null) {
 

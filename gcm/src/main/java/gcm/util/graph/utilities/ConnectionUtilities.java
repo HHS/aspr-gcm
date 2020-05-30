@@ -1,4 +1,4 @@
-package gcm.util.graph;
+package gcm.util.graph.utilities;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -7,6 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import gcm.util.graph.Graph;
+import gcm.util.graph.MutableGraph;
 
 /**
  * 
@@ -20,6 +23,34 @@ import java.util.Set;
  * 
  */
 public final class ConnectionUtilities {
+
+	/**
+	 * 
+	 * An enumeration of the three types of graph connectedness.
+	 * 
+	 * Strongly connected graphs are ones in which for every pair (not
+	 * necessarily distinct) of nodes in the graph there exits a Path connecting
+	 * those nodes. Note that a node is not implicitly connected to itself.
+	 * 
+	 * Weakly connected graphs are ones where the nodes connect to one another
+	 * if edge directionality is ignored. Formally, let graph G exist with edges
+	 * E and nodes N. Construct a graph GPrime with all of N and E(i.e. a copy
+	 * of G). For each edge e in E, create edge ePrime that is oppositely
+	 * directed from e and add ePrime to GPrime. G is weakly connected graph if
+	 * and only if GPrime is strongly connected.
+	 * 
+	 * Disconnected graphs are those that are neither strongly nor weakly
+	 * connected.
+	 * 
+	 * Note that strongly connected graphs are weakly connected. Empty graphs
+	 * are considered strongly connected.
+	 * 
+	 * @author Shawn Hatch
+	 * 
+	 */
+	public static enum Connectedness {
+		STRONGLYCONNECTED, WEAKLYCONNECTED, DISCONNECTED
+	}
 
 	private ConnectionUtilities() {
 
@@ -35,16 +66,26 @@ public final class ConnectionUtilities {
 	 * @return
 	 */
 	public static <N, E> Connectedness determineConnectedness(Graph<N, E> graph) {
-		if (isStronglyConnected(graph)) {
-			return Connectedness.STRONGLYCONNECTED;
+		if (cutGraph(graph).size() == 1) {
+			if (AcyclicGraphReducer.isCyclicGraph(graph)) {
+				return Connectedness.STRONGLYCONNECTED;
+			} else {
+				return Connectedness.WEAKLYCONNECTED;
+			}
 		}
-
-		List<Graph<N, E>> list = cutGraph(graph);
-		if ((list.size() == 1) && ((graph.nodeCount() > 1) || (graph.edgeCount() > 1))) {
-			return Connectedness.WEAKLYCONNECTED;
-		}
-
 		return Connectedness.DISCONNECTED;
+
+		// if (isStronglyConnected(graph)) {
+		// return Connectedness.STRONGLYCONNECTED;
+		// }
+		//
+		// List<Graph<N, E>> list = cutGraph(graph);
+		// if ((list.size() == 1) && ((graph.nodeCount() > 1) ||
+		// (graph.edgeCount() > 1))) {
+		// return Connectedness.WEAKLYCONNECTED;
+		// }
+		//
+		// return Connectedness.DISCONNECTED;
 	}
 
 	/**
@@ -132,7 +173,7 @@ public final class ConnectionUtilities {
 				}
 
 				// we now construct a result graph from the nodesForNextGraph
-				MutableGraph<N, E> resultGraph = new GenericMutableGraph<>();
+				MutableGraph<N, E> resultGraph = new MutableGraph<>();
 				for (N node2 : nodesForNextGraph) {
 					resultGraph.addNode(node2);
 				}
@@ -142,62 +183,12 @@ public final class ConnectionUtilities {
 						resultGraph.addEdge(edge, originNode, destinationNode);
 					}
 				}
-				// finally, we create an immutable graph to add to the outgoing
+				// finally, we create a graph to add to the outgoing
 				// list of graphs
-				result.add(GenericGraph.getGenericGraph(resultGraph));
+				result.add(resultGraph.asGraph());
 			}
 		}
 		return result;
 	}
 
-	private static <N, E> boolean isStronglyConnected(Graph<N, E> graph) {
-		if (graph.nodeCount() == 0) {
-			return true;
-		}
-
-		N primaryNode = graph.getNodes().iterator().next();
-
-		Set<N> nodesToExpand = new LinkedHashSet<>();
-		Set<N> expandedNodes = new LinkedHashSet<>();
-
-		nodesToExpand.add(primaryNode);
-
-		while (nodesToExpand.size() > 0) {
-			N node = nodesToExpand.iterator().next();
-			nodesToExpand.remove(node);
-			expandedNodes.add(node);
-			for (E edge : graph.getOutboundEdges(node)) {
-				N destinationNode = graph.getDestinationNode(edge);
-				if (!expandedNodes.contains(destinationNode)) {
-					nodesToExpand.add(destinationNode);
-				}
-			}
-		}
-
-		if (expandedNodes.size() != graph.nodeCount()) {
-			return false;
-		}
-
-		expandedNodes.clear();
-		nodesToExpand.clear();
-		nodesToExpand.add(primaryNode);
-
-		while (nodesToExpand.size() > 0) {
-			N node = nodesToExpand.iterator().next();
-			nodesToExpand.remove(node);
-			expandedNodes.add(node);
-			for (E edge : graph.getInboundEdges(node)) {
-				N originNode = graph.getOriginNode(edge);
-				if (!expandedNodes.contains(originNode)) {
-					nodesToExpand.add(originNode);
-				}
-			}
-		}
-
-		if (expandedNodes.size() != graph.nodeCount()) {
-			return false;
-		}
-		return true;
-
-	}
 }

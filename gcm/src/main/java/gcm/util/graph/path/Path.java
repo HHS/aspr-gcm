@@ -1,8 +1,9 @@
-package gcm.util.graph;
+package gcm.util.graph.path;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import gcm.util.graph.path.PathSolver.EdgeCostEvaluator;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -67,8 +68,8 @@ public final class Path<E> {
 	 * edges in the graph at least once.
 	 * 
 	 */
-	public Iterable<E> getEdges() {
-		return new ImmutableIterable<>(edges);
+	public List<E> getEdges() {
+		return new ArrayList<>(edges);
 	}
 
 	/**
@@ -83,6 +84,14 @@ public final class Path<E> {
 		return edges.size();
 	}
 
+	public double getPathCost(Path< E> path, EdgeCostEvaluator<E> edgeCostEvaluator) {
+		double result = 0;
+		for(E edge : edges){
+			result += edgeCostEvaluator.getEdgeCost(edge);
+		}
+		return result;		
+	}
+	
 	/**
 	 * Returns true if and only if the path contains no edges
 	 * 

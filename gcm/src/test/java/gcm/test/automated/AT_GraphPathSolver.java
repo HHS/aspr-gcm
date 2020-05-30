@@ -7,12 +7,11 @@ import java.util.List;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
-import gcm.util.graph.GenericMutableGraph;
-import gcm.util.graph.GraphPathSolver;
-import gcm.util.graph.MutableGraph;
-import gcm.util.graph.Path;
+import gcm.util.graph.Graph;
+import gcm.util.graph.path.Path;
+import gcm.util.graph.path.PathSolver;
 
-@UnitTest(target = GraphPathSolver.class)
+@UnitTest(target = PathSolver.class)
 public class AT_GraphPathSolver {
 	
 	private static class Edge{
@@ -48,11 +47,11 @@ public class AT_GraphPathSolver {
 		edges.add(new Edge("C",3,4));
 		edges.add(new Edge("C*",4,3));
 
-		MutableGraph<Integer,Edge> graph = new GenericMutableGraph<>();
+		Graph.Builder<Integer,Edge> builder = Graph.builder();
+		edges.forEach(edge->builder.addEdge(edge, edge.first, edge.second));
+		Graph<Integer,Edge> graph = builder.build();
 		
-		edges.forEach(edge->graph.addEdge(edge, edge.first, edge.second));
-				
-		Path<Edge> path = GraphPathSolver.getPath(graph, 2, 4, edge->1, (node1,node2)->0);
+		Path<Edge> path = PathSolver.getPath(graph, 2, 4, edge->1, (node1,node2)->0);
 		
 		Iterator<Edge> iterator = path.getEdges().iterator();
 		while(iterator.hasNext()) {
@@ -60,8 +59,5 @@ public class AT_GraphPathSolver {
 			Edge edge = iterator.next();
 			//System.out.println(edge);
 		}
-				
-	
-		
 	}
 }

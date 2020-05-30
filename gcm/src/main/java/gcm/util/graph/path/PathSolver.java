@@ -1,4 +1,4 @@
-package gcm.util.graph;
+package gcm.util.graph.path;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,7 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import gcm.util.graph.Path.Builder;
+import gcm.util.graph.Graph;
+import gcm.util.graph.path.Path.Builder;
 
 /**
  * 
@@ -40,15 +41,13 @@ import gcm.util.graph.Path.Builder;
  * @author Shawn Hatch
  * 
  */
-public final class GraphPathSolver {
+public final class PathSolver {
 	
-	public interface EdgeCostEvaluator<E> {
-		
+	public interface EdgeCostEvaluator<E> {		
 		public double getEdgeCost(E edge);
 	}
 	
-	public static interface TravelCostEvaluator<N> {
-		
+	public static interface TravelCostEvaluator<N> {		
 		public double getMinimumCost(N originNode, N destination);
 	}
 	
@@ -67,12 +66,16 @@ public final class GraphPathSolver {
 		}
 	}
 	
-	private GraphPathSolver() {
+	private PathSolver() {
 		
 	}
-	
-	
-	public static <N,E> Path<E> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
+		
+	public static <N,E> Path<E> getPath(
+			Graph<N, E> graph,
+			N originNode,
+			N destinationNode,
+			EdgeCostEvaluator<E> edgeCostEvaluator,
+			TravelCostEvaluator<N> travelCostEvaluator) {
 		
 		if (!graph.containsNode(originNode)) {			
 			Builder<E> builder = Path.builder();
@@ -89,9 +92,9 @@ public final class GraphPathSolver {
 		
 		visitList.add(originNode);
 		Node<E> origin = new Node<>();
-		if (travelCostEvaluator != null) {
-			origin.auxillaryCost = travelCostEvaluator.getMinimumCost(originNode, destinationNode);
-		}
+		
+		origin.auxillaryCost = travelCostEvaluator.getMinimumCost(originNode, destinationNode);
+		
 		map.put(originNode, origin);
 		
 		Comparator<N> comp = new Comparator<N>() {
@@ -128,10 +131,8 @@ public final class GraphPathSolver {
 			}
 			
 			for(E edge : graph.getOutboundEdges(node)) {				
-				double edgeCost = 1;
-				if (edgeCostEvaluator != null) {
-					edgeCost = edgeCostEvaluator.getEdgeCost(edge);
-				}
+				double edgeCost = edgeCostEvaluator.getEdgeCost(edge);
+				
 				if(Double.isInfinite(edgeCost)){
 					continue;
 				}

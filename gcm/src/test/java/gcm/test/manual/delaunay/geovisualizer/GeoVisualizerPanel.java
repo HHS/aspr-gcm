@@ -34,9 +34,9 @@ import gcm.util.dimensiontree.DimensionTree;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
-import gcm.util.graph.GenericMutableGraph;
-import gcm.util.graph.GraphPathSolver;
-import gcm.util.graph.Path;
+import gcm.util.graph.Graph;
+import gcm.util.graph.path.Path;
+import gcm.util.graph.path.PathSolver;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
@@ -290,14 +290,16 @@ public class GeoVisualizerPanel extends JPanel {
 										.setUpperBounds(new double[] { earth.getRadius(), earth.getRadius(), earth.getRadius() })//
 										.build();//
 
-			graph = new GenericMutableGraph<>();
+			Graph.Builder<Integer, Edge> builder = Graph.builder();
+			
 			for (int i = 0; i < dataModel.positions.size(); i++) {
-				graph.addNode(i);
+				builder.addNode(i);
 			}
 			for (Link link : dataModel.links) {
-				graph.addEdge(new Edge(link), link.first, link.second);
-				graph.addEdge(new Edge(link), link.second, link.first);
+				builder.addEdge(new Edge(link), link.first, link.second);
+				builder.addEdge(new Edge(link), link.second, link.first);
 			}
+			graph = builder.build();
 
 			for (int i = 0; i < dataModel.positions.size(); i++) {
 				Vector3D position = dataModel.positions.get(i);
@@ -319,7 +321,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 		private final DimensionTree<Integer> positionTree;
 
-		private final GenericMutableGraph<Integer, Edge> graph;
+		private final Graph<Integer, Edge> graph;
 
 		private Set<Link> pathLinks = new LinkedHashSet<>();
 
@@ -327,7 +329,7 @@ public class GeoVisualizerPanel extends JPanel {
 			if (recalcPath) {
 				pathLinks.clear();
 				if (pathSourceIndex != pathDestinationIndex) {
-					Path<Edge> path = GraphPathSolver.getPath(graph, pathSourceIndex, pathDestinationIndex, this::getEdgeCost, this::getTravelCost);
+					Path<Edge> path = PathSolver.getPath(graph, pathSourceIndex, pathDestinationIndex, this::getEdgeCost, this::getTravelCost);
 					path.getEdges().forEach(edge -> pathLinks.add(edge.link));
 				}
 				recalcPath = false;

@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -118,13 +119,13 @@ public class DemoRunnerAlt {
 
 		Builder builder = PopulationDescription.builder();
 		try {
-			Files.readAllLines(populationPath).stream().skip(1).forEach(line -> {			
+			Files.readAllLines(populationPath).stream().skip(1).forEach(line -> {
 				String[] strings = line.split(",", -1);
 				int age = Integer.parseInt(strings[0]);
 				String homeId = strings[1];
 				String schoolId = strings[2];
 				String workPlaceId = strings[3];
-				PopulationElement populationElement = new PopulationElement(age,homeId,schoolId,workPlaceId); 
+				PopulationElement populationElement = new PopulationElement(age, homeId, schoolId, workPlaceId);
 				builder.addPopulationElement(populationElement);
 			});
 		} catch (IOException e) {
@@ -141,7 +142,6 @@ public class DemoRunnerAlt {
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 7.3);
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 9.4);
 		experimentBuilder.addGlobalPropertyValue(GlobalProperty.ALPHA, 10.8);
-		
 
 	}
 
@@ -152,7 +152,7 @@ public class DemoRunnerAlt {
 			String[] strings = line.split(",", -1);
 			String homeId = strings[1];
 			return homeId.substring(0, 11);
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toCollection(LinkedHashSet::new));
 
 		Files.readAllLines(tractsPath).stream().skip(1).filter(line -> {
 			String[] strings = line.split(",");
@@ -208,8 +208,7 @@ public class DemoRunnerAlt {
 
 	private void execute() throws IOException {
 		// select an output directory
-		Path outputdirectory =  Paths.get("c:\\temp\\gcm");
-				
+		Path outputdirectory = Paths.get("c:\\temp\\gcm");
 
 		// build the experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -219,40 +218,40 @@ public class DemoRunnerAlt {
 		defineProperties(experimentBuilder);
 		addIdentifiers(experimentBuilder);
 		addPropertyValues(experimentBuilder);
-		List<String> regionNames = addRegions(experimentBuilder);		
-		workWithTriggers(experimentBuilder,regionNames);
+		List<String> regionNames = addRegions(experimentBuilder);
+		workWithTriggers(experimentBuilder, regionNames);
 		Experiment experiment = experimentBuilder.build();
-		
-		
+
 		// build the reports
 		NIOReportItemHandlerSupplier nioReportItemHandlerSupplier = NIOReportItemHandlerSupplier.builder()//
-		//.addGlobalPropertyReport(outputdirectory.resolve("global property report.xls"),GlobalProperty.POPULATION_PATH)//		
-		.addRegionPropertyReport(outputdirectory.resolve("region property report.xls"))//
-		.addCompartmentPopulationReport(outputdirectory.resolve("compartment population report.xls"),ReportPeriod.DAILY)//
-		.setDisplayExperimentColumnsInReports(true)//
-		.setExperiment(experiment)//
-		.build();//
-		
-		int replicationCount = 10;
-		
-		//build meta level reporting
-		NIOMetaItemHandlerSupplier nioMetaItemHandlerSupplier = NIOMetaItemHandlerSupplier.builder()//
-		.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
-		.build();//		
-		
-		
-		//build the experiment executor
-		ExperimentExecutorAlt experimentExecutor = ExperimentExecutorAlt.builder()//
-		.setSeed(1234123512345234L)//
-		.setExperiment(experiment)//
-		.setReplicationCount(replicationCount)//
-		.setThreadCount(8)//
-		.addOuputItemSupplier(nioReportItemHandlerSupplier)//
-		.addOuputItemSupplier(nioMetaItemHandlerSupplier)//		
-		.build();//
-		
+																								// .addGlobalPropertyReport(outputdirectory.resolve("global
+																								// property
+																								// report.xls"),GlobalProperty.POPULATION_PATH)//
+																								.addRegionPropertyReport(outputdirectory.resolve("region property report.xls"))//
+																								.addCompartmentPopulationReport(outputdirectory.resolve("compartment population report.xls"),
+																										ReportPeriod.DAILY)//
+																								.setDisplayExperimentColumnsInReports(true)//
+																								.setExperiment(experiment)//
+																								.build();//
 
-		//run the experiment
+		int replicationCount = 10;
+
+		// build meta level reporting
+		NIOMetaItemHandlerSupplier nioMetaItemHandlerSupplier = NIOMetaItemHandlerSupplier	.builder()//
+																							.setProduceSimulationStatusOutput(true, experiment.getScenarioCount(), replicationCount)//
+																							.build();//
+
+		// build the experiment executor
+		ExperimentExecutorAlt experimentExecutor = ExperimentExecutorAlt.builder()//
+																		.setSeed(1234123512345234L)//
+																		.setExperiment(experiment)//
+																		.setReplicationCount(replicationCount)//
+																		.setThreadCount(8)//
+																		.addOuputItemSupplier(nioReportItemHandlerSupplier)//
+																		.addOuputItemSupplier(nioMetaItemHandlerSupplier)//
+																		.build();//
+
+		// run the experiment
 		experimentExecutor.execute();
 	}
 

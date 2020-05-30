@@ -244,7 +244,7 @@ public class AT_DimensionTree {
 			// bruteForceStopWatch.stop();
 
 			// treeStopWatch.start();
-			Set<Record> actualRecords = tree.getMembersInRectanguloid(lowerBounds, upperBounds).stream().collect(Collectors.toSet());
+			Set<Record> actualRecords = tree.getMembersInRectanguloid(lowerBounds, upperBounds).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 			// treeStopWatch.stop();
 
 			assertEquals(expectedRecords, actualRecords);
@@ -289,8 +289,8 @@ public class AT_DimensionTree {
 			tree.add(record.position, record);
 		}
 
-		Set<Record> expectedRecords = records.stream().collect(Collectors.toSet());
-		Set<Record> actualRecords = tree.getAll().stream().collect(Collectors.toSet());
+		Set<Record> expectedRecords = records.stream().collect(Collectors.toCollection(LinkedHashSet::new));
+		Set<Record> actualRecords = tree.getAll().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 		assertEquals(expectedRecords, actualRecords);
 
@@ -304,8 +304,8 @@ public class AT_DimensionTree {
 
 		assertEquals(records.size() * 2, tree.getAll().size());
 
-		expectedRecords = records.stream().collect(Collectors.toSet());
-		actualRecords = tree.getAll().stream().collect(Collectors.toSet());
+		expectedRecords = records.stream().collect(Collectors.toCollection(LinkedHashSet::new));
+		actualRecords = tree.getAll().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 		assertEquals(expectedRecords, actualRecords);
 

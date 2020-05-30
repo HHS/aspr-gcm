@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -146,7 +147,7 @@ public class DemoRunner {
 			String[] strings = line.split(",", -1);
 			String homeId = strings[1];
 			return homeId.substring(0, 11);
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toCollection(LinkedHashSet::new));
 
 		Files.readAllLines(tractsPath).stream().skip(1).filter(line -> {
 			String[] strings = line.split(",");

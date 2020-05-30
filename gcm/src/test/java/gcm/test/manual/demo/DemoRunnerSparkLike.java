@@ -157,7 +157,7 @@ public class DemoRunnerSparkLike {
 			String[] strings = line.split(",", -1);
 			String homeId = strings[1];
 			return homeId.substring(0, 11);
-		}).collect(Collectors.toSet());
+		}).collect(Collectors.toCollection(LinkedHashSet::new));
 
 		Files.readAllLines(tractsPath).stream().skip(1).filter(line -> {
 			String[] strings = line.split(",");

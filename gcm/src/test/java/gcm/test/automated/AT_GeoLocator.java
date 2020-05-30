@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -128,10 +129,10 @@ public class AT_GeoLocator {
 			// radius
 			Set<LatLon> expectedLocations = locations.stream().filter(location -> {
 				return earth.getGroundDistanceFromLatLon(latLon, location) <= searchRadiusKilometers * 1000;
-			}).collect(Collectors.toSet());
+			}).collect(Collectors.toCollection(LinkedHashSet::new));
 
 			// Get the locations from the GeoLocator
-			Set<LatLon> actualLocations = geoLocator.getLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toSet());
+			Set<LatLon> actualLocations = geoLocator.getLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 			// compare the two sets
 			assertEquals(expectedLocations, actualLocations);

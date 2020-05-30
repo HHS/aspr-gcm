@@ -259,7 +259,7 @@ public class AT_SphericalPolygon {
 			expected.add(new SphericalArcWrapper(sphericalArc));
 		}
 
-		Set<SphericalArcWrapper> actual = sphericalPolygon.getSphericalArcs().stream().map(arc -> new SphericalArcWrapper(arc)).collect(Collectors.toSet());
+		Set<SphericalArcWrapper> actual = sphericalPolygon.getSphericalArcs().stream().map(arc -> new SphericalArcWrapper(arc)).collect(Collectors.toCollection(LinkedHashSet::new));
 
 		assertEquals(expected, actual);
 	}

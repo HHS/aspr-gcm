@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import gcm.util.graph.Graph;
-import gcm.util.graph.path.Path.Builder;
+import gcm.util.graph.Path;
+import gcm.util.graph.Path.Builder;
+import gcm.util.graph.Path.EdgeCostEvaluator;
+import gcm.util.graph.Path.TravelCostEvaluator;
 
 /**
  * 
@@ -43,13 +46,7 @@ import gcm.util.graph.path.Path.Builder;
  */
 public final class PathSolver {
 	
-	public interface EdgeCostEvaluator<E> {		
-		public double getEdgeCost(E edge);
-	}
 	
-	public static interface TravelCostEvaluator<N> {		
-		public double getMinimumCost(N originNode, N destination);
-	}
 	
 	private static class Node<E> {
 		
@@ -160,11 +157,6 @@ public final class PathSolver {
 		}
 		
 		Node<E> destination = map.get(destinationNode);
-		
-		
-		
-
-
 		List<E> edges = new ArrayList<>();
 		// assess whether we have a solution
 		

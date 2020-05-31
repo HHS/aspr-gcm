@@ -1,9 +1,8 @@
-package gcm.util.graph.path;
+package gcm.util.graph;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import gcm.util.graph.path.PathSolver.EdgeCostEvaluator;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -28,6 +27,14 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public final class Path<E> {
+	public interface EdgeCostEvaluator<E> {		
+		public double getEdgeCost(E edge);
+	}
+	
+	public static interface TravelCostEvaluator<N> {		
+		public double getMinimumCost(N originNode, N destination);
+	}
+	
 	/**
 	 * Returns a new instance of the Builder class
 	 */
@@ -84,7 +91,7 @@ public final class Path<E> {
 		return edges.size();
 	}
 
-	public double getPathCost(Path< E> path, EdgeCostEvaluator<E> edgeCostEvaluator) {
+	public double getCost(EdgeCostEvaluator<E> edgeCostEvaluator) {
 		double result = 0;
 		for(E edge : edges){
 			result += edgeCostEvaluator.getEdgeCost(edge);
@@ -97,7 +104,7 @@ public final class Path<E> {
 	 * 
 	 * @return
 	 */
-	public boolean isDegenerate() {
+	public boolean isEmpty() {
 		return edges.size() == 0;
 	}
 

@@ -11,6 +11,7 @@ import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.graph.Graph;
 import gcm.util.graph.MutableGraph;
+import gcm.util.graph.utilities.AcyclicGraphReducer.GraphCyclisity;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -69,6 +70,9 @@ public final class GraphDepthEvaluator<N> {
 		return maxDepth;
 	}
 
+	/**
+	 * Returns the depth for the given node
+	 */
 	public int getDepth(N node) {
 		Integer result = nodeToDepthMap.get(node);
 		if (result == null) {
@@ -78,10 +82,10 @@ public final class GraphDepthEvaluator<N> {
 	}
 
 	/**
-	 * Returns the nodes associated with the given dependency depth. Will return
+	 * Returns the nodes associated with the given depth. Will return
 	 * an empty list for depth values that are negative or exceed the max depth
 	 */
-	public List<N> getNodes(int depth) {
+	public List<N> getNodesForDepth(int depth) {
 		List<N> result = new ArrayList<>();
 		List<N> nodes = depthToNodeSetMap.get(depth);
 		if (nodes != null) {
@@ -91,7 +95,7 @@ public final class GraphDepthEvaluator<N> {
 	}
 
 	/**
-	 * Returns the nodes of the graph in their ascending rank orders. With a
+	 * Returns the nodes of the graph in their ascending rank orders. Within a
 	 * rank, the order is arbitrary but repeatable across instances of
 	 * {@link GraphDepthEvaluator} for any given {@link Graph}.
 	 */
@@ -110,7 +114,7 @@ public final class GraphDepthEvaluator<N> {
 	 * cycles.
 	 */
 	public static <N, E> Optional<GraphDepthEvaluator<N>> getGraphDepthEvaluator(Graph<N, E> graph) {
-		if (AcyclicGraphReducer.isAcyclicGraph(graph)) {
+		if (AcyclicGraphReducer.getGraphCyclisity(graph)==GraphCyclisity.ACYCLIC) {
 			GraphDepthEvaluator<N> result = new GraphDepthEvaluator<>(graph);
 			return Optional.of(result);
 		}

@@ -7,8 +7,9 @@ import java.util.Map;
 
 import gcm.util.MultiKey;
 import gcm.util.graph.Graph;
-import gcm.util.graph.path.PathSolver.EdgeCostEvaluator;
-import gcm.util.graph.path.PathSolver.TravelCostEvaluator;
+import gcm.util.graph.Path;
+import gcm.util.graph.Path.EdgeCostEvaluator;
+import gcm.util.graph.Path.TravelCostEvaluator;
 
 
 

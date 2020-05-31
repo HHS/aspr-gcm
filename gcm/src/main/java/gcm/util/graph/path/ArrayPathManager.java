@@ -6,14 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 import gcm.util.graph.Graph;
-import gcm.util.graph.path.PathSolver.EdgeCostEvaluator;
-import gcm.util.graph.path.PathSolver.TravelCostEvaluator;
+import gcm.util.graph.Path;
+import gcm.util.graph.Path.EdgeCostEvaluator;
+import gcm.util.graph.Path.TravelCostEvaluator;
 
 /**
  * Manages shortest path solutions for a given graph with reasonable efficiency.
- * The PathManager class assumes that the underlying graph is not mutating and
- * that the paths that it derives can be reused in whole and in part to derive
- * other shortest paths and costs.
  * 
  * @author Shawn Hatch
  * 

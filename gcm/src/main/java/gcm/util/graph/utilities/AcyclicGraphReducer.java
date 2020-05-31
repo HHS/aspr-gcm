@@ -11,24 +11,33 @@ import gcm.util.graph.MutableGraph;
  * 
  */
 public final class AcyclicGraphReducer {
-	
+
+	public static enum GraphCyclisity {
+		/**
+		 * The graph contains only cycles. There are no sources or sinks.
+		 */
+		CYCLIC,
+
+		/**
+		 * The graph contains at least one cycle and at least one source or
+		 * sink.
+		 */
+		MIXED,
+
+		/**
+		 * The graph contains no cycles. Empty graphs are acyclic.
+		 */
+		ACYCLIC,
+
+	}
+
 	/**
-	 * Returns the sub-graph of the input graph that has all acyclic parts
-	 * removed. That is, the resultant graph will contain only cycles. This
-	 * method is commonly used to determine whether a graph is acyclic, i.e. the
-	 * returned graph is empty, with no nodes.
-	 * 
-	 * @param <N>
-	 *            Node type
-	 * @param <E>
-	 *            Edge type
-	 * @param graph
-	 *            The graph to reduce
-	 * @return The reduced graph
+	 * Returns the sub-graph of the input graph that has had all of its acyclic
+	 * parts (sources and sinks) removed. That is, the resultant graph will
+	 * contain only cycles. This method is commonly used to determine whether a
+	 * graph is acyclic, i.e. the returned graph is empty, with no nodes.
 	 */
-	
-	public static <N, E> Graph<N, E> reduceGraph(Graph<N, E> graph) {
-		
+	public static <N, E> Graph<N, E> getSourceSinkReducedGraph(Graph<N, E> graph) {
 		MutableGraph<N, E> mutableGraph = new MutableGraph<>();
 		mutableGraph.addAll(graph);
 		boolean nodeRemoved = true;
@@ -41,26 +50,23 @@ public final class AcyclicGraphReducer {
 				}
 			}
 		}
-		return mutableGraph.asGraph();				
-	}
-	
-	/**
-	 * Returns true if and only if the given graph is acyclic. Note that
-	 * empty graphs having no nodes are considered acyclic.
-	 * 
-	 */	
-	public static <N, E> boolean isAcyclicGraph(Graph<N, E> graph) {
-		return reduceGraph(graph).isEmpty();
+		return mutableGraph.asGraph();
 	}
 
 	/**
-	 * Returns true if and only if the given graph is fully cyclic. Note that
-	 * empty graphs having no nodes are considered acyclic.
+	 * Returns the GraphCyclisity of the given graph
 	 * 
 	 */
-	public static <N, E> boolean isCyclicGraph(Graph<N, E> graph) {
-		return reduceGraph(graph).nodeCount() == graph.nodeCount();
+	public static <N, E> GraphCyclisity getGraphCyclisity(Graph<N, E> graph) {
+		Graph<N, E> sourceSinkReducedGraph = getSourceSinkReducedGraph(graph);
+		if(sourceSinkReducedGraph.isEmpty()) {
+			return GraphCyclisity.ACYCLIC;
+		}
+		if(sourceSinkReducedGraph.nodeCount()==graph.nodeCount()) {
+			return GraphCyclisity.CYCLIC;
+		}
+		return GraphCyclisity.MIXED;
 	}
-	
-	
+
+
 }

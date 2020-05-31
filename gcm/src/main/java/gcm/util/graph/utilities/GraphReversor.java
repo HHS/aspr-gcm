@@ -1,7 +1,6 @@
 package gcm.util.graph.utilities;
 
 import gcm.util.graph.Graph;
-import gcm.util.graph.MutableGraph;
 
 /**
  * A static class for creating a Graph from a given graph that contains all the
@@ -18,19 +17,23 @@ public final class GraphReversor {
 
 	}
 
-	public static <N, E> Graph<N, E> reverseGraph(Graph<N, E> graph) {
+	/**
+	 * Returns a graph that has the same nodes and edges as the given graph,
+	 * with each edge being reversed
+	 */
+	public static <N, E> Graph<N, E> getReverseGraph(Graph<N, E> graph) {
 
-		MutableGraph<N, E> mutableGraph = new MutableGraph<>();
+		Graph.Builder<N, E> builder = Graph.builder();
 
 		for (N node : graph.getNodes()) {
-			mutableGraph.addNode(node);
+			builder.addNode(node);
 		}
 
 		for (E edge : graph.getEdges()) {
 			N destinationNode = graph.getDestinationNode(edge);
 			N originNode = graph.getOriginNode(edge);
-			mutableGraph.addEdge(edge, destinationNode, originNode);
+			builder.addEdge(edge, destinationNode, originNode);
 		}
-		return mutableGraph.asGraph();
+		return builder.build();
 	}
 }

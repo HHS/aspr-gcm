@@ -35,7 +35,7 @@ import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
 import gcm.util.graph.Graph;
-import gcm.util.graph.path.Path;
+import gcm.util.graph.Path;
 import gcm.util.graph.path.PathSolver;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;

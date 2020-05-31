@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
 import gcm.util.graph.Graph;
-import gcm.util.graph.path.Path;
+import gcm.util.graph.Path;
 import gcm.util.graph.path.PathSolver;
 
 @UnitTest(target = PathSolver.class)

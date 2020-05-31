@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.util.graph.Graph;
-import gcm.util.graph.MutableGraph;
+import gcm.util.graph.utilities.AcyclicGraphReducer.GraphCyclisity;
 
 /**
  * 
@@ -48,7 +48,7 @@ public final class ConnectionUtilities {
 	 * @author Shawn Hatch
 	 * 
 	 */
-	public static enum Connectedness {
+	public static enum GraphConnectedness {
 		STRONGLYCONNECTED, WEAKLYCONNECTED, DISCONNECTED
 	}
 
@@ -59,33 +59,17 @@ public final class ConnectionUtilities {
 	/**
 	 * 
 	 * Determines the connectedness of a graph
-	 * 
-	 * @param <N>
-	 * @param <E>
-	 * @param graph
-	 * @return
+	 *	
 	 */
-	public static <N, E> Connectedness determineConnectedness(Graph<N, E> graph) {
+	public static <N, E> GraphConnectedness getGraphConnectedness(Graph<N, E> graph) {
 		if (cutGraph(graph).size() == 1) {
-			if (AcyclicGraphReducer.isCyclicGraph(graph)) {
-				return Connectedness.STRONGLYCONNECTED;
+			if (AcyclicGraphReducer.getGraphCyclisity(graph)==GraphCyclisity.CYCLIC) {
+				return GraphConnectedness.STRONGLYCONNECTED;
 			} else {
-				return Connectedness.WEAKLYCONNECTED;
+				return GraphConnectedness.WEAKLYCONNECTED;
 			}
 		}
-		return Connectedness.DISCONNECTED;
-
-		// if (isStronglyConnected(graph)) {
-		// return Connectedness.STRONGLYCONNECTED;
-		// }
-		//
-		// List<Graph<N, E>> list = cutGraph(graph);
-		// if ((list.size() == 1) && ((graph.nodeCount() > 1) ||
-		// (graph.edgeCount() > 1))) {
-		// return Connectedness.WEAKLYCONNECTED;
-		// }
-		//
-		// return Connectedness.DISCONNECTED;
+		return GraphConnectedness.DISCONNECTED;
 	}
 
 	/**
@@ -94,10 +78,6 @@ public final class ConnectionUtilities {
 	 * disconnected sub graphs. All disconnected subgraphs will consist of
 	 * single nodes with no edges.
 	 * 
-	 * @param <N>
-	 * @param <E>
-	 * @param graph
-	 * @return
 	 */
 	public static <N, E> List<Graph<N, E>> cutGraph(Graph<N, E> graph) {
 		// create a list to receive the graphs
@@ -173,19 +153,19 @@ public final class ConnectionUtilities {
 				}
 
 				// we now construct a result graph from the nodesForNextGraph
-				MutableGraph<N, E> resultGraph = new MutableGraph<>();
+				Graph.Builder<N, E> builder = Graph.builder(); 
 				for (N node2 : nodesForNextGraph) {
-					resultGraph.addNode(node2);
+					builder.addNode(node2);
 				}
 				for (N originNode : nodesForNextGraph) {
 					for (E edge : graph.getOutboundEdges(originNode)) {
 						N destinationNode = graph.getDestinationNode(edge);
-						resultGraph.addEdge(edge, originNode, destinationNode);
+						builder.addEdge(edge, originNode, destinationNode);
 					}
 				}
 				// finally, we create a graph to add to the outgoing
 				// list of graphs
-				result.add(resultGraph.asGraph());
+				result.add(builder.build());
 			}
 		}
 		return result;

@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import gcm.util.MultiKey;
 import gcm.util.graph.Graph;
-import gcm.util.path.Path.EdgeCostEvaluator;
-import gcm.util.path.Path.TravelCostEvaluator;
+import gcm.util.path.Paths.EdgeCostEvaluator;
+import gcm.util.path.Paths.TravelCostEvaluator;
 
 public class MapPathSolver<N, E> implements PathSolver<N, E> {
 

@@ -10,8 +10,6 @@ import java.util.Optional;
 
 import gcm.util.graph.Graph;
 import gcm.util.path.Path.Builder;
-import gcm.util.path.Path.EdgeCostEvaluator;
-import gcm.util.path.Path.TravelCostEvaluator;
 
 /**
  * 
@@ -45,6 +43,15 @@ import gcm.util.path.Path.TravelCostEvaluator;
  * 
  */
 public final class Paths {
+	
+	public interface EdgeCostEvaluator<E> {		
+		public double getEdgeCost(E edge);
+	}
+	
+	public static interface TravelCostEvaluator<N> {		
+		public double getMinimumCost(N originNode, N destination);
+	}
+	
 	
 	private static class Node<E> {
 		
@@ -183,6 +190,14 @@ public final class Paths {
 		}
 		
 		return Optional.of(builder.build());
+	}
+	
+	public static <E> double getCost(Path<E> path, EdgeCostEvaluator<E> edgeCostEvaluator) {
+		double result = 0;
+		for(E edge : path.getEdges()){
+			result += edgeCostEvaluator.getEdgeCost(edge);
+		}
+		return result;		
 	}
 	
 }

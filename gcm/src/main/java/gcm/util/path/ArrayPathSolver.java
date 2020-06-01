@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import gcm.util.graph.Graph;
-import gcm.util.path.Path.EdgeCostEvaluator;
-import gcm.util.path.Path.TravelCostEvaluator;
+import gcm.util.path.Paths.EdgeCostEvaluator;
+import gcm.util.path.Paths.TravelCostEvaluator;
 
 /**
  * Manages shortest path solutions for a given graph with reasonable efficiency.

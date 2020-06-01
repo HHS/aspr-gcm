@@ -29,13 +29,7 @@ import net.jcip.annotations.Immutable;
 public final class Path<E> {
 	//TODO rewrite class doc
 	
-	public interface EdgeCostEvaluator<E> {		
-		public double getEdgeCost(E edge);
-	}
 	
-	public static interface TravelCostEvaluator<N> {		
-		public double getMinimumCost(N originNode, N destination);
-	}
 	
 	/**
 	 * Returns a new instance of the Builder class
@@ -93,13 +87,7 @@ public final class Path<E> {
 		return edges.size();
 	}
 
-	public double getCost(EdgeCostEvaluator<E> edgeCostEvaluator) {
-		double result = 0;
-		for(E edge : edges){
-			result += edgeCostEvaluator.getEdgeCost(edge);
-		}
-		return result;		
-	}
+	
 	
 	/**
 	 * Returns true if and only if the path contains no edges

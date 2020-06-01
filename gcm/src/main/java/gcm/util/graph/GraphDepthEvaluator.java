@@ -1,4 +1,4 @@
-package gcm.util.graph.utilities;
+package gcm.util.graph;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -9,9 +9,6 @@ import java.util.TreeMap;
 
 import org.apache.commons.math3.util.FastMath;
 
-import gcm.util.graph.Graph;
-import gcm.util.graph.MutableGraph;
-import gcm.util.graph.utilities.AcyclicGraphReducer.GraphCyclisity;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -82,8 +79,8 @@ public final class GraphDepthEvaluator<N> {
 	}
 
 	/**
-	 * Returns the nodes associated with the given depth. Will return
-	 * an empty list for depth values that are negative or exceed the max depth
+	 * Returns the nodes associated with the given depth. Will return an empty
+	 * list for depth values that are negative or exceed the max depth
 	 */
 	public List<N> getNodesForDepth(int depth) {
 		List<N> result = new ArrayList<>();
@@ -114,7 +111,7 @@ public final class GraphDepthEvaluator<N> {
 	 * cycles.
 	 */
 	public static <N, E> Optional<GraphDepthEvaluator<N>> getGraphDepthEvaluator(Graph<N, E> graph) {
-		if (AcyclicGraphReducer.getGraphCyclisity(graph)==GraphCyclisity.ACYCLIC) {
+		if (Graphs.getGraphCyclisity(graph) == Graphs.GraphCyclisity.ACYCLIC) {
 			GraphDepthEvaluator<N> result = new GraphDepthEvaluator<>(graph);
 			return Optional.of(result);
 		}

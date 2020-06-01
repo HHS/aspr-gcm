@@ -61,7 +61,7 @@ public final class MutableGraph<N, E> {
 	 * This method is package access only and should be used to reduce the
 	 * overhead costs of creating Graphs from MutableGraphs.
 	 */
-	public Graph<N, E> asGraph() {
+	Graph<N, E> asGraph() {
 		//TODO restrict access to this method
 		return new Graph<>(this);
 	}

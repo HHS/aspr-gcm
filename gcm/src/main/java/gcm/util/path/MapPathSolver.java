@@ -1,42 +1,40 @@
-package gcm.util.graph.path;
+package gcm.util.path;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import gcm.util.MultiKey;
 import gcm.util.graph.Graph;
-import gcm.util.graph.Path;
-import gcm.util.graph.Path.EdgeCostEvaluator;
-import gcm.util.graph.Path.TravelCostEvaluator;
+import gcm.util.path.Path.EdgeCostEvaluator;
+import gcm.util.path.Path.TravelCostEvaluator;
 
+public class MapPathSolver<N, E> implements PathSolver<N, E> {
 
-
-public class FastPathSolver<N, E> {
-	
 	private static class SubPath<T> {
-		
+
 		Path<T> basePath;
-		
+
 		Path<T> solvedPath;
-		
+
 		int startIndex;
-		
+
 		int stopIndex;
 	}
-	
+
 	private Map<MultiKey, Path<E>> pathMap;
-	
+
 	private Graph<N, E> graph;
-	
+
 	private Map<MultiKey, SubPath<E>> subPathMap = new LinkedHashMap<>();
-	
+
 	private EdgeCostEvaluator<E> edgeCostEvaluator;
-	
+
 	private TravelCostEvaluator<N> pathCostBoundEvaluator;
-	
-	public FastPathSolver(Graph<N, E> graph, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> pathCostBoundEvaluator) {
+
+	public MapPathSolver(Graph<N, E> graph, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> pathCostBoundEvaluator) {
 		if (graph == null) {
 			throw new IllegalArgumentException("graph cannot be null");
 		}
@@ -44,13 +42,12 @@ public class FastPathSolver<N, E> {
 		this.edgeCostEvaluator = edgeCostEvaluator;
 		this.pathCostBoundEvaluator = pathCostBoundEvaluator;
 	}
+
 	
-	public int size() {
-		return pathMap.size();
-	}
-	
-	public Path<E> getPath(N originNode, N destinationNode) {
-		Path<E> result = null;
+
+	@Override
+	public Optional<Path<E>> getPath(N originNode, N destinationNode) {
+		Path<E> result;
 		MultiKey key = new MultiKey(originNode, destinationNode);
 		SubPath<E> subPath = subPathMap.get(key);
 		if (subPath != null) {
@@ -61,12 +58,17 @@ public class FastPathSolver<N, E> {
 					subEdges.add(edges.get(i));
 				}
 				Path.Builder<E> builder = Path.builder();
-				subEdges.forEach(edge->builder.addEdge(edge));
+				subEdges.forEach(edge -> builder.addEdge(edge));
 				subPath.solvedPath = builder.build();
 			}
 			result = subPath.solvedPath;
 		} else {
-			result = PathSolver.getPath(graph, originNode, destinationNode, edgeCostEvaluator, pathCostBoundEvaluator);
+			Optional<Path<E>> optional = Paths.getPath(graph, originNode, destinationNode, edgeCostEvaluator, pathCostBoundEvaluator);
+			if (!optional.isPresent()) {
+				return Optional.empty();
+			}
+
+			result = optional.get();
 			List<E> edges = result.getEdges();
 			for (int i = 0; i < edges.size(); i++) {
 				N startNode = graph.getOriginNode(edges.get(i));
@@ -79,10 +81,10 @@ public class FastPathSolver<N, E> {
 					subPath.stopIndex = j + 1;
 					subPathMap.put(key, subPath);
 				}
-			}			
-		}		
-		pathMap.put(key, result);		
-		return result;
+			}
+		}
+		pathMap.put(key, result);
+		return Optional.of(result);
 	}
-	
+
 }

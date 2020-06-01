@@ -1,4 +1,4 @@
-package gcm.util.graph;
+package gcm.util.path;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,8 @@ import net.jcip.annotations.Immutable;
  */
 @Immutable
 public final class Path<E> {
+	//TODO rewrite class doc
+	
 	public interface EdgeCostEvaluator<E> {		
 		public double getEdgeCost(E edge);
 	}

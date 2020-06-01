@@ -1,17 +1,19 @@
 package gcm.test.automated;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
 import gcm.util.graph.Graph;
-import gcm.util.graph.Path;
-import gcm.util.graph.path.PathSolver;
+import gcm.util.path.Path;
+import gcm.util.path.Paths;
 
-@UnitTest(target = PathSolver.class)
+@UnitTest(target = Paths.class)
 public class AT_GraphPathSolver {
 	
 	private static class Edge{
@@ -51,12 +53,14 @@ public class AT_GraphPathSolver {
 		edges.forEach(edge->builder.addEdge(edge, edge.first, edge.second));
 		Graph<Integer,Edge> graph = builder.build();
 		
-		Path<Edge> path = PathSolver.getPath(graph, 2, 4, edge->1, (node1,node2)->0);
+		Optional<Path<Edge>> solution = Paths.getPath(graph, 2, 4, edge->1, (node1,node2)->0);
+		assertTrue(solution.isPresent());
 		
-		Iterator<Edge> iterator = path.getEdges().iterator();
-		while(iterator.hasNext()) {
-			@SuppressWarnings("unused")
-			Edge edge = iterator.next();
+		Path<Edge> path = solution.get();
+		for(@SuppressWarnings("unused") Edge edge : path.getEdges()) {
+		//while(iterator.hasNext()) {
+			//@SuppressWarnings("unused")
+			//Edge edge = iterator.next();
 			//System.out.println(edge);
 		}
 	}

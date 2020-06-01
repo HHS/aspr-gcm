@@ -35,8 +35,8 @@ import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
 import gcm.util.graph.Graph;
-import gcm.util.graph.Path;
-import gcm.util.graph.path.PathSolver;
+import gcm.util.path.Path;
+import gcm.util.path.Paths;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
@@ -106,25 +106,25 @@ public class GeoVisualizerPanel extends JPanel {
 
 	}
 
-	private <T> void buildDataModel(Earth earth, Map<T,LatLon> dataMap, List<Pair<T, T>> links) {
+	private <T> void buildDataModel(Earth earth, Map<T, LatLon> dataMap, List<Pair<T, T>> links) {
 		dataModel = new Model();
 
 		Map<T, Integer> map = new LinkedHashMap<>();
 
-		for(T t : dataMap.keySet()) {
-			map.put(t,map.size());
-		}		
+		for (T t : dataMap.keySet()) {
+			map.put(t, map.size());
+		}
 
-		for(T t : dataMap.keySet()) {
+		for (T t : dataMap.keySet()) {
 			LatLon latLon = dataMap.get(t);
 			Vector3D v = earth.getECCFromLatLon(latLon);
 			dataModel.positions.add(v);
 		}
-		
+
 		links.forEach(pair -> {
 			Integer index1 = map.get(pair.getFirst());
-			Integer index2 = map.get(pair.getSecond());			
-			Link link = new Link(index1, index2);			
+			Integer index2 = map.get(pair.getSecond());
+			Link link = new Link(index1, index2);
 			dataModel.links.add(link);
 		});
 
@@ -144,7 +144,7 @@ public class GeoVisualizerPanel extends JPanel {
 
 	private PathManager pathManager;
 
-	public <T> GeoVisualizerPanel(Map<T,LatLon> dataMap, List<Pair<T, T>> links) {
+	public <T> GeoVisualizerPanel(Map<T, LatLon> dataMap, List<Pair<T, T>> links) {
 		earth = Earth.fromMeanRadius();
 
 		buildWorldGridModel(earth);
@@ -158,8 +158,8 @@ public class GeoVisualizerPanel extends JPanel {
 		dataModel.positions.forEach(v -> initialCameraPosition.add(v));
 		initialCameraPosition.normalize();
 		initialCameraPosition.scale(earth.getRadius() + 500_000);
-		
-		camera = new Camera(earth,new Vector3D(initialCameraPosition));
+
+		camera = new Camera(earth, new Vector3D(initialCameraPosition));
 
 		addMouseListener(new MouseListenerImpl());
 		addMouseWheelListener(new MouseWheelListenerImpl());
@@ -279,7 +279,7 @@ public class GeoVisualizerPanel extends JPanel {
 		private double getTravelCost(Integer id1, Integer id2) {
 			Vector3D a = dataModel.positions.get(id1);
 			Vector3D b = dataModel.positions.get(id2);
-			return earth.getGroundDistanceFromECC(a,b);
+			return earth.getGroundDistanceFromECC(a, b);
 		}
 
 		public PathManager(Earth earth, Model dataModel) {
@@ -291,7 +291,7 @@ public class GeoVisualizerPanel extends JPanel {
 										.build();//
 
 			Graph.Builder<Integer, Edge> builder = Graph.builder();
-			
+
 			for (int i = 0; i < dataModel.positions.size(); i++) {
 				builder.addNode(i);
 			}
@@ -329,8 +329,10 @@ public class GeoVisualizerPanel extends JPanel {
 			if (recalcPath) {
 				pathLinks.clear();
 				if (pathSourceIndex != pathDestinationIndex) {
-					Path<Edge> path = PathSolver.getPath(graph, pathSourceIndex, pathDestinationIndex, this::getEdgeCost, this::getTravelCost);
-					path.getEdges().forEach(edge -> pathLinks.add(edge.link));
+					Optional<Path<Edge>> path = Paths.getPath(graph, pathSourceIndex, pathDestinationIndex, this::getEdgeCost, this::getTravelCost);
+					if (path.isPresent()) {
+						path.get().getEdges().forEach(edge -> pathLinks.add(edge.link));
+					}
 				}
 				recalcPath = false;
 			}
@@ -398,9 +400,15 @@ public class GeoVisualizerPanel extends JPanel {
 
 		private MutableVector3D cameraPosition = new MutableVector3D();
 
-		private MutableVector3D head = new MutableVector3D();// depends on camera position
-		private MutableVector3D nose = new MutableVector3D();// depends on camera position
-		private MutableVector3D left = new MutableVector3D();// depends on camera position
+		private MutableVector3D head = new MutableVector3D();// depends on
+																// camera
+																// position
+		private MutableVector3D nose = new MutableVector3D();// depends on
+																// camera
+																// position
+		private MutableVector3D left = new MutableVector3D();// depends on
+																// camera
+																// position
 
 		public double getAltitudeMeters() {
 			return cameraPosition.length() - earth.getRadius();
@@ -629,7 +637,7 @@ public class GeoVisualizerPanel extends JPanel {
 			}
 
 			// determine where the mouse appears to be now that we have zoomed
-		    Vector3D newPositionOfMouse = get3DPositionFromPoint(mousePoint);
+			Vector3D newPositionOfMouse = get3DPositionFromPoint(mousePoint);
 			if (newPositionOfMouse == null) {
 				// we are off the world
 				return;
@@ -865,7 +873,7 @@ public class GeoVisualizerPanel extends JPanel {
 		int steps = (int) FastMath.ceil(180 * angle / FastMath.PI);
 		for (int i = 0; i < steps; i++) {
 			double stepAngle = (i * angle) / steps;
-			result.add(a.rotateToward(b, stepAngle));			
+			result.add(a.rotateToward(b, stepAngle));
 		}
 		result.add(b);
 		return result;

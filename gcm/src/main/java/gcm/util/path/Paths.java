@@ -1,4 +1,4 @@
-package gcm.util.graph.path;
+package gcm.util.path;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -6,12 +6,12 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import gcm.util.graph.Graph;
-import gcm.util.graph.Path;
-import gcm.util.graph.Path.Builder;
-import gcm.util.graph.Path.EdgeCostEvaluator;
-import gcm.util.graph.Path.TravelCostEvaluator;
+import gcm.util.path.Path.Builder;
+import gcm.util.path.Path.EdgeCostEvaluator;
+import gcm.util.path.Path.TravelCostEvaluator;
 
 /**
  * 
@@ -44,9 +44,7 @@ import gcm.util.graph.Path.TravelCostEvaluator;
  * @author Shawn Hatch
  * 
  */
-public final class PathSolver {
-	
-	
+public final class Paths {
 	
 	private static class Node<E> {
 		
@@ -63,25 +61,23 @@ public final class PathSolver {
 		}
 	}
 	
-	private PathSolver() {
+	private Paths() {
 		
 	}
 		
-	public static <N,E> Path<E> getPath(
+	public static <N,E> Optional<Path<E>> getPath(
 			Graph<N, E> graph,
 			N originNode,
 			N destinationNode,
 			EdgeCostEvaluator<E> edgeCostEvaluator,
 			TravelCostEvaluator<N> travelCostEvaluator) {
 		
-		if (!graph.containsNode(originNode)) {			
-			Builder<E> builder = Path.builder();
-			return builder.build();
+		if (!graph.containsNode(originNode)) {
+			return Optional.empty();
 		}
 		
 		if (!graph.containsNode(destinationNode)) {
-			Builder<E> builder = Path.builder();
-			return builder.build();
+			return Optional.empty();
 		}
 		
 		final Map<N, Node<E>> map = new LinkedHashMap<>();
@@ -186,7 +182,7 @@ public final class PathSolver {
 			builder.addEdge(edge);
 		}
 		
-		return builder.build();
+		return Optional.of(builder.build());
 	}
 	
 }

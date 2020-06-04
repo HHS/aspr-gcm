@@ -7,19 +7,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.graph.Graph;
 import gcm.util.path.Paths.EdgeCostEvaluator;
 import gcm.util.path.Paths.TravelCostEvaluator;
 
 /**
- * Manages shortest path solutions for a given graph with reasonable efficiency.
+ * Manages shortest path solutions for a given graph with reasonable efficiency
+ * using arrays of previous path solutions and their sub-paths.
  * 
  * @author Shawn Hatch
  * 
- * @param <N>
- * @param <E>
  */
-public final class ArrayPathSolver<N, E> implements PathSolver<N, E>{
+@Source(status = TestStatus.REQUIRED)
+public final class ArrayPathSolver<N, E> implements PathSolver<N, E> {
 
 	private Graph<N, E> graph;
 
@@ -53,19 +55,15 @@ public final class ArrayPathSolver<N, E> implements PathSolver<N, E>{
 		if (!graph.containsNode(destinationNode)) {
 			return Optional.empty();
 		}
-		
-		
-		
-		
 
 		Integer originIndex = nodeMap.get(originNode);
 		Integer destinationIndex = nodeMap.get(destinationNode);
 		E e = navigationArray[originIndex][destinationIndex];
-		if(e==null) {
-			if(!solve(originNode, destinationNode)) {
+		if (e == null) {
+			if (!solve(originNode, destinationNode)) {
 				return Optional.empty();
 			}
-		}		
+		}
 
 		Path.Builder<E> pathBuilder = Path.builder();
 		while (true) {
@@ -96,15 +94,15 @@ public final class ArrayPathSolver<N, E> implements PathSolver<N, E>{
 		List<E> edges = path.getEdges();
 		for (E edge : edges) {
 			originList.add(graph.getOriginNode(edge));
-			destinationList.add(graph.getDestinationNode(edge));			
+			destinationList.add(graph.getDestinationNode(edge));
 		}
 
 		int n = originList.size();
 		for (int i = 0; i < n; i++) {
-			int sourceIndex = nodeMap.get(originList.get(i));						
-			for (int j = i; j < n; j++) {				
+			int sourceIndex = nodeMap.get(originList.get(i));
+			for (int j = i; j < n; j++) {
 				int targetIndex = nodeMap.get(destinationList.get(j));
-				navigationArray[sourceIndex][targetIndex] = edges.get(i);				
+				navigationArray[sourceIndex][targetIndex] = edges.get(i);
 			}
 		}
 		return true;

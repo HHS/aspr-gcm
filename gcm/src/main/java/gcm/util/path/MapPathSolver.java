@@ -7,10 +7,19 @@ import java.util.Map;
 import java.util.Optional;
 
 import gcm.util.MultiKey;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.graph.Graph;
 import gcm.util.path.Paths.EdgeCostEvaluator;
 import gcm.util.path.Paths.TravelCostEvaluator;
-
+/**
+ * Manages shortest path solutions for a given graph with reasonable efficiency
+ * using maps of previous path solutions and their sub-paths.
+ * 
+ * @author Shawn Hatch
+ * 
+ */
+@Source(status = TestStatus.REQUIRED)
 public class MapPathSolver<N, E> implements PathSolver<N, E> {
 
 	private static class SubPath<T> {

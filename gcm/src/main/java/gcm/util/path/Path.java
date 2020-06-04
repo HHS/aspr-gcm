@@ -3,6 +3,8 @@ package gcm.util.path;
 import java.util.ArrayList;
 import java.util.List;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -25,6 +27,7 @@ import net.jcip.annotations.Immutable;
  * @author Shawn Hatch
  * 
  */
+@Source(status = TestStatus.REQUIRED)
 @Immutable
 public final class Path<E> {
 	//TODO rewrite class doc

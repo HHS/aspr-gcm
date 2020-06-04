@@ -39,6 +39,7 @@ import gcm.test.automated.AT_ExperimentBuilder;
 import gcm.test.automated.AT_Filters;
 import gcm.test.automated.AT_FloatValueContainer;
 import gcm.test.automated.AT_GeoLocator;
+import gcm.test.automated.AT_Graph;
 import gcm.test.automated.AT_GraphPathSolver;
 import gcm.test.automated.AT_HashIntSet;
 import gcm.test.automated.AT_IntId;
@@ -154,7 +155,8 @@ import gcm.test.automated.AT_Vector3D;
 	AT_SphericalArc.class,
 	AT_SphericalTriangle.class,
 	AT_SphericalPolygon.class,
-	AT_GeoLocator.class
+	AT_GeoLocator.class,
+	AT_Graph.class
 	})
 
 public class SuiteTest {

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.graph.Graph;
 import gcm.util.path.Path.Builder;
 
@@ -42,6 +44,7 @@ import gcm.util.path.Path.Builder;
  * @author Shawn Hatch
  * 
  */
+@Source(status = TestStatus.REQUIRED)
 public final class Paths {
 	
 	public interface EdgeCostEvaluator<E> {		

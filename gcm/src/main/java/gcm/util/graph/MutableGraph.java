@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+
 /**
  * 
  * A generics-based, mutable graph of nodes(N) and edges(E). All iterators are
@@ -14,12 +17,9 @@ import java.util.Set;
  * remove().
  * 
  * @author Shawn Hatch
- * 
- * @param <N>
- *            Node type
- * @param <E>
- *            Edge type
+ *
  */
+@Source(status = TestStatus.REQUIRED)
 public final class MutableGraph<N, E> {
 
 	private Set<N> nodes = new LinkedHashSet<>();
@@ -291,21 +291,6 @@ public final class MutableGraph<N, E> {
 	}
 
 	/**
-	 * Returns the number of edges that have the given node as their destination
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int inboundEdgeCount(N node) {
-		Set<E> edges = inEdges.get(node);
-		if (edges == null) {
-			return 0;
-		}
-		return edges.size();
-	}
-
-	/**
 	 * Returns true if and only if the nodeCount() is zero
 	 * 
 	 * @return
@@ -322,22 +307,7 @@ public final class MutableGraph<N, E> {
 	public int nodeCount() {
 		return nodes.size();
 	}
-
-	/**
-	 * Returns the number of edges that have the given node as their origin
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int outboundEdgeCount(N node) {
-		Set<E> edges = outEdges.get(node);
-		if (edges == null) {
-			return 0;
-		}
-		return edges.size();
-	}
-
+	
 	/**
 	 * Removes the edge from the graph.
 	 */

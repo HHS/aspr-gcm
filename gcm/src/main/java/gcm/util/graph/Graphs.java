@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
+@Source(status = TestStatus.REQUIRED)
 public class Graphs {
 	public static enum GraphCyclisity {
 		/**

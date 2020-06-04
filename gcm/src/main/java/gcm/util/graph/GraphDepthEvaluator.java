@@ -9,6 +9,8 @@ import java.util.TreeMap;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.Immutable;
 
 /**
@@ -24,6 +26,7 @@ import net.jcip.annotations.Immutable;
  * @author Shawn Hatch
  * 
  */
+@Source(status = TestStatus.REQUIRED)
 @Immutable
 public final class GraphDepthEvaluator<N> {
 

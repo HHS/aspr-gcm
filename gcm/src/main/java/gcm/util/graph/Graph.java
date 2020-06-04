@@ -2,6 +2,12 @@ package gcm.util.graph;
 
 import java.util.List;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+import net.jcip.annotations.Immutable;
+
+@Source(status = TestStatus.REQUIRED)
+@Immutable
 public final class Graph<N, E> {
 
 		
@@ -116,34 +122,12 @@ public final class Graph<N, E> {
 	}
 
 	/**
-	 * Returns the number of edges that have the given node as their destination
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int inboundEdgeCount(N node) {
-		return mutableGraph.inboundEdgeCount(node);
-	}
-
-	/**
 	 * Returns the number of nodes in this graph.
 	 * 
 	 * @return
 	 */
 	public int nodeCount() {
 		return mutableGraph.nodeCount();
-	}
-
-	/**
-	 * Returns the number of edges that have the given node as their origin
-	 * node.
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public int outboundEdgeCount(N node) {
-		return mutableGraph.outboundEdgeCount(node);
 	}
 
 	/**

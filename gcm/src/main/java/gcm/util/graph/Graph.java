@@ -11,12 +11,22 @@ import net.jcip.annotations.Immutable;
 public final class Graph<N, E> {
 
 		
-	private final MutableGraph<N, E> mutableGraph;
+	protected final MutableGraph<N, E> mutableGraph;
 
 	Graph(MutableGraph<N, E> mutableGraph) {
 		this.mutableGraph = mutableGraph;
 	}
 	
+	@Override
+	public int hashCode() {
+		return mutableGraph.hashCode();		
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return mutableGraph.equals(obj);		
+	}
+
 	public static <N, E> Builder<N, E> builder(){
 		return new Builder<>();
 	}

@@ -61,7 +61,7 @@ public final class MutableGraph<N, E> {
 	 * This method is package access only and should be used to reduce the
 	 * overhead costs of creating Graphs from MutableGraphs.
 	 */
-	Graph<N, E> asGraph() {		
+	Graph<N, E> asGraph() {
 		return new Graph<>(this);
 	}
 
@@ -307,7 +307,7 @@ public final class MutableGraph<N, E> {
 	public int nodeCount() {
 		return nodes.size();
 	}
-	
+
 	/**
 	 * Removes the edge from the graph.
 	 */
@@ -393,6 +393,7 @@ public final class MutableGraph<N, E> {
 		return result;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -402,16 +403,24 @@ public final class MutableGraph<N, E> {
 			return false;
 		}
 
-		if (!(obj instanceof Graph)) {
+		MutableGraph other;
+		if (obj instanceof Graph) {
+			Graph graph = (Graph) obj;
+			other = graph.mutableGraph;
+		} else if (obj instanceof MutableGraph) {
+			other = (MutableGraph) obj;
+		} else {
 			return false;
 		}
 
-		@SuppressWarnings("unchecked")
-		Graph<N, E> other = (Graph<N, E>) obj;
 		if (other.nodeCount() != nodeCount()) {
 			return false;
 		}
 		if (other.edgeCount() != edgeCount()) {
+			return false;
+		}
+		
+		if(nodeCount()!=other.nodeCount()) {
 			return false;
 		}
 
@@ -420,7 +429,11 @@ public final class MutableGraph<N, E> {
 				return false;
 			}
 		}
-
+		
+		if(edgeCount()!=other.edgeCount()) {
+			return false;
+		}
+		
 		for (E edge : getEdges()) {
 			if (!other.containsEdge(edge)) {
 				return false;

@@ -1,5 +1,6 @@
-package gcm.test.automated;
+package gcm.automated;
 
+import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static gcm.simulation.Filter.allPeople;
 import static gcm.simulation.Filter.compartment;
 import static gcm.simulation.Filter.groupMember;
@@ -9,7 +10,6 @@ import static gcm.simulation.Filter.groupsForPersonAndGroupType;
 import static gcm.simulation.Filter.property;
 import static gcm.simulation.Filter.region;
 import static gcm.simulation.Filter.resource;
-import static gcm.test.support.ExceptionAssertion.assertModelException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -26,6 +26,19 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import gcm.automated.support.SeedProvider;
+import gcm.automated.support.TaskComponent;
+import gcm.automated.support.TaskPlan;
+import gcm.automated.support.TaskPlanContainer;
+import gcm.automated.support.TestCompartmentId;
+import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestGlobalPropertyId;
+import gcm.automated.support.TestGroupTypeId;
+import gcm.automated.support.TestMaterialId;
+import gcm.automated.support.TestMaterialsProducerId;
+import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRegionId;
+import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.replication.ReplicationImpl;
 import gcm.scenario.ComponentId;
@@ -48,19 +61,6 @@ import gcm.simulation.Equality;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.test.support.SeedProvider;
-import gcm.test.support.TaskComponent;
-import gcm.test.support.TaskPlan;
-import gcm.test.support.TaskPlanContainer;
-import gcm.test.support.TestCompartmentId;
-import gcm.test.support.TestGlobalComponentId;
-import gcm.test.support.TestGlobalPropertyId;
-import gcm.test.support.TestGroupTypeId;
-import gcm.test.support.TestMaterialId;
-import gcm.test.support.TestMaterialsProducerId;
-import gcm.test.support.TestPersonPropertyId;
-import gcm.test.support.TestRegionId;
-import gcm.test.support.TestResourceId;
 import gcm.util.annotations.UnitTest;
 
 /**

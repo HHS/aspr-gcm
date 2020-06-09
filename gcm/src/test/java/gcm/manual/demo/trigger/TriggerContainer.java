@@ -1,4 +1,4 @@
-package gcm.test.manual.demo.trigger;
+package gcm.manual.demo.trigger;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

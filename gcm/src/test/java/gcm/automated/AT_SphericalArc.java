@@ -1,7 +1,7 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
-import static gcm.test.support.ExceptionAssertion.assertException;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -12,7 +12,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gcm.test.support.SeedProvider;
+import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.spherical.Chirality;
 import gcm.util.spherical.MalformedSphericalArcException;

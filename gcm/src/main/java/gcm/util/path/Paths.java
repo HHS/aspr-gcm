@@ -187,6 +187,10 @@ public final class Paths {
 			Collections.reverse(edges);
 		}
 		
+		if(edges.isEmpty()) {
+			return Optional.empty();
+		}
+		
 		Builder<E> builder = Path.builder();
 		for(E edge : edges) {
 			builder.addEdge(edge);

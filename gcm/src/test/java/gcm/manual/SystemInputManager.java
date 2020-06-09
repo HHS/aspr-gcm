@@ -1,4 +1,4 @@
-package gcm.test.manual;
+package gcm.manual;
 
 import java.io.BufferedReader;
 import java.io.IOException;

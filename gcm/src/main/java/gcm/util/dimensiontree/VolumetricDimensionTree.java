@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.commons.math3.util.FastMath;
 
@@ -36,38 +35,42 @@ public class VolumetricDimensionTree<T> {
 		private boolean fastRemovals = false;
 	}
 
-	public static <T> Builder<T> builder(Class<T> c) {
-		return new Builder<>();
+	// public static <T> Builder<T> builder(Class<T> c) {
+	// return new Builder<>();
+	// }
+
+	public static Builder builder() {
+		return new Builder();
 	}
 
-	public static class Builder<T> {
+	public static class Builder {
 
 		private InitialTreeSettings initialTreeSettings = new InitialTreeSettings();
 
 		private Builder() {
 		}
 
-		public Builder<T> setFastRemovals(boolean fastRemovals) {
+		public Builder setFastRemovals(boolean fastRemovals) {
 			initialTreeSettings.fastRemovals = fastRemovals;
 			return this;
 		}
 
-		public Builder<T> setLeafSize(int leafSize) {
+		public Builder setLeafSize(int leafSize) {
 			initialTreeSettings.leafSize = leafSize;
 			return this;
 		}
 
-		public Builder<T> setLowerBounds(double[] lowerBounds) {
+		public Builder setLowerBounds(double[] lowerBounds) {
 			initialTreeSettings.lowerBounds = Arrays.copyOf(lowerBounds, lowerBounds.length);
 			return this;
 		}
 
-		public Builder<T> setUpperBounds(double[] upperBounds) {
+		public Builder setUpperBounds(double[] upperBounds) {
 			initialTreeSettings.upperBounds = Arrays.copyOf(upperBounds, upperBounds.length);
 			return this;
 		}
 
-		public VolumetricDimensionTree<T> build() {
+		public <T> VolumetricDimensionTree<T> build() {
 
 			try {
 				return new VolumetricDimensionTree<>(initialTreeSettings);
@@ -90,14 +93,14 @@ public class VolumetricDimensionTree<T> {
 			this.radius = radius;
 		}
 
-		public double squareDistance(double[] position) {
-			double result = 0;
-			for (int i = 0; i < position.length; i++) {
-				double delta = (position[i] - this.position[i]);
-				result += delta * delta;
-			}
-			return result;
-		}
+//		public double squareDistance(double[] position) {
+//			double result = 0;
+//			for (int i = 0; i < position.length; i++) {
+//				double delta = (position[i] - this.position[i]);
+//				result += delta * delta;
+//			}
+//			return result;
+//		}
 
 		public boolean containsPosition(double[] position, double radius) {
 			double square_distance = 0;
@@ -212,10 +215,11 @@ public class VolumetricDimensionTree<T> {
 	}
 
 	/**
-	 * Removes the stored object from this tree using the suggested radius to
-	 * narrow the search. If the given radius is different from any radius used
-	 * to store the object, there is no guarantee that the object will be
-	 * removed.
+	 * Removes the member from this tree using the suggested radius to narrow
+	 * the search. If the given radius is different from any radius used to
+	 * store the object, there is no guarantee that the object will be removed.
+	 * This is not guaranteed to remove all occurrences of the member if multiple
+	 * radii and positions were used to add the member.
 	 */
 	public boolean remove(double radius, T t) {
 
@@ -236,7 +240,7 @@ public class VolumetricDimensionTree<T> {
 	}
 
 	/**
-	 * Removes the object from this tree
+	 * Removes all occurences of the given member from this tree
 	 */
 	public boolean remove(T t) {
 		LocationRec<T> locationRec = new LocationRec<>(null, 0, t);
@@ -287,32 +291,33 @@ public class VolumetricDimensionTree<T> {
 		return result;
 	}
 
-	public Optional<T> getNearestMember(double[] position) {
-		double leastDistance = Double.POSITIVE_INFINITY;
-		Optional<LocationRec<T>> optional = defaultDimensionTreeRec.dimensionTree.getNearestMember(position);
-		LocationRec<T> nearestLocationRec = null;
-		if (optional.isPresent()) {
-			nearestLocationRec = optional.get();
-			leastDistance = nearestLocationRec.squareDistance(position);
-		}
-
-		for (DimensionTreeRec<T> dimensionTreeRec : treeMap.values()) {
-			optional = dimensionTreeRec.dimensionTree.getNearestMember(position);
-			if (optional.isPresent()) {
-				LocationRec<T> nearestMember = optional.get();
-				double distance = nearestMember.squareDistance(position);
-				if (distance < leastDistance) {
-					leastDistance = distance;
-					nearestLocationRec = nearestMember;
-				}
-			}
-		}
-
-		if (nearestLocationRec != null) {
-			return Optional.of(nearestLocationRec.location);
-		}
-		return Optional.empty();
-	}
+	// public Optional<T> getNearestMember(double[] position) {
+	// double leastDistance = Double.POSITIVE_INFINITY;
+	// Optional<LocationRec<T>> optional =
+	// defaultDimensionTreeRec.dimensionTree.getNearestMember(position);
+	// LocationRec<T> nearestLocationRec = null;
+	// if (optional.isPresent()) {
+	// nearestLocationRec = optional.get();
+	// leastDistance = nearestLocationRec.squareDistance(position);
+	// }
+	//
+	// for (DimensionTreeRec<T> dimensionTreeRec : treeMap.values()) {
+	// optional = dimensionTreeRec.dimensionTree.getNearestMember(position);
+	// if (optional.isPresent()) {
+	// LocationRec<T> nearestMember = optional.get();
+	// double distance = nearestMember.squareDistance(position);
+	// if (distance < leastDistance) {
+	// leastDistance = distance;
+	// nearestLocationRec = nearestMember;
+	// }
+	// }
+	// }
+	//
+	// if (nearestLocationRec != null) {
+	// return Optional.of(nearestLocationRec.location);
+	// }
+	// return Optional.empty();
+	// }
 
 	@Override
 	public String toString() {

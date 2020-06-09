@@ -1,4 +1,4 @@
-package gcm.test.support.experimentspace;
+package gcm.automated.support.experimentspace;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,8 +7,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import gcm.automated.support.experimentspace.ExperimentTestDimension.ExperimentTestDimensionBuilder;
 import gcm.scenario.Scenario;
-import gcm.test.support.experimentspace.ExperimentTestDimension.ExperimentTestDimensionBuilder;
 import gcm.util.MultiKey;
 
 /**

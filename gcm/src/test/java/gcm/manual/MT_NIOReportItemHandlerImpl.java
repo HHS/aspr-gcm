@@ -1,4 +1,4 @@
-package gcm.test.manual;
+package gcm.manual;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

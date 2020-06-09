@@ -1,12 +1,12 @@
-package gcm.test.manual.demo.trigger;
+package gcm.manual.demo.trigger;
 
 import gcm.components.AbstractComponent;
+import gcm.manual.demo.identifiers.RegionProperty;
 import gcm.scenario.PersonId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Environment;
 import gcm.simulation.Plan;
-import gcm.test.manual.demo.identifiers.RegionProperty;
 
 public class RegionResourceTriggerComponent extends AbstractComponent {
 

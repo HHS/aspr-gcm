@@ -1,10 +1,10 @@
-package gcm.test.manual.demo.identifiers;
+package gcm.manual.demo.identifiers;
 
+import gcm.manual.demo.datatypes.Sex;
 import gcm.scenario.MapOption;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.TimeTrackingPolicy;
-import gcm.test.manual.demo.datatypes.Sex;
 
 public enum PersonProperty implements PersonPropertyId {
 

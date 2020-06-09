@@ -1,4 +1,4 @@
-package gcm.test.automated;
+package gcm.automated;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

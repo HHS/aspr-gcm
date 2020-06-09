@@ -1,14 +1,14 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.EnvironmentSupport.addObservationContainer;
-import static gcm.test.support.EnvironmentSupport.addStandardComponentsAndTypes;
-import static gcm.test.support.EnvironmentSupport.addStandardPeople;
-import static gcm.test.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
-import static gcm.test.support.EnvironmentSupport.addTaskPlanContainer;
-import static gcm.test.support.EnvironmentSupport.assertAllPlansExecuted;
-import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
-import static gcm.test.support.EnvironmentSupport.getReplication;
-import static gcm.test.support.ExceptionAssertion.assertModelException;
+import static gcm.automated.support.EnvironmentSupport.addObservationContainer;
+import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
+import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
+import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
+import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
+import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.EnvironmentSupport.getReplication;
+import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -20,6 +20,12 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.ObservationContainer;
+import gcm.automated.support.SeedProvider;
+import gcm.automated.support.TaskPlanContainer;
+import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestGroupTypeId;
 import gcm.replication.Replication;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
@@ -32,12 +38,6 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.test.support.EnvironmentSupport;
-import gcm.test.support.ObservationContainer;
-import gcm.test.support.SeedProvider;
-import gcm.test.support.TaskPlanContainer;
-import gcm.test.support.TestGlobalComponentId;
-import gcm.test.support.TestGroupTypeId;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
 

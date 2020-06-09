@@ -1,5 +1,5 @@
-package gcm.test.automated;
-import static gcm.test.support.ExceptionAssertion.assertException;
+package gcm.automated;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

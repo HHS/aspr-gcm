@@ -3,9 +3,12 @@ package gcm.experiment.progress;
 import java.nio.file.Path;
 
 import gcm.output.OutputItemHandler;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.ThreadSafe;
 
 @ThreadSafe
+@Source(status = TestStatus.UNEXPECTED)
 public final class NIOExperimentProgressLogProvider implements ExperimentProgressLogProvider{
 	
 	private final ExperimentProgressLog experimentProgressLog;

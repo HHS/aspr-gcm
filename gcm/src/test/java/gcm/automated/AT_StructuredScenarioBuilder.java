@@ -1,6 +1,6 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.ExceptionAssertion.assertScenarioException;
+import static gcm.automated.support.ExceptionAssertion.assertScenarioException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -8,6 +8,18 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import gcm.automated.AT_Simulation.EmptyComponent;
+import gcm.automated.support.TestCompartmentId;
+import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestGlobalPropertyId;
+import gcm.automated.support.TestGroupTypeId;
+import gcm.automated.support.TestMaterialId;
+import gcm.automated.support.TestMaterialsProducerId;
+import gcm.automated.support.TestMaterialsProducerPropertyId;
+import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRegionId;
+import gcm.automated.support.TestRegionPropertyId;
+import gcm.automated.support.TestResourceId;
 import gcm.components.AbstractComponent;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
@@ -36,18 +48,6 @@ import gcm.scenario.StructuredScenarioBuilder;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.ScenarioException.ScenarioErrorType;
 import gcm.simulation.Environment;
-import gcm.test.automated.AT_Simulation.EmptyComponent;
-import gcm.test.support.TestCompartmentId;
-import gcm.test.support.TestGlobalComponentId;
-import gcm.test.support.TestGlobalPropertyId;
-import gcm.test.support.TestGroupTypeId;
-import gcm.test.support.TestMaterialId;
-import gcm.test.support.TestMaterialsProducerId;
-import gcm.test.support.TestMaterialsProducerPropertyId;
-import gcm.test.support.TestPersonPropertyId;
-import gcm.test.support.TestRegionId;
-import gcm.test.support.TestRegionPropertyId;
-import gcm.test.support.TestResourceId;
 import gcm.util.annotations.UnitTest;
 
 /**

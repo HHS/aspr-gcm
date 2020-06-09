@@ -1,12 +1,12 @@
-package gcm.test.support;
+package gcm.automated.support;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import gcm.automated.support.TaskPlan.Task;
 import gcm.scenario.ComponentId;
-import gcm.test.support.TaskPlan.Task;
 
 /**
  * A mutable container for holding TestPlans that are distributed to a test

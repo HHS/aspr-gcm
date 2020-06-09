@@ -1,8 +1,8 @@
-package gcm.test.manual.demo.plans;
+package gcm.manual.demo.plans;
 
+import gcm.manual.demo.identifiers.Compartment;
 import gcm.scenario.PersonId;
 import gcm.simulation.Plan;
-import gcm.test.manual.demo.identifiers.Compartment;
 
 public class MovePlan implements Plan {
 		private final PersonId personId;

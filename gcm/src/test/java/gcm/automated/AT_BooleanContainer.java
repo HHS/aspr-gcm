@@ -1,4 +1,4 @@
-package gcm.test.automated;
+package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

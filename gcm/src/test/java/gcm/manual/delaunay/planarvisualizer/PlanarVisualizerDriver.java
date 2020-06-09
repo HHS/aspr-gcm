@@ -1,4 +1,4 @@
-package gcm.test.manual.delaunay.planarvisualizer;
+package gcm.manual.delaunay.planarvisualizer;
 
 import java.util.LinkedHashMap;
 import java.util.List;

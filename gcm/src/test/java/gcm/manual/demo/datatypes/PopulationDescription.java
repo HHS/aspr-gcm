@@ -1,4 +1,4 @@
-package gcm.test.manual.demo.datatypes;
+package gcm.manual.demo.datatypes;
 
 import java.util.ArrayList;
 import java.util.List;

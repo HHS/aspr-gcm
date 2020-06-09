@@ -243,5 +243,14 @@ public final class Graph<N, E> {
 	public int edgeCount(N originNode, N destinationNode) {
 		return mutableGraph.edgeCount(originNode, destinationNode);
 	}
+	
+	/**
+	 * Returns a new {@link MutableGraph} instance from the contents of this {@link Graph}
+	 */
+	public MutableGraph<N,E> toMutableGraph(){
+		MutableGraph<N, E> result = new MutableGraph<>();
+		result.addAll(this);		
+		return result;
+	}
 
 }

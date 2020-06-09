@@ -1,4 +1,4 @@
-package gcm.test.script;
+package gcm.script;
 
 import java.io.File;
 import java.nio.file.Files;

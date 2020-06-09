@@ -1,4 +1,4 @@
-package gcm.test.support.experimentspace;
+package gcm.automated.support.experimentspace;
 
 import java.util.ArrayList;
 import java.util.List;

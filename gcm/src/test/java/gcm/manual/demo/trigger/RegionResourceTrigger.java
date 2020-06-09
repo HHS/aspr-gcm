@@ -1,4 +1,4 @@
-package gcm.test.manual.demo.trigger;
+package gcm.manual.demo.trigger;
 
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;

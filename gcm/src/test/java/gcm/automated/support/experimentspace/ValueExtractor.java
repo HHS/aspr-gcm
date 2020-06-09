@@ -1,4 +1,4 @@
-package gcm.test.support.experimentspace;
+package gcm.automated.support.experimentspace;
 
 import gcm.scenario.ExperimentBuilder;
 import gcm.scenario.Scenario;

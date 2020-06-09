@@ -1,4 +1,4 @@
-package gcm.test.support;
+package gcm.automated.support;
 
 import org.apache.commons.math3.random.RandomGenerator;
 

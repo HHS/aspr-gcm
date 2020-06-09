@@ -1,4 +1,4 @@
-package gcm.test.support;
+package gcm.automated.support;
 /**
  * Implementor for proxy class testing
  * @author Shawn Hatch

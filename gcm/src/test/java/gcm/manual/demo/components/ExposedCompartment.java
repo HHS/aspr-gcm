@@ -1,15 +1,15 @@
-package gcm.test.manual.demo.components;
+package gcm.manual.demo.components;
 
 import gcm.components.AbstractComponent;
+import gcm.manual.demo.datatypes.Sex;
+import gcm.manual.demo.identifiers.Compartment;
+import gcm.manual.demo.identifiers.PersonProperty;
+import gcm.manual.demo.identifiers.Resource;
+import gcm.manual.demo.plans.MovePlan;
 import gcm.scenario.PersonId;
 import gcm.scenario.RegionId;
 import gcm.simulation.Environment;
 import gcm.simulation.Plan;
-import gcm.test.manual.demo.datatypes.Sex;
-import gcm.test.manual.demo.identifiers.Compartment;
-import gcm.test.manual.demo.identifiers.PersonProperty;
-import gcm.test.manual.demo.identifiers.Resource;
-import gcm.test.manual.demo.plans.MovePlan;
 
 public class ExposedCompartment extends AbstractComponent {
 

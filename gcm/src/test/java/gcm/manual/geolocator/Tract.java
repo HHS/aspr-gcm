@@ -1,4 +1,4 @@
-package gcm.test.manual.geolocator;
+package gcm.manual.geolocator;
 
 public class Tract  {
 	private final String id;

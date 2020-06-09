@@ -1,4 +1,4 @@
-package gcm.test.support;
+package gcm.automated.support;
 
 import java.util.ArrayList;
 import java.util.List;

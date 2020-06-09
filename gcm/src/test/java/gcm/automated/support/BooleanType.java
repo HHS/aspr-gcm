@@ -1,4 +1,4 @@
-package gcm.test.support;
+package gcm.automated.support;
 /**
  * Enumeration over the two Boolean values
  * @author Shawn Hatch

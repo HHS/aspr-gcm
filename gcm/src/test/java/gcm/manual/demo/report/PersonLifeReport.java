@@ -1,4 +1,4 @@
-package gcm.test.manual.demo.report;
+package gcm.manual.demo.report;
 
 import java.util.LinkedHashSet;
 import java.util.Set;

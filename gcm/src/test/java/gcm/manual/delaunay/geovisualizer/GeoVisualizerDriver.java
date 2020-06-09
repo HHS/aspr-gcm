@@ -1,4 +1,4 @@
-package gcm.test.manual.delaunay.geovisualizer;
+package gcm.manual.delaunay.geovisualizer;
 
 import java.io.IOException;
 import java.nio.file.Files;

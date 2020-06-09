@@ -1,4 +1,4 @@
-package gcm.test.manual.demo.identifiers;
+package gcm.manual.demo.identifiers;
 
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.PropertyDefinition;

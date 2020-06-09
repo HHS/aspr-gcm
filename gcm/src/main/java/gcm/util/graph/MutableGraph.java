@@ -58,11 +58,21 @@ public final class MutableGraph<N, E> {
 	 * this {@link MutableGraph} will be reflected in the resultant {@link
 	 * Graph}
 	 * 
-	 * This method is package access only and should be used to reduce the
+	 * This method is package access only and should only be used to reduce the
 	 * overhead costs of creating Graphs from MutableGraphs.
 	 */
 	Graph<N, E> asGraph() {
 		return new Graph<>(this);
+	}
+	
+	
+	/**
+	 * Returns a new {@link Graph} instance from the contents of this {@link MutableGraph}
+	 */
+	public Graph<N,E> toGraph(){
+		Graph.Builder<N, E> builder = Graph.builder();
+		builder.addAll(this);
+		return builder.build();
 	}
 
 	/**

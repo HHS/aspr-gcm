@@ -1,4 +1,4 @@
-package gcm.test;
+package gcm;
 
 import java.lang.reflect.Method;
 import java.nio.file.Path;
@@ -12,12 +12,12 @@ import java.util.Set;
 
 import org.junit.runners.Suite.SuiteClasses;
 
-import gcm.test.script.SourceClassRec;
-import gcm.test.script.SourceFileInvestigator;
-import gcm.test.script.SourceMethodRec;
-import gcm.test.script.TestClassRec;
-import gcm.test.script.TestFileInvestigator;
-import gcm.test.script.TestMethodRec;
+import gcm.script.SourceClassRec;
+import gcm.script.SourceFileInvestigator;
+import gcm.script.SourceMethodRec;
+import gcm.script.TestClassRec;
+import gcm.script.TestFileInvestigator;
+import gcm.script.TestMethodRec;
 import gcm.util.annotations.TestStatus;
 
 /**

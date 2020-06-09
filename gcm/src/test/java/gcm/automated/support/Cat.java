@@ -1,4 +1,4 @@
-package gcm.test.support;
+package gcm.automated.support;
 
 /**
  * Interface for proxy class testing

@@ -17,7 +17,7 @@ import gcm.util.earth.LatLon;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 
-@Source(status = TestStatus.REQUIRED)
+@Source(status = TestStatus.UNEXPECTED)
 public class GeoDelaunaySolver<T> {
 
 	/*
@@ -394,7 +394,7 @@ public class GeoDelaunaySolver<T> {
 		 * knowing all the vertex positions. This will help the tree keep its
 		 * depth to a minimum.
 		 */
-		searchTree = VolumetricDimensionTree.builder(Triangle.class)//
+		searchTree = VolumetricDimensionTree.builder()//
 											.setFastRemovals(true)//
 											.setLowerBounds(new double[] { -1, -1, -1 })//
 											.setUpperBounds(new double[] { 1, 1, 1 })//

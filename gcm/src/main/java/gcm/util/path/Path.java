@@ -32,8 +32,6 @@ import net.jcip.annotations.Immutable;
 public final class Path<E> {
 	//TODO rewrite class doc
 	
-	
-	
 	/**
 	 * Returns a new instance of the Builder class
 	 */
@@ -68,10 +66,8 @@ public final class Path<E> {
 	private final List<E> edges;
 
 	/**
-	 * Returns an iterable over the edges in the path walk. Note that the path
-	 * may cross itself (revisit nodes) and even repeat edges. Thus this is NOT
-	 * an iterator over the set of edges in the graph, but will include all
-	 * edges in the graph at least once.
+	 * Returns a list over the edges in the path walk. Note that the path
+	 * may cross itself (revisit nodes) and even repeat edges.
 	 * 
 	 */
 	public List<E> getEdges() {
@@ -86,7 +82,7 @@ public final class Path<E> {
 	 * 
 	 */
 
-	public int pathLength() {
+	public int length() {
 		return edges.size();
 	}
 
@@ -100,5 +96,38 @@ public final class Path<E> {
 	public boolean isEmpty() {
 		return edges.size() == 0;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((edges == null) ? 0 : edges.hashCode());
+		return result;
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Path)) {
+			return false;
+		}
+		Path other = (Path) obj;
+		if (edges == null) {
+			if (other.edges != null) {
+				return false;
+			}
+		} else if (!edges.equals(other.edges)) {
+			return false;
+		}
+		return true;
+	}
+	
+	
 
 }

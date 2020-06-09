@@ -568,9 +568,9 @@ public final class DimensionTree<T> {
 		return result;
 	}
 
-	@Override
-	public String toString() {
-		return root.toString();
-	}
+//	@Override
+//	public String toString() {
+//		return root.toString();
+//	}
 
 }

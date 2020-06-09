@@ -1,6 +1,6 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.ExceptionAssertion.assertException;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;

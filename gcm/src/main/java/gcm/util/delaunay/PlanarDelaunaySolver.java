@@ -17,7 +17,7 @@ import gcm.util.spherical.Chirality;
 import gcm.util.vector.MutableVector2D;
 import gcm.util.vector.Vector2D;
 
-@Source(status = TestStatus.REQUIRED)
+@Source(status = TestStatus.UNEXPECTED)
 public class PlanarDelaunaySolver<T> {
 
 	private static class Rec<T> implements Comparable<Rec<T>> {
@@ -313,7 +313,7 @@ public class PlanarDelaunaySolver<T> {
 		double[] lowerBounds = { minX, minY };
 		double[] upperBounds = { maxX, maxY };
 
-		searchTree = VolumetricDimensionTree.builder(Triangle.class)//
+		searchTree = VolumetricDimensionTree.builder()//
 											.setFastRemovals(true)//
 											.setLowerBounds(lowerBounds)//
 											.setUpperBounds(upperBounds)//

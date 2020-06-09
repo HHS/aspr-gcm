@@ -1,9 +1,21 @@
-package gcm.test.automated;
+package gcm.automated;
 
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
+import gcm.automated.support.ExceptionAssertion;
+import gcm.automated.support.ExceptionAssertion.ExceptionGenerator;
+import gcm.automated.support.TestCompartmentId;
+import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestGlobalPropertyId;
+import gcm.automated.support.TestGroupTypeId;
+import gcm.automated.support.TestMaterialsProducerId;
+import gcm.automated.support.TestMaterialsProducerPropertyId;
+import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRegionId;
+import gcm.automated.support.TestRegionPropertyId;
+import gcm.automated.support.TestResourceId;
 import gcm.components.AbstractComponent;
 import gcm.output.reports.GroupInfo;
 import gcm.output.reports.GroupInfo.GroupInfoBuilder;
@@ -31,18 +43,6 @@ import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
 import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
-import gcm.test.support.ExceptionAssertion;
-import gcm.test.support.TestCompartmentId;
-import gcm.test.support.TestGlobalComponentId;
-import gcm.test.support.TestGlobalPropertyId;
-import gcm.test.support.TestGroupTypeId;
-import gcm.test.support.TestMaterialsProducerId;
-import gcm.test.support.TestMaterialsProducerPropertyId;
-import gcm.test.support.TestPersonPropertyId;
-import gcm.test.support.TestRegionId;
-import gcm.test.support.TestRegionPropertyId;
-import gcm.test.support.TestResourceId;
-import gcm.test.support.ExceptionAssertion.ExceptionGenerator;
 import gcm.util.annotations.UnitTest;
 
 /**
@@ -131,7 +131,7 @@ public class AT_AbstractComponent {
 	}
 
 	@Test
-	public void test() {
+	public void testAbstractComponent() {
 		/*
 		 * Show that each abstract method of the AbstractComponent class will
 		 * throw a RuntimeException if the overriding class does not implement
@@ -166,4 +166,240 @@ public class AT_AbstractComponent {
 		// show that the TestAcceptance had passed set to true
 		assertTrue(testAcceptance.passed);
 	}
+
+	/**
+	 * Tests {@link AbstractComponent#init(Environment)}
+	 */
+	@Test
+	public void testInit(){
+		//see testAbstractComponent
+	}
+
+	
+	/**
+	 * Tests {@link AbstractComponent#close(Environment)}
+	 */
+	@Test
+	public void testClose(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#executePlan(Environment, Plan)}
+	 */
+	@Test
+	public void testExecutePlan(){
+		//see testAbstractComponent
+	}
+	
+	/**
+	 * Tests {@link AbstractComponent#observeCompartmentPersonArrival(Environment, PersonId)}
+	 */
+	@Test
+	public void testObserveCompartmentPersonArrival(){
+		//see testAbstractComponent
+	}
+
+	
+	/**
+	 * Tests {@link AbstractComponent#observeCompartmentPersonDeparture(Environment, CompartmentId, PersonId)}
+	 */
+	@Test
+	public void testObserveCompartmentPersonDeparture(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeCompartmentPropertyChange(Environment, CompartmentId, CompartmentPropertyId)}
+	 */
+	@Test
+	public void testObserveCompartmentPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGlobalPersonArrival(Environment, PersonId)}
+	 */
+	@Test
+	public void testObserveGlobalPersonArrival(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGlobalPersonDeparture(Environment, PersonId)}
+	 */
+	@Test
+	public void testObserveGlobalPersonDeparture(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGlobalPropertyChange(Environment, GlobalPropertyId)}
+	 */
+	@Test
+	public void testObserveGlobalPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGroupConstruction(Environment, GroupId)}
+	 */
+	@Test
+	public void testObserveGroupConstruction(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGroupDestruction(Environment, GroupInfo)}
+	 */
+	@Test
+	public void testObserveGroupDestruction(){
+		//see testAbstractComponent
+	}
+
+	
+	/**
+	 * Tests {@link AbstractComponent#observeGroupPersonArrival(Environment, GroupId, PersonId)}
+	 */
+	@Test
+	public void testObserveGroupPersonArrival(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGroupPersonDeparture(Environment, GroupId, PersonId)}
+	 */
+	@Test
+	public void testObserveGroupPersonDeparture(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeGroupPropertyChange(Environment, GroupId, GroupPropertyId)}
+	 */
+	@Test
+	public void testObserveGroupPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeMaterialsProducerPropertyChange(Environment, MaterialsProducerId, MaterialsProducerPropertyId)}
+	 */
+	@Test
+	public void testObserveMaterialsProducerPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeMaterialsProducerResourceChange(Environment, MaterialsProducerId, ResourceId)}
+	 */
+	@Test
+	public void testObserveMaterialsProducerResourceChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observePersonCompartmentChange(Environment, PersonId)}
+	 */
+	@Test
+	public void testObservePersonCompartmentChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observePersonPropertyChange(Environment, PersonId, PersonPropertyId)}
+	 */
+	@Test
+	public void testObservePersonPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#ObservePersonRegionChange(Environment, PersonId)}
+	 */
+	@Test
+	public void testObservePersonRegionChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observePersonResourceChange(Environment, PersonId, ResourceId)}
+	 */
+	@Test
+	public void testObservePersonResourceChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observePopulationIndexPersonAddition(Environment, Object, PersonId)}
+	 */
+	@Test
+	public void testObservePopulationIndexPersonAddition(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observePopulationIndexPersonRemoval(Environment, Object, PersonId)}
+	 */
+	@Test
+	public void testObservePopulationIndexPersonRemoval(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeRegionPersonArrival(Environment, PersonId)}
+	 */
+	@Test
+	public void testObserveRegionPersonArrival(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeRegionPersonDeparture(Environment, RegionId, PersonId)}
+	 */
+	@Test
+	public void testObserveRegionPersonDeparture(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeRegionPropertyChange(Environment, RegionId, RegionPropertyId)}
+	 */
+	@Test
+	public void testObserveRegionPropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeRegionResourceChange(Environment, RegionId, ResourceId)}
+	 */
+	@Test
+	public void testObserveRegionResourceChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeResourcePropertyChange(Environment, ResourceId, ResourcePropertyId)}
+	 */
+	@Test
+	public void testObserveResourcePropertyChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeStageOfferChange(Environment, StageId)}
+	 */
+	@Test
+	public void testObserveStageOfferChange(){
+		//see testAbstractComponent
+	}
+
+	/**
+	 * Tests {@link AbstractComponent#observeStageTransfer(Environment, StageId, MaterialsProducerId, MaterialsProducerId)}
+	 */
+	@Test
+	public void testObserveStageTransfer(){
+		//see testAbstractComponent
+	}
+	
 }

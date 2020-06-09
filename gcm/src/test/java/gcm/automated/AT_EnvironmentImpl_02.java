@@ -1,14 +1,14 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.EnvironmentSupport.addStandardComponentsAndTypes;
-import static gcm.test.support.EnvironmentSupport.addStandardPeople;
-import static gcm.test.support.EnvironmentSupport.addStandardPropertyDefinitions;
-import static gcm.test.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
-import static gcm.test.support.EnvironmentSupport.addTaskPlanContainer;
-import static gcm.test.support.EnvironmentSupport.assertAllPlansExecuted;
-import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
-import static gcm.test.support.EnvironmentSupport.getReplication;
-import static gcm.test.support.ExceptionAssertion.assertModelException;
+import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
+import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
+import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefinitions;
+import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
+import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
+import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.EnvironmentSupport.getReplication;
+import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -25,6 +25,16 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.SeedProvider;
+import gcm.automated.support.TaskComponent;
+import gcm.automated.support.TaskPlanContainer;
+import gcm.automated.support.TestCompartmentId;
+import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestMaterialId;
+import gcm.automated.support.TestMaterialsProducerId;
+import gcm.automated.support.TestResourceId;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
@@ -42,16 +52,6 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.test.support.EnvironmentSupport;
-import gcm.test.support.SeedProvider;
-import gcm.test.support.TaskComponent;
-import gcm.test.support.TaskPlanContainer;
-import gcm.test.support.TestCompartmentId;
-import gcm.test.support.TestGlobalComponentId;
-import gcm.test.support.TestMaterialId;
-import gcm.test.support.TestMaterialsProducerId;
-import gcm.test.support.TestResourceId;
-import gcm.test.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.util.annotations.UnitTest;
 
 @UnitTest(target = EnvironmentImpl.class)

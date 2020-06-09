@@ -1,4 +1,4 @@
-package gcm.test.script;
+package gcm.script;
 
 import java.io.IOException;
 import java.nio.file.FileVisitResult;

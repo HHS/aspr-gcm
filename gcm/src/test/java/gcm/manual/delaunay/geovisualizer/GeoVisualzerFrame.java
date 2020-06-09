@@ -1,4 +1,4 @@
-package gcm.test.manual.delaunay.geovisualizer;
+package gcm.manual.delaunay.geovisualizer;
 
 import java.awt.Frame;
 import java.util.List;

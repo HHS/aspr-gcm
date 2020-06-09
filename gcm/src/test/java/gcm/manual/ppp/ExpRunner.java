@@ -1,4 +1,4 @@
-package gcm.test.manual.ppp;
+package gcm.manual.ppp;
 
 public class ExpRunner {
 	private ExpRunner() {

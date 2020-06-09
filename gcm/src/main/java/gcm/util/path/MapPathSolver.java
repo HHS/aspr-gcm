@@ -33,7 +33,7 @@ public class MapPathSolver<N, E> implements PathSolver<N, E> {
 		int stopIndex;
 	}
 
-	private Map<MultiKey, Path<E>> pathMap;
+	private Map<MultiKey, Path<E>> pathMap = new LinkedHashMap<>();
 
 	private Graph<N, E> graph;
 

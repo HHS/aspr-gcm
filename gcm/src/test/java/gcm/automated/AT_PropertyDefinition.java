@@ -1,6 +1,6 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.ExceptionAssertion.assertException;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -11,12 +11,12 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
 import org.junit.Test;
 
+import gcm.automated.support.BooleanType;
+import gcm.automated.support.SeedProvider;
 import gcm.scenario.MapOption;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.PropertyDefinition.Builder;
-import gcm.test.support.BooleanType;
-import gcm.test.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 
 /**

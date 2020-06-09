@@ -1,4 +1,4 @@
-package gcm.test.manual.ppp;
+package gcm.manual.ppp;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;

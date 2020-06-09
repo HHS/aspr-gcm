@@ -1,4 +1,4 @@
-package gcm.test.manual;
+package gcm.manual;
 
 import java.util.ArrayList;
 import java.util.Comparator;

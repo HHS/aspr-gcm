@@ -15,7 +15,7 @@ import gcm.util.annotations.TestStatus;
 public class Graphs {
 	public static enum GraphCyclisity {
 		/**
-		 * The graph contains only cycles. There are no sources or sinks.
+		 * The graph contains no sources or sinks. Empty graphs are cyclic.
 		 */
 		CYCLIC,
 
@@ -26,7 +26,7 @@ public class Graphs {
 		MIXED,
 
 		/**
-		 * The graph contains no cycles. Empty graphs are acyclic.
+		 * The graph contains at least one source or sink and no cycles.
 		 */
 		ACYCLIC,
 
@@ -59,13 +59,21 @@ public class Graphs {
 	 * 
 	 */
 	public static <N, E> GraphCyclisity getGraphCyclisity(Graph<N, E> graph) {
-		Graph<N, E> sourceSinkReducedGraph = getSourceSinkReducedGraph(graph);
-		if(sourceSinkReducedGraph.isEmpty()) {
-			return GraphCyclisity.ACYCLIC;
+		
+		if(graph.isEmpty()) {
+			return GraphCyclisity.CYCLIC;
 		}
+		
+		Graph<N, E> sourceSinkReducedGraph = getSourceSinkReducedGraph(graph);
+		
 		if(sourceSinkReducedGraph.nodeCount()==graph.nodeCount()) {
 			return GraphCyclisity.CYCLIC;
 		}
+		
+		if(sourceSinkReducedGraph.nodeCount()==0) {
+			return GraphCyclisity.ACYCLIC;
+		}
+		
 		return GraphCyclisity.MIXED;
 	}
 	

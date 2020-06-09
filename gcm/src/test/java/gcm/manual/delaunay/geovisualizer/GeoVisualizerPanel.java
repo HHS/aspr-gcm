@@ -1,4 +1,4 @@
-package gcm.test.manual.delaunay.geovisualizer;
+package gcm.manual.delaunay.geovisualizer;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

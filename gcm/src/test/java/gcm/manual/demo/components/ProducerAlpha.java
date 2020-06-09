@@ -1,11 +1,11 @@
-package gcm.test.manual.demo.components;
+package gcm.manual.demo.components;
 
 import gcm.components.AbstractComponent;
+import gcm.manual.demo.identifiers.Material;
+import gcm.manual.demo.identifiers.MaterialsProducers;
 import gcm.scenario.BatchId;
 import gcm.scenario.StageId;
 import gcm.simulation.Environment;
-import gcm.test.manual.demo.identifiers.Material;
-import gcm.test.manual.demo.identifiers.MaterialsProducers;
 
 public class ProducerAlpha extends AbstractComponent {
 

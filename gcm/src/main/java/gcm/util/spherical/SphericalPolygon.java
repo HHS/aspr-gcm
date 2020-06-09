@@ -334,7 +334,7 @@ public class SphericalPolygon {
 		}
 
 		if (sphericalTriangles.size() > SEARCH_TREE_THRESHOLD && scaffold.useSearchTree) {
-			searchTree = VolumetricDimensionTree.builder(SphericalTriangle.class)//
+			searchTree = VolumetricDimensionTree.builder()//
 												.setFastRemovals(true)//
 												.setLowerBounds(new double[] { -1, -1, -1 })//
 												.setUpperBounds(new double[] { 1, 1, 1 })//

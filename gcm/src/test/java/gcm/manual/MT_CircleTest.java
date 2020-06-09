@@ -1,6 +1,6 @@
-package gcm.test.manual;
+package gcm.manual;
 
-import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 import org.junit.Test;
 
-import gcm.test.manual.delaunay.planarvisualizer.PlanarVisualzerFrame;
-import gcm.test.support.SeedProvider;
+import gcm.automated.support.SeedProvider;
+import gcm.manual.delaunay.planarvisualizer.PlanarVisualzerFrame;
 import gcm.util.vector.Circle2D;
 import gcm.util.vector.Circle2D.SolutionAlgorithm;
 import gcm.util.vector.Vector2D;

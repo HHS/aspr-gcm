@@ -1,4 +1,4 @@
-package gcm.test.manual.delaunay.planarvisualizer;
+package gcm.manual.delaunay.planarvisualizer;
 
 import java.awt.Frame;
 import java.util.List;

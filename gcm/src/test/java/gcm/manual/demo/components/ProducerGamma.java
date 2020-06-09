@@ -1,14 +1,14 @@
-package gcm.test.manual.demo.components;
+package gcm.manual.demo.components;
 
 import gcm.components.AbstractComponent;
+import gcm.manual.demo.identifiers.Material;
+import gcm.manual.demo.identifiers.Resource;
 import gcm.scenario.BatchId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.RegionId;
 import gcm.scenario.StageId;
 import gcm.simulation.Environment;
 import gcm.simulation.Plan;
-import gcm.test.manual.demo.identifiers.Material;
-import gcm.test.manual.demo.identifiers.Resource;
 
 public class ProducerGamma extends AbstractComponent {
 

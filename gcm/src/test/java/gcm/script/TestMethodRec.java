@@ -1,4 +1,4 @@
-package gcm.test.script;
+package gcm.script;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;

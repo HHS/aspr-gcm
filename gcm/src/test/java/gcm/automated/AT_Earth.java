@@ -1,6 +1,6 @@
-package gcm.test.automated;
+package gcm.automated;
 
-import static gcm.test.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static org.junit.Assert.assertEquals;
 
 import java.util.LinkedHashMap;
@@ -12,7 +12,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gcm.test.support.SeedProvider;
+import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;

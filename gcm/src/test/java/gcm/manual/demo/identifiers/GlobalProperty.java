@@ -1,8 +1,8 @@
-package gcm.test.manual.demo.identifiers;
+package gcm.manual.demo.identifiers;
 
+import gcm.manual.demo.datatypes.PopulationDescription;
 import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.PropertyDefinition;
-import gcm.test.manual.demo.datatypes.PopulationDescription;
 
 public enum GlobalProperty implements GlobalPropertyId {
 	

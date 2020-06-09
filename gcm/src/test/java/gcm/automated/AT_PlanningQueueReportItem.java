@@ -1,16 +1,16 @@
-package gcm.test.automated;
+package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import gcm.automated.support.SimpleStat;
 import gcm.output.simstate.PlanningQueueReportItem;
 import gcm.output.simstate.PlanningQueueReportItem.PlanningQueueReportItemBuilder;
 import gcm.scenario.ComponentId;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.simulation.Plan;
-import gcm.test.support.SimpleStat;
 import gcm.util.annotations.UnitTest;
 import gcm.util.stats.Stat;
 

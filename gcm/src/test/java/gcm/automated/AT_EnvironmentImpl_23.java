@@ -34,9 +34,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlan;
+import gcm.automated.support.TaskPlan.Task;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
@@ -45,8 +47,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
-import gcm.automated.support.TaskPlan.Task;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.MaterialsProducerId;
@@ -88,7 +88,7 @@ public class AT_EnvironmentImpl_23 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPlanKeys()}
+	 * Tests {@link EnvironmentImpl#getPlanKeys()}
 	 */
 	@Test
 	public void testGetPlanKeys() {
@@ -146,7 +146,7 @@ public class AT_EnvironmentImpl_23 {
 	}
 
 	/**
-	 * Tests {@link Environment#observePopulationIndexChange(boolean, Object)}
+	 * Tests {@link EnvironmentImpl#observePopulationIndexChange(boolean, Object)}
 	 */
 	@Test
 	public void testObservePopulationIndexChange() {
@@ -355,7 +355,7 @@ public class AT_EnvironmentImpl_23 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeStageTransferBySourceMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#observeStageTransferBySourceMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId)}
 	 *
 	 */
 	@Test
@@ -558,7 +558,7 @@ public class AT_EnvironmentImpl_23 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeStageTransferByDestinationMaterialsProducerId(boolean, MaterialsProducerId)}
+	 * {@link EnvironmentImpl#observeStageTransferByDestinationMaterialsProducerId(boolean, MaterialsProducerId)}
 	 *
 	 */
 	@Test
@@ -764,7 +764,7 @@ public class AT_EnvironmentImpl_23 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeGlobalRegionPropertyChange(boolean, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#observeGlobalRegionPropertyChange(boolean, gcm.scenario.RegionPropertyId)}
 	 *
 	 */
 	@Test

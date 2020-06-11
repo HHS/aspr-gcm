@@ -95,9 +95,7 @@ public final class MutableStat implements Stat {
 
 	}
 
-	public MutableStat(Stat stat) {
-
-	}
+	
 
 	private double min;
 	private double max;

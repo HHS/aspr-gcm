@@ -61,6 +61,7 @@ import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
+import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.util.annotations.UnitTest;
 
@@ -756,6 +757,7 @@ public class AT_Simulation {
 
 	/**
 	 * Tests {@link Scenario#getRegionComponentClass(RegionId)}
+	 * {@link EnvironmentImpl#getRegionComponentClass(RegionId)}
 	 */
 	@Test
 	public void testGetRegionComponenClass() {

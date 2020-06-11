@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -23,10 +24,10 @@ import gcm.util.path.Path;
 public class AT_Path {
 
 	/**
-	 * Tests {@link Path} contructors
+	 * Tests {@link Path#builder()}
 	 */
 	@Test
-	public void testConstructors() {
+	public void testBuilder() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
 		assertNotNull(path);
@@ -42,6 +43,75 @@ public class AT_Path {
 
 	}
 
+	/**
+	 * Tests {@link Path#equals(Object)}
+	 */
+	@Test
+	public void testEquals() {
+		Path.Builder<Integer> builder = Path.builder();
+		
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		builder.addEdge(1);
+		Path<Integer> path1 = builder.build();
+		
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		builder.addEdge(1);
+		Path<Integer> path2 = builder.build();
+		
+		assertEquals(path1,path2);
+		assertEquals(path1,path1);
+		assertEquals(path2,path1);
+		
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		//builder.addEdge(1);
+		
+		Path<Integer> path3 = builder.build();
+		assertNotEquals(path1,path3);
+
+	}
+
+	/**
+	 * Tests {@link Path#hashCode()}
+	 */
+	@Test
+	public void testHashCode() {
+		Path.Builder<Integer> builder = Path.builder();
+		
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		builder.addEdge(1);
+		Path<Integer> path1 = builder.build();
+		
+		builder.addEdge(1);
+		builder.addEdge(3);
+		builder.addEdge(4);
+		builder.addEdge(5);
+		builder.addEdge(6);
+		builder.addEdge(1);
+		Path<Integer> path2 = builder.build();
+		
+		assertEquals(path1,path2);
+		
+		assertEquals(path1.hashCode(), path2.hashCode());
+		
+	}
+
+	
 	/**
 	 * Tests {@link Path#getEdges()}
 	 */

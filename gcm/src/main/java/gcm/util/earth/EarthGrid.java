@@ -5,8 +5,8 @@ import org.apache.commons.math3.util.FastMath;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.vector.MutableVector2D;
-import gcm.util.vector.Vector3D;
 import gcm.util.vector.MutableVector3D;
+import gcm.util.vector.Vector3D;
 
 /**
  * A utility class for converting (x,y) two dimensional grid coordinates to an

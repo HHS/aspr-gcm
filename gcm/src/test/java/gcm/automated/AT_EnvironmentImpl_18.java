@@ -32,7 +32,6 @@ import gcm.scenario.PersonId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -61,7 +60,7 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDepartureByGroup(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByGroup(boolean,
 	 * GroupId)
 	 */
 	@Test
@@ -209,7 +208,7 @@ public class AT_EnvironmentImpl_18 {
 
 	/**
 	 * Tests {@linkplain
-	 * Environment#observeGroupDepartureByGroupAndPerson(boolean, GroupId,
+	 * EnvironmentImpl#observeGroupDepartureByGroupAndPerson(boolean, GroupId,
 	 * PersonId)
 	 */
 	@Test
@@ -352,7 +351,7 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDepartureByPerson(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByPerson(boolean,
 	 * PersonId)
 	 */
 	@Test
@@ -500,7 +499,7 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDepartureByType(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByType(boolean,
 	 * GroupTypeId)
 	 */
 	@Test
@@ -664,7 +663,7 @@ public class AT_EnvironmentImpl_18 {
 
 	/**
 	 * Tests {@linkplain
-	 * Environment#observeGroupDepartureByTypeAndPerson(boolean, GroupTypeId,
+	 * EnvironmentImpl#observeGroupDepartureByTypeAndPerson(boolean, GroupTypeId,
 	 * PersonId)
 	 */
 	@Test
@@ -824,7 +823,7 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDestruction(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDestruction(boolean)
 	 */
 	@Test
 	public void testObserveGroupDestruction() {
@@ -935,7 +934,7 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDestructionByGroup(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDestructionByGroup(boolean,
 	 * GroupId)
 	 */
 	@Test

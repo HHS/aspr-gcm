@@ -402,10 +402,10 @@ public class AT_LatLonBox {
 	}
 
 	/**
-	 * Tests {@link LatLonBox constructors}
+	 * Tests {@link LatLonBox#builder()}
 	 */
 	@Test
-	public void testConstructors() {
+	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		LatLonBoxBuilder builder = LatLonBox.builder();

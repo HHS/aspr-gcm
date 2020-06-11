@@ -1011,7 +1011,7 @@ public class AT_MutableVector3D {
 	 * Tests {@linkplain MutableVector3D#isNormal()}
 	 */
 	@Test
-	public void testisNormal() {
+	public void testIsNormal() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(32);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

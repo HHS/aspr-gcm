@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -38,7 +39,6 @@ import gcm.automated.support.TestMaterialsProducerPropertyId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
@@ -51,7 +51,6 @@ import gcm.scenario.RegionId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -80,7 +79,7 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setGlobalPropertyValue(gcm.scenario.GlobalPropertyId, Object)}
+	 * {@link EnvironmentImpl#setGlobalPropertyValue(gcm.scenario.GlobalPropertyId, Object)}
 	 */
 	@Test
 	public void testSetGlobalPropertyValue() {
@@ -218,7 +217,7 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setGroupPropertyValue(GroupId, GroupPropertyId, Object)}
+	 * {@link EnvironmentImpl#setGroupPropertyValue(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
 	public void testSetGroupPropertyValue() {
@@ -372,7 +371,7 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId, Object)}
+	 * {@link EnvironmentImpl#setMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
 	public void testSetMaterialsProducerPropertyValue() {
@@ -531,7 +530,7 @@ public class AT_EnvironmentImpl_21 {
 	}
 
 	/**
-	 * Tests {@link Environment#setPersonCompartment(PersonId, CompartmentId)}
+	 * Tests {@link EnvironmentImpl#setPersonCompartment(PersonId, CompartmentId)}
 	 */
 	@Test
 	public void testSetPersonCompartment() {
@@ -670,7 +669,7 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setPersonPropertyValue(PersonId, PersonPropertyId, Object)}
+	 * {@link EnvironmentImpl#setPersonPropertyValue(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
 	public void testSetPersonPropertyValue() {
@@ -805,7 +804,7 @@ public class AT_EnvironmentImpl_21 {
 	}
 
 	/**
-	 * Tests {@link Environment#setPersonRegion(PersonId, RegionId)}
+	 * Tests {@link EnvironmentImpl#setPersonRegion(PersonId, RegionId)}
 	 */
 	@Test
 	public void testSetPersonRegion() {
@@ -928,7 +927,7 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId, Object)}
+	 * {@link EnvironmentImpl#setRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId, Object)}
 	 */
 	@Test
 	public void testSetRegionPropertyValue() {

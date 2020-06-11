@@ -83,17 +83,11 @@ public class AT_GeoLocator {
 		return builder.build();
 	}
 
-	// Builder<T>
-	// builder()
-	// getLocations(double, double, double)
-	// getNearestLocation(double, double)
-	// getPrioritizedLocations(double, double, double)
-
 	/**
 	 * Tests {@link GeoLocator#builder()}
 	 */
 	@Test
-	public void testConstructor() {
+	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		List<LatLon> locations = generateLocations(randomGenerator, 35, 128, 50, 100);

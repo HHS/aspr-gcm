@@ -79,13 +79,6 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 	}
 	
 	@Override
-	public Scenario buildWithoutDefaultPropertyNullChecks() {
-		final StructuredScenarioBuilder structuredScenarioBuilder = new StructuredScenarioBuilder();
-		fillStructuredScenarioBuilder(structuredScenarioBuilder);
-		return structuredScenarioBuilder.buildWithoutDefaultPropertyNullChecks();
-	}
-
-	@Override
 	public Scenario build() {
 		final StructuredScenarioBuilder structuredScenarioBuilder = new StructuredScenarioBuilder();
 		fillStructuredScenarioBuilder(structuredScenarioBuilder);

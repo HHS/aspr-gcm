@@ -31,6 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -39,7 +40,6 @@ import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
@@ -53,7 +53,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -87,7 +86,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchPropertyTime(BatchId, BatchPropertyId)}
+	 * Tests {@link EnvironmentImpl#getBatchPropertyTime(BatchId, BatchPropertyId)}
 	 */
 	@Test
 	public void testGetBatchPropertyTime() {
@@ -200,7 +199,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchPropertyValue(BatchId, BatchPropertyId)}
+	 * Tests {@link EnvironmentImpl#getBatchPropertyValue(BatchId, BatchPropertyId)}
 	 */
 	@Test
 	public void testGetBatchPropertyValue() {
@@ -290,7 +289,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchStageId(BatchId)}
+	 * Tests {@link EnvironmentImpl#getBatchStageId(BatchId)}
 	 */
 	@Test
 	public void testGetBatchStageId() {
@@ -342,7 +341,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchTime(BatchId)}
+	 * Tests {@link EnvironmentImpl#getBatchTime(BatchId)}
 	 */
 	@Test
 	public void testGetBatchTime() {
@@ -405,7 +404,7 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getBiWeightedGroupContact(GroupId, PersonId, boolean, gcm.simulation.BiWeightingFunction)}
+	 * {@link EnvironmentImpl#getBiWeightedGroupContact(GroupId, PersonId, boolean, gcm.simulation.BiWeightingFunction)}
 	 */
 	@Test
 	public void testGetBiWeightedGroupContact() {
@@ -544,7 +543,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getNonWeightedGroupContact(GroupId)}
+	 * Tests {@link EnvironmentImpl#getNonWeightedGroupContact(GroupId)}
 	 */
 	@Test
 	public void testGetNonWeightedGroupContact() {
@@ -666,7 +665,7 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getNonWeightedGroupContactWithExclusion(GroupId, PersonId)}
+	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusion(GroupId, PersonId)}
 	 */
 	@Test
 	public void testGetNonWeightedGroupContactWithExclusion() {
@@ -835,7 +834,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCompartmentIds()}
+	 * Tests {@link EnvironmentImpl#getCompartmentIds()}
 	 */
 	@Test
 	public void testGetCompartmentIds() {
@@ -874,7 +873,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCompartmentPopulationCount(CompartmentId)}
+	 * Tests {@link EnvironmentImpl#getCompartmentPopulationCount(CompartmentId)}
 	 */
 	@Test
 	public void testGetCompartmentPopulationCount() {
@@ -939,7 +938,7 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getCompartmentPopulationCountTime(CompartmentId)}
+	 * {@link EnvironmentImpl#getCompartmentPopulationCountTime(CompartmentId)}
 	 */
 	@Test
 	public void testGetCompartmentPopulationCountTime() {
@@ -1008,7 +1007,7 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getCompartmentPropertyDefinition(gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyDefinition(gcm.scenario.CompartmentPropertyId)}
 	 */
 	@Test
 	public void testGetCompartmentPropertyDefinition() {
@@ -1075,7 +1074,7 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCompartmentPropertyIds()}
+	 * Tests {@link EnvironmentImpl#getCompartmentPropertyIds()}
 	 */
 	@Test
 	public void testGetCompartmentPropertyIds() {

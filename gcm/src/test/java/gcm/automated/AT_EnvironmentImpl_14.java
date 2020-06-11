@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
@@ -39,7 +40,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
@@ -52,7 +52,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -82,7 +81,7 @@ public class AT_EnvironmentImpl_14 {
 	
 	/**
 	 * Tests
-	 * {@link Environment#observeMaterialsProducerResourceChangeByMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#observeMaterialsProducerResourceChangeByMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId, ResourceId)}
 	 *
 	 */
 
@@ -254,7 +253,7 @@ public class AT_EnvironmentImpl_14 {
 	}
 
 	/**
-	 * Tests {@link Environment#observeMaterialsProducerResourceChange(boolean,
+	 * Tests {@link EnvironmentImpl#observeMaterialsProducerResourceChange(boolean,
 	 * ResourceId)
 	 */
 
@@ -417,7 +416,7 @@ public class AT_EnvironmentImpl_14 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observePersonCompartmentChange(boolean, PersonId)}
+	 * {@link EnvironmentImpl#observePersonCompartmentChange(boolean, PersonId)}
 	 *
 	 */
 	@Test
@@ -612,7 +611,7 @@ public class AT_EnvironmentImpl_14 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observePersonPropertyChange(boolean, PersonId, PersonPropertyId)}
+	 * {@link EnvironmentImpl#observePersonPropertyChange(boolean, PersonId, PersonPropertyId)}
 	 *
 	 */
 	@Test
@@ -819,7 +818,7 @@ public class AT_EnvironmentImpl_14 {
 	}
 
 	/**
-	 * Tests {@link Environment#observePersonRegionChange(boolean, PersonId)}
+	 * Tests {@link EnvironmentImpl#observePersonRegionChange(boolean, PersonId)}
 	 *
 	 */
 	@Test
@@ -1017,7 +1016,7 @@ public class AT_EnvironmentImpl_14 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observePersonResourceChange(boolean, PersonId, ResourceId)}
+	 * {@link EnvironmentImpl#observePersonResourceChange(boolean, PersonId, ResourceId)}
 	 *
 	 */
 	@Test

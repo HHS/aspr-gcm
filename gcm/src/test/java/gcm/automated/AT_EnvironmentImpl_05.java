@@ -27,11 +27,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGroupTypeId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
@@ -41,7 +41,6 @@ import gcm.scenario.PropertyDefinition;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -69,7 +68,7 @@ public class AT_EnvironmentImpl_05 {
 
 
 	/**
-	 * Tests {@link Environment#getGroupCountForPerson(PersonId)}
+	 * Tests {@link EnvironmentImpl#getGroupCountForPerson(PersonId)}
 	 */
 	@Test
 	public void testGetGroupCountForPerson() {
@@ -155,7 +154,7 @@ public class AT_EnvironmentImpl_05 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGroupPropertyDefinition(GroupTypeId, GroupPropertyId)}
+	 * {@link EnvironmentImpl#getGroupPropertyDefinition(GroupTypeId, GroupPropertyId)}
 	 */
 	@Test
 	public void testGetGroupPropertyDefinition() {
@@ -226,7 +225,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupPropertyIds(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#getGroupPropertyIds(GroupTypeId)}
 	 */
 	@Test
 	public void testGetGroupPropertyIds() {
@@ -282,7 +281,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupPropertyTime(GroupId, GroupPropertyId)}
+	 * Tests {@link EnvironmentImpl#getGroupPropertyTime(GroupId, GroupPropertyId)}
 	 */
 	@Test
 	public void testGetGroupPropertyTime() {
@@ -418,7 +417,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupPropertyValue(GroupId, GroupPropertyId)}
+	 * Tests {@link EnvironmentImpl#getGroupPropertyValue(GroupId, GroupPropertyId)}
 	 */
 	@Test
 	public void testGetGroupPropertyValue() {
@@ -519,7 +518,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupsForGroupType(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#getGroupsForGroupType(GroupTypeId)}
 	 */
 	@Test
 	public void testGetGroupsForGroupType() {
@@ -598,7 +597,7 @@ public class AT_EnvironmentImpl_05 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGroupsForGroupTypeAndPerson(GroupTypeId, PersonId)}
+	 * {@link EnvironmentImpl#getGroupsForGroupTypeAndPerson(GroupTypeId, PersonId)}
 	 */
 	@Test
 	public void testGetGroupsForGroupTypeAndPerson() {
@@ -709,7 +708,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupsForPerson(PersonId)}
+	 * Tests {@link EnvironmentImpl#getGroupsForPerson(PersonId)}
 	 */
 	@Test
 	public void testGetGroupsForPerson() {
@@ -820,7 +819,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupType(GroupId)
+	 * Tests {@link EnvironmentImpl#getGroupType(GroupId)
 	 */
 	@Test
 	public void testGetGroupType() {
@@ -873,7 +872,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupTypeCountForPerson(PersonId)}
+	 * Tests {@link EnvironmentImpl#getGroupTypeCountForPerson(PersonId)}
 	 */
 	@Test
 	public void testGetGroupTypeCountForPerson() {
@@ -956,7 +955,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupTypeIds()}
+	 * Tests {@link EnvironmentImpl#getGroupTypeIds()}
 	 */
 	@Test
 	public void testGetGroupTypeIds() {
@@ -996,7 +995,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupIds()}
+	 * Tests {@link EnvironmentImpl#getGroupIds()}
 	 */
 	@Test
 	public void testGetGroupIds() {
@@ -1052,7 +1051,7 @@ public class AT_EnvironmentImpl_05 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupTypesForPerson(PersonId)}
+	 * Tests {@link EnvironmentImpl#getGroupTypesForPerson(PersonId)}
 	 */
 	@Test
 	public void testGetGroupTypesForPerson() {

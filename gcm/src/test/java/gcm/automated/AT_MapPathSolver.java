@@ -15,7 +15,6 @@ import gcm.util.graph.Graph;
 import gcm.util.path.MapPathSolver;
 import gcm.util.path.Path;
 import gcm.util.path.PathSolver;
-
 import gcm.util.path.Paths.EdgeCostEvaluator;
 import gcm.util.path.Paths.TravelCostEvaluator;
 import gcm.util.vector.Vector2D;

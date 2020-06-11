@@ -48,7 +48,7 @@ public interface PersonIdManager extends Element {
 	 * Returns the original PersonId instance that will equal the given
 	 * instance. This cuts down on the size of key collections when a modeler
 	 * chooses to create new PersonId instance rather than using the
-	 * {@link Environment#addPerson(gcm.scenario.RegionId, gcm.scenario.CompartmentId)}
+	 * {@link EnvironmentImpl#addPerson(gcm.scenario.RegionId, gcm.scenario.CompartmentId)}
 	 * method.
 	 * 
 	 * @throws RuntimeException

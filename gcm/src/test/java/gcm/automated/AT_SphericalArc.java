@@ -338,6 +338,7 @@ public class AT_SphericalArc {
 	/**
 	 * Tests {@link SphericalArc#getSphericalPoint(int)}
 	 */
+	@Test
 	public void testGetSphericalPoint() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -474,7 +475,7 @@ public class AT_SphericalArc {
 	 */
 	@Test
 	public void testGetChirality() {
-		final long seed = SEED_PROVIDER.getSeedValue(4);
+		final long seed = SEED_PROVIDER.getSeedValue(7);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 2 - 1;
@@ -515,4 +516,45 @@ public class AT_SphericalArc {
 			assertEquals(expectedChirality, actualChirality);
 		}
 	}
+
+	/**
+	 * Tests {@link SphericalArc#toString()}
+	 */
+	@Test
+	public void testToString() {
+		final long seed = SEED_PROVIDER.getSeedValue(6);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+			double x0 = randomGenerator.nextDouble() * 2 - 1;
+			double y0 = randomGenerator.nextDouble() * 2 - 1;
+			double z0 = randomGenerator.nextDouble() * 2 - 1;
+
+			SphericalPoint sphericalPoint0 = new SphericalPoint(new Vector3D(x0, y0, z0));
+
+			double x1 = randomGenerator.nextDouble() * 2 - 1;
+			double y1 = randomGenerator.nextDouble() * 2 - 1;
+			double z1 = randomGenerator.nextDouble() * 2 - 1;
+
+			SphericalPoint sphericalPoint1 = new SphericalPoint(new Vector3D(x1, y1, z1));
+
+			SphericalArc sphericalArc = new SphericalArc(sphericalPoint0, sphericalPoint1);
+
+			StringBuilder sb = new StringBuilder();
+			sb.append("SphericalArc [sphericalPoints=[");
+			sb.append(sphericalPoint0);
+			sb.append(", ");
+			sb.append(sphericalPoint1);
+			sb.append("]]");
+
+			String expected = sb.toString();
+
+			String actual = sphericalArc.toString();
+
+			assertEquals(expected, actual);
+
+		}
+
+	}
+
 }

@@ -1,8 +1,10 @@
 package gcm.automated;
 
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -47,9 +49,10 @@ public class AT_DimensionTree {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		 System.out.println(AT_DimensionTree.class.getSimpleName() + " " +
-//		 SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_DimensionTree.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
+
 	private static class Record {
 
 		@Override
@@ -111,7 +114,7 @@ public class AT_DimensionTree {
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
 								.setLowerBounds(new double[] { 0, 0 })//
-								.setUpperBounds(new double[] { 100, 100 })//								
+								.setUpperBounds(new double[] { 100, 100 })//
 								.build(); //
 
 		List<Record> records = new ArrayList<>();
@@ -128,14 +131,13 @@ public class AT_DimensionTree {
 
 		double searchRadius = 10;
 
-		
 		for (int i = 0; i < n; i++) {
 			double[] position = new double[2];
 			position[0] = randomGenerator.nextDouble() * 120 - 10;
 			position[1] = randomGenerator.nextDouble() * 120 - 10;
 
 			List<Record> list = new ArrayList<>();
-		
+
 			for (Record record : records) {
 				double deltaX = record.position[0] - position[0];
 				double deltaY = record.position[1] - position[1];
@@ -143,21 +145,16 @@ public class AT_DimensionTree {
 				if (distance < searchRadius) {
 					list.add(record);
 				}
-			}	
+			}
 
 			Set<Record> expectedRecords = new LinkedHashSet<>(list);
 
-		
 			list = tree.getMembersInSphere(searchRadius, position);
-			
-		
 
 			Set<Record> actualRecords = new LinkedHashSet<>(list);
 
 			assertEquals(expectedRecords, actualRecords);
 		}
-
-		
 
 	}
 
@@ -292,8 +289,6 @@ public class AT_DimensionTree {
 	public void testAdd() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		
-	
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -339,7 +334,6 @@ public class AT_DimensionTree {
 	public void testContains() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -376,7 +370,6 @@ public class AT_DimensionTree {
 	public void testRemove() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		
 
 		DimensionTree<Record> tree = //
 				DimensionTree	.builder()//
@@ -414,9 +407,117 @@ public class AT_DimensionTree {
 
 	}
 
-	//@Test
-	public void testPerformance() {
+	/**
+	 * Tests {@link DimensionTree#builder()}
+	 */
+	@Test
+	public void testBuilder() {
+		/*
+		 * Precondition tests
+		 */
+
+		// first show that the following arguments to the builder form a tree.
+		DimensionTree<Object> tree = DimensionTree	.builder()//
+													.setLowerBounds(new double[] { 0, 0 })//
+													.setUpperBounds(new double[] { 100, 100 })//
+													.setFastRemovals(true)//
+													.setLeafSize(50)//
+													.build(); //
+		assertNotNull(tree);
+
+		// if the selected leaf size is not positive
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(-50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the lower bounds were not contributed or were null
+		assertException(() -> {
+			DimensionTree	.builder()//
+							//.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
 		
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(null)//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the upper bounds were not contributed or were null
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							//.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(null)//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the lower and upper bounds do not match in length
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100,100})//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 ,0})//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if any of the lower bounds exceed the corresponding
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 101, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+		
+		assertException(() -> {
+			DimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 101 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+
+	}
+
+	// @Test
+	public void testPerformance() {
+
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 

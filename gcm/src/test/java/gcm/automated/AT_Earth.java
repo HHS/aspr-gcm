@@ -42,7 +42,8 @@ public class AT_Earth {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(AT_Earth.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_Earth.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -287,8 +288,7 @@ public class AT_Earth {
 	}
 
 	/**
-	 * Tests
-	 * {@linkplain Earth#getECCFromLatLonAlt(gcm.util.earth.LatLonAlt)
+	 * Tests {@linkplain Earth#getECCFromLatLonAlt(gcm.util.earth.LatLonAlt)
 	 */
 	@Test
 	public void testGetECCFromLatLonAlt() {
@@ -317,6 +317,35 @@ public class AT_Earth {
 			assertEquals(v.getX(), ecc.getX(), TOLERANCE);
 			assertEquals(v.getY(), ecc.getY(), TOLERANCE);
 			assertEquals(v.getZ(), ecc.getZ(), TOLERANCE);
+		}
+
+	}
+
+	/**
+	 * Tests {@linkplain Earth#getLatLonAlt(Vector3D)
+	 */
+	@Test
+	public void testGetLatLonAlt() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(4);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 1000; i++) {
+			double radius = randomGenerator.nextDouble() * 6_000_000 + 1_000_000;
+			Earth earth = Earth.fromRadius(radius);
+
+			double lat = randomGenerator.nextDouble() * 180 - 90;
+			double lon = randomGenerator.nextDouble() * 360 - 180;
+			double alt = randomGenerator.nextDouble() * 100_000;
+
+			LatLonAlt expectedLatLonAlt = new LatLonAlt(lat, lon, alt);
+			Vector3D ecc = earth.getECCFromLatLonAlt(expectedLatLonAlt);
+
+			LatLonAlt actualLatLonAlt = earth.getLatLonAlt(ecc);
+
+			assertEquals(expectedLatLonAlt.getLatitude(), actualLatLonAlt.getLatitude(), TOLERANCE);
+			assertEquals(expectedLatLonAlt.getLongitude(), actualLatLonAlt.getLongitude(), TOLERANCE);
+			assertEquals(expectedLatLonAlt.getAltitude(), actualLatLonAlt.getAltitude(), TOLERANCE);
 		}
 
 	}

@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -34,7 +35,6 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.PersonId;
@@ -46,7 +46,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -76,7 +75,7 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId, Object)}
+	 * {@link EnvironmentImpl#setResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId, Object)}
 	 */
 	@Test
 	public void testSetResourcePropertyValue() {
@@ -233,7 +232,7 @@ public class AT_EnvironmentImpl_22 {
 	}
 
 	/**
-	 * Tests {@link Environment#setStageOffer(StageId, boolean)}
+	 * Tests {@link EnvironmentImpl#setStageOffer(StageId, boolean)}
 	 */
 	@Test
 	public void testSetStageOffer() {
@@ -296,7 +295,7 @@ public class AT_EnvironmentImpl_22 {
 	}
 
 	/**
-	 * Tests {@link Environment#shiftBatchContent(BatchId, BatchId, double)}
+	 * Tests {@link EnvironmentImpl#shiftBatchContent(BatchId, BatchId, double)}
 	 */
 	@Test
 	public void testShiftBatchContent() {
@@ -431,7 +430,7 @@ public class AT_EnvironmentImpl_22 {
 	}
 
 	/**
-	 * Tests {@link Environment#stageExists(StageId)}
+	 * Tests {@link EnvironmentImpl#stageExists(StageId)}
 	 */
 	@Test
 	public void testStageExists() {
@@ -482,7 +481,7 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link Environment#transferOfferedStageToMaterialsProducer(StageId, gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#transferOfferedStageToMaterialsProducer(StageId, gcm.scenario.MaterialsProducerId)}
 	 */
 	@Test
 	public void testTransferOfferedStageToMaterialsProducer() {
@@ -643,7 +642,7 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link Environment#transferProducedResourceToRegion(gcm.scenario.MaterialsProducerId, ResourceId, RegionId, long)}
+	 * {@link EnvironmentImpl#transferProducedResourceToRegion(gcm.scenario.MaterialsProducerId, ResourceId, RegionId, long)}
 	 */
 	@Test
 	public void testTransferProducedResourceToRegion() {
@@ -792,7 +791,7 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link Environment#transferResourceBetweenRegions(ResourceId, RegionId, RegionId, long)}
+	 * {@link EnvironmentImpl#transferResourceBetweenRegions(ResourceId, RegionId, RegionId, long)}
 	 */
 	@Test
 	public void testTransferResourceBetweenRegions() {
@@ -944,7 +943,7 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link Environment#transferResourceFromPerson(ResourceId, PersonId, long)}
+	 * {@link EnvironmentImpl#transferResourceFromPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
 	public void testTransferResourceFromPerson() {

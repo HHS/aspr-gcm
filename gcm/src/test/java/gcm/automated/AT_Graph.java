@@ -123,10 +123,10 @@ public class AT_Graph {
 	}
 
 	/**
-	 * Tests {@link Graph} constructors
+	 * Tests {@link Graph#builder()}
 	 */
 	@Test
-	public void testConstructor() {
+	public void testBuilder() {
 		/*
 		 * We will only test the builder methods for adding an entire Graph or
 		 * MutableGraph. The other builder methods are tested via the remaining
@@ -505,6 +505,91 @@ public class AT_Graph {
 		builder.addNode("B");
 		graph = builder.build();
 		assertEquals(2, graph.nodeCount());
+	}
+	
+	/**
+	 * Tests {@link Graph#toMutableGraph()}
+	 */
+	@Test
+	public void testToMutableGraph() {
+		Graph.Builder<String, String> builder = Graph.builder();
+		builder.addEdge("A->B","A","B");
+		builder.addEdge("A->C","A","C");
+		builder.addEdge("B->A","B","A");
+		builder.addEdge("B->D","B","D");
+		builder.addNode("E");
+		
+		Graph<String, String> graph = builder.build();
+		
+		MutableGraph<String, String> mutableGraph = graph.toMutableGraph();
+		
+		assertEquals(graph, mutableGraph);
+		
+	}
+	
+	/**
+	 * Tests {@link Graph#hashCode()}
+	 */
+	@Test
+	public void testHashCode() {
+		Graph.Builder<String, String> builder = Graph.builder();
+		builder.addEdge("A->B","A","B");
+		builder.addEdge("A->C","A","C");
+		builder.addEdge("B->A","B","A");
+		builder.addEdge("B->D","B","D");
+		builder.addNode("E");
+		
+		Graph<String, String> graph1 = builder.build();		
+		
+		int expected = "A".hashCode();
+		expected += "B".hashCode();
+		expected += "C".hashCode();
+		expected += "D".hashCode();
+		expected += "E".hashCode();
+		expected += "A->B".hashCode();
+		expected += "A->C".hashCode();
+		expected += "B->A".hashCode();
+		expected += "B->D".hashCode();
+		
+		int actual = graph1.hashCode();
+		
+		assertEquals(expected, actual);
+		
+		builder.addNode("E");
+		builder.addEdge("B->D","B","D");
+		builder.addEdge("B->A","B","A");
+		builder.addEdge("A->C","A","C");
+		builder.addEdge("A->B","A","B");
+		Graph<String, String> graph2 = builder.build();
+		assertEquals(graph1, graph2);
+		assertEquals(graph1.hashCode(), graph2.hashCode());
+		
+	}
+
+	
+	/**
+	 * Tests {@link Graph#equals(Object)}
+	 */
+	@Test
+	public void testEquals() {
+		Graph.Builder<String, String> builder = Graph.builder();
+		
+		builder.addEdge("A->B","A","B");
+		builder.addEdge("A->C","A","C");
+		builder.addEdge("B->A","B","A");
+		builder.addEdge("B->D","B","D");
+		builder.addNode("E");		
+		Graph<String, String> graph1 = builder.build();
+		
+		
+		builder.addNode("E");
+		builder.addEdge("B->D","B","D");
+		builder.addEdge("B->A","B","A");
+		builder.addEdge("A->C","A","C");
+		builder.addEdge("A->B","A","B");
+		Graph<String, String> graph2 = builder.build();
+		
+		assertEquals(graph1, graph2);
 	}
 
 

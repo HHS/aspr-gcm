@@ -28,6 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
@@ -36,7 +37,6 @@ import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.CompartmentPropertyId;
@@ -48,7 +48,6 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -80,7 +79,7 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeCompartmentalPersonPropertyChange(boolean, CompartmentId, PersonPropertyId)}
+	 * {@link EnvironmentImpl#observeCompartmentalPersonPropertyChange(boolean, CompartmentId, PersonPropertyId)}
 	 *
 	 */
 	@Test
@@ -276,7 +275,7 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeCompartmentalPersonResourceChange(boolean, CompartmentId, ResourceId)}
+	 * {@link EnvironmentImpl#observeCompartmentalPersonResourceChange(boolean, CompartmentId, ResourceId)}
 	 *
 	 */
 	@Test
@@ -518,7 +517,7 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeCompartmentPersonArrival(boolean, CompartmentId)}
+	 * {@link EnvironmentImpl#observeCompartmentPersonArrival(boolean, CompartmentId)}
 	 *
 	 */
 	@Test
@@ -709,7 +708,7 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeCompartmentPersonDeparture(boolean, CompartmentId)}
+	 * {@link EnvironmentImpl#observeCompartmentPersonDeparture(boolean, CompartmentId)}
 	 * 
 	 */
 	@Test
@@ -899,7 +898,7 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeCompartmentPropertyChange(boolean, CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#observeCompartmentPropertyChange(boolean, CompartmentId, gcm.scenario.CompartmentPropertyId)}
 	 *
 	 */
 	@Test

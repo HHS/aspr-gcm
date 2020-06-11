@@ -10,12 +10,12 @@ import java.util.Set;
 
 import gcm.components.Component;
 import gcm.output.reports.BatchInfo;
-import gcm.output.reports.GroupInfo;
-import gcm.output.reports.PersonInfo;
-import gcm.output.reports.StageInfo;
 import gcm.output.reports.BatchInfo.BatchInfoBuilder;
+import gcm.output.reports.GroupInfo;
 import gcm.output.reports.GroupInfo.GroupInfoBuilder;
+import gcm.output.reports.PersonInfo;
 import gcm.output.reports.PersonInfo.PersonInfoBuilder;
+import gcm.output.reports.StageInfo;
 import gcm.output.reports.StageInfo.StageInfoBuilder;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;

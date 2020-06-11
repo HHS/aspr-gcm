@@ -33,7 +33,6 @@ import gcm.scenario.PersonId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -63,7 +62,7 @@ public class AT_EnvironmentImpl_17 {
 
 	/**
 	 * Tests
-	 * {@linkplain Environment#observeGroupArrivalByGroup(boolean, GroupId)}
+	 * {@linkplain EnvironmentImpl#observeGroupArrivalByGroup(boolean, GroupId)}
 	 */
 	@Test
 	public void testObserveGroupArrivalByGroup() {
@@ -173,7 +172,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupArrivalByPerson(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByPerson(boolean,
 	 * PersonId)
 	 */
 	@Test
@@ -309,7 +308,7 @@ public class AT_EnvironmentImpl_17 {
 
 	/**
 	 * Tests {@linkplain
-	 * Environment#observeGroupArrivalByGroupAndPerson(boolean, GroupId,
+	 * EnvironmentImpl#observeGroupArrivalByGroupAndPerson(boolean, GroupId,
 	 * PersonId)
 	 */
 	@Test
@@ -459,7 +458,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupArrivalByType(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByType(boolean,
 	 * GroupTypeId)
 	 */
 	@Test
@@ -608,7 +607,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupArrivalByTypeAndPerson(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByTypeAndPerson(boolean,
 	 * GroupTypeId, PersonId)
 	 */
 	@Test
@@ -739,7 +738,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupConstruction(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupConstruction(boolean)
 	 */
 	@Test
 	public void testObserveGroupConstruction() {
@@ -842,7 +841,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupConstructionByType(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupConstructionByType(boolean,
 	 * GroupTypeId)
 	 */
 	@Test
@@ -955,7 +954,7 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupDeparture(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDeparture(boolean)
 	 */
 	@Test
 	public void testObserveGroupDeparture() {

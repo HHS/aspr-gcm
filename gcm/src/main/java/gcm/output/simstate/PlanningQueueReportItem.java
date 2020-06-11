@@ -6,8 +6,8 @@ import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.simulation.Plan;
 import gcm.util.annotations.Source;
+import gcm.util.stats.ImmutableStat;
 import gcm.util.stats.Stat;
-import gcm.util.stats.ImmutableStat.ImmutableStatBuilder;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -196,15 +196,15 @@ public final class PlanningQueueReportItem implements OutputItem {
 			if (stat == null) {
 				throw new RuntimeException("stat is null");
 			}
-			ImmutableStatBuilder immutableStatBuilder = new ImmutableStatBuilder();
+			ImmutableStat.Builder builder = ImmutableStat.builder();
 			if (stat.size() > 0) {
-				immutableStatBuilder.setMin(stat.getMin().get());
-				immutableStatBuilder.setMax(stat.getMax().get());
-				immutableStatBuilder.setMean(stat.getMean().get());
-				immutableStatBuilder.setVariance(stat.getVariance().get());
-				immutableStatBuilder.setSize(stat.size());
+				builder.setMin(stat.getMin().get());
+				builder.setMax(stat.getMax().get());
+				builder.setMean(stat.getMean().get());
+				builder.setVariance(stat.getVariance().get());
+				builder.setSize(stat.size());
 			}
-			scaffold.stat = immutableStatBuilder.build();
+			scaffold.stat = builder.build();
 		}
 		
 		public void setAdditionCount(long additionCount) {

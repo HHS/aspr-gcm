@@ -23,7 +23,7 @@ public class AT_MultiKey {
 	
 	
 	/**
-	 * Tests the equals contract for MultiKey
+	 * Tests the equals contract for {@link AT_MultiKey#equals(Object)}
 	 */
 	@Test
 	public void testEqualsContract() {
@@ -81,7 +81,7 @@ public class AT_MultiKey {
 	}
 
 	/**
-	 * Tests MultiKey.getKey()
+	 * Tests {@link MultiKey#getKey(int)}
 	 */
 	@Test
 	public void testGetKey() {
@@ -110,18 +110,9 @@ public class AT_MultiKey {
 		
 	}
 
-	/**
-	 * Tests MultiKey.getKey() precondition
-	 */
-	@Test(expected = ArrayIndexOutOfBoundsException.class)
-	public void testGetKeyPreCondition() {
-		final MultiKey multiKey = new MultiKey(3, "B", false);
-		multiKey.getKey(-1);
-		System.out.println("here");
-	}
 
 	/**
-	 * Tests MultiKey.getKeys()
+	 * Tests {@link MultiKey#getKeys()}
 	 */
 	@Test
 	public void testGetKeys() {
@@ -139,7 +130,7 @@ public class AT_MultiKey {
 	}
 
 	/**
-	 * Tests MultiKey.MultiKeyBuilder
+	 * Tests {@link MultiKey#MultiKeyBuilder}
 	 */
 	@Test
 	public void testMultiKeyBuilder() {
@@ -187,7 +178,7 @@ public class AT_MultiKey {
 	}
 
 	/**
-	 * Tests the standard constructor for MultiKey
+	 * Tests {@link MultiKey#MultiKey(Object...)}
 	 */
 	@Test
 	public void testMultiKeyConstructor() {
@@ -216,6 +207,9 @@ public class AT_MultiKey {
 		assertEquals(3, multiKey.size());
 	}
 
+	/**
+	 * Tests {@link MultiKey#size()}
+	 */
 	@Test
 	public void testSize() {
 		MultiKey multiKey = new MultiKey();
@@ -235,6 +229,9 @@ public class AT_MultiKey {
 
 	}
 
+	/**
+	 * Tests {@link MultiKey#toKeyString()}
+	 */	
 	@Test
 	public void testToKeyString() {
 		MultiKey multiKey = new MultiKey();
@@ -253,6 +250,31 @@ public class AT_MultiKey {
 		assertEquals("[X, X, 17, 44]", multiKey.toKeyString());
 	}
 
+	/**
+	 * Tests {@link MultiKey#toTabString()}
+	 */
+	@Test
+	public void testToTabString() {
+		MultiKey multiKey = new MultiKey();
+		assertEquals("", multiKey.toTabString());
+
+		multiKey = new MultiKey("D");
+		assertEquals("D", multiKey.toTabString());
+
+		multiKey = new MultiKey(4.5, 12);
+		
+		assertEquals("4.5\t12", multiKey.toTabString());
+
+		multiKey = new MultiKey(3, "B", false);
+		assertEquals("3\tB\tfalse", multiKey.toTabString());
+
+		multiKey = new MultiKey("X", "X", 17, 44);
+		assertEquals("X\tX\t17\t44", multiKey.toTabString());
+	}
+
+	/**
+	 * Tests {@link MultiKey#toString()}
+	 */	
 	@Test
 	public void testToString() {
 		MultiKey multiKey = new MultiKey();
@@ -270,7 +292,10 @@ public class AT_MultiKey {
 		multiKey = new MultiKey("X", "X", 17, 44);
 		assertEquals("MultiKey [objects=[X, X, 17, 44]]", multiKey.toString());
 	}
-	
+
+	/**
+	 * Tests {@link MultiKey#equals(Object)}
+	 */
 	@Test
 	public void testEquals() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
@@ -299,6 +324,9 @@ public class AT_MultiKey {
 		
 	}
 
+	/**
+	 * Tests {@link MultiKey#hashCode()}
+	 */
 	@Test
 	public void testHashCode() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);

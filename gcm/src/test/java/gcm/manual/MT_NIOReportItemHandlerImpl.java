@@ -6,13 +6,13 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import gcm.output.OutputItemHandler;
-import gcm.output.reports.ReportItemHandler;
 import gcm.output.reports.NIOReportItemHandler;
-import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportItem;
 import gcm.output.reports.NIOReportItemHandler.Builder;
+import gcm.output.reports.ReportHeader;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItemHandler;
 import gcm.output.reports.commonreports.CompartmentPopulationReport;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;

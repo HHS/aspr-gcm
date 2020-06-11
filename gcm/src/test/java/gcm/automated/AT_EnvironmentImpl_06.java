@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -37,7 +38,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestMaterialsProducerPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
@@ -50,7 +50,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -85,7 +84,7 @@ public class AT_EnvironmentImpl_06 {
 	}
 
 	/**
-	 * Tests {@link Environment#getIndexedPeople(Object)}
+	 * Tests {@link EnvironmentImpl#getIndexedPeople(Object)}
 	 */
 	@Test
 	public void testGetIndexedPeople() {
@@ -156,7 +155,7 @@ public class AT_EnvironmentImpl_06 {
 	}
 
 	/**
-	 * Tests {@link Environment#getIndexSize(Object)}
+	 * Tests {@link EnvironmentImpl#getIndexSize(Object)}
 	 */
 	@Test
 	public void testGetIndexSize() {
@@ -226,7 +225,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getInventoryBatches(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getInventoryBatches(gcm.scenario.MaterialsProducerId)}
 	 */
 	@Test
 	public void testGetInventoryBatches() {
@@ -310,7 +309,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getInventoryBatchesByMaterialId(gcm.scenario.MaterialsProducerId, MaterialId)}
+	 * {@link EnvironmentImpl#getInventoryBatchesByMaterialId(gcm.scenario.MaterialsProducerId, MaterialId)}
 	 */
 	@Test
 	public void testGetInventoryBatchesByMaterialId() {
@@ -512,7 +511,7 @@ public class AT_EnvironmentImpl_06 {
 	}
 
 	/**
-	 * Tests {@link Environment#getMaterialIds()}
+	 * Tests {@link EnvironmentImpl#getMaterialIds()}
 	 */
 	@Test
 	public void testGetMaterialIds() {
@@ -553,7 +552,7 @@ public class AT_EnvironmentImpl_06 {
 	}
 
 	/**
-	 * Tests {@link Environment#getMaterialsProducerIds()}
+	 * Tests {@link EnvironmentImpl#getMaterialsProducerIds()}
 	 */
 	@Test
 	public void testGetMaterialsProducerIds() {
@@ -593,7 +592,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerPropertyDefinition(gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyDefinition(gcm.scenario.MaterialsProducerPropertyId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerPropertyDefinition() {
@@ -647,7 +646,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerPropertyTime(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyTime(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerPropertyTime() {
@@ -756,7 +755,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerPropertyValue() {
@@ -850,7 +849,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerResourceLevel(gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerResourceLevel(gcm.scenario.MaterialsProducerId, ResourceId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerResourceLevel() {
@@ -932,7 +931,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerResourceTime(gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerResourceTime(gcm.scenario.MaterialsProducerId, ResourceId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerResourceTime() {
@@ -1015,7 +1014,7 @@ public class AT_EnvironmentImpl_06 {
 	}
 
 	/**
-	 * Tests {@link Environment#getMaterialsProducerPropertyIds()}
+	 * Tests {@link EnvironmentImpl#getMaterialsProducerPropertyIds()}
 	 */
 	@Test
 	public void testGetMaterialsProducerPropertyIds() {
@@ -1057,7 +1056,7 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMonoWeightedGroupContact(GroupId, gcm.simulation.MonoWeightingFunction)}
+	 * {@link EnvironmentImpl#getMonoWeightedGroupContact(GroupId, gcm.simulation.MonoWeightingFunction)}
 	 */
 	@Test
 	public void testGetMonoWeightedGroupContact() {

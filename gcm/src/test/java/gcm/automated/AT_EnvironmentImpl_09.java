@@ -23,6 +23,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -30,7 +31,6 @@ import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
@@ -41,7 +41,6 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -70,7 +69,7 @@ public class AT_EnvironmentImpl_09 {
 	
 
 	/**
-	 * Tests {@link Environment#getRegionPopulationCount(Object)}
+	 * Tests {@link EnvironmentImpl#getRegionPopulationCount(Object)}
 	 */
 	@Test
 	public void testGetRegionPopulationCount() {
@@ -134,7 +133,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionPopulationCountTime(Object)}
+	 * Tests {@link EnvironmentImpl#getRegionPopulationCountTime(Object)}
 	 */
 	@Test
 	public void testGetRegionPopulationCountTime() {
@@ -202,7 +201,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getRegionPropertyDefinition(gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyDefinition(gcm.scenario.RegionPropertyId)}
 	 */
 	@Test
 	public void testGetRegionPropertyDefinition() {
@@ -257,7 +256,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionPropertyIds()}
+	 * Tests {@link EnvironmentImpl#getRegionPropertyIds()}
 	 */
 	@Test
 	public void testGetRegionPropertyIds() {
@@ -297,7 +296,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getRegionPropertyTime(RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyTime(RegionId, gcm.scenario.RegionPropertyId)}
 	 */
 	@Test
 	public void testGetRegionPropertyTime() {
@@ -402,7 +401,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId)}
 	 */
 	@Test
 	public void testGetRegionPropertyValue() {
@@ -488,7 +487,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionResourceLevel(RegionId, ResourceId)}
+	 * Tests {@link EnvironmentImpl#getRegionResourceLevel(RegionId, ResourceId)}
 	 */
 	@Test
 	public void testGetRegionResourceLevel() {
@@ -569,7 +568,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionResourceTime(RegionId, ResourceId)}
+	 * Tests {@link EnvironmentImpl#getRegionResourceTime(RegionId, ResourceId)}
 	 */
 	@Test
 	public void testGetRegionResourceTime() {
@@ -674,7 +673,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getReplicationId()}
+	 * Tests {@link EnvironmentImpl#getReplicationId()}
 	 */
 	@Test
 	public void testGetReplicationId() {
@@ -713,7 +712,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getResourceIds()}
+	 * Tests {@link EnvironmentImpl#getResourceIds()}
 	 */
 	@Test
 	public void testGetResourceIds() {
@@ -752,7 +751,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getResourcePropertyDefinition(gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyDefinition(gcm.scenario.ResourcePropertyId)}
 	 */
 	@Test
 	public void testGetResourcePropertyDefinition() {
@@ -818,7 +817,7 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link Environment#getResourcePropertyIds()}
+	 * Tests {@link EnvironmentImpl#getResourcePropertyIds()}
 	 */
 	@Test
 	public void testGetResourcePropertyIds() {
@@ -864,7 +863,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getResourcePropertyTime(ResourceId, gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyTime(ResourceId, gcm.scenario.ResourcePropertyId)}
 	 */
 	@Test
 	public void testGetResourcePropertyTime() {
@@ -977,7 +976,7 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId)}
 	 */
 	@Test
 	public void testGetResourcePropertyValue() {

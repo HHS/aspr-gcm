@@ -18,6 +18,9 @@ import gcm.util.annotations.UnitTest;
 @UnitTest(target = Equality.class)
 public class AT_Equality {
 
+	/**
+	 * Tests {@link Equality#isCompatibleComparisonValue(int)}
+	 */
 	@Test
 	public void testIsCompatibleComparisonValue() {
 
@@ -54,16 +57,36 @@ public class AT_Equality {
 			assertTrue(Equality.GREATER_THAN_EQUAL.isCompatibleComparisonValue(i));
 		}
 	}
-	
+
+	/**
+	 * Tests {@link Equality#valueOf(String)} Tests
+	 * {@link Equality#valueOf(Class, String)}
+	 */
 	@Test
 	public void testValueOf() {
-		//nothing to test
+		// nothing to test
 
 	}
-	
+
+	/**
+	 * Tests {@link Equality#values()}
+	 */
 	@Test
 	public void testValues() {
-		//nothing to test
+		// nothing to test
 	}
 
+	/**
+	 * Tests {@link Equality#getNegation(Equality)}
+	 */
+	@Test
+	public void testGetNegation() {
+		assertEquals(6, Equality.values().length);
+		assertEquals(Equality.NOT_EQUAL, Equality.getNegation(Equality.EQUAL));
+		assertEquals(Equality.EQUAL, Equality.getNegation(Equality.NOT_EQUAL));
+		assertEquals(Equality.LESS_THAN_EQUAL, Equality.getNegation(Equality.GREATER_THAN));
+		assertEquals(Equality.LESS_THAN, Equality.getNegation(Equality.GREATER_THAN_EQUAL));
+		assertEquals(Equality.GREATER_THAN_EQUAL, Equality.getNegation(Equality.LESS_THAN));
+		assertEquals(Equality.GREATER_THAN, Equality.getNegation(Equality.LESS_THAN_EQUAL));
+	}
 }

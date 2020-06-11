@@ -28,13 +28,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestPersonPropertyId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
@@ -45,7 +45,6 @@ import gcm.scenario.PropertyDefinition;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.ObservationType;
@@ -76,7 +75,7 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests
-	 * {@linkplain Environment#observeGroupDestructionByType(boolean, GroupTypeId)
+	 * {@linkplain EnvironmentImpl#observeGroupDestructionByType(boolean, GroupTypeId)
 	 */
 	@Test
 	public void testObserveGroupDestructionByType() {
@@ -196,7 +195,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupPropertyChange(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChange(boolean)
 	 */
 	@Test
 	public void testObserveGroupPropertyChange() {
@@ -325,7 +324,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupPropertyChangeByGroup(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByGroup(boolean,
 	 * GroupId)
 	 */
 	@Test
@@ -469,7 +468,7 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests {@linkplain
-	 * Environment#observeGroupPropertyChangeByGroupAndProperty(boolean,
+	 * EnvironmentImpl#observeGroupPropertyChangeByGroupAndProperty(boolean,
 	 * GroupId, GroupPropertyId)
 	 */
 	@Test
@@ -610,7 +609,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@linkplain Environment#observeGroupPropertyChangeByType(boolean,
+	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByType(boolean,
 	 * GroupTypeId)
 	 */
 	@Test
@@ -762,7 +761,7 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests {@linkplain
-	 * Environment#observeGroupPropertyChangeByTypeAndProperty(boolean,
+	 * EnvironmentImpl#observeGroupPropertyChangeByTypeAndProperty(boolean,
 	 * GroupTypeId, GroupPropertyId)
 	 */
 	@Test
@@ -902,7 +901,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Test of {@link Environment#init(gcm.simulation.Context)}
+	 * Test of {@link EnvironmentImpl#init(gcm.simulation.Context)}
 	 */
 	@Test
 	public void testInit() {
@@ -910,7 +909,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Test of {@link Environment#observeGroupArrival(boolean)}
+	 * Test of {@link EnvironmentImpl#observeGroupArrival(boolean)}
 	 */
 	@Test
 	public void testObserveGroupArrival() {
@@ -1023,7 +1022,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@link Environment#personExists(PersonId)}
+	 * Tests {@link EnvironmentImpl#personExists(PersonId)}
 	 */
 	@Test
 	public void testPersonExists() {
@@ -1068,7 +1067,7 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@link Environment#personIsInPopulationIndex(PersonId, Object)}
+	 * Tests {@link EnvironmentImpl#personIsInPopulationIndex(PersonId, Object)}
 	 */
 	@Test
 	public void testPersonIsInPopulationIndex() {

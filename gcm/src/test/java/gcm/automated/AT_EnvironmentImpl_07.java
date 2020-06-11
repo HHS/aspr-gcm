@@ -28,6 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -37,7 +38,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
@@ -51,7 +51,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.Simulation;
@@ -80,7 +79,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getObservableEnvironment()}
+	 * Tests {@link EnvironmentImpl#getObservableEnvironment()}
 	 *
 	 */
 	@Test
@@ -124,7 +123,7 @@ public class AT_EnvironmentImpl_07 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getOfferedStages(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getOfferedStages(gcm.scenario.MaterialsProducerId)}
 	 */
 	@Test
 	public void testGetOfferedStages() {
@@ -191,7 +190,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeople()}
+	 * Tests {@link EnvironmentImpl#getPeople()}
 	 */
 	@Test
 	public void testGetPeople() {
@@ -235,7 +234,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeopleForGroup(GroupId)}
+	 * Tests {@link EnvironmentImpl#getPeopleForGroup(GroupId)}
 	 */
 	@Test
 	public void testGetPeopleForGroup() {
@@ -331,7 +330,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeopleForGroupType(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#getPeopleForGroupType(GroupTypeId)}
 	 */
 	@Test
 	public void testGetPeopleForGroupType() {
@@ -424,7 +423,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeopleInCompartment(CompartmentId)}
+	 * Tests {@link EnvironmentImpl#getPeopleInCompartment(CompartmentId)}
 	 */
 	@Test
 	public void testGetPeopleInCompartment() {
@@ -480,7 +479,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeopleInRegion(RegionId)}
+	 * Tests {@link EnvironmentImpl#getPeopleInRegion(RegionId)}
 	 */
 	@Test
 	public void testGetPeopleInRegion() {
@@ -536,7 +535,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link} {@link Environment#getPeopleWithoutResource(ResourceId)}
+	 * Tests {@link} {@link EnvironmentImpl#getPeopleWithoutResource(ResourceId)}
 	 */
 	@Test
 	public void testGetPeopleWithoutResource() {
@@ -604,7 +603,7 @@ public class AT_EnvironmentImpl_07 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getPeopleWithPropertyValue(PersonPropertyId, Object)}
+	 * {@link EnvironmentImpl#getPeopleWithPropertyValue(PersonPropertyId, Object)}
 	 */
 	@Test
 	public void testGetPeopleWithPropertyValue() {
@@ -695,7 +694,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPeopleWithResource(ResourceId)}
+	 * Tests {@link EnvironmentImpl#getPeopleWithResource(ResourceId)}
 	 */
 	@Test
 	public void testGetPeopleWithResource() {
@@ -761,7 +760,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonCompartment(PersonId)}
+	 * Tests {@link EnvironmentImpl#getPersonCompartment(PersonId)}
 	 */
 	@Test
 	public void testGetPersonCompartment() {
@@ -817,7 +816,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonCompartmentArrivalTime(PersonId)}
+	 * Tests {@link EnvironmentImpl#getPersonCompartmentArrivalTime(PersonId)}
 	 */
 	@Test
 	public void testGetPersonCompartmentArrivalTime() {
@@ -910,7 +909,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonCountForGroup(GroupId)} id
+	 * Tests {@link EnvironmentImpl#getPersonCountForGroup(GroupId)} id
 	 */
 	@Test
 	public void testGetPersonCountForGroup() {
@@ -990,7 +989,7 @@ public class AT_EnvironmentImpl_07 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonCountForGroupType(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#getPersonCountForGroupType(GroupTypeId)}
 	 */
 	@Test
 	public void testGetPersonCountForGroupType() {

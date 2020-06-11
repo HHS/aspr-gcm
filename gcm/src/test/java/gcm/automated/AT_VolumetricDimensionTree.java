@@ -1,7 +1,9 @@
 package gcm.automated;
 
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -298,6 +300,114 @@ public class AT_VolumetricDimensionTree {
 			boolean removed = tree.remove(record);
 			assertEquals(i % 2 == 0, removed);
 		}
+
+	}
+	
+	/**
+	 * Tests {@link VolumetricDimensionTree#builder()}
+	 */
+	@Test
+	public void testBuilder() {
+		/*
+		 * Precondition tests
+		 */
+
+		// first show that the following arguments to the builder form a tree.
+		VolumetricDimensionTree<Object> tree = VolumetricDimensionTree	.builder()//
+													.setLowerBounds(new double[] { 0, 0 })//
+													.setUpperBounds(new double[] { 100, 100 })//
+													.setFastRemovals(true)//
+													.setLeafSize(50)//
+													.build(); //
+		assertNotNull(tree);
+
+		// if the selected leaf size is not positive
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(-50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the lower bounds were not contributed or were null
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							//.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(null)//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the upper bounds were not contributed or were null
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							//.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(null)//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if the lower and upper bounds do not match in length
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 })//
+							.setUpperBounds(new double[] { 100, 100,100})//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 0 ,0})//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
+		// if any of the lower bounds exceed the corresponding
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 101, 0 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+		
+		assertException(() -> {
+			VolumetricDimensionTree	.builder()//
+							.setLowerBounds(new double[] { 0, 101 })//
+							.setUpperBounds(new double[] { 100, 100 })//
+							.setFastRemovals(true)//
+							.setLeafSize(50)//
+							.build(); //
+		}, RuntimeException.class);
+
 
 	}
 

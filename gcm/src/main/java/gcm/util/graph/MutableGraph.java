@@ -64,12 +64,12 @@ public final class MutableGraph<N, E> {
 	Graph<N, E> asGraph() {
 		return new Graph<>(this);
 	}
-	
-	
+
 	/**
-	 * Returns a new {@link Graph} instance from the contents of this {@link MutableGraph}
+	 * Returns a new {@link Graph} instance from the contents of this
+	 * {@link MutableGraph}
 	 */
-	public Graph<N,E> toGraph(){
+	public Graph<N, E> toGraph() {
 		Graph.Builder<N, E> builder = Graph.builder();
 		builder.addAll(this);
 		return builder.build();
@@ -389,6 +389,10 @@ public final class MutableGraph<N, E> {
 
 	}
 
+	/**
+	 * Returns a hash code that is the sum of the hash codes of its nodes and
+	 * edges.
+	 */
 	@Override
 	public int hashCode() {
 		int result = 0;
@@ -402,6 +406,12 @@ public final class MutableGraph<N, E> {
 		}
 		return result;
 	}
+
+	/**
+	 * Returns true if and only if the given object is an instance of
+	 * {@link Graph} or {@link MutableGraph} that contains the same nodes and
+	 * edges as this {@link MutableGraph}
+	 */
 
 	@SuppressWarnings("rawtypes")
 	@Override
@@ -429,8 +439,8 @@ public final class MutableGraph<N, E> {
 		if (other.edgeCount() != edgeCount()) {
 			return false;
 		}
-		
-		if(nodeCount()!=other.nodeCount()) {
+
+		if (nodeCount() != other.nodeCount()) {
 			return false;
 		}
 
@@ -439,11 +449,11 @@ public final class MutableGraph<N, E> {
 				return false;
 			}
 		}
-		
-		if(edgeCount()!=other.edgeCount()) {
+
+		if (edgeCount() != other.edgeCount()) {
 			return false;
 		}
-		
+
 		for (E edge : getEdges()) {
 			if (!other.containsEdge(edge)) {
 				return false;

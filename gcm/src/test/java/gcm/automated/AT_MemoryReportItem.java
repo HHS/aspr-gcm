@@ -81,7 +81,7 @@ public class AT_MemoryReportItem {
 	}
 
 	@Test
-	public void testGScenarioId() {
+	public void testGetScenarioId() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		ScenarioId expectedScenarioId = new ScenarioId(85674);
 		memoryReportItemBuilder.setScenarioId(expectedScenarioId);

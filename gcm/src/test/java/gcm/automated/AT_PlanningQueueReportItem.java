@@ -78,6 +78,24 @@ public class AT_PlanningQueueReportItem {
 		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
 		assertEquals(replicationId, planningQueueReportItem.getReplicationId());
 	}
+	
+	@Test
+	public void testGetAdditionCount() {
+		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
+		long additionCount = 34534645745L;
+		planningQueueReportItemBuilder.setAdditionCount(additionCount);
+		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
+		assertEquals(additionCount, planningQueueReportItem.getAdditionCount());
+	}
+	
+	@Test
+	public void testGetCancellationCount() {
+		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
+		long cancellationCount = 34534645745L;
+		planningQueueReportItemBuilder.setCancellationCount(cancellationCount);
+		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
+		assertEquals(cancellationCount, planningQueueReportItem.getCancellationCount());
+	}
 
 	@Test
 	public void testGetScenarioId() {

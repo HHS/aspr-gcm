@@ -1,7 +1,6 @@
 package gcm.simulation;
 
 import java.util.ArrayList;
-
 import java.util.List;
 
 import gcm.output.OutputItemHandler;

@@ -1,4 +1,4 @@
-package gcm.automated.support;
+package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
@@ -22,10 +22,10 @@ import gcm.util.stats.BinContainer.Bin;
 public class AT_BinContainer {
 
 	/**
-	 * Tests {@link BinContainer} construction
+	 * Tests {@link BinContainer#builder(double)} construction
 	 */
 	@Test
-	public void testConstructor() {
+	public void testBuilder() {
 
 		assertException(() -> BinContainer.builder(0), RuntimeException.class);
 

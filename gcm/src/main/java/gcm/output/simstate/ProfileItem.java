@@ -7,8 +7,8 @@ import gcm.scenario.ScenarioId;
 import gcm.simulation.Context;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.stats.ImmutableStat;
 import gcm.util.stats.Stat;
-import gcm.util.stats.ImmutableStat.ImmutableStatBuilder;
 import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -204,13 +204,13 @@ public final class ProfileItem implements OutputItem {
 		 *             if the stat is null
 		 */
 		public void setStat(Stat stat) {
-			ImmutableStatBuilder immutableStatBuilder = new ImmutableStatBuilder();
-			immutableStatBuilder.setMin(stat.getMin().get());
-			immutableStatBuilder.setMax(stat.getMax().get());
-			immutableStatBuilder.setMean(stat.getMean().get());
-			immutableStatBuilder.setVariance(stat.getVariance().get());
-			immutableStatBuilder.setSize(stat.size());
-			scaffold.stat = immutableStatBuilder.build();
+			ImmutableStat.Builder builder = ImmutableStat.builder();
+			builder.setMin(stat.getMin().get());
+			builder.setMax(stat.getMax().get());
+			builder.setMean(stat.getMean().get());
+			builder.setVariance(stat.getVariance().get());
+			builder.setSize(stat.size());
+			scaffold.stat = builder.build();
 		}
 
 		/**

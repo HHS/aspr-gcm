@@ -495,6 +495,20 @@ public class AT_MutableGraph {
 		mutableGraph1.addEdge("D->A", "D", "A");
 		mutableGraph1.addEdge("D->B", "D", "B");
 
+		int expected = "A".hashCode();
+		expected += "B".hashCode();
+		expected += "C".hashCode();
+		expected += "D".hashCode();
+		expected += "A->B".hashCode();
+		expected += "A->C".hashCode();
+		expected += "B->C".hashCode();
+		expected += "B->D".hashCode();
+		expected += "D->A".hashCode();
+		expected += "D->B".hashCode();
+
+		int actual = mutableGraph1.hashCode();
+		assertEquals(expected, actual);
+
 		// build a copy with the edges added in a different order
 		MutableGraph<String, String> mutableGraph2 = new MutableGraph<>();
 		mutableGraph2.addEdge("D->B", "D", "B");
@@ -535,13 +549,13 @@ public class AT_MutableGraph {
 		assertEquals(0, mutableGraph.nodeCount());
 		for (int i = 0; i < 10; i++) {
 			mutableGraph.addNode(i);
-			assertEquals(i+1, mutableGraph.nodeCount());
+			assertEquals(i + 1, mutableGraph.nodeCount());
 		}
 
 		for (int i = 9; i >= 0; i--) {
 			mutableGraph.removeNode(i);
 			assertEquals(i, mutableGraph.nodeCount());
-		}		
+		}
 	}
 
 	/**
@@ -556,7 +570,7 @@ public class AT_MutableGraph {
 		mutableGraph.addEdge("B->D", "B", "D");
 		mutableGraph.addEdge("D->A", "D", "A");
 		mutableGraph.addEdge("D->B", "D", "B");
-		
+
 		assertEquals(6, mutableGraph.edgeCount());
 		mutableGraph.removeEdge("A->B");
 		assertEquals(5, mutableGraph.edgeCount());
@@ -564,7 +578,7 @@ public class AT_MutableGraph {
 		mutableGraph.removeEdge("A->B");
 		assertEquals(5, mutableGraph.edgeCount());
 		assertFalse(mutableGraph.containsEdge("A->B"));
-		
+
 		mutableGraph.removeEdge("B->C");
 		assertEquals(4, mutableGraph.edgeCount());
 		assertFalse(mutableGraph.containsEdge("B->C"));
@@ -585,25 +599,41 @@ public class AT_MutableGraph {
 		mutableGraph.addNode("D");
 		mutableGraph.addNode("E");
 		mutableGraph.addNode("F");
-		
+
 		assertEquals(6, mutableGraph.nodeCount());
 		mutableGraph.removeNode("A");
 		assertEquals(5, mutableGraph.nodeCount());
-		assertFalse(mutableGraph.containsNode("A"));		
+		assertFalse(mutableGraph.containsNode("A"));
 		mutableGraph.removeNode("A");
 		assertEquals(5, mutableGraph.nodeCount());
 		assertFalse(mutableGraph.containsNode("A"));
 
-		
 		assertEquals(5, mutableGraph.nodeCount());
 		mutableGraph.removeNode("B");
 		assertEquals(4, mutableGraph.nodeCount());
-		assertFalse(mutableGraph.containsNode("B"));		
+		assertFalse(mutableGraph.containsNode("B"));
 		mutableGraph.removeNode("B");
 		assertEquals(4, mutableGraph.nodeCount());
 		assertFalse(mutableGraph.containsNode("B"));
 
-		
 	}
 
+	/**
+	 * Tests {@link MutableGraph#toGraph()}
+	 */
+	@Test
+	public void testToGraph() {
+
+		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B", "A", "B");
+		mutableGraph.addEdge("A->C", "A", "C");
+		mutableGraph.addEdge("B->A", "B", "A");
+		mutableGraph.addEdge("B->D", "B", "D");
+		mutableGraph.addNode("E");
+
+		Graph<String, String> graph = mutableGraph.toGraph();
+
+		assertEquals(graph, mutableGraph);
+
+	}
 }

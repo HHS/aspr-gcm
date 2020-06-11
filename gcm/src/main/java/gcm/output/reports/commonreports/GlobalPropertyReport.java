@@ -5,9 +5,9 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.StateChange;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.StateChange;
 import gcm.scenario.GlobalPropertyId;
 import gcm.simulation.ObservableEnvironment;
 import gcm.util.annotations.Source;

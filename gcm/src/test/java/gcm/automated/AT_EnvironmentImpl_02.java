@@ -26,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlanContainer;
@@ -34,7 +35,6 @@ import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
@@ -48,7 +48,6 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -78,7 +77,7 @@ public class AT_EnvironmentImpl_02 {
 
 	/**
 	 * Tests
-	 * {@link Environment#convertStageToBatch(StageId, MaterialId, double)}
+	 * {@link EnvironmentImpl#convertStageToBatch(StageId, MaterialId, double)}
 	 */
 	@Test
 	public void testConvertStageToBatch() {
@@ -184,7 +183,7 @@ public class AT_EnvironmentImpl_02 {
 
 	/**
 	 * Tests
-	 * {@link Environment#convertStageToResource(StageId, ResourceId, long)}
+	 * {@link EnvironmentImpl#convertStageToResource(StageId, ResourceId, long)}
 	 */
 	@Test
 	public void testConvertStageToResource() {
@@ -316,7 +315,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#createBatch(MaterialId, double)}
+	 * Tests {@link EnvironmentImpl#createBatch(MaterialId, double)}
 	 */
 	@Test
 	public void testCreateBatch() {
@@ -398,7 +397,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#createStage()}
+	 * Tests {@link EnvironmentImpl#createStage()}
 	 */
 	@Test
 	public void testCreateStage() {
@@ -468,7 +467,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#destroyBatch(BatchId)}
+	 * Tests {@link EnvironmentImpl#destroyBatch(BatchId)}
 	 */
 	@Test
 	public void testDestroyBatch() {
@@ -532,7 +531,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCompartmentMapOption()}
+	 * Tests {@link EnvironmentImpl#getCompartmentMapOption()}
 	 */
 	@Test
 	public void testGetCompartmentMapOption() {
@@ -568,7 +567,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionMapOption()}
+	 * Tests {@link EnvironmentImpl#getRegionMapOption()}
 	 */
 	@Test
 	public void testGetRegionMapOption() {
@@ -604,7 +603,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonCompartmentArrivalTrackingPolicy()}
+	 * Tests {@link EnvironmentImpl#getPersonCompartmentArrivalTrackingPolicy()}
 	 */
 	@Test
 	public void testGetPersonCompartmentArrivalTrackingPolicy() {
@@ -640,7 +639,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonRegionArrivalTrackingPolicy()}
+	 * Tests {@link EnvironmentImpl#getPersonRegionArrivalTrackingPolicy()}
 	 */
 	@Test
 	public void testGetPersonRegionArrivalTrackingPolicy() {
@@ -676,7 +675,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonResourceTimeTrackingPolicy()}
+	 * Tests {@link EnvironmentImpl#getPersonResourceTimeTrackingPolicy()}
 	 */
 	@Test
 	public void testGetPersonResourceTimeTrackingPolicy() {
@@ -726,7 +725,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#destroyStage(StageId, boolean)}
+	 * Tests {@link EnvironmentImpl#destroyStage(StageId, boolean)}
 	 */
 	@Test
 	public void testDestroyStage() {
@@ -800,7 +799,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchAmount(BatchId)}
+	 * Tests {@link EnvironmentImpl#getBatchAmount(BatchId)}
 	 */
 	@Test
 	public void testGetBatchAmount() {
@@ -851,7 +850,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchMaterial(BatchId)}
+	 * Tests {@link EnvironmentImpl#getBatchMaterial(BatchId)}
 	 */
 	@Test
 	public void testGetBatchMaterial() {
@@ -903,7 +902,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchProducer(BatchId)}
+	 * Tests {@link EnvironmentImpl#getBatchProducer(BatchId)}
 	 */
 	@Test
 	public void testGetBatchProducer() {
@@ -963,7 +962,7 @@ public class AT_EnvironmentImpl_02 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getBatchPropertyDefinition(MaterialId, BatchPropertyId)}
+	 * {@link EnvironmentImpl#getBatchPropertyDefinition(MaterialId, BatchPropertyId)}
 	 */
 	@Test
 	public void testGetBatchPropertyDefinition() {
@@ -1027,7 +1026,7 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link Environment#getBatchPropertyIds(MaterialId)}
+	 * Tests {@link EnvironmentImpl#getBatchPropertyIds(MaterialId)}
 	 */
 	@Test
 	public void testGetBatchPropertyIds() {

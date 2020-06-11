@@ -27,6 +27,7 @@ import org.junit.Test;
 import gcm.automated.support.Cat;
 import gcm.automated.support.CatImpl;
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -35,7 +36,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.output.simstate.NIOProfileItemHandler;
 import gcm.replication.Replication;
 import gcm.scenario.PersonId;
@@ -46,7 +46,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -83,7 +82,7 @@ public class AT_EnvironmentImpl_11 {
 
 	/**
 	 * Tests
-	 * {@link Environment#transferResourceToPerson(ResourceId, PersonId, long)}
+	 * {@link EnvironmentImpl#transferResourceToPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
 	public void testTransferResourceToPerson() {
@@ -261,7 +260,7 @@ public class AT_EnvironmentImpl_11 {
 	}
 
 	/**
-	 * Tests {@link Environment#getProfiledProxy(Object)}
+	 * Tests {@link EnvironmentImpl#getProfiledProxy(Object)}
 	 */
 	@Test
 	public void testGetProfiledProxy() {
@@ -329,7 +328,7 @@ public class AT_EnvironmentImpl_11 {
 	}
 
 	/**
-	 * Tests {@link Environment#isInitialized(Object)}
+	 * Tests {@link EnvironmentImpl#isInitialized(Object)}
 	 */
 	@Test
 	public void testIsInitialized() {
@@ -363,7 +362,7 @@ public class AT_EnvironmentImpl_11 {
 	}
 
 	/**
-	 * Tests {@link Environment#collectMemoryLinks(Object)}
+	 * Tests {@link EnvironmentImpl#collectMemoryLinks(Object)}
 	 */
 	@Test
 	public void testCollectMemoryLinks() {
@@ -374,7 +373,7 @@ public class AT_EnvironmentImpl_11 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getPersonPropertyTime(PersonId, PersonPropertyId)}
+	 * {@link EnvironmentImpl#getPersonPropertyTime(PersonId, PersonPropertyId)}
 	 */
 	@Test
 	public void testGetPersonPropertyTime() {

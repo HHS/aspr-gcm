@@ -24,6 +24,7 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.TimeTrackingPolicy;
+import gcm.simulation.BiWeightingFunction;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.MonoWeightingFunction;
 import gcm.simulation.ObservableEnvironment;

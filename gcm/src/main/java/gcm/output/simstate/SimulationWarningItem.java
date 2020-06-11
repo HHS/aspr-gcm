@@ -1,7 +1,6 @@
 package gcm.output.simstate;
 
 import gcm.scenario.ReplicationId;
-
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

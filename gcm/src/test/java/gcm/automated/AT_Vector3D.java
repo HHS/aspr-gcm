@@ -745,7 +745,7 @@ public class AT_Vector3D {
 	 * Tests {@linkplain Vector3D#isNormal()}
 	 */
 	@Test
-	public void testisNormal() {
+	public void testIsNormal() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

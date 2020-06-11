@@ -22,6 +22,10 @@ import gcm.util.annotations.UnitTest;
 @UnitTest(target = ReplicationImpl.class)
 public class AT_ReplicationImpl {
 
+	/**
+	 * Tests {@link ReplicationImpl#getSeed()}
+	 */
+	@Test
 	public void testGetSeed() {
 		int[] ids = { 17, 2344, -12352356, 776785768, 2, 0 };
 		long[] seeds = { 340983453345L, 34563455L, 97735136456L, 36694567567L, 234333456L, 8876867225L };
@@ -35,7 +39,10 @@ public class AT_ReplicationImpl {
 		}
 
 	}
-	
+	/**
+	 * Tests {@link ReplicationImpl#getId()}
+	 */
+	@Test
 	public void testGetId() {
 		int[] ids = { 17, 2344, -12352356, 776785768, 2, 0 };
 		long[] seeds = { 340983453345L, 34563455L, 97735136456L, 36694567567L, 234333456L, 8876867225L };
@@ -65,7 +72,7 @@ public class AT_ReplicationImpl {
 
 	}
 
-	/*
+	/**
 	 * Tests several instances of a List of Replications built by the
 	 * ReplicationFactory and asserts that the inputs to the factory match both
 	 * the number of Replications built, but also the expected field values for

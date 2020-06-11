@@ -7,6 +7,7 @@ import gcm.automated.AT_AbstractComponent;
 import gcm.automated.AT_ActionType;
 import gcm.automated.AT_ArrayIntSet;
 import gcm.automated.AT_ArrayPathSolver;
+import gcm.automated.AT_BinContainer;
 import gcm.automated.AT_BooleanContainer;
 import gcm.automated.AT_DimensionTree;
 import gcm.automated.AT_DoubleValueContainer;
@@ -37,7 +38,7 @@ import gcm.automated.AT_EnvironmentImpl_22;
 import gcm.automated.AT_EnvironmentImpl_23;
 import gcm.automated.AT_Equality;
 import gcm.automated.AT_ExperimentBuilder;
-import gcm.automated.AT_Filters;
+import gcm.automated.AT_Filter;
 import gcm.automated.AT_FloatValueContainer;
 import gcm.automated.AT_GeoLocator;
 import gcm.automated.AT_Graph;
@@ -45,6 +46,7 @@ import gcm.automated.AT_GraphDepthEvaluator;
 import gcm.automated.AT_GraphPathSolver;
 import gcm.automated.AT_Graphs;
 import gcm.automated.AT_HashIntSet;
+import gcm.automated.AT_ImmutableStat;
 import gcm.automated.AT_IntId;
 import gcm.automated.AT_IntValueContainer;
 import gcm.automated.AT_LatLon;
@@ -81,7 +83,6 @@ import gcm.automated.AT_UnstructuredScenarioBuilder;
 import gcm.automated.AT_Vector2D;
 import gcm.automated.AT_Vector3D;
 import gcm.automated.AT_VolumetricDimensionTree;
-import gcm.automated.support.AT_BinContainer;
 
 /**
  * This class executes automated JUnit tests for GCM. Automated tests are noted
@@ -121,7 +122,7 @@ import gcm.automated.support.AT_BinContainer;
 	AT_EnvironmentImpl_22.class,
 	AT_EnvironmentImpl_23.class,
 	AT_MultiKey.class,
-	AT_Filters.class,
+	AT_Filter.class,
 	AT_IntValueContainer.class,
 	AT_DoubleValueContainer.class,
 	AT_BooleanContainer.class,
@@ -174,7 +175,8 @@ import gcm.automated.support.AT_BinContainer;
 	AT_VolumetricDimensionTree.class,
 	AT_MapPathSolver.class,
 	AT_ArrayPathSolver.class,
-	AT_BinContainer.class
+	AT_BinContainer.class,
+	AT_ImmutableStat.class
 	})
 
 public class SuiteTest {

@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
@@ -40,7 +41,6 @@ import gcm.automated.support.TestMaterialsProducerPropertyId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -51,7 +51,6 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -80,7 +79,7 @@ public class AT_EnvironmentImpl_13 {
 	}
 
 	/**
-	 * Tests {@link Environment#observeGlobalPersonArrival(boolean)}
+	 * Tests {@link EnvironmentImpl#observeGlobalPersonArrival(boolean)}
 	 *
 	 */
 	@Test
@@ -237,7 +236,7 @@ public class AT_EnvironmentImpl_13 {
 	}
 
 	/**
-	 * Tests {@link Environment#observeGlobalPersonDeparture(boolean)}
+	 * Tests {@link EnvironmentImpl#observeGlobalPersonDeparture(boolean)}
 	 *
 	 */
 	@Test
@@ -390,7 +389,7 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeGlobalPersonPropertyChange(boolean, PersonPropertyId)}
+	 * {@link EnvironmentImpl#observeGlobalPersonPropertyChange(boolean, PersonPropertyId)}
 	 *
 	 */
 	@Test
@@ -585,7 +584,7 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeGlobalPersonResourceChange(boolean, ResourceId)}
+	 * {@link EnvironmentImpl#observeGlobalPersonResourceChange(boolean, ResourceId)}
 	 *
 	 */
 	@Test
@@ -821,7 +820,7 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeGlobalPropertyChange(boolean, gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#observeGlobalPropertyChange(boolean, gcm.scenario.GlobalPropertyId)}
 	 *
 	 */
 	@Test
@@ -1011,7 +1010,7 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeMaterialsProducerPropertyChange(boolean, gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#observeMaterialsProducerPropertyChange(boolean, gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
 	 *
 	 */
 	@Test

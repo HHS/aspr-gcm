@@ -38,8 +38,8 @@ public class AT_SphericalPoint {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_SphericalPoint.class.getSimpleName() + " " +
-		// SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_SphericalPoint.class.getSimpleName() + " " +
+//		 SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -94,4 +94,32 @@ public class AT_SphericalPoint {
 		}
 
 	}
+	
+	/**
+	 * Tests {@link SphericalPoint#toString()}
+	 */
+	@Test
+	public void testToString() {
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+
+		
+		for (int i = 0; i < 100; i++) {
+			RandomGenerator randomGenerator = getRandomGenerator(seed);
+			double x = randomGenerator.nextDouble() * 2 - 1;
+			double y = randomGenerator.nextDouble() * 2 - 1;
+			double z = randomGenerator.nextDouble() * 2 - 1;
+
+			Vector3D v = new Vector3D(x, y, z);
+			SphericalPoint sphericalPoint = new SphericalPoint(v);
+			v = v.normalize();
+			
+			String expected = v.toString();
+			expected = "SphericalPoint [position="+expected+"]";
+			
+			String actual = sphericalPoint.toString();
+			assertEquals(expected, actual);
+		}
+
+	}
+
 }

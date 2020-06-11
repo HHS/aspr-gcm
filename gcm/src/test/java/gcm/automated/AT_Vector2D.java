@@ -894,7 +894,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#perpendicularRotation(Chirality)}
 	 */
 	@Test
-	public void testPerpTo() {
+	public void testPerpendicularRotation() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(16);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -929,7 +929,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#isNormal()}
 	 */
 	@Test
-	public void testisNormal() {
+	public void testIsNormal() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

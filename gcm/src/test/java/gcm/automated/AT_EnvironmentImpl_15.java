@@ -29,6 +29,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
@@ -38,7 +39,6 @@ import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -49,7 +49,6 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -79,7 +78,7 @@ public class AT_EnvironmentImpl_15 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeRegionPersonPropertyChange(boolean, RegionId, PersonPropertyId)}
+	 * {@link EnvironmentImpl#observeRegionPersonPropertyChange(boolean, RegionId, PersonPropertyId)}
 	 */
 	@Test
 	public void testObserveRegionPersonPropertyChange() {
@@ -291,7 +290,7 @@ public class AT_EnvironmentImpl_15 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeRegionPersonResourceChange(boolean, RegionId, ResourceId)}
+	 * {@link EnvironmentImpl#observeRegionPersonResourceChange(boolean, RegionId, ResourceId)}
 	 *
 	 */
 	@Test
@@ -529,7 +528,7 @@ public class AT_EnvironmentImpl_15 {
 	}
 
 	/**
-	 * Tests {@link Environment#observeRegionPersonArrival(boolean, RegionId)}
+	 * Tests {@link EnvironmentImpl#observeRegionPersonArrival(boolean, RegionId)}
 	 *
 	 */
 	@Test
@@ -719,7 +718,7 @@ public class AT_EnvironmentImpl_15 {
 	}
 
 	/**
-	 * Tests {@link Environment#observeRegionPersonDeparture(boolean, RegionId)}
+	 * Tests {@link EnvironmentImpl#observeRegionPersonDeparture(boolean, RegionId)}
 	 *
 	 */
 	@Test
@@ -908,7 +907,7 @@ public class AT_EnvironmentImpl_15 {
 
 	/**
 	 * Tests
-	 * {@link Environment#observeRegionPropertyChange(boolean, RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#observeRegionPropertyChange(boolean, RegionId, gcm.scenario.RegionPropertyId)}
 	 *
 	 */
 	@Test

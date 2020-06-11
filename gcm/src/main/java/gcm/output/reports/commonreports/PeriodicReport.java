@@ -3,9 +3,9 @@ package gcm.output.reports.commonreports;
 import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
-import gcm.output.reports.ReportPeriod;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportPeriod;
 import gcm.simulation.ObservableEnvironment;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

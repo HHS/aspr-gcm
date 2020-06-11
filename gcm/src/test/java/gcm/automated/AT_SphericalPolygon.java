@@ -5,6 +5,7 @@ import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import gcm.util.vector.Vector3D;
  */
 @UnitTest(target = SphericalPolygon.class)
 public class AT_SphericalPolygon {
+
 	private static SeedProvider SEED_PROVIDER;
 
 	@BeforeClass
@@ -50,7 +52,8 @@ public class AT_SphericalPolygon {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(AT_SphericalPolygon.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_SphericalPolygon.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static SphericalPoint generateRandomizedSphericalPoint(RandomGenerator randomGenerator) {
@@ -82,7 +85,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#builder()}
 	 */
 	@Test
-	public void testConstructor() {
+	public void testBuilder() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -119,6 +122,19 @@ public class AT_SphericalPolygon {
 											.add(30, 20)//
 											.build(),
 				MalformedSphericalPolygonException.class);
+
+		// Show that an ambiguous set of points will throw a
+		// MalformedSphericalPolygonException -- In practice, this is a very
+		// difficult condition to create, so we choose to pass this test via
+		// manual inspection of the SphereicalPolygon class.
+
+		// assertException(() -> localBuilder()//
+		// .add(0, 0)//
+		// .add(0, 120)//
+		// .add(0, -120)//
+		// .build(),
+		// MalformedSphericalPolygonException.class);
+
 	}
 
 	private SphericalPolygon generateSphericalPolygon(RandomGenerator randomGenerator, Chirality chirality) {
@@ -233,6 +249,59 @@ public class AT_SphericalPolygon {
 	}
 
 	/**
+	 * Tests {@link SphericalPolygon#getCentroid()}
+	 */
+	@Test
+	public void testGetCentroid() {
+		final long seed = SEED_PROVIDER.getSeedValue(4);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (Chirality chirality : Chirality.values()) {
+			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
+			Vector3D v = new Vector3D();
+			for (SphericalPoint sphericalPoint : sphericalPolygon.getSphericalPoints()) {
+				v = v.add(sphericalPoint.getPosition());
+			}
+			SphericalPoint expected = new SphericalPoint(v);
+
+			SphericalPoint actual = sphericalPolygon.getCentroid();
+
+			for (int index = 0; index < 3; index++) {
+				double expectedCoordinateValue = expected.getPosition().get(index);
+				double actualCoordinateValue = actual.getPosition().get(index);
+				double delta = FastMath.abs(expectedCoordinateValue - actualCoordinateValue);
+				assertTrue(delta < Vector3D.NORMAL_LENGTH_TOLERANCE);
+			}
+
+		}
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#getRadius()}
+	 */
+	@Test
+	public void testGetRadius() {
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (Chirality chirality : Chirality.values()) {
+			SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, chirality);
+
+			SphericalPoint centroid = sphericalPolygon.getCentroid();
+
+			double expectedRadius = Double.NEGATIVE_INFINITY;
+			for (SphericalPoint sphericalPoint : sphericalPolygon.getSphericalPoints()) {
+				expectedRadius = FastMath.max(expectedRadius, sphericalPoint.getPosition().angle(centroid.getPosition()));
+			}
+
+			double actualRadius = sphericalPolygon.getRadius();
+
+			assertEquals(expectedRadius, actualRadius, Vector3D.NORMAL_LENGTH_TOLERANCE);
+
+		}
+	}
+
+	/**
 	 * Tests {@link SphericalPolygon#getSphericalArcs()}
 	 */
 	@Test
@@ -312,12 +381,251 @@ public class AT_SphericalPolygon {
 		}
 	}
 
+	/**
+	 * Tests {@link SphericalPolygon#getSphericalPoints()}
+	 */
+	@Test
+	public void testGetSphericalPoints() {
+		Earth earth = Earth.fromMeanRadius();
 
+		List<SphericalPoint> expected = new ArrayList<>();
 
-	// getSphericalPoints()
-	// getSphericalTriangles()
-	// intersects(SphericalArc)
-	// intersects(SphericalPolygon)
-	// intersects(SphericalTriangle)
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(38.69724712, -101.5135275))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(37.92632876, -99.96309844))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(37.96933031, -97.32288686))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(39.35733124, -95.45661273))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(38.35690025, -98.8421335))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(39.46582205, -98.42992687))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(39.16371461, -97.35415071))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(39.66032273, -96.34105164))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(40.80930453, -96.82301542))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(40.53524646, -99.62446993))));
+		expected.add(new SphericalPoint(earth.getECCFromLatLon(new LatLon(39.72191785, -101.7482263))));
+
+		SphericalPolygon.Builder builder = SphericalPolygon.builder();
+		for (SphericalPoint sphericalPoint : expected) {
+			builder.addSphericalPoint(sphericalPoint);
+		}
+
+		SphericalPolygon sphericalPolygon = builder.build();
+
+		List<SphericalPoint> actual = sphericalPolygon.getSphericalPoints();
+
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#getSphericalTriangles()}
+	 */
+	@Test
+	public void testGetSphericalTriangles() {
+		final long seed = SEED_PROVIDER.getSeedValue(6);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		List<SphericalTriangle> sphericalTriangles = sphericalPolygon.getSphericalTriangles();
+
+		Vector3D north = new Vector3D(0, 0, 1);
+		Vector3D center = sphericalPolygon.getCentroid().getPosition();
+
+		// Generate a bunch of points that are in the general area of the
+		// polygon. If the triangles and the polygon agree in all cases, we
+		// conclude that the triangles do indeed cover the polygon.
+		int intersectionCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			Vector3D v = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v = v.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint = new SphericalPoint(v);
+
+			boolean expected = false;
+			for (SphericalTriangle sphericalTriangle : sphericalTriangles) {
+				if (sphericalTriangle.contains(sphericalPoint)) {
+					expected = true;
+					break;
+				}
+			}
+			if (expected) {
+				intersectionCount++;
+			}
+
+			boolean actual = sphericalPolygon.containsPosition(sphericalPoint);
+
+			assertEquals(expected, actual);
+		}
+
+		assertTrue(intersectionCount > 100);
+		assertTrue(intersectionCount < 900);
+
+	}
+
+	/**
+	 * Tests {@link SphericalPolygon#intersects(SphericalArc)} Tests
+	 * {@link SphericalPolygon#intersects(SphericalPolygon)} Tests
+	 * {@link SphericalPolygon#intersects(SphericalTriangle)}
+	 */
+	@Test
+	public void testIntersects() {
+		testIntersects_Arcs();
+		testIntersects_Triangles();
+		testIntersects_Polygons();
+	}
+
+	private void testIntersects_Arcs() {
+		final long seed = SEED_PROVIDER.getSeedValue(7);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		List<SphericalTriangle> sphericalTriangles = sphericalPolygon.getSphericalTriangles();
+
+		Vector3D north = new Vector3D(0, 0, 1);
+		Vector3D center = sphericalPolygon.getCentroid().getPosition();
+
+		// Generate a bunch of arcs that are in the general area of the
+		// polygon. If the triangles and the polygon agree in all cases, we
+		// conclude that the triangles do indeed cover the polygon.
+		int intersectionCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			Vector3D v1 = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v1 = v1.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint1 = new SphericalPoint(v1);
+
+			Vector3D v2 = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v2 = v2.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint2 = new SphericalPoint(v2);
+
+			SphericalArc sphericalArc = new SphericalArc(sphericalPoint1, sphericalPoint2);
+
+			boolean expected = false;
+			for (SphericalTriangle sphericalTriangle : sphericalTriangles) {
+				if (sphericalTriangle.intersects(sphericalArc)) {
+					expected = true;
+					break;
+				}
+			}
+			if (expected) {
+				intersectionCount++;
+			}
+
+			boolean actual = sphericalPolygon.intersects(sphericalArc);
+
+			assertEquals(expected, actual);
+
+		}
+		assertTrue(intersectionCount > 100);
+		assertTrue(intersectionCount < 900);
+
+	}
+
+	private void testIntersects_Triangles() {
+		final long seed = SEED_PROVIDER.getSeedValue(8);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		List<SphericalTriangle> sphericalTriangles = sphericalPolygon.getSphericalTriangles();
+
+		Vector3D north = new Vector3D(0, 0, 1);
+		Vector3D center = sphericalPolygon.getCentroid().getPosition();
+
+		// Generate a bunch of arcs that are in the general area of the
+		// polygon. If the triangles and the polygon agree in all cases, we
+		// conclude that the triangles do indeed cover the polygon.
+		int intersectionCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			Vector3D v1 = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v1 = v1.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint1 = new SphericalPoint(v1);
+
+			Vector3D v2 = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v2 = v2.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint2 = new SphericalPoint(v2);
+
+			Vector3D v3 = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+			v3 = v3.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+			SphericalPoint sphericalPoint3 = new SphericalPoint(v3);
+
+			SphericalTriangle testTriangle = new SphericalTriangle(sphericalPoint1, sphericalPoint2, sphericalPoint3);
+
+			boolean expected = false;
+			for (SphericalTriangle sphericalTriangle : sphericalTriangles) {
+				if (sphericalTriangle.intersects(testTriangle)) {
+					expected = true;
+					break;
+				}
+			}
+			if (expected) {
+				intersectionCount++;
+			}
+
+			boolean actual = sphericalPolygon.intersects(testTriangle);
+
+			assertEquals(expected, actual);
+
+		}
+		assertTrue(intersectionCount > 100);
+		assertTrue(intersectionCount < 900);
+
+	}
+
+	private void testIntersects_Polygons() {
+		final long seed = SEED_PROVIDER.getSeedValue(9);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		SphericalPolygon sphericalPolygon = generateSphericalPolygon(randomGenerator, Chirality.LEFT_HANDED);
+
+		List<SphericalTriangle> sphericalTriangles = sphericalPolygon.getSphericalTriangles();
+
+		Vector3D north = new Vector3D(0, 0, 1);
+		Vector3D center = sphericalPolygon.getCentroid().getPosition();
+
+		// Generate a bunch of arcs that are in the general area of the
+		// polygon. If the triangles and the polygon agree in all cases, we
+		// conclude that the triangles do indeed cover the polygon.
+		int intersectionCount = 0;
+		int wellformedCount = 0;
+		for (int i = 0; i < 1000; i++) {
+			SphericalPolygon.Builder builder = SphericalPolygon.builder();
+
+			for (int j = 0; j < 4; j++) {
+				Vector3D v = center.rotateToward(north, FastMath.sqrt(randomGenerator.nextDouble()) * sphericalPolygon.getRadius() * 2);
+				v = v.rotateAbout(center, randomGenerator.nextDouble() * 2 * FastMath.PI);
+				builder.addSphericalPoint(new SphericalPoint(v));
+			}
+			boolean wellFormed;
+			SphericalPolygon testPolygon = null;
+			try {
+				testPolygon = builder.build();
+				wellFormed = true;
+			} catch (MalformedSphericalPolygonException e) {
+				wellFormed = false;
+			}
+
+			if (wellFormed) {
+				wellformedCount++;
+				List<SphericalTriangle> testTriangles = testPolygon.getSphericalTriangles();
+
+				boolean expected = false;
+				for (SphericalTriangle sphericalTriangle : sphericalTriangles) {
+					for (SphericalTriangle testTriangle : testTriangles) {
+						if (sphericalTriangle.intersects(testTriangle)) {
+							expected = true;
+							break;
+						}
+					}
+				}
+				if (expected) {
+					intersectionCount++;
+				}
+				boolean actual = sphericalPolygon.intersects(testPolygon);
+				assertEquals(expected, actual);
+			}
+
+		}
+		assertTrue(wellformedCount > 500);
+		assertTrue(intersectionCount > 0);
+		assertTrue(intersectionCount < wellformedCount);
+	}
 
 }

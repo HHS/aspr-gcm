@@ -12,7 +12,9 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.Filter.*;
+import static gcm.simulation.Filter.allPeople;
+import static gcm.simulation.Filter.compartment;
+import static gcm.simulation.Filter.region;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -32,6 +34,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlan;
 import gcm.automated.support.TaskPlanContainer;
@@ -42,7 +45,6 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
@@ -58,7 +60,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -86,7 +87,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#populationIndexExists(Object)}
+	 * Tests {@link EnvironmentImpl#populationIndexExists(Object)}
 	 */
 	@Test
 	public void testPopulationIndexExists() {
@@ -132,7 +133,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#removeGroup(GroupId)}
+	 * Tests {@link EnvironmentImpl#removeGroup(GroupId)}
 	 */
 	@Test
 	public void testRemoveGroup() {
@@ -207,7 +208,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#removePerson(PersonId)}
+	 * Tests {@link EnvironmentImpl#removePerson(PersonId)}
 	 */
 	@Test
 	public void testRemovePerson() {
@@ -297,7 +298,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#removePersonFromGroup(PersonId, GroupId)}
+	 * Tests {@link EnvironmentImpl#removePersonFromGroup(PersonId, GroupId)}
 	 */
 	@Test
 	public void testRemovePersonFromGroup() {
@@ -371,7 +372,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#removePlan(Object)}
+	 * Tests {@link EnvironmentImpl#removePlan(Object)}
 	 */
 	@Test
 	public void testRemovePlan() {
@@ -427,7 +428,7 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link Environment#removePopulationIndex(Object)}
+	 * Tests {@link EnvironmentImpl#removePopulationIndex(Object)}
 	 */
 	@Test
 	public void testRemovePopulationIndex() {
@@ -495,7 +496,7 @@ public class AT_EnvironmentImpl_20 {
 
 	/**
 	 * Tests
-	 * {@link Environment#removeResourceFromPerson(ResourceId, PersonId, long)}
+	 * {@link EnvironmentImpl#removeResourceFromPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
 	public void testRemoveResourceFromPerson() {
@@ -676,7 +677,7 @@ public class AT_EnvironmentImpl_20 {
 
 	/**
 	 * Tests
-	 * {@link Environment#removeResourceFromRegion(ResourceId, RegionId, long)}
+	 * {@link EnvironmentImpl#removeResourceFromRegion(ResourceId, RegionId, long)}
 	 */
 	@Test
 	public void testRemoveResourceFromRegion() {
@@ -776,7 +777,7 @@ public class AT_EnvironmentImpl_20 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setBatchPropertyValue(BatchId, BatchPropertyId, Object)}
+	 * {@link EnvironmentImpl#setBatchPropertyValue(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
 	public void testSetBatchPropertyValue() {
@@ -946,7 +947,7 @@ public class AT_EnvironmentImpl_20 {
 
 	/**
 	 * Tests
-	 * {@link Environment#setCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId, Object)}
+	 * {@link EnvironmentImpl#setCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId, Object)}
 	 */
 	@Test
 	public void testSetCompartmentPropertyValue() {

@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlan;
@@ -38,7 +39,6 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.GroupId;
@@ -51,7 +51,6 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
@@ -80,7 +79,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#getPersonResourceTimeTrackingPolicy(ResourceId)}
+	 * Tests {@link EnvironmentImpl#getPersonResourceTimeTrackingPolicy(ResourceId)}
 	 */
 	@Test
 	public void testGetResourceTimeTrackingPolicy() {
@@ -138,7 +137,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#getScenarioId()}
+	 * Tests {@link EnvironmentImpl#getScenarioId()}
 	 */
 	@Test
 	public void testGetScenarioId() {
@@ -177,7 +176,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#getStageBatches(StageId)}
+	 * Tests {@link EnvironmentImpl#getStageBatches(StageId)}
 	 */
 	@Test
 	public void testGetStageBatches() {
@@ -253,7 +252,7 @@ public class AT_EnvironmentImpl_10 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getStageBatchesByMaterialId(StageId, MaterialId)}
+	 * {@link EnvironmentImpl#getStageBatchesByMaterialId(StageId, MaterialId)}
 	 */
 	@Test
 	public void testGetStageBatchesByMaterialId() {
@@ -507,7 +506,7 @@ public class AT_EnvironmentImpl_10 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getStages(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getStages(gcm.scenario.MaterialsProducerId)}
 	 */
 	@Test
 	public void testGetStages() {
@@ -573,7 +572,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#getTime()}
+	 * Tests {@link EnvironmentImpl#getTime()}
 	 */
 	@Test
 	public void testGetTime() {
@@ -614,7 +613,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#groupExists(GroupId)}
+	 * Tests {@link EnvironmentImpl#groupExists(GroupId)}
 	 */
 	@Test
 	public void testGroupExists() {
@@ -665,7 +664,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#halt()}
+	 * Tests {@link EnvironmentImpl#halt()}
 	 */
 	@Test
 	public void testHalt() {
@@ -755,7 +754,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#isGroupMember(PersonId, GroupId)}
+	 * Tests {@link EnvironmentImpl#isGroupMember(PersonId, GroupId)}
 	 */
 	@Test
 	public void testIsGroupMember() {
@@ -861,7 +860,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#isStageOffered(StageId)}
+	 * Tests {@link EnvironmentImpl#isStageOffered(StageId)}
 	 */
 	@Test
 	public void testIsStageOffered() {
@@ -920,7 +919,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#moveBatchToInventory(BatchId)}
+	 * Tests {@link EnvironmentImpl#moveBatchToInventory(BatchId)}
 	 */
 	@Test
 	public void testMoveBatchToInventory() {
@@ -1011,7 +1010,7 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests {@link Environment#moveBatchToStage(BatchId, StageId)}
+	 * Tests {@link EnvironmentImpl#moveBatchToStage(BatchId, StageId)}
 	 */
 	@Test
 	public void testMoveBatchToStage() {

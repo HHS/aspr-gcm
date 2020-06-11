@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import gcm.automated.support.EmptyTaskPlan;
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -35,7 +36,6 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
@@ -47,7 +47,6 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Filter;
@@ -77,7 +76,7 @@ public class AT_EnvironmentImpl_01 {
 
 	
 	/**
-	 * Tests {@link Environment#addGroup(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#addGroup(GroupTypeId)}
 	 */
 	@Test
 	public void testAddGroup() {
@@ -131,7 +130,7 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link Environment#addPerson(RegionId, CompartmentId)}
+	 * Tests {@link EnvironmentImpl#addPerson(RegionId, CompartmentId)}
 	 */
 	@Test
 	public void testAddPerson() {
@@ -211,7 +210,7 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link Environment#addPersonToGroup(PersonId, GroupId)}
+	 * Tests {@link EnvironmentImpl#addPersonToGroup(PersonId, GroupId)}
 	 */
 	@Test
 	public void testAddPersonToGroup() {
@@ -306,7 +305,7 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link Environment#addPlan(gcm.simulation.Plan, double)
+	 * Tests {@link EnvironmentImpl#addPlan(gcm.simulation.Plan, double)
 	 *
 	 */
 	@Test
@@ -365,7 +364,7 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link Environment#addPopulationIndex(Filter, Object)}
+	 * Tests {@link EnvironmentImpl#addPopulationIndex(Filter, Object)}
 	 *
 	 */
 	@Test
@@ -468,7 +467,7 @@ public class AT_EnvironmentImpl_01 {
 
 
 	/**
-	 * Tests {@link Environment#addResourceToRegion(ResourceId, RegionId, long)}
+	 * Tests {@link EnvironmentImpl#addResourceToRegion(ResourceId, RegionId, long)}
 	 */
 	@Test
 	public void testAddResourceToRegion() {
@@ -578,7 +577,7 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link Environment#batchExists(BatchId)}
+	 * Tests {@link EnvironmentImpl#batchExists(BatchId)}
 	 */
 	@Test
 	public void testBatchExists() {

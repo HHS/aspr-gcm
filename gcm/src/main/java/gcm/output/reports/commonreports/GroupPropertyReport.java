@@ -7,9 +7,9 @@ import java.util.Set;
 
 import gcm.output.reports.GroupInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.StateChange;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.StateChange;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;

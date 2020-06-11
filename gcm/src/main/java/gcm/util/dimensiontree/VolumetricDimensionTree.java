@@ -290,40 +290,4 @@ public class VolumetricDimensionTree<T> {
 		}
 		return result;
 	}
-
-	// public Optional<T> getNearestMember(double[] position) {
-	// double leastDistance = Double.POSITIVE_INFINITY;
-	// Optional<LocationRec<T>> optional =
-	// defaultDimensionTreeRec.dimensionTree.getNearestMember(position);
-	// LocationRec<T> nearestLocationRec = null;
-	// if (optional.isPresent()) {
-	// nearestLocationRec = optional.get();
-	// leastDistance = nearestLocationRec.squareDistance(position);
-	// }
-	//
-	// for (DimensionTreeRec<T> dimensionTreeRec : treeMap.values()) {
-	// optional = dimensionTreeRec.dimensionTree.getNearestMember(position);
-	// if (optional.isPresent()) {
-	// LocationRec<T> nearestMember = optional.get();
-	// double distance = nearestMember.squareDistance(position);
-	// if (distance < leastDistance) {
-	// leastDistance = distance;
-	// nearestLocationRec = nearestMember;
-	// }
-	// }
-	// }
-	//
-	// if (nearestLocationRec != null) {
-	// return Optional.of(nearestLocationRec.location);
-	// }
-	// return Optional.empty();
-	// }
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		treeMap.values().forEach(dimensionTreeRec -> sb.append(dimensionTreeRec));
-		return sb.toString();
-	}
-
 }

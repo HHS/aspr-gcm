@@ -15,7 +15,7 @@ import net.jcip.annotations.ThreadSafe;
  *
  */
 @ThreadSafe
-@Source(status = TestStatus.UNEXPECTED)
+@Source(status = TestStatus.REQUIRED)
 public final class ImmutableStat implements Stat {
 
 	/**
@@ -33,13 +33,23 @@ public final class ImmutableStat implements Stat {
 	}
 
 	/**
+	 * Returns a new Builder for {@link ImmutableStat}
+	 */
+	public static Builder builder() {
+		return new Builder();
+	}
+	
+	/**
 	 * A builder class for {@link ImmutableStat}
 	 * 
 	 * @author Shawn Hatch
 	 *
 	 */
 	@NotThreadSafe
-	public static class ImmutableStatBuilder {
+	public static class Builder {
+		private Builder() {
+			
+		}
 		private Scaffold scaffold = new Scaffold();
 
 		/**
@@ -71,36 +81,41 @@ public final class ImmutableStat implements Stat {
 		/**
 		 * Sets the mean
 		 */
-		public void setMean(double mean) {
+		public Builder setMean(double mean) {
 			scaffold.mean = mean;
+			return this;
 		}
 
 		/**
 		 * Sets the variance
 		 */
-		public void setVariance(double variance) {
+		public Builder setVariance(double variance) {
 			scaffold.variance = variance;
+			return this;
 		}
 
 		/**
 		 * Sets the max
 		 */
-		public void setMax(double max) {
+		public Builder setMax(double max) {
 			scaffold.max = max;
+			return this;
 		}
 
 		/**
 		 * Sets the min
 		 */
-		public void setMin(double min) {
+		public Builder setMin(double min) {
 			scaffold.min = min;
+			return this;
 		}
 
 		/**
 		 * Sets the size
 		 */
-		public void setSize(int size) {
+		public Builder setSize(int size) {
 			scaffold.size = size;
+			return this;
 		}
 
 		/*

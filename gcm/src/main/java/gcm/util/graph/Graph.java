@@ -10,76 +10,85 @@ import net.jcip.annotations.Immutable;
 @Immutable
 public final class Graph<N, E> {
 
-		
 	protected final MutableGraph<N, E> mutableGraph;
 
 	Graph(MutableGraph<N, E> mutableGraph) {
 		this.mutableGraph = mutableGraph;
 	}
-	
+
+	/**
+	 * Returns a hash code that is the sum of the hash codes of its nodes and
+	 * edges.
+	 */
 	@Override
 	public int hashCode() {
-		return mutableGraph.hashCode();		
+		return mutableGraph.hashCode();
 	}
 
+	/**
+	 * Returns true if and only if the given object is an instance of
+	 * {@link Graph} or {@link MutableGraph} that contains the same nodes and
+	 * edges as this {@link Graph}
+	 */
 	@Override
 	public boolean equals(Object obj) {
-		return mutableGraph.equals(obj);		
+		return mutableGraph.equals(obj);
 	}
 
-	public static <N, E> Builder<N, E> builder(){
+	public static <N, E> Builder<N, E> builder() {
 		return new Builder<>();
 	}
-	public static class Builder<N, E>{
-		
+
+	public static class Builder<N, E> {
+
 		private MutableGraph<N, E> mutableGraph = new MutableGraph<>();
-		
+
 		private Builder() {
-			
+
 		}
-		
-		public Graph<N,E> build(){
+
+		public Graph<N, E> build() {
 			try {
 				return new Graph<>(mutableGraph);
-			}finally {
+			} finally {
 				mutableGraph = new MutableGraph<>();
 			}
 		}
-		
+
 		/**
 		 * Adds the node to this graph.
 		 */
-		public Builder<N,E> addNode(N node) {
+		public Builder<N, E> addNode(N node) {
 			mutableGraph.addNode(node);
 			return this;
 		}
-		
+
 		/**
-		 * Adds the edge to this graph, possibly replacing the edge if it is already
-		 * in the graph. Adds the nodes if required.
+		 * Adds the edge to this graph, possibly replacing the edge if it is
+		 * already in the graph. Adds the nodes if required.
 		 */
-		public Builder<N,E> addEdge(E edge, N originNode, N destinationNode) {
+		public Builder<N, E> addEdge(E edge, N originNode, N destinationNode) {
 			mutableGraph.addEdge(edge, originNode, destinationNode);
 			return this;
 		}
-		
+
 		/**
 		 * Adds the content of the given {@link Graph} to this {@link Graph}
 		 */
-		public Builder<N,E> addAll(Graph<N, E> graph) {
+		public Builder<N, E> addAll(Graph<N, E> graph) {
 			mutableGraph.addAll(graph);
 			return this;
 		}
-		
+
 		/**
 		 * Adds the content of the given {@link MutableGraph} to this
 		 * {@link MutableGraph}
 		 */
-		public Builder<N,E> addAll(MutableGraph<N, E> graph) {
+		public Builder<N, E> addAll(MutableGraph<N, E> graph) {
 			mutableGraph.addAll(graph);
 			return this;
 		}
-		
+
 	}
 
 	/**
@@ -243,13 +252,14 @@ public final class Graph<N, E> {
 	public int edgeCount(N originNode, N destinationNode) {
 		return mutableGraph.edgeCount(originNode, destinationNode);
 	}
-	
+
 	/**
-	 * Returns a new {@link MutableGraph} instance from the contents of this {@link Graph}
+	 * Returns a new {@link MutableGraph} instance from the contents of this
+	 * {@link Graph}
 	 */
-	public MutableGraph<N,E> toMutableGraph(){
+	public MutableGraph<N, E> toMutableGraph() {
 		MutableGraph<N, E> result = new MutableGraph<>();
-		result.addAll(this);		
+		result.addAll(this);
 		return result;
 	}
 

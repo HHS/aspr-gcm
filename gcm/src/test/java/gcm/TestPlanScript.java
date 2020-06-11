@@ -401,10 +401,10 @@ public class TestPlanScript {
 
 	private void testSourceMethodCoverage(SourceClassRec sourceClassRec, TestReport testReport) {
 		for (SourceMethodRec sourceMethodRec : sourceClassRec.getSourceMethodRecs()) {			
-			String sourceMethodName = sourceMethodRec.getName();
+			String sourceMethodName = sourceMethodRec.getName();			
 			String testMethodName = "test" + sourceMethodName.substring(0, 1).toUpperCase();
 			testMethodName += sourceMethodName.substring(1, sourceMethodName.length());
-
+			
 			boolean testMethodFound = false;
 			for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
 				TestMethodRec testMethodRec = testClassRec.getTestMethodRec(testMethodName);

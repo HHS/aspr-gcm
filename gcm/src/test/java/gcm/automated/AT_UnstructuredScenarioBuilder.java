@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedHashSet;
 import java.util.Random;
 import java.util.Set;
 
@@ -23,6 +24,7 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
 import gcm.components.AbstractComponent;
+import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -38,17 +40,18 @@ import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
+import gcm.scenario.ScenarioException.ScenarioErrorType;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.scenario.ScenarioException.ScenarioErrorType;
 import gcm.simulation.Environment;
 import gcm.util.annotations.UnitTest;
 
@@ -1120,10 +1123,10 @@ public class AT_UnstructuredScenarioBuilder {
 	private static Object generatePropertyValue(final PropertyDefinition propertyDefinition, final Random random) {
 
 		final Class<?> type = propertyDefinition.getType();
-		if(!propertyDefinition.getDefaultValue().isPresent()) {
+		if (!propertyDefinition.getDefaultValue().isPresent()) {
 			throw new RuntimeException("requires a property definition with a non-null default value");
 		}
-		
+
 		Object defaultValue = propertyDefinition.getDefaultValue().get();
 		Object result = defaultValue;
 		while (result.equals(defaultValue)) {
@@ -1952,10 +1955,10 @@ public class AT_UnstructuredScenarioBuilder {
 		ResourceId resourceId = TestResourceId.RESOURCE8;
 		ResourcePropertyId resourcePropertyId = TestResourceId.RESOURCE8.getResourcePropertyIds()[0];
 		Object propertyValue = 534;
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
-				.setType(Integer.class)//
-				.setDefaultValue(12)//
-				.build();//
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Integer.class)//
+																	.setDefaultValue(12)//
+																	.build();//
 
 		// precondition: if the resource id is null
 		scenarioBuilder.setResourcePropertyValue(null, resourcePropertyId, propertyValue);
@@ -2077,4 +2080,58 @@ public class AT_UnstructuredScenarioBuilder {
 
 	}
 
+	/**
+	 * Tests {@link UnstructuredScenarioBuilder#setSuggestedPopulationSize(int)}
+	 */
+	@Test
+	public void testSetSuggestedPopulationSize() {
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+
+		// precondition: if suggested population size is negative
+		scenarioBuilder.setSuggestedPopulationSize(-1);
+		assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.NEGATIVE_SUGGGESTED_POPULATION);
+
+		for (int i = 0; i < 20; i++) {
+			scenarioBuilder.setSuggestedPopulationSize(i);
+			Scenario scenario = scenarioBuilder.build();
+			// postcondition: the scenario has the expected region map option
+			assertEquals(i, scenario.getSuggestedPopulationSize());
+		}
+	}
+
+	/**
+	 * Tests {@link UnstructuredScenarioBuilder#addRandomNumberGeneratorId(gcm.scenario.RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testAddRandomNumberGeneratorId() {
+		
+		
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+
+		// precondition : if the generator id is null
+		scenarioBuilder.addRandomNumberGeneratorId(null);		
+		assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+
+		// precondition : if the generator id was previously added
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);		
+		assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER);
+
+		Set<RandomNumberGeneratorId> expected = new LinkedHashSet<>();
+		expected.add(RandomGeneratorId.COMET);
+		expected.add(RandomGeneratorId.CUPID);
+		expected.add(RandomGeneratorId.DONNER);
+		expected.add(RandomGeneratorId.BLITZEN);
+
+		for(RandomNumberGeneratorId randomNumberGeneratorId : expected) {
+			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
+		}
+		
+		Scenario scenario = scenarioBuilder.build();
+		
+		//postcondition: the scenario contains the expected ids
+		Set<RandomNumberGeneratorId> actual = scenario.getRandomNumberGeneratorIds();
+		assertEquals(expected, actual);
+		
+	}
 }

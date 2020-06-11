@@ -147,7 +147,7 @@ public interface ScenarioBuilder {
 	 * @throws ScenarioException
 	 *
 	 *             <li>{@link ScenarioErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *             if the material id is null
+	 *             if the random generator id is null
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ADDED_IDENTIFIER} if
 	 *             the random number generator id was previously added
 	 *
@@ -268,8 +268,6 @@ public interface ScenarioBuilder {
 	 *             associated with property definitions.
 	 */
 	public Scenario build();
-	
-	public Scenario buildWithoutDefaultPropertyNullChecks();
 
 	/**
 	 * Defines a batch property.

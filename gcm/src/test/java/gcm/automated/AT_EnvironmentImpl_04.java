@@ -27,6 +27,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlanContainer;
@@ -36,14 +37,13 @@ import gcm.automated.support.TestGlobalPropertyId;
 import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestRegionId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.components.Component;
 import gcm.experiment.progress.ExperimentProgressLog;
 import gcm.output.OutputItem;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportItem;
 import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.ReportItem.ReportItemBuilder;
 import gcm.output.reports.commonreports.CompartmentPopulationReport;
 import gcm.replication.Replication;
@@ -60,7 +60,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -88,7 +87,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getCompartmentPropertyTime(CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyTime(CompartmentId, gcm.scenario.CompartmentPropertyId)}
 	 */
 	@Test
 	public void testGetCompartmentPropertyTime() {
@@ -198,7 +197,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId)}
 	 */
 	@Test
 	public void testGetCompartmentPropertyValue() {
@@ -287,7 +286,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGlobalComponentIds()}
+	 * Tests {@link EnvironmentImpl#getGlobalComponentIds()}
 	 */
 	@Test
 	public void testGetGlobalComponentIds() {
@@ -329,7 +328,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGlobalPropertyDefinition(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyDefinition(gcm.scenario.GlobalPropertyId)}
 	 */
 	@Test
 	public void testGetGlobalPropertyDefinition() {
@@ -383,7 +382,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGlobalPropertyIds()}
+	 * Tests {@link EnvironmentImpl#getGlobalPropertyIds()}
 	 */
 	@Test
 	public void testGetGlobalPropertyIds() {
@@ -430,7 +429,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCompartmentComponentClass(CompartmentId)}
+	 * Tests {@link EnvironmentImpl#getCompartmentComponentClass(CompartmentId)}
 	 */
 	@Test
 	public void testGetCompartmentComponentClass() {
@@ -473,7 +472,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getRegionComponentClass(RegionId)}
+	 * Tests {@link EnvironmentImpl#getRegionComponentClass(RegionId)}
 	 */
 	@Test
 	public void testGetRegionComponentClass() {
@@ -517,7 +516,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getMaterialsProducerComponentClass(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerComponentClass(gcm.scenario.MaterialsProducerId)}
 	 */
 	@Test
 	public void testGetMaterialsProducerComponentClass() {
@@ -560,7 +559,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#releaseOutputItem(OutputItem)
+	 * Tests {@link EnvironmentImpl#releaseOutputItem(OutputItem)
 	 */
 	@Test
 	public void testReleaseOutputItem() {
@@ -696,7 +695,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGlobalComponentClass(gcm.scenario.GlobalComponentId)}
+	 * {@link EnvironmentImpl#getGlobalComponentClass(gcm.scenario.GlobalComponentId)}
 	 */
 	@Test
 	public void testGetGlobalComponentClass() {
@@ -738,7 +737,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getCurrentComponentId()}
+	 * Tests {@link EnvironmentImpl#getCurrentComponentId()}
 	 */
 	@Test
 	public void testGetCurrentComponentId() {
@@ -785,7 +784,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGlobalPropertyTime(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyTime(gcm.scenario.GlobalPropertyId)}
 	 */
 	@Test
 	public void testGetGlobalPropertyTime() {
@@ -883,7 +882,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGlobalPropertyValue(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyValue(gcm.scenario.GlobalPropertyId)}
 	 */
 	@Test
 	public void testGetGlobalPropertyValue() {
@@ -957,7 +956,7 @@ public class AT_EnvironmentImpl_04 {
 	}
 
 	/**
-	 * Tests {@link Environment#getGroupCountForGroupType(GroupTypeId)}
+	 * Tests {@link EnvironmentImpl#getGroupCountForGroupType(GroupTypeId)}
 	 */
 	@Test
 	public void testGetGroupCountForGroupType() {
@@ -1027,7 +1026,7 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link Environment#getGroupCountForGroupTypeAndPerson(GroupTypeId, PersonId)}
+	 * {@link EnvironmentImpl#getGroupCountForGroupTypeAndPerson(GroupTypeId, PersonId)}
 	 */
 	@Test
 	public void testGetGroupCountForGroupTypeAndPerson() {

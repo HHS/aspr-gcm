@@ -3,6 +3,8 @@ package gcm.util.spherical;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.util.FastMath;
+
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.VolumetricDimensionTree;
@@ -77,6 +79,7 @@ public class SphericalPolygon {
 		 *             values
 		 *             <li>if the {@link SphericalPoint} values form a crossing
 		 *             polygon
+		 *             <li>if the polygon is ambiguous
 		 * 
 		 */
 		public SphericalPolygon build() {
@@ -307,10 +310,17 @@ public class SphericalPolygon {
 		for (SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
 			v.add(sphericalPoint.getPosition());
 		}
-		
 		centroid = new SphericalPoint(v);
+		
+		if(!centroid.getPosition().isFinite()) {
+			throw new MalformedSphericalPolygonException("the spherical polygon formed from the given spherical points is ambiguous");
+		}
 
-		radius = centroid.getPosition().distanceTo(scaffold.sphericalPoints.get(0).getPosition());
+		double r = Double.NEGATIVE_INFINITY;
+		for(SphericalPoint sphericalPoint : scaffold.sphericalPoints) {
+			r = FastMath.max(r, centroid.getPosition().angle(sphericalPoint.getPosition()));
+		}
+		radius = r;
 
 		Chirality chirality = Chirality.RIGHT_HANDED;
 		List<SphericalTriangle> triangles = triangulate(scaffold.sphericalPoints, Chirality.RIGHT_HANDED);
@@ -360,7 +370,9 @@ public class SphericalPolygon {
 
 	/**
 	 * Returns the center of this {@link SphericalPolygon}. All vertices of this
-	 * polygon lie with the radius around the centroid.
+	 * polygon lie with the radius around the centroid. The centroid is
+	 * calculated as the numerical average of the points that compose the
+	 * polygon.
 	 */
 	public SphericalPoint getCentroid() {
 		return centroid;

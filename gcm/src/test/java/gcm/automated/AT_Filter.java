@@ -9,6 +9,7 @@ import static gcm.simulation.Filter.groupsForPerson;
 import static gcm.simulation.Filter.groupsForPersonAndGroupType;
 import static gcm.simulation.Filter.property;
 import static gcm.simulation.Filter.region;
+import static gcm.simulation.Filter.noPeople;
 import static gcm.simulation.Filter.resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -56,7 +57,7 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
-import gcm.simulation.Environment;
+import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
@@ -74,7 +75,7 @@ import gcm.util.annotations.UnitTest;
  * Tests each of the static filter constructions, sometimes in compositions, and
  * their corresponding constructions via the FilterBuilder. Tests are executed
  * through an instance of the simulation. Rather than invoking the filter for
- * each person, we will use {@link Environment#getIndexedPeople(Object)}.
+ * each person, we will use {@link EnvironmentImpl#getIndexedPeople(Object)}.
  * 
  * Seed cases for creating TestPlanExecutors range from 1000 to 1999
  *
@@ -83,7 +84,7 @@ import gcm.util.annotations.UnitTest;
  *
  */
 @UnitTest(target = Filter.class)
-public class AT_Filters {
+public class AT_Filter {
 
 	private static void assertAllPlansExecuted(TaskPlanContainer taskPlanContainer) {
 		for (ComponentId componentId : taskPlanContainer.getComponentIds()) {
@@ -271,6 +272,7 @@ public class AT_Filters {
 	/**
 	 * Tests {@link Filter#or(Filter)}
 	 */
+	@Test
 	public void testOr() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(1);
@@ -1580,4 +1582,46 @@ public class AT_Filters {
 		assertAllPlansExecuted(taskPlanContainer);
 	}
 
+	/**
+	 * Tests {@link Filter#noPeople()}
+	 */
+	@Test
+	public void testNoPeople() {
+		final long seed = SEED_PROVIDER.getSeedValue(100);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 30);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 0;
+
+		
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			
+			assertTrue(environment.getPopulationCount()>0);
+			
+			// create filter
+			final Filter filter = noPeople();
+			final Object key = "key";
+			environment.addPopulationIndex(filter, key);
+
+			// show that the filters match our expectations
+			assertEquals(0,	environment.getIndexedPeople(key).size());
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
 }

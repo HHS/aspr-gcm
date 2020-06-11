@@ -1294,12 +1294,10 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	private static void throwInsufficientPropertyValueAssignment(Object propertyId) {
 		throw new ScenarioException(ScenarioErrorType.INSUFFICIENT_PROPERTY_VALUE_ASSIGNMENT, propertyId.getClass().getSimpleName() + "." + propertyId);
 	}
-	
+
 	private static void throwNullDefaultValue(Object propertyId) {
 		throw new ScenarioException(ScenarioErrorType.NULL_DEFAULT_VALUE, propertyId.getClass().getSimpleName() + "." + propertyId);
 	}
-	
-	
 
 	private static void throwNonFiniteValueException(ScenarioErrorType scenarioErrorType, final Object value) {
 		final StringBuilder sb = new StringBuilder();
@@ -2063,16 +2061,8 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	private boolean locked;
 
 	@Override
-	public Scenario buildWithoutDefaultPropertyNullChecks() {
-		return internalBuild(false);
-	}
-
-	@Override
 	public Scenario build() {
-		return internalBuild(true);
-	}
-	
-	private Scenario internalBuild(boolean useDefaultPropertyNullChecks) {
+
 		try {
 
 			if (scenarioData.scenarioId == null) {
@@ -2102,155 +2092,152 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 				}
 			}
 
-			if (useDefaultPropertyNullChecks) {
+			/*
+			 * For every global property definition that has a null default
+			 * value, ensure that there is a corresponding global property value
+			 * assignment and put that initial assignment on the property
+			 * definition and repair the definition.
+			 */
+			for (GlobalPropertyId globalPropertyId : scenarioData.globalPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = scenarioData.globalPropertyDefinitions.get(globalPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					Object propertyValue = scenarioData.globalPropertyValues.get(globalPropertyId);
+					if (propertyValue == null) {
+						throwInsufficientPropertyValueAssignment(globalPropertyId);
+					}
+				}
+			}
 
-				/*
-				 * For every global property definition that has a null default
-				 * value, ensure that there is a corresponding global property
-				 * value assignment and put that initial assignment on the
-				 * property definition and repair the definition.
-				 */
-				for (GlobalPropertyId globalPropertyId : scenarioData.globalPropertyDefinitions.keySet()) {
-					PropertyDefinition propertyDefinition = scenarioData.globalPropertyDefinitions.get(globalPropertyId);
-					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						Object propertyValue = scenarioData.globalPropertyValues.get(globalPropertyId);
+			/*
+			 * For every compartment property definition that has a null default
+			 * value, ensure that there is a corresponding compartment property
+			 * value assignment and repair the definition.
+			 */
+			for (CompartmentId compartmentId : scenarioData.compartmentIds.keySet()) {
+				Map<CompartmentPropertyId, PropertyDefinition> propertyDefinitions = scenarioData.compartmentPropertyDefinitions.get(compartmentId);
+				if (propertyDefinitions != null) {
+					for (CompartmentPropertyId compartmentPropertyId : propertyDefinitions.keySet()) {
+						PropertyDefinition propertyDefinition = propertyDefinitions.get(compartmentPropertyId);
+						if (!propertyDefinition.getDefaultValue().isPresent()) {
+							Map<CompartmentPropertyId, Object> compartmentPropertyMap = scenarioData.compartmentPropertyValues.get(compartmentId);
+							Object propertyValue = null;
+							if (compartmentPropertyMap != null) {
+								propertyValue = compartmentPropertyMap.get(compartmentPropertyId);
+							}
+							if (propertyValue == null) {
+								throwInsufficientPropertyValueAssignment(compartmentId);
+							}
+						}
+					}
+				}
+			}
+			/*
+			 * For every materials producer property definition that has a null
+			 * default value, ensure that all corresponding materials producer
+			 * property values are not null and repair the definition.
+			 */
+			for (MaterialsProducerPropertyId materialsProducerPropertyId : scenarioData.materialsProducerPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = scenarioData.materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					for (MaterialsProducerId materialsProducerId : scenarioData.materialsProducerIds.keySet()) {
+						Object propertyValue = null;
+						Map<MaterialsProducerPropertyId, Object> propertyValueMap = scenarioData.materialsProducerPropertyValues.get(materialsProducerId);
+						if (propertyValueMap != null) {
+							propertyValue = propertyValueMap.get(materialsProducerPropertyId);
+
+						}
 						if (propertyValue == null) {
-							throwInsufficientPropertyValueAssignment(globalPropertyId);
-						} 
-					}
-				}
-
-				/*
-				 * For every compartment property definition that has a null
-				 * default value, ensure that there is a corresponding
-				 * compartment property value assignment and repair the definition.
-				 */
-				for (CompartmentId compartmentId : scenarioData.compartmentIds.keySet()) {
-					Map<CompartmentPropertyId, PropertyDefinition> propertyDefinitions = scenarioData.compartmentPropertyDefinitions.get(compartmentId);
-					if (propertyDefinitions != null) {
-						for (CompartmentPropertyId compartmentPropertyId : propertyDefinitions.keySet()) {
-							PropertyDefinition propertyDefinition = propertyDefinitions.get(compartmentPropertyId);
-							if (!propertyDefinition.getDefaultValue().isPresent()) {
-								Map<CompartmentPropertyId, Object> compartmentPropertyMap = scenarioData.compartmentPropertyValues.get(compartmentId);
-								Object propertyValue = null;
-								if (compartmentPropertyMap != null) {
-									propertyValue = compartmentPropertyMap.get(compartmentPropertyId);
-								}
-								if (propertyValue == null) {
-									throwInsufficientPropertyValueAssignment(compartmentId);
-								} 
-							}
+							throwInsufficientPropertyValueAssignment(materialsProducerPropertyId);
 						}
 					}
 				}
-				/*
-				 * For every materials producer property definition that has a
-				 * null default value, ensure that all corresponding materials
-				 * producer property values are not null and repair the definition.
-				 */
-				for (MaterialsProducerPropertyId materialsProducerPropertyId : scenarioData.materialsProducerPropertyDefinitions.keySet()) {
-					PropertyDefinition propertyDefinition = scenarioData.materialsProducerPropertyDefinitions.get(materialsProducerPropertyId);
-					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						for (MaterialsProducerId materialsProducerId : scenarioData.materialsProducerIds.keySet()) {
-							Object propertyValue = null;
-							Map<MaterialsProducerPropertyId, Object> propertyValueMap = scenarioData.materialsProducerPropertyValues.get(materialsProducerId);
-							if (propertyValueMap != null) {
-								propertyValue = propertyValueMap.get(materialsProducerPropertyId);
+			}
 
+			/*
+			 * For every region property definition that has a null default
+			 * value, ensure that there all corresponding region property values
+			 * are not null and repair the definition.
+			 */
+			for (RegionPropertyId regionPropertyId : scenarioData.regionPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = scenarioData.regionPropertyDefinitions.get(regionPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					for (RegionId regionId : scenarioData.regionIds.keySet()) {
+						Object propertyValue = null;
+						Map<RegionPropertyId, Object> propertyValueMap = scenarioData.regionPropertyValues.get(regionId);
+						if (propertyValueMap != null) {
+							propertyValue = propertyValueMap.get(regionPropertyId);
+						}
+						if (propertyValue == null) {
+							throwInsufficientPropertyValueAssignment(regionPropertyId);
+						}
+					}
+				}
+			}
+
+			/*
+			 * For every resource property definition that has a null default
+			 * value, ensure that there all corresponding resource property
+			 * values are not null and repair the definition.
+			 */
+			for (ResourceId resourceId : scenarioData.resourceIds) {
+				Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.resourcePropertyDefinitions.get(resourceId);
+				if (propertyDefinitionMap != null) {
+					for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
+						PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
+						if (!propertyDefinition.getDefaultValue().isPresent()) {
+							Object propertyValue = null;
+							Map<ResourcePropertyId, Object> propertyValueMap = scenarioData.resourcePropertyValues.get(resourceId);
+							if (propertyValueMap != null) {
+								propertyValue = propertyValueMap.get(resourcePropertyId);
 							}
 							if (propertyValue == null) {
-								throwInsufficientPropertyValueAssignment(materialsProducerPropertyId);
-							} 
+								throwInsufficientPropertyValueAssignment(resourcePropertyId);
+							}
 						}
 					}
 				}
+			}
 
-				/*
-				 * For every region property definition that has a null default
-				 * value, ensure that there all corresponding region property
-				 * values are not null and repair the definition.
-				 */
-				for (RegionPropertyId regionPropertyId : scenarioData.regionPropertyDefinitions.keySet()) {
-					PropertyDefinition propertyDefinition = scenarioData.regionPropertyDefinitions.get(regionPropertyId);
-					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						for (RegionId regionId : scenarioData.regionIds.keySet()) {
-							Object propertyValue = null;
-							Map<RegionPropertyId, Object> propertyValueMap = scenarioData.regionPropertyValues.get(regionId);
-							if (propertyValueMap != null) {
-								propertyValue = propertyValueMap.get(regionPropertyId);
-							}
-							if (propertyValue == null) {
-								throwInsufficientPropertyValueAssignment(regionPropertyId);
-							}
+			/*
+			 * All batch property definitions must have default values since
+			 * batches may be created dynamically in the simulation
+			 */
+			for (MaterialId materialId : scenarioData.materialIds) {
+				Map<BatchPropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.batchPropertyDefinitions.get(materialId);
+				if (propertyDefinitionMap != null) {
+					for (BatchPropertyId batchPropertyId : propertyDefinitionMap.keySet()) {
+						PropertyDefinition propertyDefinition = propertyDefinitionMap.get(batchPropertyId);
+						if (!propertyDefinition.getDefaultValue().isPresent()) {
+							throwNullDefaultValue(batchPropertyId);
 						}
 					}
 				}
+			}
 
-				/*
-				 * For every resource property definition that has a null
-				 * default value, ensure that there all corresponding resource
-				 * property values are not null and repair the definition.
-				 */
-				for (ResourceId resourceId : scenarioData.resourceIds) {
-					Map<ResourcePropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.resourcePropertyDefinitions.get(resourceId);
-					if (propertyDefinitionMap != null) {
-						for (ResourcePropertyId resourcePropertyId : propertyDefinitionMap.keySet()) {
-							PropertyDefinition propertyDefinition = propertyDefinitionMap.get(resourcePropertyId);
-							if (!propertyDefinition.getDefaultValue().isPresent()) {
-								Object propertyValue = null;
-								Map<ResourcePropertyId, Object> propertyValueMap = scenarioData.resourcePropertyValues.get(resourceId);
-								if (propertyValueMap != null) {
-									propertyValue = propertyValueMap.get(resourcePropertyId);
-								}
-								if (propertyValue == null) {
-									throwInsufficientPropertyValueAssignment(resourcePropertyId);
-								} 
-							}
+			/*
+			 * All group property definitions must have default values since
+			 * groups may be created dynamically in the simulation
+			 */
+			for (GroupTypeId groupTypeId : scenarioData.groupTypeIds) {
+				Map<GroupPropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.groupPropertyDefinitions.get(groupTypeId);
+				if (propertyDefinitionMap != null) {
+					for (GroupPropertyId groupPropertyId : propertyDefinitionMap.keySet()) {
+						PropertyDefinition propertyDefinition = propertyDefinitionMap.get(groupPropertyId);
+						if (!propertyDefinition.getDefaultValue().isPresent()) {
+							throwNullDefaultValue(groupPropertyId);
 						}
 					}
 				}
-
-				/*
-				 * All batch property definitions must have default values since
-				 * batches may be created dynamically in the simulation
-				 */
-				for (MaterialId materialId : scenarioData.materialIds) {
-					Map<BatchPropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.batchPropertyDefinitions.get(materialId);
-					if (propertyDefinitionMap != null) {
-						for (BatchPropertyId batchPropertyId : propertyDefinitionMap.keySet()) {
-							PropertyDefinition propertyDefinition = propertyDefinitionMap.get(batchPropertyId);
-							if (!propertyDefinition.getDefaultValue().isPresent()) {
-								throwNullDefaultValue(batchPropertyId);
-							}
-						}
-					}
-				}
-
-				/*
-				 * All group property definitions must have default values since
-				 * groups may be created dynamically in the simulation
-				 */
-				for (GroupTypeId groupTypeId : scenarioData.groupTypeIds) {
-					Map<GroupPropertyId, PropertyDefinition> propertyDefinitionMap = scenarioData.groupPropertyDefinitions.get(groupTypeId);
-					if (propertyDefinitionMap != null) {
-						for (GroupPropertyId groupPropertyId : propertyDefinitionMap.keySet()) {
-							PropertyDefinition propertyDefinition = propertyDefinitionMap.get(groupPropertyId);
-							if (!propertyDefinition.getDefaultValue().isPresent()) {
-								throwNullDefaultValue(groupPropertyId);
-							}
-						}
-					}
-				}
-				/*
-				 * All person property definitions must have default values
-				 * since people may be created dynamically in the simulation
-				 * 
-				 */
-				for (PersonPropertyId personPropertyId : scenarioData.personPropertyDefinitions.keySet()) {
-					PropertyDefinition propertyDefinition = scenarioData.personPropertyDefinitions.get(personPropertyId);
-					if (!propertyDefinition.getDefaultValue().isPresent()) {
-						throwNullDefaultValue(personPropertyId);
-					}
+			}
+			/*
+			 * All person property definitions must have default values since
+			 * people may be created dynamically in the simulation
+			 * 
+			 */
+			for (PersonPropertyId personPropertyId : scenarioData.personPropertyDefinitions.keySet()) {
+				PropertyDefinition propertyDefinition = scenarioData.personPropertyDefinitions.get(personPropertyId);
+				if (!propertyDefinition.getDefaultValue().isPresent()) {
+					throwNullDefaultValue(personPropertyId);
 				}
 			}
 

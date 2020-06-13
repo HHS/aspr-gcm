@@ -183,7 +183,7 @@ public final class PropertyDefinition {
 	 * Returns true if and only if the value of the property must remain
 	 * constant.
 	 */
-	public boolean getPropertyValueAreMutability() {
+	public boolean getPropertyValuesAreMutability() {
 		return propertyValuesAreMutable;
 	}
 

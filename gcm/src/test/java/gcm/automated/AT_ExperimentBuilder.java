@@ -98,9 +98,7 @@ public class AT_ExperimentBuilder {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		if (SEED_PROVIDER.hasUnusedSeeds()) {
-			System.out.println(AT_ExperimentBuilder.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
-		}
+		System.out.println(AT_ExperimentBuilder.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static final int TEST_DIMENSION_VALUE_COUNT = 10;
@@ -470,8 +468,8 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests
-	 * {@link ExperimentBuilder#addBatchPropertyValue(BatchId, BatchPropertyId, Object)
+	 * Tests {@link ExperimentBuilder#addBatchPropertyValue(BatchId,
+	 * BatchPropertyId, Object)
 	 */
 	@Test
 	public void testAddBatchPropertyValue() {
@@ -2903,7 +2901,7 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, 76);
 		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, 77);
 		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
-		experimentBuilder.addBatchPropertyValue(batchId, null, generatePropertyValue(propertyDefinition));		
+		experimentBuilder.addBatchPropertyValue(batchId, null, generatePropertyValue(propertyDefinition));
 		experimentBuilder.covaryBatchProperty(batchId, null, dimensionId);
 		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_BATCH_PROPERTY_ID);
 
@@ -3748,7 +3746,7 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.addPerson(personId, regionId, compartmentId);
 		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
 		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
-		experimentBuilder.addResource(personResourceId);		
+		experimentBuilder.addResource(personResourceId);
 		experimentBuilder.covaryPersonResource(personId, personResourceId, dimensionId);
 		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.EXPERIMENT_VARIABLE_SIZE_MISMATCH);
 
@@ -3843,7 +3841,7 @@ public class AT_ExperimentBuilder {
 		fillWithVariantGlobalProperties(experimentBuilder);
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
 		experimentBuilder.addResource(materialsProducerResourceId);
-		experimentBuilder.addMaterialsProducerResourceLevel(null, materialsProducerResourceId, 2345L);		
+		experimentBuilder.addMaterialsProducerResourceLevel(null, materialsProducerResourceId, 2345L);
 		experimentBuilder.covaryMaterialsProducerResource(null, materialsProducerResourceId, dimensionId);
 		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_MATERIALS_PRODUCER_ID);
 
@@ -4480,5 +4478,134 @@ public class AT_ExperimentBuilder {
 		 * the other tests in this test class.
 		 */
 	}
+	
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceBatchPropertyExperimentColumn(BatchId, BatchPropertyId)}
+	 */
+	@Test
+	public void testForceBatchPropertyExperimentColumn() {
+		refreshRandomGenerator(49);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		BatchId batchId = new BatchId(15);
+		BatchId badBatchId = new BatchId(20);
+		BatchPropertyId batchPropertyId = TestMaterialId.MATERIAL_3.getBatchPropertyIds()[0];
+		BatchPropertyId badBatchPropertyId = TestMaterialId.MATERIAL_3.getBatchPropertyIds()[1];
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+		MaterialId materialId = TestMaterialId.MATERIAL_3;
+		double amount = 2341456;
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+
+		// precondition: if the batch id is null
+
+		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+		experimentBuilder.addMaterial(materialId);
+		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.forceBatchPropertyExperimentColumn(null, batchPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the batch id is not recognized
+		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+		experimentBuilder.addMaterial(materialId);
+		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.forceBatchPropertyExperimentColumn(badBatchId, batchPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the batch property id is null
+		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+		experimentBuilder.addMaterial(materialId);
+		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.forceBatchPropertyExperimentColumn(batchId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the batch property id is not recognized
+		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+		experimentBuilder.addMaterial(materialId);
+		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.forceBatchPropertyExperimentColumn(batchId, badBatchPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addBatchPropertyValue(batchId, batchPropertyId, propertyValue);
+		experimentBuilder.defineBatchProperty(materialId, batchPropertyId, propertyDefinition);
+		experimentBuilder.addMaterial(materialId);
+		experimentBuilder.addBatch(batchId, materialId, amount, materialsProducerId);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.forceBatchPropertyExperimentColumn(batchId, batchPropertyId);
+		Experiment experiment = experimentBuilder.build();
+		
+		String expected = "batch_property_value_assignment.15.TestBatchPropertyId [id=BProp_3_1]";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+
+	}
+	
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceCompartmentPropertyExperimentColumn(CompartmentId, CompartmentPropertyId)}
+	 */
+	@Test
+	public void testForceCompartmentPropertyExperimentColumn() {
+		refreshRandomGenerator(50);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
+		CompartmentId badCompartmentId = TestCompartmentId.COMPARTMENT_2;		
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);	
+		CompartmentPropertyId badCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(1);
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+		
+		// precondition: if the compartment id is null
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
+		experimentBuilder.forceCompartmentPropertyExperimentColumn(null, compartmentPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the compartment id is unknown
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
+		experimentBuilder.forceCompartmentPropertyExperimentColumn(badCompartmentId, compartmentPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the compartment property id is null
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
+		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+		
+		// precondition: if the compartment property id is unknown
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
+		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, badCompartmentPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
+		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, compartmentPropertyId);
+		Experiment experiment = experimentBuilder.build();		
+		String expected = "compartment_property.COMPARTMENT_1.TestCompartmentPropertyId [id=Compartment_Property_1_1]";
+		String actual = experiment.getExperimentFieldName(0);		
+		assertEquals(expected, actual);
+
+	}
+	
 
 }

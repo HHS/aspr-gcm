@@ -1,5 +1,6 @@
 package gcm.automated;
 
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -8,7 +9,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.random.Well44497b;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -47,18 +47,12 @@ public class AT_PropertyDefinition {
 		// + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
-	private static void refreshRandomGenerator(int seedCase) {
-		randomGenerator = new Well44497b(SEED_PROVIDER.getSeedValue(seedCase));
-	}
-
-	private static RandomGenerator randomGenerator;
-
 	private static final int TEST_COUNT = 1000;
 
 	/*
 	 * Generates a random property definition from the given Random instance
 	 */
-	private PropertyDefinition generateRandomPropertyDefinition() {
+	private PropertyDefinition generateRandomPropertyDefinition(RandomGenerator randomGenerator) {
 		Class<?> type;
 		final int typeCase = randomGenerator.nextInt(5);
 		Object defaultValue;
@@ -104,10 +98,10 @@ public class AT_PropertyDefinition {
 	 * that has at least one field value that does not match the given property
 	 * definition.
 	 */
-	private PropertyDefinition generateNonMatchingRandomPropertyDefinition(PropertyDefinition propertyDefinition) {
+	private PropertyDefinition generateNonMatchingRandomPropertyDefinition(PropertyDefinition propertyDefinition, RandomGenerator randomGenerator) {
 		while (true) {
-			PropertyDefinition result = generateRandomPropertyDefinition();
-			boolean different = result.getPropertyValueAreMutability() != propertyDefinition.getPropertyValueAreMutability();
+			PropertyDefinition result = generateRandomPropertyDefinition(randomGenerator);
+			boolean different = result.getPropertyValuesAreMutability() != propertyDefinition.getPropertyValuesAreMutability();
 
 			different |= propertyDefinition.getDefaultValue().isPresent() != result.getDefaultValue().isPresent();
 			if (propertyDefinition.getDefaultValue().isPresent() && result.getDefaultValue().isPresent()) {
@@ -134,7 +128,7 @@ public class AT_PropertyDefinition {
 		}
 
 		return builder	.setType(propertyDefinition.getType())//
-						.setPropertyValueMutability(propertyDefinition.getPropertyValueAreMutability())//
+						.setPropertyValueMutability(propertyDefinition.getPropertyValuesAreMutability())//
 						.setMapOption(propertyDefinition.getMapOption())//
 						.setTimeTrackingPolicy(propertyDefinition.getTimeTrackingPolicy())//
 						.build();//
@@ -148,17 +142,18 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testEqualsContact() {
-		refreshRandomGenerator(0);
+		final long seed = SEED_PROVIDER.getSeedValue(0);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		/*
 		 * Show that two Property Definitions are equal if and only if their
 		 * fields are equal
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def1 = generateRandomPropertyDefinition();
+			PropertyDefinition def1 = generateRandomPropertyDefinition(randomGenerator);
 			PropertyDefinition def2 = generateMatchingPropertyDefinition(def1);
 			assertEquals(def1, def2);
-			PropertyDefinition def3 = generateNonMatchingRandomPropertyDefinition(def1);
+			PropertyDefinition def3 = generateNonMatchingRandomPropertyDefinition(def1, randomGenerator);
 			assertNotEquals(def1, def3);
 		}
 
@@ -166,7 +161,7 @@ public class AT_PropertyDefinition {
 		 * Show that a property definition is not equal to null
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition();
+			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
 			assertFalse(def.equals(null));
 		}
 
@@ -174,7 +169,7 @@ public class AT_PropertyDefinition {
 		 * Show that a property definition is equal to itself
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition();
+			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
 			assertTrue(def.equals(def));
 		}
 
@@ -183,7 +178,7 @@ public class AT_PropertyDefinition {
 		 * another class
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def = generateRandomPropertyDefinition();
+			PropertyDefinition def = generateRandomPropertyDefinition(randomGenerator);
 			assertFalse(def.equals(new Object()));
 		}
 
@@ -191,7 +186,7 @@ public class AT_PropertyDefinition {
 		 * Show that equal objects have equal hash codes
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition def1 = generateRandomPropertyDefinition();
+			PropertyDefinition def1 = generateRandomPropertyDefinition(randomGenerator);
 			PropertyDefinition def2 = generateMatchingPropertyDefinition(def1);
 			assertEquals(def1.hashCode(), def2.hashCode());
 		}
@@ -203,14 +198,15 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testToString() {
-		refreshRandomGenerator(1);
+		final long seed = SEED_PROVIDER.getSeedValue(1);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		/*
 		 * Show that the toString returns a non-empty string. This is an
 		 * otherwise boiler-plate implementation.
 		 */
 		for (int i = 0; i < TEST_COUNT; i++) {
-			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+			PropertyDefinition propertyDefinition = generateRandomPropertyDefinition(randomGenerator);
 			String toString = propertyDefinition.toString();
 			assertNotNull(toString);
 			assertTrue(toString.length() > 0);
@@ -222,7 +218,8 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testGetDefaultValue() {
-		refreshRandomGenerator(2);
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		// Show that a property definition that has a null default value (value
 		// is set to null or was not set at all)
@@ -273,11 +270,38 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
+	 * test for {@link PropertyDefinition#getPropertyValuesAreMutability()}
+	 */
+	@Test
+	public void testGetPropertyValuesAreMutability() {
+		/*
+		 * Show that a property definition defaults
+		 * getPropertyValuesAreMutability() to true
+		 */
+		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
+																	.setType(Boolean.class)//
+																	.build();//
+		assertTrue(propertyDefinition.getPropertyValuesAreMutability());
+
+		propertyDefinition = PropertyDefinition	.builder()//
+												.setType(Boolean.class)//
+												.setPropertyValueMutability(false)//
+												.build();//
+		assertFalse(propertyDefinition.getPropertyValuesAreMutability());
+
+		propertyDefinition = PropertyDefinition	.builder()//
+												.setType(Boolean.class)//
+												.setPropertyValueMutability(true)//
+												.build();//
+		assertTrue(propertyDefinition.getPropertyValuesAreMutability());
+
+	}
+
+	/**
 	 * test for {@link PropertyDefinition#getMapOption()}
 	 */
 	@Test
 	public void testGetMapOption() {
-		refreshRandomGenerator(3);
 
 		/*
 		 * Show that the map option value used to form the property definition
@@ -299,7 +323,6 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testGetTimeTrackingPolicy() {
-		refreshRandomGenerator(4);
 
 		/*
 		 * Show that the TimeTrackingPolicy value used to form the property
@@ -321,7 +344,6 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testGetType() {
-		refreshRandomGenerator(5);
 
 		/*
 		 * Show that the class type value used to form the property definition
@@ -361,11 +383,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getPropertyValueAreMutability()}
+	 * test for {@link PropertyDefinition#getPropertyValuesAreMutability()}
 	 */
 	@Test
 	public void testPropertyValuesAreMutable() {
-		refreshRandomGenerator(6);
 
 		/*
 		 * Show that the hasConstantPropertyValues value used to form the
@@ -378,21 +399,21 @@ public class AT_PropertyDefinition {
 																		.setDefaultValue("default value")//
 																		.setPropertyValueMutability(booleanType.value())//
 																		.build();//
-			assertEquals(booleanType.value(), propertyDefinition.getPropertyValueAreMutability());
+			assertEquals(booleanType.value(), propertyDefinition.getPropertyValuesAreMutability());
 
 			propertyDefinition = PropertyDefinition	.builder()//
 													.setType(Double.class)//
 													.setDefaultValue(5.6)//
 													.setPropertyValueMutability(booleanType.value())//
 													.build();//
-			assertEquals(booleanType.value(), propertyDefinition.getPropertyValueAreMutability());
+			assertEquals(booleanType.value(), propertyDefinition.getPropertyValuesAreMutability());
 
 			propertyDefinition = PropertyDefinition	.builder()//
 													.setType(Boolean.class)//
 													.setDefaultValue(false)//
 													.setPropertyValueMutability(booleanType.value())//
 													.build();//
-			assertEquals(booleanType.value(), propertyDefinition.getPropertyValueAreMutability());
+			assertEquals(booleanType.value(), propertyDefinition.getPropertyValuesAreMutability());
 
 			propertyDefinition = PropertyDefinition	.builder()//
 													.setType(Long.class)//
@@ -400,14 +421,14 @@ public class AT_PropertyDefinition {
 													.setPropertyValueMutability(booleanType.value())//
 													.build();//
 
-			assertEquals(booleanType.value(), propertyDefinition.getPropertyValueAreMutability());
+			assertEquals(booleanType.value(), propertyDefinition.getPropertyValuesAreMutability());
 
 			propertyDefinition = PropertyDefinition	.builder()//
 													.setType(Integer.class)//
 													.setDefaultValue(2345)//
 													.setPropertyValueMutability(booleanType.value())//
 													.build();//
-			assertEquals(booleanType.value(), propertyDefinition.getPropertyValueAreMutability());
+			assertEquals(booleanType.value(), propertyDefinition.getPropertyValuesAreMutability());
 		}
 
 	}
@@ -417,7 +438,6 @@ public class AT_PropertyDefinition {
 	 */
 	@Test
 	public void testBuilderDefaults() {
-		refreshRandomGenerator(7);
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
@@ -426,7 +446,7 @@ public class AT_PropertyDefinition {
 
 		assertEquals(MapOption.NONE, propertyDefinition.getMapOption());
 		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
-		assertEquals(true, propertyDefinition.getPropertyValueAreMutability());
+		assertEquals(true, propertyDefinition.getPropertyValuesAreMutability());
 
 		assertException(() -> {
 			PropertyDefinition	.builder()//
@@ -532,15 +552,15 @@ public class AT_PropertyDefinition {
 	 * test for {@link PropertyDefinition#builder()}
 	 */
 	@Test
-	public void testBuilder() {		
+	public void testBuilder() {
 
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-		.setType(String.class)//
-		.setDefaultValue("default value")//
-		.build();//
-		
+																	.setType(String.class)//
+																	.setDefaultValue("default value")//
+																	.build();//
+
 		assertNotNull(propertyDefinition);
-		
+
 		// if the class type of the definition is not assigned or null
 		assertException(() -> {
 			PropertyDefinition	.builder()//
@@ -549,14 +569,13 @@ public class AT_PropertyDefinition {
 								.build();//
 
 		}, RuntimeException.class);
-		
+
 		assertException(() -> {
-			PropertyDefinition	.builder()//								
+			PropertyDefinition	.builder()//
 								.setDefaultValue("default value")//
 								.build();//
 
 		}, RuntimeException.class);
-
 
 	}
 

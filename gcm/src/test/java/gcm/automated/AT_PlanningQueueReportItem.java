@@ -89,6 +89,15 @@ public class AT_PlanningQueueReportItem {
 	}
 	
 	@Test
+	public void testGetRemovalCount() {
+		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
+		long removalCount = 34534645745L;
+		planningQueueReportItemBuilder.setRemovalCount(removalCount);
+		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
+		assertEquals(removalCount, planningQueueReportItem.getRemovalCount());
+	}
+	
+	@Test
 	public void testGetCancellationCount() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		long cancellationCount = 34534645745L;

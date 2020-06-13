@@ -309,7 +309,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validatePropertyMutability(final PropertyDefinition propertyDefinition) {
 		if (componentManager.getFocalComponentType() != ComponentType.SIM) {
-			if (!propertyDefinition.getPropertyValueAreMutability()) {
+			if (!propertyDefinition.getPropertyValuesAreMutability()) {
 				throwModelException(SimulationErrorType.IMMUTABLE_VALUE);
 			}
 		}

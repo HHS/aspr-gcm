@@ -30,8 +30,8 @@ public enum ActionType {
 	BATCH_PROPERTY_VALUE_ASSIGNMENT("batch_property_value_assignment"),
 
 	// assignments of resource values
-	PERSON_RESOURCE_ASSIGNMENT("region_resource"),
-	REGION_RESOURCE_ASSIGNMENT("person_resource"),
+	PERSON_RESOURCE_ASSIGNMENT("person_resource"),
+	REGION_RESOURCE_ASSIGNMENT("region_resource"),
 
 	// assignments of various data control policies
 	PERSON_COMPARTMENT_ARRIVAL_TRACKING_ASSIGNMENT("person_compartment_arrival_tracking_assignment"),

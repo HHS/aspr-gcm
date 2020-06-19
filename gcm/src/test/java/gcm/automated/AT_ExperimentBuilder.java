@@ -34,6 +34,7 @@ import gcm.automated.support.experimentspace.ExperimentTestSpace.ExperimentTestS
 import gcm.automated.support.experimentspace.ExperimentTestVariable.ExperimentTestVariableBuilder;
 import gcm.components.AbstractComponent;
 import gcm.experiment.Experiment;
+import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -51,6 +52,7 @@ import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
@@ -98,7 +100,8 @@ public class AT_ExperimentBuilder {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_ExperimentBuilder.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_ExperimentBuilder.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static final int TEST_DIMENSION_VALUE_COUNT = 10;
@@ -4478,7 +4481,7 @@ public class AT_ExperimentBuilder {
 		 * the other tests in this test class.
 		 */
 	}
-	
+
 	/**
 	 * Tests
 	 * {@link ExperimentBuilder#forceBatchPropertyExperimentColumn(BatchId, BatchPropertyId)}
@@ -4543,13 +4546,13 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
 		experimentBuilder.forceBatchPropertyExperimentColumn(batchId, batchPropertyId);
 		Experiment experiment = experimentBuilder.build();
-		
+
 		String expected = "batch_property_value_assignment.15.TestBatchPropertyId [id=BProp_3_1]";
 		String actual = experiment.getExperimentFieldName(0);
 		assertEquals(expected, actual);
 
 	}
-	
+
 	/**
 	 * Tests
 	 * {@link ExperimentBuilder#forceCompartmentPropertyExperimentColumn(CompartmentId, CompartmentPropertyId)}
@@ -4560,12 +4563,12 @@ public class AT_ExperimentBuilder {
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
-		CompartmentId badCompartmentId = TestCompartmentId.COMPARTMENT_2;		
-		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);	
+		CompartmentId badCompartmentId = TestCompartmentId.COMPARTMENT_2;
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(0);
 		CompartmentPropertyId badCompartmentPropertyId = TestCompartmentId.COMPARTMENT_1.getCompartmentPropertyId(1);
 		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
 		Object propertyValue = generatePropertyValue(propertyDefinition);
-		
+
 		// precondition: if the compartment id is null
 		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
 		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
@@ -4586,7 +4589,7 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
 		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, null);
 		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
-		
+
 		// precondition: if the compartment property id is unknown
 		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
 		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
@@ -4594,18 +4597,801 @@ public class AT_ExperimentBuilder {
 		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, badCompartmentPropertyId);
 		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
 
-		
 		// postcondition: the experiment contains the expected column
 		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, propertyValue);
 		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
 		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, propertyDefinition);
 		experimentBuilder.forceCompartmentPropertyExperimentColumn(compartmentId, compartmentPropertyId);
-		Experiment experiment = experimentBuilder.build();		
+		Experiment experiment = experimentBuilder.build();
 		String expected = "compartment_property.COMPARTMENT_1.TestCompartmentPropertyId [id=Compartment_Property_1_1]";
-		String actual = experiment.getExperimentFieldName(0);		
+		String actual = experiment.getExperimentFieldName(0);
 		assertEquals(expected, actual);
 
 	}
-	
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#addRandomNumberGeneratorId(RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testAddRandomNumberGeneratorId() {
+		refreshRandomGenerator(51);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		// precondition: if the randomNumberGeneratorId is null
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addRandomNumberGeneratorId(null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+
+		// precondition: if the randomNumberGeneratorId was previously added
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+		assertScenarioException(() -> experimentBuilder.build(), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
+
+		// postcondition: all the scenarios contain the expected
+		// randomNumberGenerator Ids
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.CUPID);
+		List<Scenario> scenarios = getScenarios(experimentBuilder.build());
+		assertTrue(scenarios.size() > 0);
+		for (Scenario scenario : scenarios) {
+			assertEquals(2, scenario.getRandomNumberGeneratorIds().size());
+			assertTrue(scenario.getRandomNumberGeneratorIds().contains(RandomGeneratorId.BLITZEN));
+			assertTrue(scenario.getRandomNumberGeneratorIds().contains(RandomGeneratorId.CUPID));
+		}
+	}
+
+	/**
+	 * Tests {@link ExperimentBuilder#covarySuggestedPopulationSize(Object)}
+	 */
+	@Test
+	public void testCovarySuggestedPopulationSize() {
+		refreshRandomGenerator(52);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		Object dimensionId = "DimensionId";
+
+		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_2;
+		CompartmentPropertyId compartmentPropertyId = TestCompartmentId.COMPARTMENT_2.getCompartmentPropertyId(0);
+		PropertyDefinition compartmentPropertyDefinition = PropertyDefinition	.builder()//
+																				.setType(String.class)//
+																				.setDefaultValue("default")//
+																				.build();
+
+		/*
+		 * precondition: if the dimension id is null
+		 */
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.covarySuggestedPopulationSize(null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_DIMENSION_IDENTIFIER);
+
+		/*
+		 * precondition: if number of population sizes does not match the number
+		 * of values for all other variables joined under the given dimensionId
+		 */
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.defineCompartmentProperty(compartmentId, compartmentPropertyId, compartmentPropertyDefinition);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, "a");
+		experimentBuilder.addCompartmentPropertyValue(compartmentId, compartmentPropertyId, "b");
+		experimentBuilder.covaryCompartmentProperty(compartmentId, compartmentPropertyId, dimensionId);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.EXPERIMENT_VARIABLE_SIZE_MISMATCH);
+
+		/*
+		 * precondition: if the suggested population was previously declared as
+		 * covariant
+		 */
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.DUPLICATE_EXPERIMENT_COVARIANT_DECLARATION);
+
+		/*
+		 * precondition: if there are no added values to associate with this
+		 * dimension
+		 */
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		/*
+		 * precondition: if there are more than one dimensionId values with the
+		 * same associated data
+		 */
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		Object dimensionId2 = new Object();
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId2);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.EXPERIMENT_COVARIANT_DECLARATION_SPANS_MULTIPLE_DIMENSIONS);
+
+		// postcondition tests
+		/*
+		 * Build a list of scenarios using variant values for two global
+		 * properties,one compartment property and one resource property. Covary
+		 * the compartment property values with the resource property values.
+		 */
+
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.addSuggestedPopulationSize(2000);
+		experimentBuilder.addSuggestedPopulationSize(3000);
+		experimentBuilder.covarySuggestedPopulationSize(dimensionId);
+		List<Scenario> scenarios = getScenarios(experimentBuilder.build());
+
+		/*
+		 * Build an ExperimentTestSpace that reflects our expectations of the
+		 * the dimensions and values within the experiment space.
+		 */
+		ExperimentTestSpaceBuilder experimentTestSpaceBuilder = new ExperimentTestSpaceBuilder();
+		fillWithVariantGlobalProperties(experimentTestSpaceBuilder);
+
+		ExperimentTestDimensionBuilder experimentTestDimensionBuilder = new ExperimentTestDimensionBuilder();
+		ExperimentTestVariableBuilder experimentTestVariableBuilder = new ExperimentTestVariableBuilder();
+		experimentTestVariableBuilder.addValue(1000);
+		experimentTestVariableBuilder.addValue(2000);
+		experimentTestVariableBuilder.addValue(3000);
+		experimentTestVariableBuilder.setValueExtractor((scenario) -> scenario.getSuggestedPopulationSize());
+		experimentTestDimensionBuilder.addExperimentVariable(experimentTestVariableBuilder.build());
+		experimentTestSpaceBuilder.addExperimentDimension(experimentTestDimensionBuilder.build());
+		ExperimentTestSpace experimentTestSpace = experimentTestSpaceBuilder.build();
+
+		/*
+		 * 
+		 * Show that the list of scenarios matches our expectations on the
+		 * details of the experiment space
+		 */
+		experimentTestSpace.assertEqualSpaces(scenarios);
+
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceGlobalPropertyExperimentColumn(GlobalPropertyId)}
+	 */
+	@Test
+	public void testForceGlobalPropertyExperimentColumn() {
+		refreshRandomGenerator(53);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		GlobalPropertyId globalPropertyId = TestGlobalPropertyId.Global_Property_1;
+		GlobalPropertyId badGlobalPropertyId = TestGlobalPropertyId.Global_Property_2;
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+
+		// precondition: if the global property id is null
+		experimentBuilder.addGlobalPropertyValue(globalPropertyId, propertyValue);
+		experimentBuilder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		experimentBuilder.forceGlobalPropertyExperimentColumn(null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the global property id is unknown
+		experimentBuilder.addGlobalPropertyValue(globalPropertyId, propertyValue);
+		experimentBuilder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		experimentBuilder.forceGlobalPropertyExperimentColumn(badGlobalPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addGlobalPropertyValue(globalPropertyId, propertyValue);
+		experimentBuilder.defineGlobalProperty(globalPropertyId, propertyDefinition);
+		experimentBuilder.forceGlobalPropertyExperimentColumn(globalPropertyId);
+		Experiment experiment = experimentBuilder.build();
+		String expected = "global_property.Global_Property_1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+
+	}
+
+	/**
+	 * Tests {@link ExperimentBuilder#addSuggestedPopulationSize(int)}
+	 */
+	@Test
+	public void testAddSuggestedPopulationSize() {
+		refreshRandomGenerator(54);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		// precondition: if the suggested population size is negative
+
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(-1);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NEGATIVE_SUGGGESTED_POPULATION);
+
+		// postcondition: all scenarios contain the suggested population size
+		fillWithVariantGlobalProperties(experimentBuilder);
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		List<Scenario> scenarios = getScenarios(experimentBuilder.build());
+		assertTrue(scenarios.size() > 0);
+		for (Scenario scenario : scenarios) {
+			assertEquals(1000, scenario.getSuggestedPopulationSize());
+		}
+	}
+
+	/**
+	 * Tests {@link ExperimentBuilder#setBaseScenarioId(int)}
+	 */
+	@Test
+	public void testSetBaseScenarioId() {
+		refreshRandomGenerator(55);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		// postcondition: all scenarios contain the suggested population size
+		fillWithVariantGlobalProperties(experimentBuilder);
+		int baseScenarioNumber = 1000;
+		experimentBuilder.setBaseScenarioId(baseScenarioNumber);
+		List<Scenario> scenarios = getScenarios(experimentBuilder.build());
+		assertTrue(scenarios.size() > 0);
+		Set<ScenarioId> expectedScenarioIds = new LinkedHashSet<>();
+		for (int i = 0; i < scenarios.size(); i++) {
+			expectedScenarioIds.add(new ScenarioId(++baseScenarioNumber));
+		}
+
+		Set<ScenarioId> actualScenarioIds = new LinkedHashSet<>();
+		for (Scenario scenario : scenarios) {
+			actualScenarioIds.add(scenario.getScenarioId());
+		}
+
+		assertEquals(expectedScenarioIds, actualScenarioIds);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceGroupPropertyExperimentColumn(GroupId, GroupPropertyId)}
+	 */
+	@Test
+	public void testForceGroupPropertyExperimentColumn() {
+		refreshRandomGenerator(56);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		GroupId groupId = new GroupId(10);
+		GroupId badGroupId = new GroupId(11);
+		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
+		GroupPropertyId groupPropertyId = TestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
+		GroupPropertyId badGroupPropertyId = TestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[1];
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+
+		// precondition: if the group id is null
+		experimentBuilder.addGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(null, groupPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the group id is unknown
+		experimentBuilder.addGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(badGroupId, groupPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the group property id is null
+		experimentBuilder.addGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(groupId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the group property id is unknown
+		experimentBuilder.addGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(groupId, badGroupPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(groupId, badGroupPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addGroupPropertyValue(groupId, groupPropertyId, propertyValue);
+		experimentBuilder.defineGroupProperty(groupTypeId, badGroupPropertyId, propertyDefinition);
+		experimentBuilder.forceGroupPropertyExperimentColumn(groupId, groupPropertyId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "group_property_value_assignment.10.TestGroupPropertyId [id=GTProp_1_1]";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceSuggestedPopulationSizeExperimentColumn()}
+	 */
+	@Test
+	public void testForceSuggestedPopulationSizeExperimentColumn() {
+		refreshRandomGenerator(57);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		// precondition: if the there are no values
+		experimentBuilder.forceSuggestedPopulationSizeExperimentColumn();
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addSuggestedPopulationSize(1000);
+		experimentBuilder.forceSuggestedPopulationSizeExperimentColumn();
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "suggested_population_size";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceResourcePropertyExperimentColumn(ResourceId, ResourcePropertyId)}
+	 */
+	@Test
+	public void testForceResourcePropertyExperimentColumn() {
+		refreshRandomGenerator(58);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		ResourceId resourceId = TestResourceId.RESOURCE1;
+		ResourceId badResourceId = TestResourceId.RESOURCE2;
+		ResourcePropertyId resourcePropertyId = TestResourceId.RESOURCE8.getResourcePropertyIds()[0];
+		ResourcePropertyId badResourcePropertyId = TestResourceId.RESOURCE8.getResourcePropertyIds()[1];
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+
+		// precondition: if the resource id is null
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		experimentBuilder.addResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(null, resourcePropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is unknown
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		experimentBuilder.addResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(badResourceId, resourcePropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource property id is null
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		experimentBuilder.addResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(resourceId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource property id is unknown
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		experimentBuilder.addResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(resourceId, badResourcePropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values for the column
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		// experimentBuilder.addResourcePropertyValue(resourceId,
+		// resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(resourceId, resourcePropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.defineResourceProperty(resourceId, resourcePropertyId, propertyDefinition);
+		experimentBuilder.addResourcePropertyValue(resourceId, resourcePropertyId, propertyValue);
+		experimentBuilder.forceResourcePropertyExperimentColumn(resourceId, resourcePropertyId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "resource_property.RESOURCE1.TestResourcePropertyId [id=ResourceProperty_8_1]";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceRegionResourceExperimentColumn(RegionId, ResourceId)}
+	 */
+	@Test
+	public void testForceRegionResourceExperimentColumn() {
+		refreshRandomGenerator(59);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		RegionId regionId = TestRegionId.REGION_1;
+		RegionId badRegionId = TestRegionId.REGION_2;
+		ResourceId resourceId = TestResourceId.RESOURCE1;
+		ResourceId badResourceId = TestResourceId.RESOURCE2;
+
+		// precondition: if the region id is null
+		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(null, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the region id is unknown
+		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(badRegionId, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is null
+		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(regionId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is unknown
+		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(regionId, badResourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values for the column
+		// experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(regionId, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addRegionResourceLevel(regionId, resourceId, 100);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceRegionResourceExperimentColumn(regionId, resourceId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "region_resource.REGION_1.RESOURCE1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceRegionPropertyExperimentColumn(RegionId, RegionPropertyId)}
+	 */
+	@Test
+	public void testForceRegionPropertyExperimentColumn() {
+		refreshRandomGenerator(60);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		RegionId regionId = TestRegionId.REGION_1;
+		RegionId badRegionId = TestRegionId.REGION_2;
+		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_7;
+		RegionPropertyId badRegionPropertyId = TestRegionPropertyId.REGION_PROPERTY_8;
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+
+		// precondition: if the region id is null
+		experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(null, regionPropertyId);
+		;
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the region id is unknown
+		experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(badRegionId, regionPropertyId);
+		;
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the region property id is null
+		experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(regionId, null);
+		;
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the region property id is unknown
+		experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(regionId, badRegionPropertyId);
+		;
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values for the column
+		// experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId,
+		// propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(regionId, regionPropertyId);
+		;
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addRegionPropertyValue(regionId, regionPropertyId, propertyValue);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.defineRegionProperty(regionPropertyId, propertyDefinition);
+		experimentBuilder.forceRegionPropertyExperimentColumn(regionId, regionPropertyId);
+		;
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "region_property.REGION_1.REGION_PROPERTY_7";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forcePersonResourceExperimentColumn(RegionId, RegionPropertyId)}
+	 */
+	@Test
+	public void testForcePersonResourceExperimentColumn() {
+		refreshRandomGenerator(61);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		PersonId personId = new PersonId(100);
+		PersonId badPersonId = new PersonId(101);
+
+		ResourceId resourceId = TestResourceId.RESOURCE1;
+		ResourceId badResourceId = TestResourceId.RESOURCE2;
+
+		RegionId regionId = TestRegionId.REGION_1;
+		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
+
+		// precondition: if the person id is null
+		experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(null, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the person id is unknown
+		experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(badPersonId, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is null
+		experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(personId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is unknown
+		experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(personId, badResourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values for the column resource id is
+		// unknown
+		// experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(personId, badResourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addPersonResourceLevel(personId, resourceId, 75);
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forcePersonResourceExperimentColumn(personId, resourceId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "person_resource.100.RESOURCE1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forcePersonPropertyExperimentColumn(PersonId, PersonPropertyId)}
+	 */
+	@Test
+	public void testForcePersonPropertyExperimentColumn() {
+		refreshRandomGenerator(62);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		PersonId personId = new PersonId(100);
+		PersonId badPersonId = new PersonId(101);
+		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1;
+		PersonPropertyId badPersonPropertyId = TestPersonPropertyId.PERSON_PROPERTY_2;
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+		RegionId regionId = TestRegionId.REGION_1;
+		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
+
+		// precondition: if the person id is null
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPersonPropertyValue(personId, personPropertyId, propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(null, personPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the person id is unknown
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPersonPropertyValue(personId, personPropertyId, propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(badPersonId, personPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the person property id is null
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPersonPropertyValue(personId, personPropertyId, propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(personId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the person property id is unknown
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPersonPropertyValue(personId, personPropertyId, propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(personId, badPersonPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values for the column
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		// experimentBuilder.addPersonPropertyValue(personId,personPropertyId,propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(personId, personPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addRegionId(regionId, PlaceholderComponent.class);
+		experimentBuilder.addCompartmentId(compartmentId, PlaceholderComponent.class);
+		experimentBuilder.addPersonPropertyValue(personId, personPropertyId, propertyValue);
+		experimentBuilder.addPerson(personId, regionId, compartmentId);
+		experimentBuilder.definePersonProperty(personPropertyId, propertyDefinition);
+		experimentBuilder.forcePersonPropertyExperimentColumn(personId, personPropertyId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "person_property.100.PERSON_PROPERTY_1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceMaterialsProducerResourceExperimentColumn(MaterialsProducerId, ResourceId)}
+	 */
+	@Test
+	public void testForceMaterialsProducerResourceExperimentColumn() {
+		refreshRandomGenerator(63);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId badMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+
+		ResourceId resourceId = TestResourceId.RESOURCE1;
+		ResourceId badResourceId = TestResourceId.RESOURCE2;
+
+		// precondition: if the materials producer id is null
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(null, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the materials producer id is unknown
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(badMaterialsProducerId, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is null
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(materialsProducerId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the resource id is unknown
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(materialsProducerId, badResourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values in the column
+		// experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId,resourceId,1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(materialsProducerId, resourceId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addMaterialsProducerResourceLevel(materialsProducerId, resourceId, 1000);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.addResource(resourceId);
+		experimentBuilder.forceMaterialsProducerResourceExperimentColumn(materialsProducerId, resourceId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "materials_producer_resource_assignment.MATERIALS_PRODUCER_1.RESOURCE1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
+
+	/**
+	 * Tests
+	 * {@link ExperimentBuilder#forceMaterialsProducerPropertyExperimentColumn(MaterialsProducerId, MaterialsProducerPropertyId)}
+	 */
+	@Test
+	public void testForceMaterialsProducerPropertyExperimentColumn() {
+		refreshRandomGenerator(64);
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+
+		MaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
+		MaterialsProducerId badMaterialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_2;
+		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
+		MaterialsProducerPropertyId badMaterialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_2;
+		PropertyDefinition propertyDefinition = generateRandomPropertyDefinition();
+		Object propertyValue = generatePropertyValue(propertyDefinition);
+
+		// precondition: if the materials producer id is null
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(null, materialsProducerPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the materials producer id is unknown
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(badMaterialsProducerId, materialsProducerPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the materials producer property id is null
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(materialsProducerId, null);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if the materials producer property id is unknown
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(materialsProducerId, badMaterialsProducerPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// precondition: if there are no values in the column
+		// experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId,materialsProducerPropertyId,propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(materialsProducerId, materialsProducerPropertyId);
+		assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.COVARIANT_WITHOUT_VALUES);
+
+		// postcondition: the experiment contains the expected column
+		experimentBuilder.addMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, propertyValue);
+		experimentBuilder.addMaterialsProducerId(materialsProducerId, PlaceholderComponent.class);
+		experimentBuilder.defineMaterialsProducerProperty(materialsProducerPropertyId, propertyDefinition);
+		experimentBuilder.forceMaterialsProducerPropertyExperimentColumn(materialsProducerId, materialsProducerPropertyId);
+
+		Experiment experiment = experimentBuilder.build();
+		String expected = "materials_producer_property_value_assignment.MATERIALS_PRODUCER_1.MATERIALS_PRODUCER_PROPERTY_1";
+		String actual = experiment.getExperimentFieldName(0);
+		assertEquals(expected, actual);
+	}
 
 }

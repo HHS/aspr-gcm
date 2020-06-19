@@ -23,10 +23,16 @@ public final class ExperimentTestSpace {
 	public static class ExperimentTestSpaceBuilder {
 		private ExperimentTestSpace experimentSpaceTest = new ExperimentTestSpace();
 
+		/**
+		 * Adds a dimension -- each dimension will have its own associated Experiment Test Variables
+		 */
 		public void addExperimentDimension(ExperimentTestDimension experimentTestDimension) {
 			experimentSpaceTest.experimentTestDimensions.add(experimentTestDimension);
 		}
 
+		/**
+		 * Adds an Experiment Test Variable that is not aligned to a dimension.
+		 */
 		public void addExperimentVariable(ExperimentTestVariable experimentTestVariable) {
 			ExperimentTestDimensionBuilder experimentTestDimensionBuilder = new ExperimentTestDimensionBuilder();
 			experimentTestDimensionBuilder.addExperimentVariable(experimentTestVariable);

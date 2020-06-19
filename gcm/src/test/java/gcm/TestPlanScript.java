@@ -212,7 +212,7 @@ public class TestPlanScript {
 	}
 
 	private void demonstrateSourceClassesHaveNoMoreThanOneTestClass() {
-		TestReport testReport = new TestReport("Does any source class have a mix of automated and manual test classes?", "All source classes only automated or manual test class");
+		TestReport testReport = new TestReport("Does any source class have a mix of automated and manual test classes?", "All source classes have only automated or only manual test classes");
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
 			int automatedTestClassCount = 0;
 			for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {

@@ -36,6 +36,7 @@ import gcm.automated.AT_EnvironmentImpl_20;
 import gcm.automated.AT_EnvironmentImpl_21;
 import gcm.automated.AT_EnvironmentImpl_22;
 import gcm.automated.AT_EnvironmentImpl_23;
+import gcm.automated.AT_EnvironmentImpl_24;
 import gcm.automated.AT_Equality;
 import gcm.automated.AT_ExperimentBuilder;
 import gcm.automated.AT_Filter;
@@ -121,6 +122,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_EnvironmentImpl_21.class,
 	AT_EnvironmentImpl_22.class,
 	AT_EnvironmentImpl_23.class,
+	AT_EnvironmentImpl_24.class,
 	AT_MultiKey.class,
 	AT_Filter.class,
 	AT_IntValueContainer.class,

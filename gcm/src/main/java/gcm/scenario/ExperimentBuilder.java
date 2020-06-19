@@ -510,7 +510,7 @@ public final class ExperimentBuilder {
 	 *
 	 *             <li>{@link ScenarioErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *             if the material id is null
-	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ADDED_IDENTIFIER} if
+	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the material was previously added
 	 *
 	 */
@@ -2043,12 +2043,12 @@ public final class ExperimentBuilder {
 		scaffold.putExperimentDimensionData(ActionType.SUGGESTED_POPULATION_SIZE, dimensionId);
 	}
 
-	/**
-	 * Returns a row-based listing of all the data that will be used to the
-	 * experiment.
-	 */
-	@Override
-	public String toString() {
-		return scaffold.toString();
-	}
+//	/**
+//	 * Returns a row-based listing of all the data that will be used to form the
+//	 * experiment.
+//	 */
+//	@Override
+//	public String toString() {
+//		return scaffold.toString();
+//	}
 }

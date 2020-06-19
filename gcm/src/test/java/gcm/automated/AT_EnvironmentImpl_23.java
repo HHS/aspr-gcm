@@ -37,6 +37,7 @@ import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
 import gcm.automated.support.SeedProvider;
+import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlan;
 import gcm.automated.support.TaskPlan.Task;
 import gcm.automated.support.TaskPlanContainer;
@@ -47,11 +48,14 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
+import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
+import gcm.scenario.GlobalComponentId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
@@ -84,7 +88,8 @@ public class AT_EnvironmentImpl_23 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_EnvironmentImpl_23.class.getSimpleName() + " "
+		// + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -146,7 +151,8 @@ public class AT_EnvironmentImpl_23 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#observePopulationIndexChange(boolean, Object)}
+	 * Tests
+	 * {@link EnvironmentImpl#observePopulationIndexChange(boolean, Object)}
 	 */
 	@Test
 	public void testObservePopulationIndexChange() {
@@ -777,15 +783,15 @@ public class AT_EnvironmentImpl_23 {
 		 *
 		 * Actions
 		 *
-		 * Time 1 : Region 1 starts observation 
+		 * Time 1 : Region 1 starts observation
 		 *
-		 * Time 2 : Region 2 starts observation 
+		 * Time 2 : Region 2 starts observation
 		 * 
 		 * Time 3 : Region 2 changes its Property P value
 		 *
-		 * Time 4 : Region 1 stops observation 
+		 * Time 4 : Region 1 stops observation
 		 *
-		 * Time 5 : Compartment 1 starts observation 
+		 * Time 5 : Compartment 1 starts observation
 		 *
 		 * Time 6 : Region 2 changes its Property P value
 		 *
@@ -878,14 +884,14 @@ public class AT_EnvironmentImpl_23 {
 		});
 
 		/*
-		 * Time 4 : Region 1 stops observation 
+		 * Time 4 : Region 1 stops observation
 		 */
 		taskPlanContainer.addTaskPlan(TestRegionId.REGION_1, testTime++, (environment) -> {
-			environment.observeGlobalRegionPropertyChange(false,  selectedRegionPropertyId);
+			environment.observeGlobalRegionPropertyChange(false, selectedRegionPropertyId);
 		});
 
 		/*
-		 * Time 5 : Compartment 1 starts observation 
+		 * Time 5 : Compartment 1 starts observation
 		 */
 		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_1, testTime++, (environment) -> {
 			environment.observeGlobalRegionPropertyChange(true, selectedRegionPropertyId);
@@ -905,8 +911,7 @@ public class AT_EnvironmentImpl_23 {
 			// if the property id is null
 			assertModelException(() -> environment.observeGlobalRegionPropertyChange(true, null), SimulationErrorType.NULL_REGION_PROPERTY_ID);
 			// if the property is unknown
-			assertModelException(() -> environment.observeGlobalRegionPropertyChange(true, TestRegionPropertyId.getUnknownRegionPropertyId()),
-					SimulationErrorType.UNKNOWN_REGION_PROPERTY_ID);
+			assertModelException(() -> environment.observeGlobalRegionPropertyChange(true, TestRegionPropertyId.getUnknownRegionPropertyId()), SimulationErrorType.UNKNOWN_REGION_PROPERTY_ID);
 		});
 
 		Simulation simulation = new Simulation();
@@ -944,4 +949,193 @@ public class AT_EnvironmentImpl_23 {
 		assertEquals(expectedObservations, actualObservations);
 
 	}
+
+	/**
+	 * Tests {@link EnvironmentImpl#getSuggestedPopulationSize()}
+	 */
+	@Test
+	public void testGetSuggestedPopulationSize() {
+		/*
+		 * Assert that we can retrieve the expected suggested population size.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+		scenarioBuilder.setSuggestedPopulationSize(345);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			assertEquals(345, environment.getSuggestedPopulationSize());
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests {@link EnvironmentImpl#getRandomNumberGeneratorIds()}
+	 */
+	@Test
+	public void testGetRandomNumberGeneratorIds() {
+		/*
+		 * Assert that we can retrieve the expected suggested population size.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(6);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+
+		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
+		randomNumberGeneratorIds.add(RandomGeneratorId.DANCER);
+		randomNumberGeneratorIds.add(RandomGeneratorId.COMET);
+		randomNumberGeneratorIds.add(RandomGeneratorId.VIXEN);
+
+		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
+			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
+		}
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			assertEquals(randomNumberGeneratorIds, environment.getRandomNumberGeneratorIds());
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getRandomGeneratorFromId(RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetRandomGeneratorFromId() {
+		/*
+		 * Assert that we can retrieve the expected suggested population size.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(7);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+
+		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
+		randomNumberGeneratorIds.add(RandomGeneratorId.DANCER);
+		randomNumberGeneratorIds.add(RandomGeneratorId.COMET);
+		randomNumberGeneratorIds.add(RandomGeneratorId.VIXEN);
+
+		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
+			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
+		}
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			assertEquals(randomNumberGeneratorIds, environment.getRandomNumberGeneratorIds());
+
+			for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
+				assertNotNull(environment.getRandomGeneratorFromId(randomNumberGeneratorId));
+			}
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#addGlobalComponent(GlobalComponentId, Class)}
+	 */
+	@Test
+	public void testAddGlobalComponent() {
+		/*
+		 * Assert that we can retrieve the expected suggested population size.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(8);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		GlobalComponentId globalComponentId = new GlobalComponentId() {
+		};
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			// We create the global component
+			environment.addGlobalComponent(globalComponentId, TaskComponent.class);
+		});
+
+		taskPlanContainer.addTaskPlan(globalComponentId, testTime++, (environment) -> {
+			// the newly created global component now executes this task plan
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		// If both task plans were executed, then we know that the new global
+		// component was created
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
 }

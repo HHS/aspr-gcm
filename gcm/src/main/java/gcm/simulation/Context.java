@@ -297,9 +297,7 @@ public final class Context implements MemoryReportParticipant {
 		 *             if the replication is null
 		 */
 		public void setReplication(final Replication replication) {
-			if (replication == null) {
-				throw new RuntimeException("Replication is null");
-			}
+			
 			scaffold.replication = replication;
 		}
 
@@ -322,10 +320,7 @@ public final class Context implements MemoryReportParticipant {
 		 * @throws RuntimeException
 		 *             if the scenario is null
 		 */
-		public void setScenario(final Scenario scenario) {
-			if (scenario == null) {
-				throw new IllegalArgumentException("Scenario is null");
-			}
+		public void setScenario(final Scenario scenario) {			
 			scaffold.scenario = scenario;
 		}
 	}

@@ -790,6 +790,7 @@ public class AT_EnvironmentImpl_03 {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
+			PersonId excludedPersonId = new PersonId(0);
 			/*
 			 * Create a group with no people
 			 */
@@ -798,7 +799,7 @@ public class AT_EnvironmentImpl_03 {
 			// Show that an empty group returns no people
 			int sampleCount = 10;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusion(groupId,excludedPersonId);
 				assertFalse(nonWeightedGroupContact.isPresent());
 
 			}

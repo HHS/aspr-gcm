@@ -71,6 +71,7 @@ import gcm.automated.AT_PropertyDefinition;
 import gcm.automated.AT_ReplicationImpl;
 import gcm.automated.AT_ReportPeriod;
 import gcm.automated.AT_Simulation;
+import gcm.automated.AT_Simulation_SetScenario;
 import gcm.automated.AT_SimulationErrorType;
 import gcm.automated.AT_SphericalArc;
 import gcm.automated.AT_SphericalPoint;
@@ -98,7 +99,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ 
 	AT_ReplicationImpl.class,
-	AT_Simulation.class,
+	AT_Simulation_SetScenario.class,
 	AT_EnvironmentImpl_01.class,
 	AT_EnvironmentImpl_02.class,
 	AT_EnvironmentImpl_03.class,
@@ -178,7 +179,8 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_MapPathSolver.class,
 	AT_ArrayPathSolver.class,
 	AT_BinContainer.class,
-	AT_ImmutableStat.class
+	AT_ImmutableStat.class,
+	AT_Simulation.class
 	})
 
 public class SuiteTest {

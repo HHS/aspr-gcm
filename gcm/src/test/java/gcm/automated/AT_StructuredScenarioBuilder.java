@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import gcm.automated.AT_Simulation.EmptyComponent;
+import gcm.automated.AT_Simulation_SetScenario.EmptyComponent;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGlobalPropertyId;

@@ -15,7 +15,7 @@ import org.apache.commons.math3.random.Well44497b;
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import gcm.automated.AT_Simulation.EmptyComponent;
+import gcm.automated.AT_Simulation_SetScenario.EmptyComponent;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;

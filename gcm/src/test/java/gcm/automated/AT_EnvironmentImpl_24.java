@@ -10,11 +10,17 @@ import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.AfterClass;
@@ -26,18 +32,23 @@ import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.replication.Replication;
+import gcm.scenario.GroupId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
+import gcm.simulation.BiWeightingFunction;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Filter;
+import gcm.simulation.MonoWeightingFunction;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
@@ -59,7 +70,8 @@ public class AT_EnvironmentImpl_24 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//		System.out.println(AT_EnvironmentImpl_24.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_EnvironmentImpl_24.class.getSimpleName() + " "
+		// + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -173,7 +185,6 @@ public class AT_EnvironmentImpl_24 {
 		Object key30 = new Object();
 		Object key40 = new Object();
 		Object key50 = new Object();
-		
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			assert (environment.getPopulationCount() >= 30);
@@ -201,22 +212,22 @@ public class AT_EnvironmentImpl_24 {
 				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key30, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
-				assertTrue(personId.getValue()>=0);
-				assertTrue(personId.getValue()<10);				
+				assertTrue(personId.getValue() >= 0);
+				assertTrue(personId.getValue() < 10);
 			}
 			for (int i = 0; i < 100; i++) {
 				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key40, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
-				assertTrue(personId.getValue()>=10);
-				assertTrue(personId.getValue()<20);				
+				assertTrue(personId.getValue() >= 10);
+				assertTrue(personId.getValue() < 20);
 			}
 			for (int i = 0; i < 100; i++) {
 				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key50, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
-				assertTrue(personId.getValue()>=20);
-				assertTrue(personId.getValue()<30);				
+				assertTrue(personId.getValue() >= 20);
+				assertTrue(personId.getValue() < 30);
 			}
 		});
 
@@ -228,7 +239,7 @@ public class AT_EnvironmentImpl_24 {
 
 			// if the key does not correspond to an existing population index
 			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(new Object(), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-			
+
 			// if the randomNumberGeneratorId is null
 			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
@@ -244,7 +255,694 @@ public class AT_EnvironmentImpl_24 {
 
 		assertAllPlansExecuted(taskPlanContainer);
 	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getRandomIndexedPersonWithExclusionFromGenerator(PersonId, Object, RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetRandomIndexedPersonWithExclusionFromGenerator() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 30);
+		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1;
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
+		Map<Object, PropertyDefinition> forcedPropertyDefinitions = new LinkedHashMap<>();
+		forcedPropertyDefinitions.put(personPropertyId, propertyDefinition);
+		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		Object key30 = new Object();
+		Object key40 = new Object();
+		Object key50 = new Object();
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			assert (environment.getPopulationCount() >= 30);
+
+			for (int i = 0; i < 10; i++) {
+				PersonId personId = new PersonId(i);
+				environment.setPersonPropertyValue(personId, personPropertyId, 30);
+			}
+
+			for (int i = 0; i < 10; i++) {
+				PersonId personId = new PersonId(i + 10);
+				environment.setPersonPropertyValue(personId, personPropertyId, 40);
+			}
+
+			for (int i = 0; i < 10; i++) {
+				PersonId personId = new PersonId(i + 20);
+				environment.setPersonPropertyValue(personId, personPropertyId, 50);
+			}
+
+			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 30), key30);
+			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 40), key40);
+			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 50), key50);
+
+			for (int i = 0; i < 100; i++) {
+				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key30, RandomGeneratorId.BLITZEN);
+				assertTrue(personIdOptional.isPresent());
+				PersonId personId = personIdOptional.get();
+				assertTrue(personId.getValue() >= 0);
+				assertTrue(personId.getValue() < 10);
+				assertNotEquals(excludedPersonId, personId);
+			}
+			for (int i = 0; i < 100; i++) {
+				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key40, RandomGeneratorId.BLITZEN);
+				assertTrue(personIdOptional.isPresent());
+				PersonId personId = personIdOptional.get();
+				assertTrue(personId.getValue() >= 10);
+				assertTrue(personId.getValue() < 20);
+				assertNotEquals(excludedPersonId, personId);
+			}
+			for (int i = 0; i < 100; i++) {
+				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key50, RandomGeneratorId.BLITZEN);
+				assertTrue(personIdOptional.isPresent());
+				PersonId personId = personIdOptional.get();
+				assertTrue(personId.getValue() >= 20);
+				assertTrue(personId.getValue() < 30);
+				assertNotEquals(excludedPersonId, personId);
+			}
+		});
+
+		// precondition tests
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			// if the excluded person is null
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(null, key30, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_PERSON_ID);
+
+			// if the excluded person is unknown
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(100000), key30, RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_PERSON_ID);
+
+			// if the key is null
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+
+			// if the key does not correspond to an existing population index
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), new Object(), RandomGeneratorId.BLITZEN),
+					SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
+
+			// if the randomNumberGeneratorId is null
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+
+			// if the randomNumberGeneratorId is unknown
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), key30, RandomGeneratorId.COMET),
+					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/*
+	 * Utility class for getting random people from population indices
+	 */
+	private static class Counter {
+		int count;
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getMonoWeightedGroupContactFromGenerator(GroupId, MonoWeightingFunction, RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetMonoWeightedGroupContactFromGenerator() {
+
+		/*
+		 * Assert that group contacts via MonoWeightingFunctions work properly
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(3);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 0;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			/*
+			 * Add a group
+			 */
+			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			final int groupSize = 20;
+
+			/*
+			 * Add the first 20 people to the group
+			 */
+			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
+				PersonId personId = new PersonId(personIndex);
+				environment.addPersonToGroup(personId, groupId);
+			}
+
+			/*
+			 * Force the random selection of a person from the group to person 3
+			 */
+			Optional<PersonId> opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getPerson3MonoWeight,RandomGeneratorId.BLITZEN);
+			assertTrue(opt.isPresent());
+			assertEquals(3, opt.get().getValue());
+
+			// use a uniform distribution with 10000 repetitions
+
+			final Map<Integer, Counter> hits = new LinkedHashMap<>();
+			for (int personId = 0; personId < groupSize; personId++) {
+				hits.put(personId, new Counter());
+			}
+			for (int i = 0; i < 10000; i++) {
+				opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantMonoWeight,RandomGeneratorId.BLITZEN);
+				assertTrue(opt.isPresent());
+				hits.get(opt.get().getValue()).count++;
+			}
+			// show that each person was selected about 500 times
+			for (final Integer personId : hits.keySet()) {
+				final Counter counter = hits.get(personId);
+				assertTrue(counter.count > 400);
+				assertTrue(counter.count < 600);
+			}
+
+		});
+
+		// show that a weighting function that returns all zeros will result in
+		// an optional where no value is present
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			final int groupSize = 20;
+
+			/*
+			 * Add the first 20 people to the group
+			 */
+			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
+				PersonId personId = new PersonId(personIndex);
+				environment.addPersonToGroup(personId, groupId);
+			}
+			Optional<PersonId> opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getZeroMonoWeight,RandomGeneratorId.BLITZEN);
+			assertTrue(!opt.isPresent());
+		});
+
+		// test preconditions
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			// if the group id is null
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(null, EnvironmentSupport::getConstantMonoWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
+			// if the group id is unknown(group does not exist) *
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
+			// if the monoWeightingFunction is null
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), null,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+			// if the monoWeightingFunction is malformed. (all invocations
+			// evaluate to zero, some evaluate to negative numbers, etc.)
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
+			// if the random generator id is null
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantMonoWeight,null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			// if the group id is unknown(group does not exist) *
+			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantMonoWeight,RandomGeneratorId.DONNER), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+		});
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getBiWeightedGroupContactFromGenerator(GroupId, PersonId, boolean, BiWeightingFunction, RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetBiWeightedGroupContactFromGenerator() {
+
+		/*
+		 * Assert that group contacts via BiWeightingFunctions work properly
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(4);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			/*
+			 * Add a group
+			 */
+			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			final int groupSize = 20;
+
+			/*
+			 * Add the first 20 people to the group
+			 */
+			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
+				environment.addPersonToGroup(new PersonId(personIndex), groupId);
+			}
+
+			/*
+			 * Force the random selection of a person from the group to person 3
+			 */
+			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getPerson3BiWeight,RandomGeneratorId.BLITZEN);
+			assertTrue(opt.isPresent());
+			assertEquals(3, opt.get().getValue());
+
+			// use a uniform distribution with 10000 repetitions
+			final Map<Integer, Counter> hits = new LinkedHashMap<>();
+			for (int personId = 0; personId < groupSize; personId++) {
+				hits.put(personId, new Counter());
+			}
+
+			/*
+			 * using exclusion, select 10000 times from the group and show that
+			 * person 0 is never selected and that all other people get selected
+			 * a reasonable number of times
+			 */
+			for (int i = 0; i < 10000; i++) {
+				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN);
+				assertTrue(opt.isPresent());
+				hits.get(opt.get().getValue()).count++;
+			}
+			// show that each person was selected about 500 times
+			for (final Integer personId : hits.keySet()) {
+				final Counter counter = hits.get(personId);
+				if (personId.equals(0)) {
+					assertEquals(counter.count, 0);
+				} else {
+					assertTrue(counter.count > 400);
+					assertTrue(counter.count < 600);
+				}
+			}
+			/*
+			 * using inclusion, select 10000 times from the group and show that
+			 * all people get selected a reasonable number of times
+			 */
+			for (final Counter counter : hits.values()) {
+				counter.count = 0;
+			}
+			for (int i = 0; i < 10000; i++) {
+				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN);
+				assertTrue(opt.isPresent());
+				hits.get(opt.get().getValue()).count++;
+			}
+			// show that each person was selected about 500 times
+			for (final Integer personId : hits.keySet()) {
+				final Counter counter = hits.get(personId);
+				assertTrue(counter.count > 400);
+				assertTrue(counter.count < 600);
+			}
+		});
+
+		// show that a weighting function that returns all zeros will result in
+		// an optional where no value is present
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			final int groupSize = 20;
+
+			/*
+			 * Add the first 20 people to the group
+			 */
+			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
+				environment.addPersonToGroup(new PersonId(personIndex), groupId);
+			}
+			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getZeroBiWeight,RandomGeneratorId.BLITZEN);
+			assertTrue(!opt.isPresent());
+		});
+
+		// test preconditions
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			// if the group id is null
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(null, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
+			// if the group id is unknown(group does not exist) *
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(-1), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
+			// if the source person id is null
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), null, true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_PERSON_ID);
+			// if the source person id is unknown
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(-1), true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_PERSON_ID);
+			// if the biWeightingFunction is null
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, null,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+			// if the biWeightingFunction is malformed. (some evaluate to
+			// negative numbers, etc.)
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getNegativeBiWeight,RandomGeneratorId.BLITZEN),
+					SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
+			// if the group id is null
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight,null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			// if the group id is unknown(group does not exist) *
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight,RandomGeneratorId.CUPID), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+		});
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
 	
-	
+	/**
+	 * Tests {@link EnvironmentImpl#getNonWeightedGroupContactFromGenerator(GroupId, RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetNonWeightedGroupContactFromGenerator() {
+
+		/*
+		 * Show that we can retrieve people randomly from a group.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			/*
+			 * put some people in a group
+			 */
+			int groupSize = environment.getPopulationCount() / 2;
+
+			/*
+			 * show that there will enough people in the group. This will also
+			 * demonstrate that there are people who will not be in the group
+			 */
+			assertTrue(groupSize > 10);
+
+			/*
+			 * Create the group and fill it with random people
+			 */
+			GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			List<PersonId> people = environment.getPeople();
+			Collections.shuffle(people, new Random(environment.getRandomGenerator().nextLong()));
+			for (int i = 0; i < groupSize; i++) {
+				PersonId personId = people.get(i);
+				environment.addPersonToGroup(personId, groupId);
+			}
+
+			/*
+			 * Sample random people from the group and count how often each
+			 * person is selected. Show that the returned people are members of
+			 * the group.
+			 */
+			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
+			int sampleCount = groupSize * 100;
+			for (int i = 0; i < sampleCount; i++) {
+				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactFromGenerator(groupId,RandomGeneratorId.BLITZEN);
+				assertTrue(nonWeightedGroupContact.isPresent());
+				PersonId selectedPersonId = nonWeightedGroupContact.get();
+				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
+				Counter counter = counterMap.get(selectedPersonId);
+				if (counter == null) {
+					counter = new Counter();
+					counterMap.put(selectedPersonId, counter);
+				}
+				counter.count++;
+			}
+
+			// Show that each person is selected a reasonable number of
+			// times.
+
+			List<PersonId> peopleInGroup = environment.getPeopleForGroup(groupId);
+			assertEquals(groupSize, peopleInGroup.size());
+			for (final PersonId personId : peopleInGroup) {
+				final Counter counter = counterMap.get(personId);
+				assertNotNull(counter);
+				assertTrue(counter.count > 50);
+				assertTrue(counter.count < 150);
+			}
+
+		});
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			/*
+			 * Create a group with no people
+			 */
+			GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			// Show that an empty group returns no people
+			int sampleCount = 10;
+			for (int i = 0; i < sampleCount; i++) {
+				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactFromGenerator(groupId,RandomGeneratorId.BLITZEN);
+				assertFalse(nonWeightedGroupContact.isPresent());
+
+			}
+
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			// if the group id is null
+			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(null,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
+			// if the group id is unknown
+			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(-5),RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
+			// if the random generator id is null
+			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(0),null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			// if the random generator id is unknown
+			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(0),RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusionFromGenerator(GroupId, PersonId, RandomNumberGeneratorId)}
+	 */
+	@Test
+	public void testGetNonWeightedGroupContactWithExclusionFromGenerator() {
+
+		/*
+		 * Show that we can retrieve people randomly from a group.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(6);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			/*
+			 * put some people in a group
+			 */
+			int groupSize = environment.getPopulationCount() / 2;
+
+			/*
+			 * show that there will enough people in the group. This will also
+			 * demonstrate that there are people who will not be in the group
+			 */
+			assertTrue(groupSize > 10);
+
+			/*
+			 * Create the group and fill it with random people
+			 */
+			GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+			List<PersonId> people = environment.getPeople();
+			Collections.shuffle(people, new Random(environment.getRandomGenerator().nextLong()));
+			for (int i = 0; i < groupSize; i++) {
+				PersonId personId = people.get(i);
+				environment.addPersonToGroup(personId, groupId);
+			}
+
+			/*
+			 * Sample random people from the group and count how often each
+			 * person is selected. Show that the returned people are members of
+			 * the group.
+			 */
+			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
+			int sampleCount = groupSize * 100;
+			// pick a random person from the group to exclude
+			Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+			assertTrue(nonWeightedGroupContact.isPresent());
+			PersonId excludedPersonId = nonWeightedGroupContact.get();
+
+			for (int i = 0; i < sampleCount; i++) {
+				nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, excludedPersonId,RandomGeneratorId.BLITZEN);
+				assertTrue(nonWeightedGroupContact.isPresent());
+				PersonId selectedPersonId = nonWeightedGroupContact.get();
+				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
+				Counter counter = counterMap.get(selectedPersonId);
+				if (counter == null) {
+					counter = new Counter();
+					counterMap.put(selectedPersonId, counter);
+				}
+				counter.count++;
+			}
+			// Show that each person is selected a reasonable number of
+			// times other than the excluded person, who should never be
+			// selected.
+			List<PersonId> peopleInGroup = environment.getPeopleForGroup(groupId);
+			assertEquals(groupSize, peopleInGroup.size());
+			for (final PersonId personId : peopleInGroup) {
+				if (!personId.equals(excludedPersonId)) {
+					final Counter counter = counterMap.get(personId);
+					assertNotNull(counter);
+					assertTrue(counter.count > 50);
+					assertTrue(counter.count < 150);
+				}
+			}
+			assertFalse(counterMap.containsKey(excludedPersonId));
+
+			// pick a random person from outside group to exclude
+			counterMap.clear();
+			excludedPersonId = null;
+			for (PersonId personId : environment.getPeople()) {
+				if (!environment.isGroupMember(personId, groupId)) {
+					excludedPersonId = personId;
+				}
+			}
+			assertNotNull(excludedPersonId);
+
+			for (int i = 0; i < sampleCount; i++) {
+				nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, excludedPersonId,RandomGeneratorId.BLITZEN);
+				assertTrue(nonWeightedGroupContact.isPresent());
+				PersonId selectedPersonId = nonWeightedGroupContact.get();
+				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
+				Counter counter = counterMap.get(selectedPersonId);
+				if (counter == null) {
+					counter = new Counter();
+					counterMap.put(selectedPersonId, counter);
+				}
+				counter.count++;
+			}
+			// Show that each person is selected a reasonable number of
+			// times.
+
+			for (final PersonId personId : peopleInGroup) {
+				final Counter counter = counterMap.get(personId);
+				assertNotNull(counter);
+				assertTrue(counter.count > 50);
+				assertTrue(counter.count < 150);
+			}
+			assertFalse(counterMap.containsKey(excludedPersonId));
+
+		});
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			PersonId excludedPersonId = new PersonId(0);
+			/*
+			 * Create a group with no people
+			 */
+			GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
+
+			// Show that an empty group returns no people
+			int sampleCount = 10;
+			for (int i = 0; i < sampleCount; i++) {
+				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId,excludedPersonId,RandomGeneratorId.BLITZEN);
+				assertFalse(nonWeightedGroupContact.isPresent());
+
+			}
+
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			PersonId excludedPersonId = environment.getPeople().get(0);
+			GroupId groupId = environment.getGroupIds().get(0);
+
+			// if the group id is null
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(null, excludedPersonId,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
+			// if the group id is unknown
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(new GroupId(-5), excludedPersonId,RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
+			// if the person id is null
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, null,RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_PERSON_ID);
+			// if the person id is unknown
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, new PersonId(-1),RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_PERSON_ID);
+			// if the group id is null
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, excludedPersonId,null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			// if the group id is unknown
+			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusionFromGenerator(groupId, excludedPersonId,RandomGeneratorId.DANCER), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+
+	}
 
 }

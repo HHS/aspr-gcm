@@ -476,16 +476,8 @@ public class TestPlanScript {
 		demonstrateEachProxiedSourceClassLinksToATestedSourceClass();
 
 		demonstrateEachTestClassHasALegitimateSourceClass();
-
-		/*
-		 * Does each method of a tested source class have a corresponding test
-		 * method in each of its test classes?
-		 */
+		
 		demonstrateEachSourceMethodHasATestMethod();
-
-		/*
-		 * Does each method of a test class test a source class method?
-		 */
 
 		demonstrateTestSuiteCompleteness();
 

@@ -35,19 +35,14 @@ public final class SourceFileInvestigator {
 
 		@Override
 		public FileVisitResult visitFile(Path file, BasicFileAttributes attr) {
-
-			
 			if (FileClassUtil.isJavaFile(file)) {
-				Class<?> c = FileClassUtil.getClassFromFile(sourcePath, file);	
-				
-				
+				Class<?> c = FileClassUtil.getClassFromFile(sourcePath, file);
 				if (!c.isAnnotation() && !c.isInterface()) {
 					Source source = c.getAnnotation(Source.class);					
 					SourceClassRec sourceClassRec = new SourceClassRec(c, source);
 					sourceClassRecs.add(sourceClassRec);
 				}
 			}
-
 			return FileVisitResult.CONTINUE;
 		}
 

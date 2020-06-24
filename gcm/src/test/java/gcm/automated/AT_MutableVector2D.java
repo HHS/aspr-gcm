@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.spherical.Chirality;
 import gcm.util.vector.MutableVector2D;
 import gcm.util.vector.MutableVector3D;
@@ -1138,7 +1139,8 @@ public class AT_MutableVector2D {
 	 * 
 	 * Tests {@linkplain MutableVector2D#rotateToward(Vector2D, double)}
 	 */
-	@Test
+	@UnitTestMethod(name = "rotateToward", args= {MutableVector2D.class, double.class})
+	@Test	
 	public void testRotateToward() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(11);

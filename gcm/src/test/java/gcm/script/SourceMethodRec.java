@@ -23,7 +23,7 @@ public final class SourceMethodRec {
 		return methods.get(index);
 	}
 	
-	public void addMethod(Method method) {
+	public void addMethod(Method method) {				
 		methods.add(method);
 	}
 	public String getName() {

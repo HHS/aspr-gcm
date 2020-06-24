@@ -416,7 +416,7 @@ public class AT_Earth {
 	/**
 	 * Tests {@linkplain Earth#getGroundDistanceFromLatLon(LatLon, LatLon))
 	 */
-	@Test
+	@Test	
 	public void testGetGroundDistanceFromLatLon() {
 
 		// covered by testGetGroundDistanceFromECC()

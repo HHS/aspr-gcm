@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.BinContainer;
 import gcm.util.stats.BinContainer.Bin;
 
@@ -25,6 +26,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#builder(double)} construction
 	 */
 	@Test
+	@UnitTestMethod(name="builder", args= {double.class})
 	public void testBuilder() {
 
 		assertException(() -> BinContainer.builder(0), RuntimeException.class);
@@ -33,9 +35,9 @@ public class AT_BinContainer {
 	}
 
 	/**
-	 * Tests {@link BinContainer#addValue(double, int)}
+	 * Tests {@link BinContainer.Builder#addValue(double, int)}
 	 */
-	@Test
+	@Test	
 	public void testAddValue() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -68,6 +70,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#binCount()}
 	 */
 	@Test
+	@UnitTestMethod(name="binCount", args= {})
 	public void testBinCount() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -85,6 +88,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#getBin(int)}
 	 */
 	@Test
+	@UnitTestMethod(name="getBin", args= {int.class})
 	public void testGetBin() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);

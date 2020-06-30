@@ -38,6 +38,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -56,14 +57,15 @@ public class AT_EnvironmentImpl_18 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByGroup(boolean,
-	 * GroupId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDepartureByGroup(boolean, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDepartureByGroup", args = { boolean.class, GroupId.class })
 	public void testObserveGroupDepartureByGroup() {
 		/*
 		 *
@@ -207,11 +209,11 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain
-	 * EnvironmentImpl#observeGroupDepartureByGroupAndPerson(boolean, GroupId,
-	 * PersonId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDepartureByGroupAndPerson(boolean, GroupId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDepartureByGroupAndPerson", args = { boolean.class, GroupId.class, PersonId.class })
 	public void testObserveGroupDepartureByGroupAndPerson() {
 		/*
 		 * 
@@ -351,10 +353,11 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByPerson(boolean,
-	 * PersonId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDepartureByPerson(boolean, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDepartureByPerson", args = { boolean.class, PersonId.class })
 	public void testObserveGroupDepartureByPerson() {
 		/*
 		 * 
@@ -499,10 +502,11 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDepartureByType(boolean,
-	 * GroupTypeId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDepartureByType(boolean, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDepartureByType", args = { boolean.class, GroupTypeId.class })
 	public void testObserveGroupDepartureByType() {
 		/*
 		 * 
@@ -662,11 +666,11 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain
-	 * EnvironmentImpl#observeGroupDepartureByTypeAndPerson(boolean, GroupTypeId,
-	 * PersonId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDepartureByTypeAndPerson(boolean, GroupTypeId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDepartureByTypeAndPerson", args = { boolean.class, GroupTypeId.class, PersonId.class })
 	public void testObserveGroupDepartureByTypeAndPerson() {
 		/*
 		 * 
@@ -823,9 +827,10 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDestruction(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDestruction(boolean)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDestruction", args = { boolean.class })
 	public void testObserveGroupDestruction() {
 		/*
 		 * 
@@ -934,10 +939,11 @@ public class AT_EnvironmentImpl_18 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDestructionByGroup(boolean,
-	 * GroupId)
+	 * Tests
+	 * {@linkplain EnvironmentImpl#observeGroupDestructionByGroup(boolean, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDestructionByGroup", args = { boolean.class, GroupId.class })
 	public void testObserveGroupDestructionByGroup() {
 		/*
 		 * 
@@ -1059,5 +1065,4 @@ public class AT_EnvironmentImpl_18 {
 		assertEquals(expectedObservations, actualObservations);
 	}
 
-	
 }

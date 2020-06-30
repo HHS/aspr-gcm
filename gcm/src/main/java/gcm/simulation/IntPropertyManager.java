@@ -15,7 +15,7 @@ import gcm.util.containers.IntValueContainer.IntValueType;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class IntPropertyManager extends AbstractPropertyManager {
 
 	/*

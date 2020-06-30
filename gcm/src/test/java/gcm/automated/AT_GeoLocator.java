@@ -22,6 +22,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
@@ -87,6 +88,7 @@ public class AT_GeoLocator {
 	 * Tests {@link GeoLocator#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args= {})
 	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -95,9 +97,10 @@ public class AT_GeoLocator {
 	}
 
 	/**
-	 * Tests {@link GeoLocator#getLocations()}
+	 * Tests {@link GeoLocator#getLocations(double, double, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getLocations", args= {double.class, double.class, double.class})
 	public void testGetLocations() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -134,9 +137,10 @@ public class AT_GeoLocator {
 	}
 
 	/**
-	 * Tests {@link GeoLocator#getNearestLocation()}
+	 * Tests {@link GeoLocator#getNearestLocation(double, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNearestLocation", args= {double.class, double.class})
 	public void testGetNearestLocation() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -181,9 +185,10 @@ public class AT_GeoLocator {
 	}
 
 	/**
-	 * Tests {@link GeoLocator#getPrioritizedLocations()}
+	 * Tests {@link GeoLocator#getPrioritizedLocations(double, double, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPrioritizedLocations", args= {double.class, double.class, double.class})
 	public void testGetPrioritizedLocations() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

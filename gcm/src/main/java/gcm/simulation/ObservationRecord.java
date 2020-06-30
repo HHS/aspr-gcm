@@ -25,7 +25,7 @@ import gcm.util.annotations.TestStatus;
  * remaining keys containing the ordered set of arguments that are needed for
  * that observation method.
  */
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class ObservationRecord {
 	private final ComponentId componentId;
 	private final Object[] arguments;

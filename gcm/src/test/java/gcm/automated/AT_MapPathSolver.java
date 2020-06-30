@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.path.MapPathSolver;
 import gcm.util.path.Path;
@@ -45,7 +46,7 @@ public class AT_MapPathSolver {
 			return edge.cost();
 		}
 	};
-	
+
 	private static class Edge {
 		private final Node originNode;
 		private final Node destinationNode;
@@ -84,14 +85,13 @@ public class AT_MapPathSolver {
 		}
 
 	}
+
 	/**
-	 * Tests
-	 * {@link MapPathSolver#getPath(Object, Object)}
+	 * Tests {@link MapPathSolver#getPath(Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPath", args = { Object.class, Object.class })
 	public void testGetPath() {
-		
-		
 
 		// create a few nodes
 		Node nodeA = new Node("A", new Vector2D(15, 7));
@@ -128,7 +128,7 @@ public class AT_MapPathSolver {
 		Graph.Builder<Node, Edge> graphBuilder = Graph.builder();
 		edges.forEach(edge -> graphBuilder.addEdge(edge, edge.originNode, edge.destinationNode));
 		Graph<Node, Edge> graph = graphBuilder.build();
-		
+
 		PathSolver<Node, Edge> pathSolver = new MapPathSolver<>(graph, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 
 		Path.Builder<Edge> pathBuilder = Path.builder();
@@ -173,5 +173,4 @@ public class AT_MapPathSolver {
 
 	}
 
-	
 }

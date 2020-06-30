@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.graph.MutableGraph;
 
@@ -26,7 +27,13 @@ import gcm.util.graph.MutableGraph;
 @UnitTest(target = MutableGraph.class)
 public class AT_MutableGraph {
 
-	private void testAddAllForMutableGraph() {
+
+	/**
+	 * Tests {@link MutableGraph#addAll(MutableGraph)}
+	 */
+	@Test	
+	@UnitTestMethod(name = "addAll", args = {MutableGraph.class})
+	public void testAddAllForMutableGraph() {
 		MutableGraph<String, String> mutableGraph1 = new MutableGraph<>();
 		mutableGraph1.addEdge("A->B", "A", "B");
 		mutableGraph1.addEdge("A->C", "A", "C");
@@ -75,7 +82,13 @@ public class AT_MutableGraph {
 		assertEquals("A", mutableGraph1.getDestinationNode("B->A"));
 	}
 
-	private void testAddAllForGraph() {
+	
+	/**
+	 * Tests {@link MutableGraph#addAll(Graph)}
+	 */
+	@Test	
+	@UnitTestMethod(name = "addAll", args = {Graph.class})
+	public void testAddAllForGraph() {
 		MutableGraph<String, String> mutableGraph1 = new MutableGraph<>();
 		mutableGraph1.addEdge("A->B", "A", "B");
 		mutableGraph1.addEdge("A->C", "A", "C");
@@ -123,21 +136,12 @@ public class AT_MutableGraph {
 		assertEquals("A", mutableGraph1.getDestinationNode("B->A"));
 	}
 
-	/**
-	 * Tests {@link MutableGraph#addAll(Graph)}
-	 * 
-	 * Tests {@link MutableGraph#addAll(MutableGraph)}
-	 */
-	@Test
-	public void testAddAll() {
-		testAddAllForMutableGraph();
-		testAddAllForGraph();
-	}
-
+	
 	/**
 	 * Tests {@link MutableGraph#addEdge(Object, Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addEdge", args = {Object.class, Object.class, Object.class})
 	public void testAddEdge() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -159,6 +163,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#addNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addNode", args = {Object.class})
 	public void testAddNode() {
 		MutableGraph<Integer, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addNode(1);
@@ -180,6 +185,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#containsEdge(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "containsEdge", args = {Object.class})
 	public void testContainsEdge() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -196,6 +202,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#containsNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "containsNode", args = {Object.class})
 	public void testContainsNode() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addNode("A");
@@ -208,12 +215,11 @@ public class AT_MutableGraph {
 	}
 
 	/**
-	 * Tests {@link MutableGraph#edgeCount()}
-	 * 
 	 * Tests {@link MutableGraph#edgeCount(Object, Object)}
 	 */
 	@Test
-	public void testEdgeCount() {
+	@UnitTestMethod(name = "edgeCount", args = {Object.class,Object.class})
+	public void testEdgeCount_WithNodes() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B_1", "A", "B");
 		mutableGraph.addEdge("A->B_2", "A", "B");
@@ -235,9 +241,37 @@ public class AT_MutableGraph {
 	}
 
 	/**
+	 * Tests {@link MutableGraph#edgeCount()}
+	 */
+	@Test
+	@UnitTestMethod(name = "edgeCount", args = {})
+	public void testEdgeCount_WithoutNodes() {
+		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
+		mutableGraph.addEdge("A->B_1", "A", "B");
+		mutableGraph.addEdge("A->B_2", "A", "B");
+		mutableGraph.addEdge("A->B_3", "A", "B");
+		mutableGraph.addEdge("A->C_1", "A", "C");
+		mutableGraph.addEdge("A->C_2", "A", "C");
+		mutableGraph.addEdge("B->C", "B", "C");
+		mutableGraph.addEdge("B->D_1", "B", "D");
+		mutableGraph.addEdge("A->D_2", "A", "D");
+
+		assertEquals(8, mutableGraph.edgeCount());
+
+		assertEquals(3, mutableGraph.edgeCount("A", "B"));
+		assertEquals(2, mutableGraph.edgeCount("A", "C"));
+		assertEquals(1, mutableGraph.edgeCount("B", "C"));
+		assertEquals(1, mutableGraph.edgeCount("B", "D"));
+		assertEquals(1, mutableGraph.edgeCount("A", "D"));
+		assertEquals(0, mutableGraph.edgeCount("C", "D"));
+	}
+
+	
+	/**
 	 * Tests {@link MutableGraph#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		MutableGraph<String, String> mutableGraph1 = new MutableGraph<>();
 		mutableGraph1.addEdge("A->B", "A", "B");
@@ -268,6 +302,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#formsEdgeRelationship(Object, Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "formsEdgeRelationship", args = {Object.class,Object.class,Object.class})
 	public void testFormsEdgeRelationship() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -288,6 +323,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getDestinationNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getDestinationNode", args = {Object.class})
 	public void testGetDestinationNode() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -306,6 +342,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getEdges(Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getEdges", args = {Object.class,Object.class})
 	public void testGetEdges() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -326,6 +363,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getInboundEdgeCount(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInboundEdgeCount", args = {Object.class})
 	public void testGetInboundEdgeCount() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -346,6 +384,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getInboundEdges(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInboundEdges", args = {Object.class})
 	public void testGetInboundEdges() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -383,6 +422,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getNodes()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNodes", args = {})
 	public void testGetNodes() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		List<String> nodes = new ArrayList<>();
@@ -410,6 +450,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getOriginNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOriginNode", args = {Object.class})
 	public void testGetOriginNode() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -431,6 +472,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getOutboundEdgeCount(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOutboundEdgeCount", args = {Object.class})
 	public void testGetOutboundEdgeCount() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -450,6 +492,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#getOutboundEdges(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOutboundEdges", args = {Object.class})
 	public void testGetOutboundEdges() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -486,6 +529,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		MutableGraph<String, String> mutableGraph1 = new MutableGraph<>();
 		mutableGraph1.addEdge("A->B", "A", "B");
@@ -529,6 +573,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#isEmpty()}
 	 */
 	@Test
+	@UnitTestMethod(name = "isEmpty", args = {})
 	public void testIsEmpty() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		assertTrue(mutableGraph.isEmpty());
@@ -544,6 +589,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#nodeCount()}
 	 */
 	@Test
+	@UnitTestMethod(name = "nodeCount", args = {})
 	public void testNodeCount() {
 		MutableGraph<Integer, String> mutableGraph = new MutableGraph<>();
 		assertEquals(0, mutableGraph.nodeCount());
@@ -562,6 +608,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#removeEdge(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removeEdge", args = {Object.class})
 	public void testRemoveEdge() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addEdge("A->B", "A", "B");
@@ -591,6 +638,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#removeNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removeNode", args = {Object.class})
 	public void testRemoveNode() {
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();
 		mutableGraph.addNode("A");
@@ -622,6 +670,7 @@ public class AT_MutableGraph {
 	 * Tests {@link MutableGraph#toGraph()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toGraph", args = {})
 	public void testToGraph() {
 
 		MutableGraph<String, String> mutableGraph = new MutableGraph<>();

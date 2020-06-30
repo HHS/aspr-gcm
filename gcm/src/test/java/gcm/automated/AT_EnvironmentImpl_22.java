@@ -37,6 +37,7 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
@@ -51,6 +52,7 @@ import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -69,15 +71,15 @@ public class AT_EnvironmentImpl_22 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
 	}
-
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#setResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId, Object)}
+	 * {@link EnvironmentImpl#setResourcePropertyValue(ResourceId, ResourcePropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 		/*
 		 * For each resource and resource property definition, set a new
@@ -235,6 +237,7 @@ public class AT_EnvironmentImpl_22 {
 	 * Tests {@link EnvironmentImpl#setStageOffer(StageId, boolean)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setStageOffer", args = { StageId.class, boolean.class })
 	public void testSetStageOffer() {
 		/*
 		 * Create stages and show that we can set the offer state at will
@@ -298,6 +301,7 @@ public class AT_EnvironmentImpl_22 {
 	 * Tests {@link EnvironmentImpl#shiftBatchContent(BatchId, BatchId, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "shiftBatchContent", args = { BatchId.class, BatchId.class, double.class })
 	public void testShiftBatchContent() {
 		/*
 		 * Show that we shift content between stages
@@ -433,6 +437,7 @@ public class AT_EnvironmentImpl_22 {
 	 * Tests {@link EnvironmentImpl#stageExists(StageId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "stageExists", args = { StageId.class })
 	public void testStageExists() {
 		/*
 		 * Show that stages exist as expected after construction and after
@@ -481,9 +486,10 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#transferOfferedStageToMaterialsProducer(StageId, gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#transferOfferedStageToMaterialsProducer(StageId, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "transferOfferedStageToMaterialsProducer", args = { StageId.class, MaterialsProducerId.class })
 	public void testTransferOfferedStageToMaterialsProducer() {
 		/*
 		 * Show that we transfer an offered stage from various component actors
@@ -642,9 +648,10 @@ public class AT_EnvironmentImpl_22 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#transferProducedResourceToRegion(gcm.scenario.MaterialsProducerId, ResourceId, RegionId, long)}
+	 * {@link EnvironmentImpl#transferProducedResourceToRegion(MaterialsProducerId, ResourceId, RegionId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "transferProducedResourceToRegion", args = { MaterialsProducerId.class, ResourceId.class, RegionId.class, long.class })
 	public void testTransferProducedResourceToRegion() {
 		/*
 		 * Show that we transfer a resource to a region
@@ -794,6 +801,7 @@ public class AT_EnvironmentImpl_22 {
 	 * {@link EnvironmentImpl#transferResourceBetweenRegions(ResourceId, RegionId, RegionId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "transferResourceBetweenRegions", args = { ResourceId.class, RegionId.class, RegionId.class, long.class})
 	public void testTransferResourceBetweenRegions() {
 		/*
 		 * For each pair of regions (distinct from one another) and each
@@ -946,6 +954,7 @@ public class AT_EnvironmentImpl_22 {
 	 * {@link EnvironmentImpl#transferResourceFromPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "transferResourceFromPerson", args = { ResourceId.class, PersonId.class, long.class})
 	public void testTransferResourceFromPerson() {
 		/*
 		 * For each person in each region and each resource type, transfer a
@@ -1042,12 +1051,10 @@ public class AT_EnvironmentImpl_22 {
 			 * ensure that the person has a positive amount to transfer
 			 */
 			final Object key = new Object();
-			final Filter filter = 
-					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-					
-					
+			final Filter filter =
+
+					compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
 
@@ -1109,10 +1116,8 @@ public class AT_EnvironmentImpl_22 {
 			 * from above we know that there should be sufficient resource
 			 */
 			final Object key = new Object();
-			final Filter filter = 					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));					
-					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
 
@@ -1130,11 +1135,8 @@ public class AT_EnvironmentImpl_22 {
 			 * from above we know that there should be sufficient resource
 			 */
 			final Object key = new Object();
-			final Filter filter =			
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-			
-			
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
 

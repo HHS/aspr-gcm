@@ -57,6 +57,7 @@ import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
+import gcm.scenario.RegionPropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
@@ -70,6 +71,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -96,6 +98,7 @@ public class AT_EnvironmentImpl_23 {
 	 * Tests {@link EnvironmentImpl#getPlanKeys()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPlanKeys", args = {})
 	public void testGetPlanKeys() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
@@ -155,6 +158,7 @@ public class AT_EnvironmentImpl_23 {
 	 * {@link EnvironmentImpl#observePopulationIndexChange(boolean, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observePopulationIndexChange", args = { boolean.class, Object.class })
 	public void testObservePopulationIndexChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -361,10 +365,11 @@ public class AT_EnvironmentImpl_23 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeStageTransferBySourceMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#observeStageTransferBySourceMaterialsProducerId(boolean, MaterialsProducerId)}
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeStageTransferBySourceMaterialsProducerId", args = { boolean.class, MaterialsProducerId.class })
 	public void testObserveStageTransferBySourceMaterialsProducerId() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -568,6 +573,7 @@ public class AT_EnvironmentImpl_23 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeStageTransferByDestinationMaterialsProducerId", args = { boolean.class, MaterialsProducerId.class })
 	public void testObserveStageTransferByDestinationMaterialsProducerId() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -770,10 +776,11 @@ public class AT_EnvironmentImpl_23 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeGlobalRegionPropertyChange(boolean, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#observeGlobalRegionPropertyChange(boolean, RegionPropertyId)}
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGlobalRegionPropertyChange", args = { boolean.class, RegionPropertyId.class })
 	public void testObserveGlobalRegionPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -954,6 +961,7 @@ public class AT_EnvironmentImpl_23 {
 	 * Tests {@link EnvironmentImpl#getSuggestedPopulationSize()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSuggestedPopulationSize", args = {})
 	public void testGetSuggestedPopulationSize() {
 		/*
 		 * Assert that we can retrieve the expected suggested population size.
@@ -993,6 +1001,7 @@ public class AT_EnvironmentImpl_23 {
 	 * Tests {@link EnvironmentImpl#getRandomNumberGeneratorIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRandomNumberGeneratorIds", args = {})
 	public void testGetRandomNumberGeneratorIds() {
 		/*
 		 * Assert that we can retrieve the expected suggested population size.
@@ -1041,6 +1050,7 @@ public class AT_EnvironmentImpl_23 {
 	 * {@link EnvironmentImpl#getRandomGeneratorFromId(RandomNumberGeneratorId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRandomGeneratorFromId", args = { RandomNumberGeneratorId.class })
 	public void testGetRandomGeneratorFromId() {
 		/*
 		 * Assert that we can retrieve the expected suggested population size.
@@ -1094,6 +1104,7 @@ public class AT_EnvironmentImpl_23 {
 	 * {@link EnvironmentImpl#addGlobalComponent(GlobalComponentId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGlobalComponent", args = { GlobalComponentId.class, Class.class })
 	public void testAddGlobalComponent() {
 		/*
 		 * Assert that we can retrieve the expected suggested population size.

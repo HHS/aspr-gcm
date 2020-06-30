@@ -26,7 +26,7 @@ import gcm.util.containers.IntValueContainer;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PersonLocationMangerImpl extends BaseElement implements PersonLocationManger {
 
 	/*

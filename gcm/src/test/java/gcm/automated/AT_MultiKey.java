@@ -11,6 +11,7 @@ import org.junit.Test;
 import gcm.util.MultiKey;
 import gcm.util.MultiKey.MultiKeyBuilder;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link MultiKey}
@@ -25,7 +26,8 @@ public class AT_MultiKey {
 	/**
 	 * Tests the equals contract for {@link AT_MultiKey#equals(Object)}
 	 */
-	@Test
+	@Test	
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEqualsContract() {
 		final MultiKey multiKey1 = new MultiKey(3, "B", false);
 		final MultiKey multiKey2 = new MultiKey(3, "B", false);
@@ -84,6 +86,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#getKey(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getKey", args = {int.class})
 	public void testGetKey() {
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
@@ -115,6 +118,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#getKeys()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getKeys", args = {})
 	public void testGetKeys() {
 		MultiKey multiKey = new MultiKey(3, "B", false);
 		Object[] expectedKeys = new Object[] { 3, "B", false };
@@ -211,6 +215,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#size()}
 	 */
 	@Test
+	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals(0, multiKey.size());
@@ -233,6 +238,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toKeyString()}
 	 */	
 	@Test
+	@UnitTestMethod(name = "toKeyString", args = {})
 	public void testToKeyString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("[]", multiKey.toKeyString());
@@ -254,6 +260,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toTabString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toTabString", args = {})
 	public void testToTabString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("", multiKey.toTabString());
@@ -276,6 +283,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#toString()}
 	 */	
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		MultiKey multiKey = new MultiKey();
 		assertEquals("MultiKey [objects=[]]", multiKey.toString());
@@ -297,6 +305,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
 		MultiKey multiKey2 = new MultiKey(3, "B", false);
@@ -328,6 +337,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
 		MultiKey multiKey2 = new MultiKey(3, "B", false);

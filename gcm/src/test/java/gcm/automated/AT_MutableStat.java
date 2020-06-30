@@ -3,10 +3,10 @@ package gcm.automated;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.MutableStat;
 import gcm.util.stats.Stat;
 
@@ -74,6 +75,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#combineStats(Stat...)}
 	 */
 	@Test
+	@UnitTestMethod(name = "combineStats", args= {Stat[].class})
 	public void testCombineStats() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -113,9 +115,10 @@ public class AT_MutableStat {
 	}
 
 	/**
-	 * Tests {@link MutableStat#combineStatsCollection(java.util.Collection)}
+	 * Tests {@link MutableStat#combineStatsCollection(Collection)}
 	 */
 	@Test
+	@UnitTestMethod(name = "combineStatsCollection", args= {Collection.class})
 	public void testCombineStatsCollection() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -159,17 +162,10 @@ public class AT_MutableStat {
 	}
 
 	/**
-	 * Tests {@link MutableStat#MutableStat()}
-	 */
-	@Test
-	public void testCombineStxatsCollection() {
-		assertNotNull(new MutableStat());
-	}
-
-	/**
 	 * Tests {@link MutableStat#add(double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "add", args= {double.class})
 	public void testAdd() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -245,6 +241,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMean()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMean", args= {})
 	public void testGetMean() {
 		// covered by testAdd()
 	}
@@ -253,6 +250,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMax()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMax", args= {})
 	public void testGetMax() {
 		// covered by testAdd()
 	}
@@ -269,6 +267,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getStandardDeviation()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStandardDeviation", args= {})
 	public void testGetStandardDeviation() {
 		// covered by testAdd()
 	}
@@ -277,6 +276,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getVariance()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getVariance", args= {})
 	public void testGetVariance() {
 		// covered by testAdd()
 	}
@@ -285,6 +285,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#clear()}
 	 */
 	@Test
+	@UnitTestMethod(name = "clear", args= {})
 	public void testClear() {
 		MutableStat mutableStat = new MutableStat();
 		mutableStat.add(1);
@@ -312,6 +313,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#size()}
 	 */
 	@Test
+	@UnitTestMethod(name = "size", args= {})
 	public void testSize() {
 		// covered by testAdd()
 	}
@@ -320,6 +322,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args= {})
 	public void testToString() {
 		MutableStat mutableStat = new MutableStat();
 		mutableStat.add(1);

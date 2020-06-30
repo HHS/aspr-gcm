@@ -42,19 +42,16 @@ public class AT_MutableVector2D {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_MutableVector2D.class.getSimpleName() + " " +
-		// SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_MutableVector2D.class.getSimpleName() + " " +
+//		 SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
 	 * Tests {@linkplain MutableVector2D#add(MutableVector2D)}
-	 * 
-	 * Tests {@linkplain MutableVector2D#add(double, double)}
-	 * 
-	 * Tests {@linkplain MutableVector2D#add(Vector2D)}
 	 */
 	@Test
-	public void testAdd() {
+	@UnitTestMethod(name = "add", args = { MutableVector2D.class })
+	public void testAdd_MutableVector2D() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -72,17 +69,63 @@ public class AT_MutableVector2D {
 
 			v1.add(v2);
 
-			// Tests {@linkplain MutableVector2D#add(MutableVector2D)}
 			assertEquals(x1 + x2, v1.getX(), 0);
 			assertEquals(y1 + y2, v1.getY(), 0);
 
 			v1 = new MutableVector2D(x1, y1);
 			v1.add(x2, y2);
 
-			// Tests {@linkplain MutableVector2D#add(double, double)}
+		}
+	}
+
+	/**
+	 * Tests {@linkplain MutableVector2D#add(double, double)}
+	 */
+	@Test
+	@UnitTestMethod(name = "add", args = { double.class, double.class })
+	public void testAdd_DoubleDouble() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(35);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v1 = new MutableVector2D(x1, y1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			v1 = new MutableVector2D(x1, y1);
+			v1.add(x2, y2);
+
 			assertEquals(x1 + x2, v1.getX(), 0);
 			assertEquals(y1 + y2, v1.getY(), 0);
 
+		}
+	}
+
+	/**
+	 * Tests {@linkplain MutableVector2D#add(Vector2D)}
+	 */
+	@Test
+	@UnitTestMethod(name = "add", args = { MutableVector2D.class })
+	public void testAdd_Vector2D() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(36);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		for (int i = 0; i < 100; i++) {
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			MutableVector2D v1 = new MutableVector2D(x1, y1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			
 			v1 = new MutableVector2D(x1, y1);
 			Vector2D v3 = new Vector2D(x2, y2);
 			v1.add(v3);
@@ -148,7 +191,7 @@ public class AT_MutableVector2D {
 	 * Tests {@linkplain MutableVector2D#addScaled(Vector2D, double)}
 	 * 
 	 */
-	@Test
+	@Test	
 	public void testAddScaled() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(2);
@@ -1139,8 +1182,8 @@ public class AT_MutableVector2D {
 	 * 
 	 * Tests {@linkplain MutableVector2D#rotateToward(Vector2D, double)}
 	 */
-	@UnitTestMethod(name = "rotateToward", args= {MutableVector2D.class, double.class})
-	@Test	
+	@UnitTestMethod(name = "rotateToward", args = { MutableVector2D.class, double.class })
+	@Test
 	public void testRotateToward() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(11);

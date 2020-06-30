@@ -11,7 +11,7 @@ import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.stats.MutableStat;
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class PlanningQueueReportItemManagerImpl extends BaseElement implements PlanningQueueReportItemManager {
 
 	private static class Counter {

@@ -43,6 +43,9 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
+import gcm.scenario.GlobalPropertyId;
+import gcm.scenario.MaterialsProducerId;
+import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -57,6 +60,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -83,6 +87,7 @@ public class AT_EnvironmentImpl_13 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGlobalPersonArrival", args = {boolean.class})
 	public void testObserveGlobalPersonArrival() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -240,7 +245,7 @@ public class AT_EnvironmentImpl_13 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeGlobalPersonDeparture", args = {boolean.class})
 	public void testObserveGlobalPersonDeparture() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -393,6 +398,7 @@ public class AT_EnvironmentImpl_13 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGlobalPersonPropertyChange", args = {boolean.class,PersonPropertyId.class})
 	public void testObserveGlobalPersonPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -588,7 +594,7 @@ public class AT_EnvironmentImpl_13 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeGlobalPersonResourceChange", args = {boolean.class,ResourceId.class})
 	public void testObserveGlobalPersonResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -820,11 +826,11 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeGlobalPropertyChange(boolean, gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#observeGlobalPropertyChange(boolean, GlobalPropertyId)}
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeGlobalPropertyChange", args = {boolean.class,GlobalPropertyId.class})
 	public void testObserveGlobalPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -1010,10 +1016,11 @@ public class AT_EnvironmentImpl_13 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeMaterialsProducerPropertyChange(boolean, gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#observeMaterialsProducerPropertyChange(boolean, MaterialsProducerId, MaterialsProducerPropertyId)}
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeMaterialsProducerPropertyChange", args = {boolean.class,MaterialsProducerId.class, MaterialsProducerPropertyId.class})	
 	public void testObserveMaterialsProducerPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components

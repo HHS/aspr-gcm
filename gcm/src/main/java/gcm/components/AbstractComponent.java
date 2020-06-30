@@ -116,7 +116,6 @@ public abstract class AbstractComponent implements Component {
 	@Override
 	public void observeGlobalPersonDeparture(final Environment environment,final PersonId personId) {
 		throwNoConcreteImplementation();
-
 	}
 
 	/**
@@ -129,7 +128,6 @@ public abstract class AbstractComponent implements Component {
 	@Override
 	public void observeGlobalPropertyChange(final Environment environment,final GlobalPropertyId globalPropertyId) {
 		throwNoConcreteImplementation();
-
 	}
 
 	/**
@@ -142,7 +140,6 @@ public abstract class AbstractComponent implements Component {
 	@Override
 	public void observeMaterialsProducerPropertyChange(final Environment environment,final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		throwNoConcreteImplementation();
-
 	}
 
 	/**

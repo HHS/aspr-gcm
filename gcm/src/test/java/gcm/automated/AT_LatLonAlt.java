@@ -11,9 +11,11 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
 import gcm.util.vector.Vector3D;
+
 /**
  * Test class for {@link LatLonAlt}
  * 
@@ -45,6 +47,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#getLatitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getLatitude", args = {})
 	public void testGetLatitude() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -61,6 +64,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#getLongitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getLongitude", args = {})
 	public void testGetLongitude() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -77,6 +81,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#getAltitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getAltitude", args = {})
 	public void testGetAltitude() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -93,6 +98,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		LatLonAlt latLonAlt = new LatLonAlt(35, 128, 1000);
 		assertEquals("LatLonAlt [latitude=35.0, longitude=128.0, altitude=1000.0]", latLonAlt.toString());
@@ -123,6 +129,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// Show equal objects have equal hash codes
@@ -143,6 +150,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -217,6 +225,7 @@ public class AT_LatLonAlt {
 	 * Tests {@link LatLonAlt#toVector3D()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toVector3D", args = {})
 	public void testToVector3D() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

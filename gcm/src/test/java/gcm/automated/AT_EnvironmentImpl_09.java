@@ -35,6 +35,7 @@ import gcm.replication.Replication;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
+import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
@@ -45,6 +46,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -69,9 +71,10 @@ public class AT_EnvironmentImpl_09 {
 	
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRegionPopulationCount(Object)}
+	 * Tests {@link EnvironmentImpl#getRegionPopulationCount(RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPopulationCount", args = {RegionId.class})
 	public void testGetRegionPopulationCount() {
 		/*
 		 * Assert that each region has the number of people in it expected from
@@ -133,9 +136,10 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRegionPopulationCountTime(Object)}
+	 * Tests {@link EnvironmentImpl#getRegionPopulationCountTime(RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPopulationCountTime", args = {RegionId.class})
 	public void testGetRegionPopulationCountTime() {
 
 		/*
@@ -201,9 +205,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRegionPropertyDefinition(gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyDefinition(RegionPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPropertyDefinition", args = {RegionPropertyId.class})
 	public void testGetRegionPropertyDefinition() {
 		/*
 		 * Retrieve each region property definition and assert that it equals
@@ -259,6 +264,7 @@ public class AT_EnvironmentImpl_09 {
 	 * Tests {@link EnvironmentImpl#getRegionPropertyIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPropertyIds", args = {})
 	public void testGetRegionPropertyIds() {
 		/*
 		 * Assert that the region property identifiers from the environment are
@@ -296,9 +302,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRegionPropertyTime(RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyTime(RegionId, RegionPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPropertyTime", args = {RegionId.class, RegionPropertyId.class})
 	public void testGetRegionPropertyTime() {
 		/*
 		 * For each region property first show that the property time is zero.
@@ -401,9 +408,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#getRegionPropertyValue(RegionId, RegionPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionPropertyValue", args = {RegionId.class, RegionPropertyId.class})
 	public void testGetRegionPropertyValue() {
 		/*
 		 * For each region and region property definition, show that the current
@@ -490,6 +498,7 @@ public class AT_EnvironmentImpl_09 {
 	 * Tests {@link EnvironmentImpl#getRegionResourceLevel(RegionId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionResourceLevel", args = {RegionId.class, ResourceId.class})
 	public void testGetRegionResourceLevel() {
 
 		/*
@@ -571,6 +580,7 @@ public class AT_EnvironmentImpl_09 {
 	 * Tests {@link EnvironmentImpl#getRegionResourceTime(RegionId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionResourceTime", args = {RegionId.class, ResourceId.class})
 	public void testGetRegionResourceTime() {
 		/*
 		 * Create three test plans such that we show that the initial resources
@@ -676,6 +686,7 @@ public class AT_EnvironmentImpl_09 {
 	 * Tests {@link EnvironmentImpl#getReplicationId()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getReplicationId", args = {})
 	public void testGetReplicationId() {
 		/*
 		 * Assert that we can retrieve the expected replication identifier.
@@ -715,6 +726,7 @@ public class AT_EnvironmentImpl_09 {
 	 * Tests {@link EnvironmentImpl#getResourceIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getResourceIds", args = {})
 	public void testGetResourceIds() {
 		/*
 		 * Assert that the resource identifiers from the environment are the
@@ -751,9 +763,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getResourcePropertyDefinition(gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyDefinition(ResourceId, ResourcePropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getResourcePropertyDefinition", args = {ResourceId.class, ResourcePropertyId.class})
 	public void testGetResourcePropertyDefinition() {
 		/*
 		 * Retrieve each resource property definition and assert that it equals
@@ -817,9 +830,10 @@ public class AT_EnvironmentImpl_09 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getResourcePropertyIds()}
+	 * Tests {@link EnvironmentImpl#getResourcePropertyIds(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getResourcePropertyIds", args = {ResourceId.class})
 	public void testGetResourcePropertyIds() {
 		/*
 		 * Assert that the resource property identifiers from the environment
@@ -863,9 +877,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getResourcePropertyTime(ResourceId, gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyTime(ResourceId, ResourcePropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getResourcePropertyTime", args = {ResourceId.class, ResourcePropertyId.class})
 	public void testGetResourcePropertyTime() {
 		/*
 		 * For each resource property first show that the property time is zero.
@@ -976,9 +991,10 @@ public class AT_EnvironmentImpl_09 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getResourcePropertyValue(ResourceId, gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#getResourcePropertyValue(ResourceId, ResourcePropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getResourcePropertyValue", args = {ResourceId.class, ResourcePropertyId.class})
 	public void testGetResourcePropertyValue() {
 
 		/*

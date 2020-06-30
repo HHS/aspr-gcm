@@ -9,6 +9,7 @@ import gcm.output.simstate.MemoryReportItem.MemoryReportItemBuilder;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = MemoryReportItem.class)
 public class AT_MemoryReportItem {
@@ -27,7 +28,11 @@ public class AT_MemoryReportItem {
 		return result;
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getChildByteCount()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getChildByteCount", args = {})
 	public void testGetChildByteCount() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		long expectedChildByteCount = 12345;
@@ -36,7 +41,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedChildByteCount, memoryReportItem.getChildByteCount());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getDescriptor()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getDescriptor", args = {})
 	public void testGetDescriptor() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		String expectedDescriptor = "some descriptor";
@@ -45,7 +54,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedDescriptor, memoryReportItem.getDescriptor());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getId", args = {})
 	public void testGetId() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		int expectedId = 8888;
@@ -54,7 +67,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedId, memoryReportItem.getId());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getItemClass()} 
+	 */
 	@Test
+	@UnitTestMethod(name = "getItemClass", args = {})
 	public void testGetItemClass() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		memoryReportItemBuilder.setItemClass(Integer.class);
@@ -62,7 +79,11 @@ public class AT_MemoryReportItem {
 		assertEquals(Integer.class, memoryReportItem.getItemClass());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getParentId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getParentId", args = {})
 	public void testGetParentId() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		int expectedParentId = 85674;
@@ -71,7 +92,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedParentId, memoryReportItem.getParentId());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getReplicationId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getReplicationId", args = {})
 	public void testGetReplicationId() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		ReplicationId expectedReplicationId = new ReplicationId(85674);
@@ -80,7 +105,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedReplicationId, memoryReportItem.getReplicationId());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getScenarioId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getScenarioId", args = {})
 	public void testGetScenarioId() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		ScenarioId expectedScenarioId = new ScenarioId(85674);
@@ -89,7 +118,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedScenarioId, memoryReportItem.getScenarioId());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getSelfByteCount()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getSelfByteCount", args = {})
 	public void testGetSelfByteCount() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		long expectedSelfByteCount = 7645345L;
@@ -98,7 +131,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedSelfByteCount, memoryReportItem.getSelfByteCount());
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#getTime()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getTime", args = {})
 	public void testGetTime() {
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
 		double expectedTime = 7645.345;
@@ -107,7 +144,11 @@ public class AT_MemoryReportItem {
 		assertEquals(expectedTime, memoryReportItem.getTime(), 0);
 	}
 
+	/**
+	 * Tests {@link MemoryReportItem#toString()}
+	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		// boiler plate implementation
 		MemoryReportItemBuilder memoryReportItemBuilder = getMemoryReportItemBuilder();
@@ -115,6 +156,5 @@ public class AT_MemoryReportItem {
 
 		String expectedString = "MemoryReportItem [scenarioId=97, replicationId=77, time=5346.0, descriptor=descriptor, parentId=45, id=67, selfByteCount=234, childByteCount=5678]";
 		assertEquals(expectedString, memoryReportItem.toString());
-
 	}
 }

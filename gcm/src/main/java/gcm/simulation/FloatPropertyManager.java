@@ -14,7 +14,7 @@ import gcm.util.containers.FloatValueContainer;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class FloatPropertyManager extends AbstractPropertyManager {
 
 	

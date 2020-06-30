@@ -64,6 +64,7 @@ import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.Environment;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link ExperimentBuilder}
@@ -238,6 +239,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addBatch(BatchId, MaterialId, double, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addBatch", args = { BatchId.class, MaterialId.class, double.class, MaterialsProducerId.class })
 	public void testAddBatch() {
 		refreshRandomGenerator(1);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -471,10 +473,11 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests {@link ExperimentBuilder#addBatchPropertyValue(BatchId,
-	 * BatchPropertyId, Object)
+	 * Tests
+	 * {@link ExperimentBuilder#addBatchPropertyValue(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class, Object.class })
 	public void testAddBatchPropertyValue() {
 		refreshRandomGenerator(0);
 
@@ -581,6 +584,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addBatchToStage(StageId, BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addBatchToStage", args = { StageId.class, BatchId.class })
 	public void testAddBatchToStage() {
 		refreshRandomGenerator(2);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -669,9 +673,10 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests {@link ExperimentBuilder#addCompartmentId(CompartmentId)}
+	 * Tests {@link ExperimentBuilder#addCompartmentId(CompartmentId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addCompartmentId", args = { CompartmentId.class, Class.class })
 	public void testAddCompartmentId() {
 		refreshRandomGenerator(3);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -712,6 +717,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addCompartmentPropertyValue(CompartmentId, CompartmentPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addCompartmentPropertyValue", args = { CompartmentId.class, CompartmentPropertyId.class, Object.class })
 	public void testAddCompartmentPropertyValue() {
 		refreshRandomGenerator(4);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -797,9 +803,11 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests {@link ExperimentBuilder#addGlobalComponentId(GlobalComponentId)}
+	 * Tests
+	 * {@link ExperimentBuilder#addGlobalComponentId(GlobalComponentId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGlobalComponentId", args = { GlobalComponentId.class, Class.class })
 	public void testAddGlobalComponentId() {
 		refreshRandomGenerator(5);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -838,6 +846,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addGlobalPropertyValue(GlobalPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testAddGlobalPropertyValue() {
 		refreshRandomGenerator(13);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -906,6 +915,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addGroup(GroupId, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
 		refreshRandomGenerator(6);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -955,6 +965,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addGroupPropertyValue(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
 	public void testAddGroupPropertyValue() {
 		refreshRandomGenerator(14);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1051,6 +1062,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addGroupTypeId(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroupTypeId", args = { GroupTypeId.class })
 	public void testAddGroupTypeId() {
 		refreshRandomGenerator(7);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1082,6 +1094,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addMaterial(MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterial", args = { MaterialId.class })
 	public void testAddMaterial() {
 		refreshRandomGenerator(8);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1110,9 +1123,10 @@ public class AT_ExperimentBuilder {
 
 	/**
 	 * Tests
-	 * {@link ExperimentBuilder#addMaterialsProducerId(MaterialsProducerId)}
+	 * {@link ExperimentBuilder#addMaterialsProducerId(MaterialsProducerId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterialsProducerId", args = { MaterialsProducerId.class, Class.class })
 	public void testAddMaterialsProducerId() {
 		refreshRandomGenerator(9);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1151,6 +1165,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
 	public void testAddMaterialsProducerPropertyValue() {
 		refreshRandomGenerator(10);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1239,6 +1254,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addMaterialsProducerResourceLevel(MaterialsProducerId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class, long.class })
 	public void testAddMaterialsProducerResourceLevel() {
 		refreshRandomGenerator(11);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1316,6 +1332,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addPerson(PersonId, RegionId, CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPerson", args = { PersonId.class, RegionId.class, CompartmentId.class })
 	public void testAddPerson() {
 		refreshRandomGenerator(12);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1386,6 +1403,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addPersonPropertyValue(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testAddPersonPropertyValue() {
 		refreshRandomGenerator(15);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1493,6 +1511,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addPersonResourceLevel(PersonId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonResourceLevel", args = { PersonId.class, ResourceId.class, long.class })
 	public void testAddPersonResourceLevel() {
 		refreshRandomGenerator(16);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1584,6 +1603,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addPersonToGroup(GroupId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
 	public void testAddPersonToGroup() {
 		refreshRandomGenerator(17);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1658,9 +1678,10 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests {@link ExperimentBuilder#addRegionId(RegionId)}
+	 * Tests {@link ExperimentBuilder#addRegionId(RegionId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRegionId", args = { RegionId.class, Class.class})
 	public void testAddRegionId() {
 		refreshRandomGenerator(18);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1699,6 +1720,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addRegionPropertyValue(RegionId, RegionPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class})
 	public void testAddRegionPropertyValue() {
 		refreshRandomGenerator(19);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1788,6 +1810,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addRegionResourceLevel(RegionId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRegionResourceLevel", args = { RegionId.class, ResourceId.class, long.class})
 	public void testAddRegionResourceLevel() {
 		refreshRandomGenerator(20);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1863,6 +1886,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addResource(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addResource", args = {ResourceId.class})
 	public void testAddResource() {
 		refreshRandomGenerator(21);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1894,6 +1918,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addResourcePropertyValue(ResourceId, ResourcePropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addResourcePropertyValue", args = {ResourceId.class,ResourcePropertyId.class,Object.class})
 	public void testAddResourcePropertyValue() {
 		refreshRandomGenerator(22);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -1977,6 +2002,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addStage(StageId, boolean, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addStage", args = {StageId.class,boolean.class,MaterialsProducerId.class})
 	public void testAddStage() {
 		refreshRandomGenerator(23);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2056,6 +2082,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#defineBatchProperty(MaterialId, BatchPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineBatchProperty", args = {MaterialId.class, BatchPropertyId.class, PropertyDefinition.class})
 	public void testDefineBatchProperty() {
 		refreshRandomGenerator(24);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2117,9 +2144,10 @@ public class AT_ExperimentBuilder {
 
 	/**
 	 * Tests
-	 * {@link ExperimentBuilder#defineCompartmentProperty(CompartmentPropertyId, PropertyDefinition)}
+	 * {@link ExperimentBuilder#defineCompartmentProperty(CompartmentId, CompartmentPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineCompartmentProperty", args = {CompartmentId.class, CompartmentPropertyId.class, PropertyDefinition.class})
 	public void testDefineCompartmentProperty() {
 		refreshRandomGenerator(25);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2186,6 +2214,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#defineGlobalProperty(GlobalPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGlobalProperty", args = {GlobalPropertyId.class, PropertyDefinition.class})
 	public void testDefineGlobalProperty() {
 		refreshRandomGenerator(26);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2236,6 +2265,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#defineGroupProperty(GroupTypeId, GroupPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGroupProperty", args = {GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class})
 	public void testDefineGroupProperty() {
 		refreshRandomGenerator(27);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2302,6 +2332,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#defineMaterialsProducerProperty(MaterialsProducerPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineMaterialsProducerProperty", args = {MaterialsProducerPropertyId.class, PropertyDefinition.class})
 	public void testDefineMaterialsProducerProperty() {
 		refreshRandomGenerator(28);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2354,6 +2385,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#definePersonProperty(PersonPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "definePersonProperty", args = {PersonPropertyId.class, PropertyDefinition.class})
 	public void testDefinePersonProperty() {
 		refreshRandomGenerator(29);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2403,6 +2435,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#defineRegionProperty(RegionPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineRegionProperty", args = {RegionPropertyId.class, PropertyDefinition.class})
 	public void testDefineRegionProperty() {
 		refreshRandomGenerator(30);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2449,9 +2482,10 @@ public class AT_ExperimentBuilder {
 
 	/**
 	 * Tests
-	 * {@link ExperimentBuilder#defineResourceProperty(ResourcePropertyId, PropertyDefinition)}
+	 * {@link ExperimentBuilder#defineResourceProperty(ResourceId, ResourcePropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineResourceProperty", args = {ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class})
 	public void testDefineResourceProperty() {
 		refreshRandomGenerator(31);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2516,6 +2550,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#setCompartmentMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentMapOption", args = {MapOption.class})
 	public void testSetCompartmentMapOption() {
 		refreshRandomGenerator(32);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2553,6 +2588,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#setPersonCompartmentArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonCompartmentArrivalTracking", args = {TimeTrackingPolicy.class})
 	public void testSetPersonCompartmentArrivalTracking() {
 		refreshRandomGenerator(33);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2587,6 +2623,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#setPersonRegionArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonRegionArrivalTracking", args = {TimeTrackingPolicy.class})
 	public void testSetPersonRegionArrivalTracking() {
 		refreshRandomGenerator(34);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2620,6 +2657,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#setRegionMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionMapOption", args = {MapOption.class})
 	public void testSetRegionMapOption() {
 		refreshRandomGenerator(35);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2652,6 +2690,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#setResourceTimeTracking(ResourceId, TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourceTimeTracking", args = {ResourceId.class, TimeTrackingPolicy.class})
 	public void testSetResourceTimeTracking() {
 		refreshRandomGenerator(36);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2700,6 +2739,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryCompartmentProperty(CompartmentId, CompartmentPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryCompartmentProperty", args = {CompartmentId.class, CompartmentPropertyId.class, Object.class})
 	public void testCovaryCompartmentProperty() {
 		refreshRandomGenerator(37);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -2843,9 +2883,10 @@ public class AT_ExperimentBuilder {
 
 	/**
 	 * Tests
-	 * {@link ExperimentBuilder#covaryBatchProperty(BatchId, Object, Object)}
+	 * {@link ExperimentBuilder#covaryBatchProperty(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryBatchProperty", args = {BatchId.class, BatchPropertyId.class, Object.class})
 	public void testCovaryBatchProperty() {
 		refreshRandomGenerator(38);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -3035,6 +3076,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryGlobalProperty(GlobalPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryGlobalProperty", args = {GlobalPropertyId.class, Object.class})
 	public void testCovaryGlobalProperty() {
 		refreshRandomGenerator(39);
 
@@ -3172,6 +3214,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryGroupProperty(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryGroupProperty", args = {GroupId.class, GroupPropertyId.class, Object.class})
 	public void testCovaryGroupProperty() {
 		refreshRandomGenerator(40);
 
@@ -3352,6 +3395,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryPersonProperty(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryPersonProperty", args = {PersonId.class, PersonPropertyId.class, Object.class})
 	public void testCovaryPersonProperty() {
 		refreshRandomGenerator(41);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -3512,6 +3556,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryMaterialsProducerProperty(MaterialsProducerId, MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryMaterialsProducerProperty", args = {MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class})
 	public void testCovaryMaterialsProducerProperty() {
 		refreshRandomGenerator(42);
 
@@ -3667,6 +3712,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryPersonResource(PersonId, ResourceId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryPersonResource", args = {PersonId.class, ResourceId.class, Object.class})
 	public void testCovaryPersonResource() {
 		refreshRandomGenerator(43);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -3824,6 +3870,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryMaterialsProducerResource(MaterialsProducerId, ResourceId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryMaterialsProducerResource", args = {MaterialsProducerId.class, ResourceId.class, Object.class})
 	public void testCovaryMaterialsProducerResource() {
 		refreshRandomGenerator(44);
 
@@ -3975,6 +4022,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryRegionProperty(RegionId, RegionPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryRegionProperty", args = {RegionId.class, RegionPropertyId.class, Object.class})
 	public void testCovaryRegionProperty() {
 		refreshRandomGenerator(45);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4131,6 +4179,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#covaryRegionResource(RegionId, ResourceId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covaryRegionResource", args = {RegionId.class, ResourceId.class, Object.class})
 	public void testCovaryRegionResource() {
 		refreshRandomGenerator(46);
 
@@ -4273,7 +4322,11 @@ public class AT_ExperimentBuilder {
 
 	}
 
+	/**
+	 * Tests {@link ExperimentBuilder#covaryResourceProperty(ResourceId, ResourcePropertyId, Object)}
+	 */
 	@Test
+	@UnitTestMethod(name = "covaryResourceProperty", args = {ResourceId.class, ResourcePropertyId.class, Object.class})
 	public void testCovaryResourceProperty() {
 		refreshRandomGenerator(47);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4448,6 +4501,7 @@ public class AT_ExperimentBuilder {
 	 * Test {@link ExperimentBuilder#build()}
 	 */
 	@Test
+	@UnitTestMethod(name = "build", args = {})
 	public void testBuild() {
 		refreshRandomGenerator(48);
 
@@ -4487,6 +4541,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceBatchPropertyExperimentColumn(BatchId, BatchPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceBatchPropertyExperimentColumn", args = {BatchId.class, BatchPropertyId.class})
 	public void testForceBatchPropertyExperimentColumn() {
 		refreshRandomGenerator(49);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4558,6 +4613,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceCompartmentPropertyExperimentColumn(CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceCompartmentPropertyExperimentColumn", args = {CompartmentId.class, CompartmentPropertyId.class})
 	public void testForceCompartmentPropertyExperimentColumn() {
 		refreshRandomGenerator(50);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4614,6 +4670,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#addRandomNumberGeneratorId(RandomNumberGeneratorId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRandomNumberGeneratorId", args = { RandomNumberGeneratorId.class})
 	public void testAddRandomNumberGeneratorId() {
 		refreshRandomGenerator(51);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4647,6 +4704,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#covarySuggestedPopulationSize(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "covarySuggestedPopulationSize", args = {Object.class})
 	public void testCovarySuggestedPopulationSize() {
 		refreshRandomGenerator(52);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4756,6 +4814,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceGlobalPropertyExperimentColumn(GlobalPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceGlobalPropertyExperimentColumn", args = {GlobalPropertyId.class})
 	public void testForceGlobalPropertyExperimentColumn() {
 		refreshRandomGenerator(53);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4792,6 +4851,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#addSuggestedPopulationSize(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addSuggestedPopulationSize", args = {int.class})
 	public void testAddSuggestedPopulationSize() {
 		refreshRandomGenerator(54);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4816,6 +4876,7 @@ public class AT_ExperimentBuilder {
 	 * Tests {@link ExperimentBuilder#setBaseScenarioId(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setBaseScenarioId", args = {int.class})
 	public void testSetBaseScenarioId() {
 		refreshRandomGenerator(55);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4844,6 +4905,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceGroupPropertyExperimentColumn(GroupId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceGroupPropertyExperimentColumn", args = {GroupId.class,GroupPropertyId.class})
 	public void testForceGroupPropertyExperimentColumn() {
 		refreshRandomGenerator(56);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4901,6 +4963,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceSuggestedPopulationSizeExperimentColumn()}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceSuggestedPopulationSizeExperimentColumn", args = {})
 	public void testForceSuggestedPopulationSizeExperimentColumn() {
 		refreshRandomGenerator(57);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4924,6 +4987,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceResourcePropertyExperimentColumn(ResourceId, ResourcePropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceResourcePropertyExperimentColumn", args = {ResourceId.class,ResourcePropertyId.class})
 	public void testForceResourcePropertyExperimentColumn() {
 		refreshRandomGenerator(58);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -4988,6 +5052,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceRegionResourceExperimentColumn(RegionId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceRegionResourceExperimentColumn", args = {RegionId.class,ResourceId.class})
 	public void testForceRegionResourceExperimentColumn() {
 		refreshRandomGenerator(59);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -5049,6 +5114,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceRegionPropertyExperimentColumn(RegionId, RegionPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceRegionPropertyExperimentColumn", args = {RegionId.class,RegionPropertyId.class})
 	public void testForceRegionPropertyExperimentColumn() {
 		refreshRandomGenerator(60);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -5116,9 +5182,10 @@ public class AT_ExperimentBuilder {
 
 	/**
 	 * Tests
-	 * {@link ExperimentBuilder#forcePersonResourceExperimentColumn(RegionId, RegionPropertyId)}
+	 * {@link ExperimentBuilder#forcePersonResourceExperimentColumn(PersonId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forcePersonResourceExperimentColumn", args = {PersonId.class,ResourceId.class})
 	public void testForcePersonResourceExperimentColumn() {
 		refreshRandomGenerator(61);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -5197,6 +5264,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forcePersonPropertyExperimentColumn(PersonId, PersonPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forcePersonPropertyExperimentColumn", args = {PersonId.class,PersonPropertyId.class})
 	public void testForcePersonPropertyExperimentColumn() {
 		refreshRandomGenerator(62);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -5274,6 +5342,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceMaterialsProducerResourceExperimentColumn(MaterialsProducerId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceMaterialsProducerResourceExperimentColumn", args = {MaterialsProducerId.class,ResourceId.class})
 	public void testForceMaterialsProducerResourceExperimentColumn() {
 		refreshRandomGenerator(63);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
@@ -5336,6 +5405,7 @@ public class AT_ExperimentBuilder {
 	 * {@link ExperimentBuilder#forceMaterialsProducerPropertyExperimentColumn(MaterialsProducerId, MaterialsProducerPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "forceMaterialsProducerPropertyExperimentColumn", args = {MaterialsProducerId.class,MaterialsProducerPropertyId.class})
 	public void testForceMaterialsProducerPropertyExperimentColumn() {
 		refreshRandomGenerator(64);
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();

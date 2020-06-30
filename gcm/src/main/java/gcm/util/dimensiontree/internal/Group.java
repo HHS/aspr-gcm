@@ -14,7 +14,7 @@ import gcm.util.dimensiontree.DimensionTree;
  * the same position. This is done to prevent infinite branching when there are
  * too many members at the same position.
  */
-@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
+@Source(status = TestStatus.REQUIRED, proxy = DimensionTree.class)
 public class Group<T> {
 
 	public Node<T> node;

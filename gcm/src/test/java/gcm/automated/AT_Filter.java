@@ -7,9 +7,9 @@ import static gcm.simulation.Filter.groupMember;
 import static gcm.simulation.Filter.groupTypesForPerson;
 import static gcm.simulation.Filter.groupsForPerson;
 import static gcm.simulation.Filter.groupsForPersonAndGroupType;
+import static gcm.simulation.Filter.noPeople;
 import static gcm.simulation.Filter.property;
 import static gcm.simulation.Filter.region;
-import static gcm.simulation.Filter.noPeople;
 import static gcm.simulation.Filter.resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +42,7 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.replication.ReplicationImpl;
+import gcm.scenario.CompartmentId;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
@@ -63,6 +64,7 @@ import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test unit for {@link Filters}. The AT_Environment covers adding population
@@ -182,6 +184,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#and(Filter)}
 	 */
 	@Test
+	@UnitTestMethod(name = "and", args= {Filter.class})
 	public void testAnd() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -273,6 +276,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#or(Filter)}
 	 */
 	@Test
+	@UnitTestMethod(name = "or", args= {Filter.class})
 	public void testOr() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(1);
@@ -370,6 +374,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#negate()}
 	 */
 	@Test
+	@UnitTestMethod(name = "negate", args= {})
 	public void testNegate() {
 		final long seed = SEED_PROVIDER.getSeedValue(14);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -448,6 +453,7 @@ public class AT_Filter {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
+	@UnitTestMethod(name = "property", args= {PersonPropertyId.class, Equality.class, Object.class})
 	public void testProperty() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(11);
@@ -732,6 +738,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#allPeople()}
 	 */
 	@Test
+	@UnitTestMethod(name = "allPeople", args= {})
 	public void testAllPeople() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(6);
@@ -780,9 +787,10 @@ public class AT_Filter {
 	}
 
 	/**
-	 * Tests {@link Filter#compartment(gcm.scenario.CompartmentId)}
+	 * Tests {@link Filter#compartment(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "compartment", args= {CompartmentId.class})
 	public void testCompartment() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -875,6 +883,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupMember(GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "groupMember", args= {GroupId.class})
 	public void testGroupMember() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(5);
@@ -951,6 +960,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupsForPerson(Equality, int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "groupsForPerson", args= {Equality.class, int.class})
 	public void testGroupsForPerson() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(9);
@@ -1070,10 +1080,11 @@ public class AT_Filter {
 
 	/**
 	 * Tests
-	 * {@link Filter#groupsForPersonAndGroupType(gcm.scenario.GroupTypeId, Equality, int)}
+	 * {@link Filter#groupsForPersonAndGroupType(GroupTypeId, Equality, int)}
 	 */
 
 	@Test
+	@UnitTestMethod(name = "groupsForPersonAndGroupType", args= {GroupTypeId.class, Equality.class, int.class})
 	public void testGroupsForPersonAndGroupType() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -1226,6 +1237,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupTypesForPerson(Equality, int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "groupTypesForPerson", args= {Equality.class, int.class})
 	public void testGroupTypesForPerson() {
 		final long seed = SEED_PROVIDER.getSeedValue(10);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -1367,6 +1379,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#region(RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "region", args= {RegionId[].class})
 	public void testRegion() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -1460,6 +1473,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#resource(ResourceId, Equality, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "resource", args= {ResourceId.class, Equality.class, long.class})
 	public void testResource() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -1586,6 +1600,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#noPeople()}
 	 */
 	@Test
+	@UnitTestMethod(name = "noPeople", args= {})
 	public void testNoPeople() {
 		final long seed = SEED_PROVIDER.getSeedValue(100);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

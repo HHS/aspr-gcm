@@ -26,7 +26,7 @@ import gcm.util.annotations.TestStatus;
  * person or its relationships to just those population indexes that may be
  * effected.
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class Trigger {
 	private final Context context;
 

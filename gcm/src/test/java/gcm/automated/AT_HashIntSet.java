@@ -11,8 +11,10 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import gcm.scenario.IntId;
 import gcm.scenario.PersonId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.HashIntSet;
 import gcm.util.containers.IntSet;
 
@@ -34,9 +36,10 @@ public class AT_HashIntSet {
 	}
 
 	/**
-	 * Test for {@link HashIntSet#add(gcm.scenario.IntId)}
+	 * Test for {@link HashIntSet#add(IntId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "add", args= {IntId.class})
 	public void testAdd() {
 
 		Set<PersonId> personIds = getPersonIds(45, 18, 23, 66);
@@ -50,9 +53,10 @@ public class AT_HashIntSet {
 	}
 
 	/**
-	 * Test for {@link HashIntSet#remove(gcm.scenario.IntId)}
+	 * Test for {@link HashIntSet#remove(IntId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "remove", args= {IntId.class})
 	public void testRemove() {
 		IntSet<PersonId> intSet = new HashIntSet<>();
 		intSet.add(new PersonId(300));
@@ -87,6 +91,7 @@ public class AT_HashIntSet {
 	 * Test for {@link HashIntSet#getValues()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getValues", args= {})
 	public void testGetValues() {
 
 		// Select 500 random values from 0..999
@@ -116,6 +121,7 @@ public class AT_HashIntSet {
 	 * Test for {@link HashIntSet#size()}
 	 */
 	@Test
+	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
 
 		Random random = new Random(3453763452345345L);
@@ -157,9 +163,10 @@ public class AT_HashIntSet {
 	}
 
 	/**
-	 * Test for {@link HashIntSet#contains(gcm.scenario.IntId)}
+	 * Test for {@link HashIntSet#contains(IntId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "contains", args= {IntId.class})
 	public void testContains() {
 
 		Set<PersonId> personIds = getPersonIds(1, 4, 5, 7, 12, 14, 16, 17, 22, 23, 28);

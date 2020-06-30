@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonBox;
@@ -55,6 +56,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#getWestLongitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getWestLongitude", args = {})
 	public void testGetWestLongitude() {
 		// covered by testGetNorthLatitude() method
 	}
@@ -65,6 +67,7 @@ public class AT_LatLonBox {
 	 * longitude values.
 	 */
 	@Test
+	@UnitTestMethod(name = "getSouthWestLatLon", args = {})
 	public void testGetSouthWestLatLon() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -86,6 +89,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#getSouthLatitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSouthLatitude", args = {})
 	public void testGetSouthLatitude() {
 		// covered by testGetNorthLatitude() method
 	}
@@ -96,6 +100,7 @@ public class AT_LatLonBox {
 	 * longitude values.
 	 */
 	@Test
+	@UnitTestMethod(name = "getSouthEastLatLon", args = {})
 	public void testGetSouthEastLatLon() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -119,6 +124,7 @@ public class AT_LatLonBox {
 	 * longitude values.
 	 */
 	@Test
+	@UnitTestMethod(name = "getNorthWestLatLon", args = {})
 	public void testGetNorthWestLatLon() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -140,6 +146,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#getNorthLatitude()}.
 	 */
 	@Test
+	@UnitTestMethod(name = "getNorthLatitude", args = {})
 	public void testGetNorthLatitude() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
@@ -221,6 +228,7 @@ public class AT_LatLonBox {
 	 * longitude values.
 	 */
 	@Test
+	@UnitTestMethod(name = "getNorthEastLatLon", args = {})
 	public void testGetNorthEastLatLon() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -240,8 +248,9 @@ public class AT_LatLonBox {
 
 	/**
 	 * Tests {@link LatLonBox#getEastLongitude()}
-	 */
+	 */	
 	@Test
+	@UnitTestMethod(name = "getEastLongitude", args = {})
 	public void testGetEastLongitude() {
 		// covered by testGetNorthLatitude() method
 	}
@@ -302,6 +311,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		// Show equal objects have equal hash codes
 		final long seed = SEED_PROVIDER.getSeedValue(6);
@@ -330,6 +340,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		// Show equal objects have equal hash codes
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -360,6 +371,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		// Show equal objects have equal hash codes
 		final long seed = SEED_PROVIDER.getSeedValue(7);
@@ -405,6 +417,7 @@ public class AT_LatLonBox {
 	 * Tests {@link LatLonBox#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

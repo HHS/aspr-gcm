@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import gcm.util.MemoryLink;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link MemoryLink}
@@ -17,7 +18,11 @@ import gcm.util.annotations.UnitTest;
 @UnitTest(target = MemoryLink.class)
 public class AT_MemoryLink {
 
+	/**
+	 * Tests {@link MemoryLink#getChild()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getChild", args = {})
 	public void testGetChild() {
 		String parent = "parent";
 		String child = "child";
@@ -26,7 +31,11 @@ public class AT_MemoryLink {
 		assertEquals(child, memoryLink.getChild());
 	}
 
+	/**
+	 * Tests {@link MemoryLink#getDescriptor()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getDescriptor", args = {})
 	public void testGetDescriptor() {
 		String parent = "parent";
 		String child = "child";
@@ -35,7 +44,11 @@ public class AT_MemoryLink {
 		assertEquals(descriptor, memoryLink.getDescriptor());
 	}
 
+	/**
+	 * Test {@link MemoryLink#getParent()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getParent", args = {})
 	public void testGetParent() {
 		String parent = "parent";
 		String child = "child";
@@ -45,7 +58,11 @@ public class AT_MemoryLink {
 
 	}
 
+	/**
+	 * Tests {@link MemoryLink#toString()}
+	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		String parent = "parent";
 		String child = "child";
@@ -55,7 +72,12 @@ public class AT_MemoryLink {
 		assertEquals(expectedString, memoryLink.toString());
 	}
 
+	
+	/**
+	 * Tests {@link MemoryLink#equals(Object)}
+	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEquals() {
 		MemoryLink memoryLink1 = new MemoryLink("parent "+1, "child "+1, "descriptor"+1);
 		MemoryLink memoryLink2 = new MemoryLink("parent "+1, "child "+1, "descriptor"+1);
@@ -75,7 +97,11 @@ public class AT_MemoryLink {
 
 	}
 
+	/**
+	 * Tests {@link MemoryLink#hashCode()}
+	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		MemoryLink memoryLink1 = new MemoryLink("parent "+1, "child "+1, "descriptor"+1);
 		MemoryLink memoryLink2 = new MemoryLink("parent "+1, "child "+1, "descriptor"+1);

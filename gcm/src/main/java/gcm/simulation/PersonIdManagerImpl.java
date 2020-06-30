@@ -7,7 +7,7 @@ import gcm.scenario.PersonId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class PersonIdManagerImpl extends BaseElement implements PersonIdManager{
 	/*
 	 * We keep the person records in a list rather than a map so that we can

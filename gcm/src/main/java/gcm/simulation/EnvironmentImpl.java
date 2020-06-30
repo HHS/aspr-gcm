@@ -48,6 +48,7 @@ import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -93,7 +94,7 @@ import net.jcip.annotations.NotThreadSafe;
  *
  */
 @NotThreadSafe
-@Source
+@Source(status = TestStatus.REQUIRED)
 public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private Context context;

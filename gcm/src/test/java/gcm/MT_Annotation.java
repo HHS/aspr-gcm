@@ -2,7 +2,6 @@ package gcm;
 
 import java.lang.reflect.Method;
 import java.util.TreeSet;
-import gcm.util.vector.MutableVector2D;
 
 public class MT_Annotation {
 	public static void main(String[] args) throws ClassNotFoundException, NoSuchMethodException, SecurityException {

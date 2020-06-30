@@ -8,6 +8,9 @@ package gcm.util.annotations;
  *
  */
 @Source(status = TestStatus.UNREQUIRED)
+/*
+ * The order of the enum must be preserved 
+ */
 public enum TestStatus {
 
 	/**
@@ -19,13 +22,7 @@ public enum TestStatus {
 	 * A unit test is desired but not required.
 	 */
 	UNEXPECTED,
-
-	/**
-	 * A unit test for another class covers the testing for this class
-	 *
-	 */
-	PROXY,
-
+	
 	/**
 	 * No unit test is required or should be developed. Generally used for
 	 * interfaces and simple enumerations.

@@ -55,6 +55,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -82,6 +83,7 @@ public class AT_EnvironmentImpl_16 {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeRegionResourceChange", args = { boolean.class, RegionId.class, ResourceId.class })
 	public void testObserveRegionResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -283,11 +285,11 @@ public class AT_EnvironmentImpl_16 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeResourcePropertyChange(boolean, ResourceId, gcm.scenario.ResourcePropertyId)}
+	 * {@link EnvironmentImpl#observeResourcePropertyChange(boolean, ResourceId, ResourcePropertyId)}
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeResourcePropertyChange", args = { boolean.class, ResourceId.class, ResourcePropertyId.class })
 	public void testObserveResourcePropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -490,6 +492,7 @@ public class AT_EnvironmentImpl_16 {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeStageOfferChange", args = { boolean.class})
 	public void testObserveStageOfferChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -637,6 +640,7 @@ public class AT_EnvironmentImpl_16 {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeStageOfferChangeByStageId", args = { boolean.class, StageId.class})
 	public void testObserveStageOfferChangeByStageId() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -790,6 +794,7 @@ public class AT_EnvironmentImpl_16 {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeStageTransfer", args = { boolean.class})
 	public void testObserveStageTransfer() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -969,6 +974,7 @@ public class AT_EnvironmentImpl_16 {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeStageTransferByStageId", args = { boolean.class, StageId.class})
 	public void testObserveStageTransferByStageId() {
 		/*
 		 * We test for the post conditions by first having the components

@@ -44,6 +44,7 @@ import gcm.simulation.Environment;
 import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Unit tests for {@link AbstractComponent}
@@ -171,235 +172,286 @@ public class AT_AbstractComponent {
 	 * Tests {@link AbstractComponent#init(Environment)}
 	 */
 	@Test
-	public void testInit(){
-		//see testAbstractComponent
+	public void testInit() {
+		// see testAbstractComponent
 	}
 
-	
 	/**
 	 * Tests {@link AbstractComponent#close(Environment)}
 	 */
 	@Test
-	public void testClose(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "close", args = { Environment.class })
+	public void testClose() {
+		// see testAbstractComponent
 	}
 
 	/**
 	 * Tests {@link AbstractComponent#executePlan(Environment, Plan)}
 	 */
 	@Test
-	public void testExecutePlan(){
-		//see testAbstractComponent
-	}
-	
-	/**
-	 * Tests {@link AbstractComponent#observeCompartmentPersonArrival(Environment, PersonId)}
-	 */
-	@Test
-	public void testObserveCompartmentPersonArrival(){
-		//see testAbstractComponent
-	}
-
-	
-	/**
-	 * Tests {@link AbstractComponent#observeCompartmentPersonDeparture(Environment, CompartmentId, PersonId)}
-	 */
-	@Test
-	public void testObserveCompartmentPersonDeparture(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "executePlan", args = { Environment.class, Plan.class })
+	public void testExecutePlan() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeCompartmentPropertyChange(Environment, CompartmentId, CompartmentPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeCompartmentPersonArrival(Environment, PersonId)}
 	 */
 	@Test
-	public void testObserveCompartmentPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeCompartmentPersonArrival", args = { Environment.class, PersonId.class })
+	public void testObserveCompartmentPersonArrival() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGlobalPersonArrival(Environment, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observeCompartmentPersonDeparture(Environment, CompartmentId, PersonId)}
 	 */
 	@Test
-	public void testObserveGlobalPersonArrival(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeCompartmentPersonDeparture", args = { Environment.class, CompartmentId.class, PersonId.class })
+	public void testObserveCompartmentPersonDeparture() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGlobalPersonDeparture(Environment, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observeCompartmentPropertyChange(Environment, CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
-	public void testObserveGlobalPersonDeparture(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeCompartmentPropertyChange", args = { Environment.class, CompartmentId.class, CompartmentPropertyId.class })
+	public void testObserveCompartmentPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGlobalPropertyChange(Environment, GlobalPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGlobalPersonArrival(Environment, PersonId)}
 	 */
 	@Test
-	public void testObserveGlobalPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGlobalPersonArrival", args = { Environment.class, PersonId.class })
+	public void testObserveGlobalPersonArrival() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGroupConstruction(Environment, GroupId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGlobalPersonDeparture(Environment, PersonId)}
 	 */
 	@Test
-	public void testObserveGroupConstruction(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGlobalPersonDeparture", args = { Environment.class, PersonId.class })
+	public void testObserveGlobalPersonDeparture() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGroupDestruction(Environment, GroupInfo)}
+	 * Tests
+	 * {@link AbstractComponent#observeGlobalPropertyChange(Environment, GlobalPropertyId)}
 	 */
 	@Test
-	public void testObserveGroupDestruction(){
-		//see testAbstractComponent
-	}
-
-	
-	/**
-	 * Tests {@link AbstractComponent#observeGroupPersonArrival(Environment, GroupId, PersonId)}
-	 */
-	@Test
-	public void testObserveGroupPersonArrival(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGlobalPropertyChange", args = { Environment.class, GlobalPropertyId.class })
+	public void testObserveGlobalPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGroupPersonDeparture(Environment, GroupId, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGroupConstruction(Environment, GroupId)}
 	 */
 	@Test
-	public void testObserveGroupPersonDeparture(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGroupConstruction", args = { Environment.class, GroupId.class })
+	public void testObserveGroupConstruction() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeGroupPropertyChange(Environment, GroupId, GroupPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGroupDestruction(Environment, GroupInfo)}
 	 */
 	@Test
-	public void testObserveGroupPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGroupDestruction", args = { Environment.class, GroupInfo.class })
+	public void testObserveGroupDestruction() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeMaterialsProducerPropertyChange(Environment, MaterialsProducerId, MaterialsProducerPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGroupPersonArrival(Environment, GroupId, PersonId)}
 	 */
 	@Test
-	public void testObserveMaterialsProducerPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGroupPersonArrival", args = { Environment.class, GroupId.class, PersonId.class })
+	public void testObserveGroupPersonArrival() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeMaterialsProducerResourceChange(Environment, MaterialsProducerId, ResourceId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGroupPersonDeparture(Environment, GroupId, PersonId)}
 	 */
 	@Test
-	public void testObserveMaterialsProducerResourceChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGroupPersonDeparture", args = { Environment.class, GroupId.class, PersonId.class })
+	public void testObserveGroupPersonDeparture() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observePersonCompartmentChange(Environment, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observeGroupPropertyChange(Environment, GroupId, GroupPropertyId)}
 	 */
 	@Test
-	public void testObservePersonCompartmentChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeGroupPropertyChange", args = { Environment.class, GroupId.class, GroupPropertyId.class })
+	public void testObserveGroupPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observePersonPropertyChange(Environment, PersonId, PersonPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeMaterialsProducerPropertyChange(Environment, MaterialsProducerId, MaterialsProducerPropertyId)}
 	 */
 	@Test
-	public void testObservePersonPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeMaterialsProducerPropertyChange", args = { Environment.class, MaterialsProducerId.class, MaterialsProducerPropertyId.class })
+	public void testObserveMaterialsProducerPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#ObservePersonRegionChange(Environment, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observeMaterialsProducerResourceChange(Environment, MaterialsProducerId, ResourceId)}
 	 */
 	@Test
-	public void testObservePersonRegionChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeMaterialsProducerResourceChange", args = { Environment.class, MaterialsProducerId.class, ResourceId.class })
+	public void testObserveMaterialsProducerResourceChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observePersonResourceChange(Environment, PersonId, ResourceId)}
+	 * Tests
+	 * {@link AbstractComponent#observePersonCompartmentChange(Environment, PersonId)}
 	 */
 	@Test
-	public void testObservePersonResourceChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePersonCompartmentChange", args = { Environment.class, PersonId.class })
+	public void testObservePersonCompartmentChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observePopulationIndexPersonAddition(Environment, Object, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observePersonPropertyChange(Environment, PersonId, PersonPropertyId)}
 	 */
 	@Test
-	public void testObservePopulationIndexPersonAddition(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePersonPropertyChange", args = { Environment.class, PersonId.class, PersonPropertyId.class })
+	public void testObservePersonPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observePopulationIndexPersonRemoval(Environment, Object, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observePersonRegionChange(Environment, PersonId)}
 	 */
 	@Test
-	public void testObservePopulationIndexPersonRemoval(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePersonRegionChange", args = { Environment.class, PersonId.class })
+	public void testObservePersonRegionChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeRegionPersonArrival(Environment, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observePersonResourceChange(Environment, PersonId, ResourceId)}
 	 */
 	@Test
-	public void testObserveRegionPersonArrival(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePersonResourceChange", args = { Environment.class, PersonId.class, ResourceId.class })
+	public void testObservePersonResourceChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeRegionPersonDeparture(Environment, RegionId, PersonId)}
+	 * Tests
+	 * {@link AbstractComponent#observePopulationIndexPersonAddition(Environment, Object, PersonId)}
 	 */
 	@Test
-	public void testObserveRegionPersonDeparture(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePopulationIndexPersonAddition", args = { Environment.class, Object.class, PersonId.class })
+	public void testObservePopulationIndexPersonAddition() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeRegionPropertyChange(Environment, RegionId, RegionPropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observePopulationIndexPersonRemoval(Environment, Object, PersonId)}
 	 */
 	@Test
-	public void testObserveRegionPropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observePopulationIndexPersonRemoval", args = { Environment.class, Object.class, PersonId.class })
+	public void testObservePopulationIndexPersonRemoval() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeRegionResourceChange(Environment, RegionId, ResourceId)}
+	 * Tests
+	 * {@link AbstractComponent#observeRegionPersonArrival(Environment, PersonId)}
 	 */
 	@Test
-	public void testObserveRegionResourceChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeRegionPersonArrival", args = { Environment.class, PersonId.class })
+	public void testObserveRegionPersonArrival() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeResourcePropertyChange(Environment, ResourceId, ResourcePropertyId)}
+	 * Tests
+	 * {@link AbstractComponent#observeRegionPersonDeparture(Environment, RegionId, PersonId)}
 	 */
 	@Test
-	public void testObserveResourcePropertyChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeRegionPersonDeparture", args = { Environment.class, RegionId.class, PersonId.class })
+	public void testObserveRegionPersonDeparture() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeStageOfferChange(Environment, StageId)}
+	 * Tests
+	 * {@link AbstractComponent#observeRegionPropertyChange(Environment, RegionId, RegionPropertyId)}
 	 */
 	@Test
-	public void testObserveStageOfferChange(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeRegionPropertyChange", args = { Environment.class, RegionId.class, RegionPropertyId.class })
+	public void testObserveRegionPropertyChange() {
+		// see testAbstractComponent
 	}
 
 	/**
-	 * Tests {@link AbstractComponent#observeStageTransfer(Environment, StageId, MaterialsProducerId, MaterialsProducerId)}
+	 * Tests
+	 * {@link AbstractComponent#observeRegionResourceChange(Environment, RegionId, ResourceId)}
 	 */
 	@Test
-	public void testObserveStageTransfer(){
-		//see testAbstractComponent
+	@UnitTestMethod(name = "observeRegionResourceChange", args = { Environment.class, RegionId.class, ResourceId.class })
+	public void testObserveRegionResourceChange() {
+		// see testAbstractComponent
 	}
-	
+
+	/**
+	 * Tests
+	 * {@link AbstractComponent#observeResourcePropertyChange(Environment, ResourceId, ResourcePropertyId)}
+	 */
+	@Test
+	@UnitTestMethod(name = "observeResourcePropertyChange", args = { Environment.class, ResourceId.class, ResourcePropertyId.class })
+	public void testObserveResourcePropertyChange() {
+		// see testAbstractComponent
+	}
+
+	/**
+	 * Tests
+	 * {@link AbstractComponent#observeStageOfferChange(Environment, StageId)}
+	 */
+	@Test
+	@UnitTestMethod(name = "observeStageOfferChange", args = { Environment.class, StageId.class })
+	public void testObserveStageOfferChange() {
+		// see testAbstractComponent
+	}
+
+	/**
+	 * Tests
+	 * {@link AbstractComponent#observeStageTransfer(Environment, StageId, MaterialsProducerId, MaterialsProducerId)}
+	 */
+	@Test
+	@UnitTestMethod(name = "observeStageTransfer", args = { Environment.class, StageId.class, MaterialsProducerId.class, MaterialsProducerId.class })
+	public void testObserveStageTransfer() {
+		// see testAbstractComponent
+	}
+
 }

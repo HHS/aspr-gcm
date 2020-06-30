@@ -14,7 +14,7 @@ import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public class SimulationWarningManagerImpl extends BaseElement implements SimulationWarningManager {
 
 	private OutputItemManager outputItemManager;

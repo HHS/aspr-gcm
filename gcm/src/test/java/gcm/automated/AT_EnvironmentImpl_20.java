@@ -65,6 +65,7 @@ import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -90,6 +91,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#populationIndexExists(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "populationIndexExists", args = {Object.class})
 	public void testPopulationIndexExists() {
 		/*
 		 * Add an indexed population, show it exists, then remove it and show it
@@ -136,6 +138,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#removeGroup(GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removeGroup", args = {GroupId.class})
 	public void testRemoveGroup() {
 		/*
 		 * Assert that the groups can be removed
@@ -211,6 +214,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#removePerson(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removePerson", args = {PersonId.class})
 	public void testRemovePerson() {
 		/*
 		 * Assert that a person can be removed, showing that the population
@@ -301,6 +305,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#removePersonFromGroup(PersonId, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removePersonFromGroup", args = {PersonId.class, GroupId.class})
 	public void testRemovePersonFromGroup() {
 		/*
 		 * Assert that people an be removed from groups
@@ -375,6 +380,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#removePlan(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removePlan", args = {Object.class})
 	public void testRemovePlan() {
 		/*
 		 * Create a test plan to remove a future test plan and then show that
@@ -431,6 +437,7 @@ public class AT_EnvironmentImpl_20 {
 	 * Tests {@link EnvironmentImpl#removePopulationIndex(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removePopulationIndex", args = {Object.class})
 	public void testRemovePopulationIndex() {
 		/*
 		 * Add an indexed population, show it exists, then remove it and show it
@@ -499,6 +506,7 @@ public class AT_EnvironmentImpl_20 {
 	 * {@link EnvironmentImpl#removeResourceFromPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removeResourceFromPerson", args = {ResourceId.class, PersonId.class, long.class})
 	public void testRemoveResourceFromPerson() {
 		/*
 		 * Remove each of the resources from people in the simulation and show
@@ -680,6 +688,7 @@ public class AT_EnvironmentImpl_20 {
 	 * {@link EnvironmentImpl#removeResourceFromRegion(ResourceId, RegionId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "removeResourceFromRegion", args = {ResourceId.class, RegionId.class, long.class})
 	public void testRemoveResourceFromRegion() {
 		/*
 		 * For each region and resource, remove random units from the region.
@@ -780,6 +789,7 @@ public class AT_EnvironmentImpl_20 {
 	 * {@link EnvironmentImpl#setBatchPropertyValue(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setBatchPropertyValue", args = {BatchId.class, BatchPropertyId.class, Object.class})
 	public void testSetBatchPropertyValue() {
 		/*
 		 * For each material and material property definition, set a new
@@ -947,9 +957,10 @@ public class AT_EnvironmentImpl_20 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#setCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId, Object)}
+	 * {@link EnvironmentImpl#setCompartmentPropertyValue(CompartmentId, CompartmentPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentPropertyValue", args = {CompartmentId.class, CompartmentPropertyId.class, Object.class})
 	public void testSetCompartmentPropertyValue() {
 
 		/*

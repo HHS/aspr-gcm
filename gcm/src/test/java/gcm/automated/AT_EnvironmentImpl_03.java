@@ -53,10 +53,12 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
+import gcm.simulation.BiWeightingFunction;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -89,6 +91,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getBatchPropertyTime(BatchId, BatchPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchPropertyTime", args = {BatchId.class, BatchPropertyId.class})
 	public void testGetBatchPropertyTime() {
 		/*
 		 * For each batch property first show that the property time is zero.
@@ -202,6 +205,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getBatchPropertyValue(BatchId, BatchPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchPropertyValue", args = {BatchId.class, BatchPropertyId.class})
 	public void testGetBatchPropertyValue() {
 		/*
 		 * For each material and material property definition, show that the
@@ -292,6 +296,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getBatchStageId(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchStageId", args = {BatchId.class})
 	public void testGetBatchStageId() {
 		/*
 		 * Show that batches have the stages that they have been assigned.
@@ -344,6 +349,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getBatchTime(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchTime", args = {BatchId.class})
 	public void testGetBatchTime() {
 		/*
 		 * Show that batches have time values equal to their creation time, over
@@ -404,9 +410,10 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getBiWeightedGroupContact(GroupId, PersonId, boolean, gcm.simulation.BiWeightingFunction)}
+	 * {@link EnvironmentImpl#getBiWeightedGroupContact(GroupId, PersonId, boolean, BiWeightingFunction)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBiWeightedGroupContact", args = {GroupId.class, PersonId.class, boolean.class, BiWeightingFunction.class})
 	public void testGetBiWeightedGroupContact() {
 
 		/*
@@ -546,6 +553,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getNonWeightedGroupContact(GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNonWeightedGroupContact", args = {GroupId.class})
 	public void testGetNonWeightedGroupContact() {
 
 		/*
@@ -668,6 +676,7 @@ public class AT_EnvironmentImpl_03 {
 	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusion(GroupId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNonWeightedGroupContactWithExclusion", args = {GroupId.class,PersonId.class})
 	public void testGetNonWeightedGroupContactWithExclusion() {
 
 		/*
@@ -838,6 +847,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getCompartmentIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentIds", args = {})
 	public void testGetCompartmentIds() {
 		/*
 		 * Assert that the compartment identifiers from the environment are the
@@ -877,6 +887,7 @@ public class AT_EnvironmentImpl_03 {
 	 * Tests {@link EnvironmentImpl#getCompartmentPopulationCount(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPopulationCount", args = {CompartmentId.class})
 	public void testGetCompartmentPopulationCount() {
 		/*
 		 * Assert that each compartment has the number of people in it expected
@@ -942,6 +953,7 @@ public class AT_EnvironmentImpl_03 {
 	 * {@link EnvironmentImpl#getCompartmentPopulationCountTime(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPopulationCountTime", args = {CompartmentId.class})
 	public void testGetCompartmentPopulationCountTime() {
 		/*
 		 * Create three test plans such that we show that the initial people
@@ -1008,9 +1020,10 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getCompartmentPropertyDefinition(gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyDefinition(CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPropertyDefinition", args = {CompartmentId.class,CompartmentPropertyId.class})
 	public void testGetCompartmentPropertyDefinition() {
 		/*
 		 * Retrieve each compartment property definition and assert that it
@@ -1075,9 +1088,10 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getCompartmentPropertyIds()}
+	 * Tests {@link EnvironmentImpl#getCompartmentPropertyIds(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPropertyIds", args = {CompartmentId.class})
 	public void testGetCompartmentPropertyIds() {
 		/*
 		 * Assert that the compartment property identifiers from the environment

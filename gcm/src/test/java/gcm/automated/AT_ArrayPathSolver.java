@@ -11,9 +11,9 @@ import java.util.Optional;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.path.ArrayPathSolver;
-import gcm.util.path.MapPathSolver;
 import gcm.util.path.Path;
 import gcm.util.path.PathSolver;
 import gcm.util.path.Paths.EdgeCostEvaluator;
@@ -87,9 +87,10 @@ public class AT_ArrayPathSolver {
 	}
 	/**
 	 * Tests
-	 * {@link MapPathSolver#getPath(Object, Object)}
+	 * {@link ArrayPathSolver#getPath(Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name="getPath",args={Object.class,Object.class})
 	public void testGetPath() {
 		
 		

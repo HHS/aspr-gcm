@@ -9,7 +9,7 @@ import gcm.util.dimensiontree.DimensionTree;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = DimensionTree.class)
+@Source(status = TestStatus.REQUIRED, proxy = DimensionTree.class)
 public class Sphere implements Shape {
 
 	private final double radius;

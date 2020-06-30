@@ -39,6 +39,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -65,6 +66,7 @@ public class AT_EnvironmentImpl_17 {
 	 * {@linkplain EnvironmentImpl#observeGroupArrivalByGroup(boolean, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrivalByGroup", args = { boolean.class, GroupId.class})
 	public void testObserveGroupArrivalByGroup() {
 
 		/*
@@ -172,10 +174,10 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByPerson(boolean,
-	 * PersonId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByPerson(boolean, PersonId)
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrivalByPerson", args = { boolean.class, PersonId.class})
 	public void testObserveGroupArrivalByPerson() {
 		/*
 		 * 
@@ -308,10 +310,10 @@ public class AT_EnvironmentImpl_17 {
 
 	/**
 	 * Tests {@linkplain
-	 * EnvironmentImpl#observeGroupArrivalByGroupAndPerson(boolean, GroupId,
-	 * PersonId)
+	 * EnvironmentImpl#observeGroupArrivalByGroupAndPerson(boolean, GroupId, PersonId)
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrivalByGroupAndPerson", args = { boolean.class, GroupId.class, PersonId.class})
 	public void testObserveGroupArrivalByGroupAndPerson() {
 
 		/*
@@ -458,10 +460,10 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByType(boolean,
-	 * GroupTypeId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByType(boolean, GroupTypeId)
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrivalByType", args = { boolean.class, GroupTypeId.class})
 	public void testObserveGroupArrivalByType() {
 		/*
 		 * 
@@ -607,10 +609,10 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByTypeAndPerson(boolean,
-	 * GroupTypeId, PersonId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupArrivalByTypeAndPerson(boolean, GroupTypeId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrivalByTypeAndPerson", args = { boolean.class, GroupTypeId.class, PersonId.class})
 	public void testObserveGroupArrivalByTypeAndPerson() {
 		/*
 		 * Time 1 : GLOBAL_COMPONENT_1 adds groups 0, 1 and 2
@@ -741,6 +743,7 @@ public class AT_EnvironmentImpl_17 {
 	 * Tests {@linkplain EnvironmentImpl#observeGroupConstruction(boolean)
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupConstruction", args = { boolean.class})
 	public void testObserveGroupConstruction() {
 		/*
 		 * 
@@ -841,10 +844,10 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupConstructionByType(boolean,
-	 * GroupTypeId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupConstructionByType(boolean, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupConstructionByType", args = { boolean.class, GroupTypeId.class})
 	public void testObserveGroupConstructionByType() {
 		/*
 		 * 
@@ -954,9 +957,10 @@ public class AT_EnvironmentImpl_17 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupDeparture(boolean)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupDeparture(boolean)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDeparture", args = { boolean.class})
 	public void testObserveGroupDeparture() {
 		/*
 		 * Time 0 : GLOBAL_COMPONENT_1 adds group 0

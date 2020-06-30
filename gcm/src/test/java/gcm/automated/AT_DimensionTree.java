@@ -24,6 +24,7 @@ import org.junit.Test;
 import gcm.automated.support.SeedProvider;
 import gcm.util.TimeElapser;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.dimensiontree.DimensionTree;
 
 /**
@@ -107,6 +108,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getMembersInSphere(double, double[])
 	 */
 	@Test
+	@UnitTestMethod(name = "getMembersInSphere", args = {double.class, double[].class})
 	public void testGetMembersInSphere() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -162,6 +164,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getNearestMember(double[])
 	 */
 	@Test
+	@UnitTestMethod(name = "getNearestMember", args = { double[].class})
 	public void testGetNearestMember() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -213,6 +216,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getMembersInRectanguloid(double[], double[])
 	 */
 	@Test
+	@UnitTestMethod(name = "getMembersInRectanguloid", args = {double[].class, double[].class})
 	public void testGetMembersInRectanguloid() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -276,6 +280,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#getAll()
 	 */
 	@Test
+	@UnitTestMethod(name = "getAll", args = {})
 	public void testGetAll() {
 		/*
 		 * See test for add()
@@ -286,6 +291,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#add(double[], Object)
 	 */
 	@Test
+	@UnitTestMethod(name = "add", args = {double[].class,Object.class})
 	public void testAdd() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -331,6 +337,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#contains(Object)
 	 */
 	@Test
+	@UnitTestMethod(name = "contains", args = {Object.class})
 	public void testContains() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -367,6 +374,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#remove(Object)
 	 */
 	@Test
+	@UnitTestMethod(name = "remove", args = { Object.class})
 	public void testRemove() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -411,6 +419,7 @@ public class AT_DimensionTree {
 	 * Tests {@link DimensionTree#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 		/*
 		 * Precondition tests
@@ -515,7 +524,7 @@ public class AT_DimensionTree {
 
 	}
 
-	// @Test
+	// @Test	
 	public void testPerformance() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(5);

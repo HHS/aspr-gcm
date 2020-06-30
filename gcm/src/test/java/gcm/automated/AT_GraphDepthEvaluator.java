@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.graph.GraphDepthEvaluator;
 import gcm.util.graph.MutableGraph;
@@ -30,6 +31,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getGraphDepthEvaluator(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGraphDepthEvaluator", args = { Graph.class })
 	public void testGetGraphDepthEvaluator() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		// empty graphs are cyclic and so no depth evaluator is generated
@@ -51,6 +53,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getDepth(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getDepth", args = { Object.class })
 	public void testGetDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -73,6 +76,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getMaxDepth()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaxDepth", args = {})
 	public void testGetMaxDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -93,6 +97,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getNodesForDepth(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNodesForDepth", args = { int.class })
 	public void testGetNodesForDepth() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -135,6 +140,7 @@ public class AT_GraphDepthEvaluator {
 	 * Tests {@link GraphDepthEvaluator#getNodesInRankOrder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNodesInRankOrder", args = {})
 	public void testGetNodesInRankOrder() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");

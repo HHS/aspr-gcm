@@ -11,7 +11,7 @@ import net.jcip.annotations.Immutable;
  *
  */
 @Immutable
-@Source(status = TestStatus.PROXY,proxy = IntId.class)
+@Source(status = TestStatus.REQUIRED,proxy = IntId.class)
 public final class StageId extends IntId{
 
 	public StageId(int id) {

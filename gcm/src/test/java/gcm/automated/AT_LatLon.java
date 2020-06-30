@@ -11,8 +11,10 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
+
 /**
  * Test class for {@link LatLon}
  * 
@@ -45,6 +47,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#getLatitude()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getLatitude", args = {})
 	public void testGetLatitude() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -61,6 +64,7 @@ public class AT_LatLon {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "getLongitude", args = {})
 	public void testGetLongitude() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -76,6 +80,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		LatLon latLon = new LatLon(35, 128);
 		assertEquals("LatLon [latitude=35.0, longitude=128.0]", latLon.toString());
@@ -94,6 +99,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
 		// Show equal objects have equal hash codes
@@ -113,6 +119,7 @@ public class AT_LatLon {
 	 * Tests {@link LatLon#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

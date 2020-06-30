@@ -43,6 +43,7 @@ import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -58,6 +59,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -81,11 +83,12 @@ public class AT_EnvironmentImpl_14 {
 	
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeMaterialsProducerResourceChangeByMaterialsProducerId(boolean, gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#observeMaterialsProducerResourceChangeByMaterialsProducerId(boolean, MaterialsProducerId, ResourceId)}
 	 *
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeMaterialsProducerResourceChangeByMaterialsProducerId", args = {boolean.class,MaterialsProducerId.class,ResourceId.class})
 	public void testObserveMaterialsProducerResourceChangeByMaterialsProducerId() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -253,11 +256,11 @@ public class AT_EnvironmentImpl_14 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#observeMaterialsProducerResourceChange(boolean,
-	 * ResourceId)
+	 * Tests {@link EnvironmentImpl#observeMaterialsProducerResourceChange(boolean, ResourceId)
 	 */
 
 	@Test
+	@UnitTestMethod(name = "observeMaterialsProducerResourceChange", args = {boolean.class,ResourceId.class})
 	public void testObserveMaterialsProducerResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -420,7 +423,7 @@ public class AT_EnvironmentImpl_14 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observePersonCompartmentChange", args = {boolean.class,PersonId.class})
 	public void testObservePersonCompartmentChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -615,7 +618,7 @@ public class AT_EnvironmentImpl_14 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observePersonPropertyChange", args = {boolean.class,PersonId.class,PersonPropertyId.class})
 	public void testObservePersonPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -822,7 +825,7 @@ public class AT_EnvironmentImpl_14 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observePersonRegionChange", args = {boolean.class,PersonId.class})
 	public void testObservePersonRegionChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -1020,7 +1023,7 @@ public class AT_EnvironmentImpl_14 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observePersonResourceChange", args = {boolean.class,PersonId.class,ResourceId.class})
 	public void testObservePersonResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components

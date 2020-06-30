@@ -45,6 +45,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -71,6 +72,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupCountForPerson(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupCountForPerson", args= {PersonId.class})
 	public void testGetGroupCountForPerson() {
 		/*
 		 * Assert that the number of groups associated with each person can be
@@ -157,6 +159,7 @@ public class AT_EnvironmentImpl_05 {
 	 * {@link EnvironmentImpl#getGroupPropertyDefinition(GroupTypeId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupPropertyDefinition", args= {GroupTypeId.class,GroupPropertyId.class})
 	public void testGetGroupPropertyDefinition() {
 		/*
 		 * Retrieve each group property definition and assert that it equals the
@@ -228,6 +231,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupPropertyIds(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupPropertyIds", args= {GroupTypeId.class})
 	public void testGetGroupPropertyIds() {
 		/*
 		 * Assert that the group property identifiers from the environment are
@@ -284,6 +288,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupPropertyTime(GroupId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupPropertyTime", args= {GroupId.class,GroupPropertyId.class})
 	public void testGetGroupPropertyTime() {
 		/*
 		 * For each group property first show that the property time is zero.
@@ -420,6 +425,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupPropertyValue(GroupId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupPropertyValue", args= {GroupId.class,GroupPropertyId.class})
 	public void testGetGroupPropertyValue() {
 		/*
 		 * For each group type id and group property definition, show that the
@@ -521,6 +527,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupsForGroupType(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupsForGroupType", args= {GroupTypeId.class})
 	public void testGetGroupsForGroupType() {
 		/*
 		 * Assert that the groups ids associated with each group type can be
@@ -600,6 +607,7 @@ public class AT_EnvironmentImpl_05 {
 	 * {@link EnvironmentImpl#getGroupsForGroupTypeAndPerson(GroupTypeId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupsForGroupTypeAndPerson", args= {GroupTypeId.class,PersonId.class})
 	public void testGetGroupsForGroupTypeAndPerson() {
 		/*
 		 * Assert that the groups ids associated with each group type can be
@@ -711,6 +719,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupsForPerson(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupsForPerson", args= {PersonId.class})
 	public void testGetGroupsForPerson() {
 		/*
 		 * Assert that the groups ids associated with each person can be
@@ -822,6 +831,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupType(GroupId)
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupType", args= {GroupId.class})
 	public void testGetGroupType() {
 		/*
 		 * Assert that the groups types associated with each group id match our
@@ -875,6 +885,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupTypeCountForPerson(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupTypeCountForPerson", args= {PersonId.class})
 	public void testGetGroupTypeCountForPerson() {
 		/*
 		 * Assert that the groups ids associated with each person can be
@@ -958,6 +969,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupTypeIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupTypeIds", args= {})
 	public void testGetGroupTypeIds() {
 		/*
 		 * Assert that the region identifiers from the environment are the same
@@ -998,6 +1010,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupIds", args= {})
 	public void testGetGroupIds() {
 		/*
 		 * Assert that the group identifiers reported by the simulation properly
@@ -1054,6 +1067,7 @@ public class AT_EnvironmentImpl_05 {
 	 * Tests {@link EnvironmentImpl#getGroupTypesForPerson(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupTypesForPerson", args= {PersonId.class})
 	public void testGetGroupTypesForPerson() {
 		/*
 		 * Assert that the groups ids associated with each person can be

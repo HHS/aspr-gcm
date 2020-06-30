@@ -43,6 +43,7 @@ import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.GroupId;
 import gcm.scenario.MaterialId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
@@ -57,6 +58,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -82,6 +84,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#getPersonResourceTimeTrackingPolicy(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonResourceTimeTrackingPolicy", args = {ResourceId.class})
 	public void testGetResourceTimeTrackingPolicy() {
 		/*
 		 * Show that the time tracking policy for each resource matches the
@@ -140,6 +143,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#getScenarioId()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getScenarioId", args = {})
 	public void testGetScenarioId() {
 		/*
 		 * Assert that we can retrieve the expected scenario identifier.
@@ -179,6 +183,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#getStageBatches(StageId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStageBatches", args = {StageId.class})
 	public void testGetStageBatches() {
 		/*
 		 * Show that the list batches in a stage reflects the stages that are
@@ -255,6 +260,7 @@ public class AT_EnvironmentImpl_10 {
 	 * {@link EnvironmentImpl#getStageBatchesByMaterialId(StageId, MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStageBatchesByMaterialId", args = {StageId.class, MaterialId.class})
 	public void testGetStageBatchesByMaterialId() {
 		/*
 		 * Show that the list batches in a stage reflects the stages that are
@@ -444,9 +450,10 @@ public class AT_EnvironmentImpl_10 {
 	}
 
 	/**
-	 * Tests Environment.getStageProducer()
+	 * Tests {@link EnvironmentImpl#getStageProducer(StageId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStageProducer", args = {StageId.class})
 	public void testGetStageProducer() {
 		/*
 		 * Show that stages have their creators.
@@ -506,9 +513,10 @@ public class AT_EnvironmentImpl_10 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getStages(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getStages(MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStages", args = {MaterialsProducerId.class})
 	public void testGetStages() {
 		/*
 		 * Show that we can get the stages that have been added to multiple
@@ -575,6 +583,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#getTime()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getTime", args = {})
 	public void testGetTime() {
 		/*
 		 * Using three test plans, assert that the time is what we expect.
@@ -616,6 +625,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#groupExists(GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "groupExists", args = {GroupId.class})
 	public void testGroupExists() {
 		/*
 		 * Assert that group existence meets expectations
@@ -667,6 +677,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#halt()}
 	 */
 	@Test
+	@UnitTestMethod(name = "halt", args = {})
 	public void testHalt() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -757,6 +768,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#isGroupMember(PersonId, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "isGroupMember", args = {PersonId.class, GroupId.class})
 	public void testIsGroupMember() {
 		/*
 		 * Assert that the groups membership for any (group type id, group id,
@@ -863,6 +875,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#isStageOffered(StageId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "isStageOffered", args = {StageId.class})
 	public void testIsStageOffered() {
 		/*
 		 * Show that stages have the offered state as false that they are
@@ -922,6 +935,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#moveBatchToInventory(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "moveBatchToInventory", args = {BatchId.class})
 	public void testMoveBatchToInventory() {
 		/*
 		 * Show that batches can be moved to inventory.
@@ -1013,6 +1027,7 @@ public class AT_EnvironmentImpl_10 {
 	 * Tests {@link EnvironmentImpl#moveBatchToStage(BatchId, StageId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "moveBatchToStage", args = {BatchId.class,StageId.class})
 	public void testMoveBatchToStage() {
 		/*
 		 * Show that batches can be moved to stages.

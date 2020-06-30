@@ -51,6 +51,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -83,6 +84,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonPropertyDefinition(PersonPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonPropertyDefinition", args = {PersonPropertyId.class})
 	public void testGetPersonPropertyDefinition() {
 		/*
 		 * Retrieve each person property definition and assert that it equals
@@ -137,6 +139,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonPropertyIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 		/*
 		 * Assert that the person property identifiers from the environment are
@@ -178,6 +181,7 @@ public class AT_EnvironmentImpl_08 {
 	 * {@link EnvironmentImpl#getPersonPropertyValue(PersonId, PersonPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonPropertyValue", args = {PersonId.class, PersonPropertyId.class})
 	public void testGetPersonPropertyValue() {
 
 		/*
@@ -263,6 +267,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonRegion(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonRegion", args = {PersonId.class})
 	public void testGetPersonRegion() {
 		/*
 		 * Assert that we get the region id associated with each person and that
@@ -317,6 +322,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonRegionArrivalTime(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonRegionArrivalTime", args = {PersonId.class})
 	public void testGetPersonRegionArrivalTime() {
 		/*
 		 * For each person first show that the region arrival time is zero. Next
@@ -411,6 +417,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonResourceLevel(PersonId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonResourceLevel", args = {PersonId.class, ResourceId.class})
 	public void testGetPersonResourceLevel() {
 		/*
 		 * For each person and resource, show that the current resource level is
@@ -498,6 +505,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPersonResourceTime(PersonId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonResourceTime", args = {PersonId.class, ResourceId.class})
 	public void testGetPersonResourceTime() {
 		/*
 		 * For each person resource level first show that the resource time is
@@ -652,6 +660,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPlan(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPlan", args = {Object.class})
 	public void testGetPlan() {
 		/*
 		 * Add three test plans and show that from the perspective of the second
@@ -711,6 +720,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPlanTime(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPlanTime", args = {Object.class})
 	public void testGetPlanTime() {
 		/*
 		 * Retrieve two future plans and assert that the plan times match the
@@ -764,6 +774,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPopulationCount()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPopulationCount", args = {})
 	public void testGetPopulationCount() {
 		/*
 		 * Assert that the initial population is the expected size and that
@@ -812,6 +823,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getPopulationTime()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPopulationTime", args = {})
 	public void testGetPopulationTime() {
 		/*
 		 * Create three test plans such that we show that the initial people
@@ -862,6 +874,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getRandomGenerator()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRandomGenerator", args = {})
 	public void testGetRandomGenerator() {
 		/*
 		 * Assert that we can retrieve the RandomGenerator instance.
@@ -898,6 +911,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getRandomIndexedPerson(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRandomIndexedPerson", args = {Object.class})
 	public void testGetRandomIndexedPerson() {
 		/*
 		 * Show that we can retrieve people from a population index.
@@ -986,9 +1000,10 @@ public class AT_EnvironmentImpl_08 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomIndexedPerson(Object)}
+	 * Tests {@link EnvironmentImpl#getRandomIndexedPersonWithExclusion(PersonId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusion", args = {PersonId.class,Object.class})
 	public void testGetRandomIndexedPersonWithExclusion() {
 		/*
 		 * Show that we can retrieve people from a population index while
@@ -1065,6 +1080,7 @@ public class AT_EnvironmentImpl_08 {
 	 * Tests {@link EnvironmentImpl#getRegionIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionIds", args = {})
 	public void testGetRegionIds() {
 		/*
 		 * Assert that the region identifiers from the environment are the same

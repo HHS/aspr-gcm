@@ -41,13 +41,17 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
+import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
+import gcm.scenario.MaterialsProducerId;
+import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
+import gcm.scenario.RegionPropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
@@ -56,6 +60,7 @@ import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -74,14 +79,15 @@ public class AT_EnvironmentImpl_21 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#setGlobalPropertyValue(gcm.scenario.GlobalPropertyId, Object)}
+	 * {@link EnvironmentImpl#setGlobalPropertyValue(GlobalPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 		/*
 		 * For each global property definition, show that the current value is
@@ -220,6 +226,7 @@ public class AT_EnvironmentImpl_21 {
 	 * {@link EnvironmentImpl#setGroupPropertyValue(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
 	public void testSetGroupPropertyValue() {
 		/*
 		 * For each group type id and group property definition, set a new
@@ -371,9 +378,10 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#setMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId, Object)}
+	 * {@link EnvironmentImpl#setMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
 	public void testSetMaterialsProducerPropertyValue() {
 		/*
 		 * For each materials producer and materials producer property
@@ -530,9 +538,11 @@ public class AT_EnvironmentImpl_21 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#setPersonCompartment(PersonId, CompartmentId)}
+	 * Tests
+	 * {@link EnvironmentImpl#setPersonCompartment(PersonId, CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonCompartment", args = { PersonId.class, CompartmentId.class })
 	public void testSetPersonCompartment() {
 		/*
 		 * Move each person the next compartment and assert that the person is
@@ -589,9 +599,7 @@ public class AT_EnvironmentImpl_21 {
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			final Object key = new Object();
-			final Filter filter = 					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
 			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
@@ -620,11 +628,8 @@ public class AT_EnvironmentImpl_21 {
 		taskPlanContainer.addTaskPlan(TestRegionId.REGION_1, testTime++, (environment) -> {
 
 			final Object key = new Object();
-			final Filter filter = 				
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-					
-					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
 			assertTrue(optional.isPresent());
@@ -642,11 +647,8 @@ public class AT_EnvironmentImpl_21 {
 		 */
 		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_2, testTime++, (environment) -> {
 			final Object key = new Object();
-			final Filter filter =					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-					
-					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
 			assertTrue(optional.isPresent());
@@ -672,6 +674,7 @@ public class AT_EnvironmentImpl_21 {
 	 * {@link EnvironmentImpl#setPersonPropertyValue(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testSetPersonPropertyValue() {
 		/*
 		 * For each person and person property definition, set a new property
@@ -807,6 +810,7 @@ public class AT_EnvironmentImpl_21 {
 	 * Tests {@link EnvironmentImpl#setPersonRegion(PersonId, RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonRegion", args = { PersonId.class, RegionId.class })
 	public void testSetPersonRegion() {
 		/*
 		 * Move each person the next region and assert that the person is where
@@ -861,10 +865,8 @@ public class AT_EnvironmentImpl_21 {
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			final Object key = new Object();
-			final Filter filter =				
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));					
-					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
@@ -885,11 +887,8 @@ public class AT_EnvironmentImpl_21 {
 
 		taskPlanContainer.addTaskPlan(TestRegionId.REGION_3, testTime++, (environment) -> {
 			final Object key = new Object();
-			final Filter filter = 					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-					
-					
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
 
@@ -902,11 +901,9 @@ public class AT_EnvironmentImpl_21 {
 
 		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_1, testTime++, (environment) -> {
 			final Object key = new Object();
-			
-			final Filter filter = 					
-					compartment(TestCompartmentId.COMPARTMENT_1).and(
-					region(TestRegionId.REGION_1));
-					
+
+			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
+
 			environment.addPopulationIndex(filter, key);
 			final PersonId personId = environment.getRandomIndexedPerson(key).get();
 
@@ -927,9 +924,10 @@ public class AT_EnvironmentImpl_21 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#setRegionPropertyValue(RegionId, gcm.scenario.RegionPropertyId, Object)}
+	 * {@link EnvironmentImpl#setRegionPropertyValue(RegionId, RegionPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
 	public void testSetRegionPropertyValue() {
 		/*
 		 * For each region and region property definition, set a new property

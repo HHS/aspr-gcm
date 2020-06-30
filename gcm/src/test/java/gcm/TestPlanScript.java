@@ -201,7 +201,7 @@ public class TestPlanScript {
 		TestReport testReport = new TestReport("Does each source class that requires a test class have one?", "All source class that require a test class have one");
 
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED) {
+			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED && sourceClassRec.getProxyClass() == null) {
 				if (sourceClassRec.getTestClassRecs().size() == 0) {
 					testReport.addWarning(sourceClassRec.getSourceClass().getSimpleName() + " has no test classes");
 				}
@@ -259,18 +259,18 @@ public class TestPlanScript {
 		testReport.print();
 	}
 
-	private void demonstrateProxiedSourceClassesHaveAProxyStatus() {
-		TestReport testReport = new TestReport("Does each source class that has a non-default proxy class have a PROXY status",
-				"All source classes that have a non-default proxy class have their status as PROXY");
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getProxyClass() != null) {
-				if (sourceClassRec.getTestStatus() != TestStatus.PROXY) {
-					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has a non-default proxy class but is marked with status = " + sourceClassRec.getTestStatus());
-				}
-			}
-		}
-		testReport.print();
-	}
+//	private void demonstrateProxiedSourceClassesHaveAProxyStatus() {
+//		TestReport testReport = new TestReport("Does each source class that has a non-default proxy class have a PROXY status",
+//				"All source classes that have a non-default proxy class have their status as PROXY");
+//		for (SourceClassRec sourceClassRec : sourceClassRecs) {
+//			if (sourceClassRec.getProxyClass() != null) {
+//				if (sourceClassRec.getTestStatus() != TestStatus.PROXY) {
+//					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has a non-default proxy class but is marked with status = " + sourceClassRec.getTestStatus());
+//				}
+//			}
+//		}
+//		testReport.print();
+//	}
 
 	private void demonstrateEachProxiedSourceClassHasALegitimateProxyClass() {
 		TestReport testReport = new TestReport("Does each proxied source class have a proxy class that corresponds to another known source class",
@@ -283,7 +283,7 @@ public class TestPlanScript {
 		}
 
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getTestStatus() == TestStatus.PROXY) {
+			if (sourceClassRec.getProxyClass() != null) {
 				if (!map.containsKey(sourceClassRec.getProxyClass())) {
 					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " does not have a legitimate proxy class = " + sourceClassRec.getProxyClass().toGenericString());
 				}
@@ -304,12 +304,14 @@ public class TestPlanScript {
 
 		for (SourceClassRec sourceClassRec : sourceClassRecs) {
 			
-			if (sourceClassRec.getTestStatus() == TestStatus.PROXY) {
+			//if (sourceClassRec.getTestStatus() == TestStatus.PROXY) {
+			if (sourceClassRec.getProxyClass() != null) {
 				SourceClassRec s = sourceClassRec;
 				Set<SourceClassRec> visitedSourceClassRecs = new LinkedHashSet<>();
 				visitedSourceClassRecs.add(s);
 				boolean circularProxies = false;
-				while (s != null && s.getTestStatus() == TestStatus.PROXY && !circularProxies) {
+				//while (s != null && s.getTestStatus() == TestStatus.PROXY && !circularProxies) {
+				while (s != null && s.getProxyClass() != null && !circularProxies) {
 					s = map.get(s.getProxyClass());
 					if (s == null) {
 						testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has unresolved proxy linkage ending in a non-source class");
@@ -469,7 +471,7 @@ public class TestPlanScript {
 
 		demonstrateThatSourceClassesThatDontNeedTestsDontHaveTests();
 
-		demonstrateProxiedSourceClassesHaveAProxyStatus();
+//		demonstrateProxiedSourceClassesHaveAProxyStatus();
 
 		demonstrateEachProxiedSourceClassHasALegitimateProxyClass();
 

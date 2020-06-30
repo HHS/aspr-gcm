@@ -49,9 +49,11 @@ import gcm.output.reports.commonreports.CompartmentPopulationReport;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.CompartmentPropertyId;
+import gcm.scenario.GlobalComponentId;
 import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
@@ -64,6 +66,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -87,9 +90,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getCompartmentPropertyTime(CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyTime(CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPropertyTime", args= {CompartmentId.class,CompartmentPropertyId.class})
 	public void testGetCompartmentPropertyTime() {
 
 		/*
@@ -197,9 +201,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getCompartmentPropertyValue(CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#getCompartmentPropertyValue(CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentPropertyValue", args= {CompartmentId.class,CompartmentPropertyId.class})
 	public void testGetCompartmentPropertyValue() {
 		/*
 		 * For each compartment and compartment property definition, show that
@@ -289,6 +294,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getGlobalComponentIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalComponentIds", args= {})
 	public void testGetGlobalComponentIds() {
 		/*
 		 * Assert that the global component identifiers from the environment are
@@ -328,9 +334,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getGlobalPropertyDefinition(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyDefinition(GlobalPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalPropertyDefinition", args= {GlobalPropertyId.class})
 	public void testGetGlobalPropertyDefinition() {
 		/*
 		 * Retrieve each global property definition and assert that it equals
@@ -385,6 +392,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getGlobalPropertyIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalPropertyIds", args= {})
 	public void testGetGlobalPropertyIds() {
 		/*
 		 * Assert that the global component classes from the environment are the
@@ -432,6 +440,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getCompartmentComponentClass(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentComponentClass", args= {CompartmentId.class})
 	public void testGetCompartmentComponentClass() {
 		/*
 		 * Assert that the compartment component classes from the environment
@@ -475,6 +484,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getRegionComponentClass(RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionComponentClass", args= {RegionId.class})
 	public void testGetRegionComponentClass() {
 		/*
 		 * Assert that the compartment component classes from the environment
@@ -516,9 +526,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerComponentClass(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerComponentClass(MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerComponentClass", args= {MaterialsProducerId.class})
 	public void testGetMaterialsProducerComponentClass() {
 		/*
 		 * Assert that the compartment component classes from the environment
@@ -562,6 +573,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#releaseOutputItem(OutputItem)
 	 */
 	@Test
+	@UnitTestMethod(name = "releaseOutputItem", args= {OutputItem.class})
 	public void testReleaseOutputItem() {
 		/*
 		 * Assert that report items are released to the ReportItemHandler
@@ -695,9 +707,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getGlobalComponentClass(gcm.scenario.GlobalComponentId)}
+	 * {@link EnvironmentImpl#getGlobalComponentClass(GlobalComponentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalComponentClass", args= {GlobalComponentId.class})
 	public void testGetGlobalComponentClass() {
 		/*
 		 * Assert that the global property identifiers from the environment are
@@ -740,6 +753,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getCurrentComponentId()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCurrentComponentId", args= {})
 	public void testGetCurrentComponentId() {
 		/*
 		 * Assert that the global property identifiers from the environment are
@@ -784,9 +798,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getGlobalPropertyTime(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyTime(GlobalPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalPropertyTime", args= {GlobalPropertyId.class})
 	public void testGetGlobalPropertyTime() {
 		/*
 		 * For each compartment property first show that the property time is
@@ -882,9 +897,10 @@ public class AT_EnvironmentImpl_04 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getGlobalPropertyValue(gcm.scenario.GlobalPropertyId)}
+	 * {@link EnvironmentImpl#getGlobalPropertyValue(GlobalPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGlobalPropertyValue", args= {GlobalPropertyId.class})
 	public void testGetGlobalPropertyValue() {
 		/*
 		 * For each global property definition, show that the current value is
@@ -959,6 +975,7 @@ public class AT_EnvironmentImpl_04 {
 	 * Tests {@link EnvironmentImpl#getGroupCountForGroupType(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupCountForGroupType", args= {GroupTypeId.class})
 	public void testGetGroupCountForGroupType() {
 		/*
 		 * Assert that the number of groups ids associated with each group type
@@ -1029,6 +1046,7 @@ public class AT_EnvironmentImpl_04 {
 	 * {@link EnvironmentImpl#getGroupCountForGroupTypeAndPerson(GroupTypeId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroupCountForGroupTypeAndPerson", args= {GroupTypeId.class,PersonId.class})
 	public void testGetGroupCountForGroupTypeAndPerson() {
 		/*
 		 * Assert that the groups ids associated with each group type can be

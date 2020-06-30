@@ -45,6 +45,7 @@ import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
+import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
@@ -55,6 +56,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -81,6 +83,7 @@ public class AT_EnvironmentImpl_15 {
 	 * {@link EnvironmentImpl#observeRegionPersonPropertyChange(boolean, RegionId, PersonPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeRegionPersonPropertyChange", args = { boolean.class, RegionId.class, PersonPropertyId.class })
 	public void testObserveRegionPersonPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -294,7 +297,7 @@ public class AT_EnvironmentImpl_15 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeRegionPersonResourceChange", args = { boolean.class, RegionId.class, ResourceId.class })
 	public void testObserveRegionPersonResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -528,10 +531,12 @@ public class AT_EnvironmentImpl_15 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#observeRegionPersonArrival(boolean, RegionId)}
+	 * Tests
+	 * {@link EnvironmentImpl#observeRegionPersonArrival(boolean, RegionId)}
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeRegionPersonArrival", args = { boolean.class, RegionId.class })
 	public void testObserveRegionPersonArrival() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -718,11 +723,12 @@ public class AT_EnvironmentImpl_15 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#observeRegionPersonDeparture(boolean, RegionId)}
+	 * Tests
+	 * {@link EnvironmentImpl#observeRegionPersonDeparture(boolean, RegionId)}
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeRegionPersonDeparture", args = { boolean.class, RegionId.class })
 	public void testObserveRegionPersonDeparture() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -907,10 +913,11 @@ public class AT_EnvironmentImpl_15 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeRegionPropertyChange(boolean, RegionId, gcm.scenario.RegionPropertyId)}
+	 * {@link EnvironmentImpl#observeRegionPropertyChange(boolean, RegionId, RegionPropertyId)}
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeRegionPropertyChange", args = { boolean.class, RegionId.class, RegionPropertyId.class })
 	public void testObserveRegionPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components

@@ -42,6 +42,7 @@ import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -57,6 +58,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -83,6 +85,7 @@ public class AT_EnvironmentImpl_07 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "getObservableEnvironment", args = {})
 	public void testGetObservableEnvironment() {
 
 		/*
@@ -123,9 +126,10 @@ public class AT_EnvironmentImpl_07 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getOfferedStages(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getOfferedStages(MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOfferedStages", args = {MaterialsProducerId.class})
 	public void testGetOfferedStages() {
 		/*
 		 * Show that the list of offered stages reflect
@@ -193,6 +197,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeople()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeople", args = {})
 	public void testGetPeople() {
 		/*
 		 * Assert that the person identifiers from the environment are the
@@ -237,6 +242,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeopleForGroup(GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleForGroup", args = {GroupId.class})
 	public void testGetPeopleForGroup() {
 		/*
 		 * Assert people can be retrieved by their association with groups.
@@ -333,6 +339,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeopleForGroupType(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleForGroupType", args = {GroupTypeId.class})
 	public void testGetPeopleForGroupType() {
 		/*
 		 * Assert people can be retrieved by their association with group types.
@@ -426,6 +433,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeopleInCompartment(CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleInCompartment", args = {CompartmentId.class})
 	public void testGetPeopleInCompartment() {
 		/*
 		 * Assert that we know the person id of every person in every
@@ -482,6 +490,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeopleInRegion(RegionId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleInRegion", args = {RegionId.class})
 	public void testGetPeopleInRegion() {
 		/*
 		 * Assert that we know the person id of every person in every region by
@@ -538,6 +547,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link} {@link EnvironmentImpl#getPeopleWithoutResource(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleWithoutResource", args = {ResourceId.class})
 	public void testGetPeopleWithoutResource() {
 		/*
 		 * Distribute to some people a positive amount of a resource and check
@@ -606,6 +616,7 @@ public class AT_EnvironmentImpl_07 {
 	 * {@link EnvironmentImpl#getPeopleWithPropertyValue(PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleWithPropertyValue", args = {PersonPropertyId.class,Object.class})
 	public void testGetPeopleWithPropertyValue() {
 		/*
 		 * For each person and person property, retrieve the values into a map
@@ -697,6 +708,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPeopleWithResource(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPeopleWithResource", args = {ResourceId.class})
 	public void testGetPeopleWithResource() {
 		/*
 		 * Distribute to some people a positive amount of a resource and check
@@ -763,6 +775,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPersonCompartment(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonCompartment", args = {PersonId.class})
 	public void testGetPersonCompartment() {
 		/*
 		 * Assert that we get the compartment id associated with each person and
@@ -819,6 +832,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPersonCompartmentArrivalTime(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonCompartmentArrivalTime", args = {PersonId.class})
 	public void testGetPersonCompartmentArrivalTime() {
 		/*
 		 * For each person first show that the compartment arrival time is zero.
@@ -912,6 +926,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPersonCountForGroup(GroupId)} id
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonCountForGroup", args = {GroupId.class})
 	public void testGetPersonCountForGroup() {
 		/*
 		 * Assert that the number of people in a group can be retrieved
@@ -992,6 +1007,7 @@ public class AT_EnvironmentImpl_07 {
 	 * Tests {@link EnvironmentImpl#getPersonCountForGroupType(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonCountForGroupType", args = {GroupTypeId.class})
 	public void testGetPersonCountForGroupType() {
 		/*
 		 * Assert that the number of people associated with a group type can be

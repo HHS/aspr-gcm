@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import gcm.simulation.Equality;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link Equality}
@@ -22,6 +23,7 @@ public class AT_Equality {
 	 * Tests {@link Equality#isCompatibleComparisonValue(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "isCompatibleComparisonValue", args= {int.class})
 	public void testIsCompatibleComparisonValue() {
 
 		assertEquals(6, Equality.values().length);
@@ -57,29 +59,12 @@ public class AT_Equality {
 			assertTrue(Equality.GREATER_THAN_EQUAL.isCompatibleComparisonValue(i));
 		}
 	}
-
-	/**
-	 * Tests {@link Equality#valueOf(String)} Tests
-	 * {@link Equality#valueOf(Class, String)}
-	 */
-	@Test
-	public void testValueOf() {
-		// nothing to test
-
-	}
-
-	/**
-	 * Tests {@link Equality#values()}
-	 */
-	@Test
-	public void testValues() {
-		// nothing to test
-	}
-
+		
 	/**
 	 * Tests {@link Equality#getNegation(Equality)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNegation", args= {Equality.class})
 	public void testGetNegation() {
 		assertEquals(6, Equality.values().length);
 		assertEquals(Equality.NOT_EQUAL, Equality.getNegation(Equality.EQUAL));

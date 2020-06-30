@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
@@ -50,6 +51,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromLatitude(double)
 	 */
 	@Test
+	@UnitTestMethod(name = "fromLatitude", args = {double.class})
 	public void testFromLatitude() {
 		for (int i = -89; i < 90; i++) {
 			double latitude = i;
@@ -62,6 +64,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromRadius(double)
 	 */
 	@Test
+	@UnitTestMethod(name = "fromRadius", args = {double.class})
 	public void testFromRadius() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -76,6 +79,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#fromMeanRadius()
 	 */
 	@Test
+	@UnitTestMethod(name = "fromMeanRadius", args = {})
 	public void testFromMeanRadius() {
 		Earth earth = Earth.fromMeanRadius();
 		assertEquals(Earth.WGS84_MEAN_RADIUS_METERS, earth.getRadius(), 0);
@@ -85,6 +89,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getEffectiveEarthRadius(double)
 	 */
 	@Test
+	@UnitTestMethod(name = "getEffectiveEarthRadius", args = {double.class})
 	public void testGetEffectiveEarthRadius() {
 		Map<Double, Double> expectedValues = new LinkedHashMap<>();
 
@@ -280,17 +285,19 @@ public class AT_Earth {
 	}
 
 	/**
-	 * Tests {@linkplain Earth#getRadius(double)
+	 * Tests {@linkplain Earth#getRadius()
 	 */
 	@Test
+	@UnitTestMethod(name = "getRadius", args = {})
 	public void testGetRadius() {
 		// covered by testFromRadius
 	}
 
 	/**
-	 * Tests {@linkplain Earth#getECCFromLatLonAlt(gcm.util.earth.LatLonAlt)
+	 * Tests {@linkplain Earth#getECCFromLatLonAlt(LatLonAlt)
 	 */
 	@Test
+	@UnitTestMethod(name = "getECCFromLatLonAlt", args = {LatLonAlt.class})
 	public void testGetECCFromLatLonAlt() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(1);
@@ -325,6 +332,7 @@ public class AT_Earth {
 	 * Tests {@linkplain Earth#getLatLonAlt(Vector3D)
 	 */
 	@Test
+	@UnitTestMethod(name = "getLatLonAlt", args = {Vector3D.class})
 	public void testGetLatLonAlt() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(4);
@@ -351,9 +359,10 @@ public class AT_Earth {
 	}
 
 	/**
-	 * Tests {@linkplain Earth#getECCFromLatLon(gcm.util.earth.LatLon))
+	 * Tests {@linkplain Earth#getECCFromLatLon(LatLon))
 	 */
 	@Test
+	@UnitTestMethod(name = "getECCFromLatLon", args = {LatLon.class})
 	public void testGetECCFromLatLon() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(3);
@@ -383,9 +392,10 @@ public class AT_Earth {
 	}
 
 	/**
-	 * Tests {@linkplain Earth#getGroundDistanceFromECC(ECC, ECC))
+	 * Tests {@linkplain Earth#getGroundDistanceFromECC(Vector3D, Vector3D))
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroundDistanceFromECC", args = {Vector3D.class,Vector3D.class})
 	public void testGetGroundDistanceFromECC() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(2);
@@ -416,7 +426,8 @@ public class AT_Earth {
 	/**
 	 * Tests {@linkplain Earth#getGroundDistanceFromLatLon(LatLon, LatLon))
 	 */
-	@Test	
+	@Test
+	@UnitTestMethod(name = "getGroundDistanceFromLatLon", args = {LatLon.class,LatLon.class})
 	public void testGetGroundDistanceFromLatLon() {
 
 		// covered by testGetGroundDistanceFromECC()
@@ -427,6 +438,7 @@ public class AT_Earth {
 	 * LatLonAlt))
 	 */
 	@Test
+	@UnitTestMethod(name = "getGroundDistanceFromLatLonAlt", args = {LatLonAlt.class,LatLonAlt.class})
 	public void testGetGroundDistanceFromLatLonAlt() {
 
 		// covered by testGetGroundDistanceFromECC()

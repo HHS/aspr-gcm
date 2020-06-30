@@ -10,7 +10,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY,proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
 public final class ExternalAccessManagerImpl extends BaseElement implements ExternalAccessManager{
 
 	/*

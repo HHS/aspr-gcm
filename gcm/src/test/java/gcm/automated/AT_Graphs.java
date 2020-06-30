@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.graph.Graphs;
 import gcm.util.graph.Graphs.GraphConnectedness;
@@ -26,9 +27,10 @@ import gcm.util.graph.MutableGraph;
 public class AT_Graphs {
 
 	/**
-	 * Tests {@link Graphs#cutGraph(gcm.util.graph.Graph)}
+	 * Tests {@link Graphs#cutGraph(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "cutGraph", args= {Graph.class})
 	public void testCutGraph() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A","B");
@@ -60,9 +62,10 @@ public class AT_Graphs {
 	}
 
 	/**
-	 * Tests {@link Graphs#getGraphConnectedness(gcm.util.graph.Graph)}
+	 * Tests {@link Graphs#getGraphConnectedness(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGraphConnectedness", args= {Graph.class})
 	public void testGetGraphConnectedness() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		assertEquals(GraphConnectedness.DISCONNECTED,Graphs.getGraphConnectedness(m.toGraph()));
@@ -88,9 +91,10 @@ public class AT_Graphs {
 	}
 
 	/**
-	 * Tests {@link Graphs#getGraphCyclisity(gcm.util.graph.Graph)}
+	 * Tests {@link Graphs#getGraphCyclisity(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getGraphCyclisity", args= {Graph.class})
 	public void testGetGraphCyclisity() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		//empty graphs are acyclic
@@ -117,9 +121,10 @@ public class AT_Graphs {
 	}
 
 	/**
-	 * Tests {@link Graphs#getReverseGraph(gcm.util.graph.Graph)}
+	 * Tests {@link Graphs#getReverseGraph(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getReverseGraph", args= {Graph.class})
 	public void testGetReverseGraph() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");
@@ -144,9 +149,10 @@ public class AT_Graphs {
 	}
 
 	/**
-	 * Tests {@link Graphs#getSourceSinkReducedGraph(gcm.util.graph.Graph)}
+	 * Tests {@link Graphs#getSourceSinkReducedGraph(Graph)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSourceSinkReducedGraph", args= {Graph.class})
 	public void testGetSourceSinkReducedGraph() {
 		MutableGraph<String, String> m = new MutableGraph<>();
 		m.addEdge("A->B", "A", "B");

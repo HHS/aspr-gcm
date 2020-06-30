@@ -43,6 +43,8 @@ import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.MaterialId;
+import gcm.scenario.MaterialsProducerId;
+import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.ResourceId;
@@ -52,9 +54,11 @@ import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
+import gcm.simulation.MonoWeightingFunction;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -87,6 +91,7 @@ public class AT_EnvironmentImpl_06 {
 	 * Tests {@link EnvironmentImpl#getIndexedPeople(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getIndexedPeople", args= {Object.class})
 	public void testGetIndexedPeople() {
 		/*
 		 * The complex testing of index creation is handled elsewhere. Here, we
@@ -158,6 +163,7 @@ public class AT_EnvironmentImpl_06 {
 	 * Tests {@link EnvironmentImpl#getIndexSize(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getIndexSize", args= {Object.class})
 	public void testGetIndexSize() {
 		/*
 		 * The complex testing of index creation is handled elsewhere. Here, we
@@ -225,9 +231,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getInventoryBatches(gcm.scenario.MaterialsProducerId)}
+	 * {@link EnvironmentImpl#getInventoryBatches(MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInventoryBatches", args= {MaterialsProducerId.class})
 	public void testGetInventoryBatches() {
 		/*
 		 * Show that the list of batches in inventory reflects the stages that
@@ -309,9 +316,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getInventoryBatchesByMaterialId(gcm.scenario.MaterialsProducerId, MaterialId)}
+	 * {@link EnvironmentImpl#getInventoryBatchesByMaterialId(MaterialsProducerId, MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInventoryBatchesByMaterialId", args= {MaterialsProducerId.class,MaterialId.class})
 	public void testGetInventoryBatchesByMaterialId() {
 		/*
 		 * Show that the list batches in inventory reflects the stages that are
@@ -514,6 +522,7 @@ public class AT_EnvironmentImpl_06 {
 	 * Tests {@link EnvironmentImpl#getMaterialIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialIds", args= {})
 	public void testGetMaterialIds() {
 		/*
 		 * Assert that the material identifiers from the environment are the
@@ -555,6 +564,7 @@ public class AT_EnvironmentImpl_06 {
 	 * Tests {@link EnvironmentImpl#getMaterialsProducerIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerIds", args= {})
 	public void testGetMaterialsProducerIds() {
 		/*
 		 * Assert that the materials producer identifiers from the environment
@@ -592,9 +602,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerPropertyDefinition(gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyDefinition(MaterialsProducerPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerPropertyDefinition", args= {MaterialsProducerPropertyId.class})
 	public void testGetMaterialsProducerPropertyDefinition() {
 		/*
 		 * Retrieve each materials producer property definition and assert that
@@ -646,9 +657,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerPropertyTime(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyTime(MaterialsProducerId, MaterialsProducerPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerPropertyTime", args= {MaterialsProducerId.class, MaterialsProducerPropertyId.class})
 	public void testGetMaterialsProducerPropertyTime() {
 		/*
 		 * For each materials producer property first show that the property
@@ -755,9 +767,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, gcm.scenario.MaterialsProducerPropertyId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerPropertyValue", args= {MaterialsProducerId.class, MaterialsProducerPropertyId.class})
 	public void testGetMaterialsProducerPropertyValue() {
 		/*
 		 * For each materials producer and material producer property
@@ -849,9 +862,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerResourceLevel(gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerResourceLevel(MaterialsProducerId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerResourceLevel", args= {MaterialsProducerId.class, ResourceId.class})
 	public void testGetMaterialsProducerResourceLevel() {
 
 		/*
@@ -931,9 +945,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMaterialsProducerResourceTime(gcm.scenario.MaterialsProducerId, ResourceId)}
+	 * {@link EnvironmentImpl#getMaterialsProducerResourceTime(MaterialsProducerId, ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerResourceTime", args= {MaterialsProducerId.class, ResourceId.class})
 	public void testGetMaterialsProducerResourceTime() {
 		/*
 		 * For each region property first show that the property time is zero.
@@ -1017,6 +1032,7 @@ public class AT_EnvironmentImpl_06 {
 	 * Tests {@link EnvironmentImpl#getMaterialsProducerPropertyIds()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMaterialsProducerPropertyIds", args= {})
 	public void testGetMaterialsProducerPropertyIds() {
 		/*
 		 * Assert that the materials production property identifiers from the
@@ -1056,9 +1072,10 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMonoWeightedGroupContact(GroupId, gcm.simulation.MonoWeightingFunction)}
+	 * {@link EnvironmentImpl#getMonoWeightedGroupContact(GroupId, MonoWeightingFunction)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMonoWeightedGroupContact", args= {GroupId.class, MonoWeightingFunction.class})
 	public void testGetMonoWeightedGroupContact() {
 
 		/*

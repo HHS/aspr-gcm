@@ -2,7 +2,6 @@ package gcm.script;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,7 +9,6 @@ import java.util.Map;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
-import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Container for all information collected on a GCM source file
@@ -84,17 +82,6 @@ public final class TestClassRec {
 			Test test = method.getAnnotation(Test.class);
 			if(test != null) {
 				addMethod(method);			
-			}
-			UnitTestMethod unitTestMethod = method.getAnnotation(UnitTestMethod.class);
-			if(unitTestMethod != null) {				
-				try {
-					Method method2 = unitTest.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
-					System.out.println("method found "+method2);
-				} catch (NoSuchMethodException | SecurityException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-								
 			}
 		}
 

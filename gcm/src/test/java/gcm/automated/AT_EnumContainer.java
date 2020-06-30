@@ -11,6 +11,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.EnumContainer;
 /**
  * Test class for {@link EnumContainer}
@@ -50,7 +51,11 @@ public class AT_EnumContainer {
 		
 	}
 
+	/**
+	 * Tests {@link EnumContainer#getValue(int)}
+	 */
 	@Test
+	@UnitTestMethod(name = "getValue", args = {int.class})
 	public void testGetValue() {
 		EnumContainer enumContainer = new EnumContainer(Animal.class, Animal.DOG);
 		enumContainer.setValue(3, Animal.CAT);
@@ -91,7 +96,11 @@ public class AT_EnumContainer {
 
 	}
 
+	/**
+	 * Test {@link EnumContainer#setValue(int, Object)}
+	 */
 	@Test
+	@UnitTestMethod(name = "setValue", args = {int.class,Object.class})
 	public void testSetValue() {
 		
 		Map<Integer,Animal> animalMap = new LinkedHashMap<>();

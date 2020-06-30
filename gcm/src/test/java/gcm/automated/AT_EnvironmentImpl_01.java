@@ -50,9 +50,11 @@ import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Filter;
+import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -79,6 +81,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addGroup(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroup", args = {GroupTypeId.class})
 	public void testAddGroup() {
 		/*
 		 * Assert that the groups can be added
@@ -133,6 +136,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addPerson(RegionId, CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPerson", args = {RegionId.class, CompartmentId.class})
 	public void testAddPerson() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -213,6 +217,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addPersonToGroup(PersonId, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonToGroup", args = {PersonId.class, GroupId.class})
 	public void testAddPersonToGroup() {
 		/*
 		 * Assert that people can be added to groups
@@ -305,10 +310,11 @@ public class AT_EnvironmentImpl_01 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#addPlan(gcm.simulation.Plan, double)
+	 * Tests {@link EnvironmentImpl#addPlan(Plan, double)
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "addPlan", args = {Plan.class, double.class})
 	public void testAddPlan() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -368,6 +374,7 @@ public class AT_EnvironmentImpl_01 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "addPopulationIndex", args = {Filter.class, Object.class})
 	public void testAddPopulationIndex() {
 
 		/*
@@ -470,6 +477,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addResourceToRegion(ResourceId, RegionId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addResourceToRegion", args = {ResourceId.class, RegionId.class, long.class})
 	public void testAddResourceToRegion() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -580,6 +588,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#batchExists(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "batchExists", args = {BatchId.class})
 	public void testBatchExists() {
 		/*
 		 * Show that batches exist as expected before construction, after

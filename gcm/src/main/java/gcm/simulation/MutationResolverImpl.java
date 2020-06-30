@@ -68,7 +68,7 @@ import gcm.util.annotations.TestStatus;
  * 
  */
 
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class MutationResolverImpl extends BaseElement implements MutationResolver {
 
 	private IndexedPopulationManager indexedPopulationManager;

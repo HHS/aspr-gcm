@@ -17,7 +17,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class StochasticsManagerImpl extends BaseElement implements StochasticsManager {
 
 	private Map<RandomNumberGeneratorId, RandomGenerator> randomGeneratorMap = new LinkedHashMap<>();

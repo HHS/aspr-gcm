@@ -52,6 +52,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -80,6 +81,7 @@ public class AT_EnvironmentImpl_02 {
 	 * {@link EnvironmentImpl#convertStageToBatch(StageId, MaterialId, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "convertStageToBatch", args = {StageId.class,MaterialId.class,double.class})
 	public void testConvertStageToBatch() {
 		/*
 		 * Show that we convert a stage to a batch, with the stage and its
@@ -186,6 +188,7 @@ public class AT_EnvironmentImpl_02 {
 	 * {@link EnvironmentImpl#convertStageToResource(StageId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "convertStageToResource", args = {StageId.class,ResourceId.class,long.class})
 	public void testConvertStageToResource() {
 		/*
 		 * Show that we convert a stage to a resource, with the stage and its
@@ -318,6 +321,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#createBatch(MaterialId, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "createBatch", args = {MaterialId.class,double.class})
 	public void testCreateBatch() {
 		/*
 		 * Show that we can add batches and that the environment acknowledges
@@ -400,6 +404,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#createStage()}
 	 */
 	@Test
+	@UnitTestMethod(name = "createStage", args = {})
 	public void testCreateStage() {
 		/*
 		 * Show that we can add stages and that the environment acknowledges
@@ -470,6 +475,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#destroyBatch(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "destroyBatch", args = {BatchId.class})
 	public void testDestroyBatch() {
 		/*
 		 * Show that batches can be destroyed and that the environment
@@ -534,6 +540,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getCompartmentMapOption()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCompartmentMapOption", args = {})
 	public void testGetCompartmentMapOption() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(5);
@@ -570,6 +577,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getRegionMapOption()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRegionMapOption", args = {})
 	public void testGetRegionMapOption() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(6);
@@ -606,6 +614,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getPersonCompartmentArrivalTrackingPolicy()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonCompartmentArrivalTrackingPolicy", args = {})
 	public void testGetPersonCompartmentArrivalTrackingPolicy() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(7);
@@ -642,6 +651,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getPersonRegionArrivalTrackingPolicy()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonRegionArrivalTrackingPolicy", args = {})
 	public void testGetPersonRegionArrivalTrackingPolicy() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -675,9 +685,10 @@ public class AT_EnvironmentImpl_02 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getPersonResourceTimeTrackingPolicy()}
+	 * Tests {@link EnvironmentImpl#getPersonResourceTimeTrackingPolicy(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonResourceTimeTrackingPolicy", args = {ResourceId.class})
 	public void testGetPersonResourceTimeTrackingPolicy() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(9);
@@ -728,6 +739,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#destroyStage(StageId, boolean)}
 	 */
 	@Test
+	@UnitTestMethod(name = "destroyStage", args = {StageId.class, boolean.class})
 	public void testDestroyStage() {
 		/*
 		 * Show that we can destroy stages and that the environment acknowledges
@@ -802,6 +814,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getBatchAmount(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchAmount", args = {BatchId.class})
 	public void testGetBatchAmount() {
 		/*
 		 * Show that batches have the amounts that they are created with. Leave
@@ -853,6 +866,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getBatchMaterial(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchMaterial", args = {BatchId.class})
 	public void testGetBatchMaterial() {
 		/*
 		 * Show that batches have the amounts that they are created with. Leave
@@ -905,6 +919,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getBatchProducer(BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchProducer", args = {BatchId.class})
 	public void testGetBatchProducer() {
 		/*
 		 * Show that batches have their creators.
@@ -965,6 +980,7 @@ public class AT_EnvironmentImpl_02 {
 	 * {@link EnvironmentImpl#getBatchPropertyDefinition(MaterialId, BatchPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchPropertyDefinition", args = {MaterialId.class, BatchPropertyId.class})
 	public void testGetBatchPropertyDefinition() {
 		/*
 		 * Retrieve each batch property definition and assert that it equals the
@@ -1029,6 +1045,7 @@ public class AT_EnvironmentImpl_02 {
 	 * Tests {@link EnvironmentImpl#getBatchPropertyIds(MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getBatchPropertyIds", args = {MaterialId.class})
 	public void testGetBatchPropertyIds() {
 		/*
 		 * Assert that the batch property identifiers from the environment are

@@ -6,7 +6,7 @@ import java.util.Set;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.PROXY, proxy = IndexedPopulationManagerImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = IndexedPopulationManagerImpl.class)
 public final class PopulationIndexEfficiencyWarning {
 
 	private final Object populationIndexId;

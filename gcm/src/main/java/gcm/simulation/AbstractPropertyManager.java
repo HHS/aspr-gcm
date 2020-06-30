@@ -32,7 +32,7 @@ import gcm.util.containers.IntSet;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public abstract class AbstractPropertyManager implements PersonPropertyManager {
 
 	private PersonIdManager personIdManager;

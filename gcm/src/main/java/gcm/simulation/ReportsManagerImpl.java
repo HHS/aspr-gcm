@@ -40,7 +40,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class ReportsManagerImpl extends BaseElement implements ReportsManager {
 
 	private final Map<Report, Set<Object>> reports = new LinkedHashMap<>();

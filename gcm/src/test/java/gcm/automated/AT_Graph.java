@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.graph.MutableGraph;
 
@@ -126,6 +127,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args= {})
 	public void testBuilder() {
 		/*
 		 * We will only test the builder methods for adding an entire Graph or
@@ -140,6 +142,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#containsEdge(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "containsEdge", args= {Object.class})
 	public void testContainsEdge() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A", "B");
@@ -159,6 +162,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#containsNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "containsNode", args= {Object.class})
 	public void testContainsNode() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addNode("A");
@@ -181,6 +185,7 @@ public class AT_Graph {
 	 * {@link Graph#edgeCount(Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "edgeCount", args= {Object.class,Object.class})
 	public void testEdgeCount() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A", "B");
@@ -205,6 +210,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#formsEdgeRelationship(Object, Object, Object)}
 	 */	
 	@Test
+	@UnitTestMethod(name = "formsEdgeRelationship", args= {Object.class,Object.class,Object.class})
 	public void testFormsEdgeRelationship(){
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -236,6 +242,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getDestinationNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getDestinationNode", args= {Object.class})
 	public void testGetDestinationNode() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -267,6 +274,7 @@ public class AT_Graph {
 	 * {@link Graph#getEdges(Object, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getEdges", args= {Object.class,Object.class})
 	public void testGetEdges() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -290,6 +298,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getInboundEdgeCount(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInboundEdgeCount", args= {Object.class})
 	public void testGetInboundEdgeCount() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -314,6 +323,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getInboundEdges(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInboundEdges", args= {Object.class})
 	public void testGetInboundEdges() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -351,6 +361,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getNodes()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getNodes", args= {})
 	public void testGetNodes() {
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("A");
@@ -375,6 +386,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getOriginNode(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOriginNode", args= {Object.class})
 	public void testGetOriginNode() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -405,6 +417,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getOutboundEdgeCount(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOutboundEdgeCount", args= {Object.class})
 	public void testGetOutboundEdgeCount() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -429,6 +442,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#getOutboundEdges(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getOutboundEdges", args= {Object.class})
 	public void testGetOutboundEdges() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
@@ -466,6 +480,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#isEmpty()}
 	 */
 	@Test
+	@UnitTestMethod(name = "isEmpty", args= {})
 	public void testIsEmpty() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addNode("A");
@@ -485,6 +500,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#nodeCount()}
 	 */
 	@Test
+	@UnitTestMethod(name = "nodeCount", args= {})
 	public void testNodeCount() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		Graph<String, String> graph = builder.build();
@@ -511,6 +527,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#toMutableGraph()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toMutableGraph", args= {})
 	public void testToMutableGraph() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B","A","B");
@@ -531,6 +548,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args= {})
 	public void testHashCode() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B","A","B");
@@ -571,6 +589,7 @@ public class AT_Graph {
 	 * Tests {@link Graph#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args= {Object.class})
 	public void testEquals() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		

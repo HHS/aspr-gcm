@@ -12,6 +12,7 @@ import org.junit.Test;
 import gcm.util.MemoryLink;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test for {@link MemoryPartition}
@@ -21,7 +22,11 @@ import gcm.util.annotations.UnitTest;
  */
 @UnitTest(target = MemoryPartition.class)
 public class AT_MemoryPartition {
+	/**
+	 * Test {@link MemoryPartition#getMemoryLinks())}
+	 */
 	@Test
+	@UnitTestMethod(name = "getMemoryLinks", args = {})
 	public void testGetMemoryLinks() {
 		Set<MemoryLink> expectedMemoryLinks = new LinkedHashSet<>();
 		MemoryPartition memoryPartition = new MemoryPartition();
@@ -39,7 +44,11 @@ public class AT_MemoryPartition {
 		assertTrue(expectedMemoryLinks.containsAll(actualMemoryLinks));
 	}
 
+	/**
+	 * Tests {@link MemoryPartition#addMemoryLink(Object, Object, String)}
+	 */
 	@Test
+	@UnitTestMethod(name = "addMemoryLink", args = {Object.class, Object.class, String.class})
 	public void testAddMemoryLink() {
 		Set<MemoryLink> expectedMemoryLinks = new LinkedHashSet<>();
 		MemoryPartition memoryPartition = new MemoryPartition();

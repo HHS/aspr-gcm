@@ -52,6 +52,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -75,9 +76,10 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests
-	 * {@linkplain EnvironmentImpl#observeGroupDestructionByType(boolean, GroupTypeId)
+	 * {@linkplain EnvironmentImpl#observeGroupDestructionByType(boolean, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupDestructionByType", args = { boolean.class, GroupTypeId.class})
 	public void testObserveGroupDestructionByType() {
 		/*
 		 * 
@@ -198,6 +200,7 @@ public class AT_EnvironmentImpl_19 {
 	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChange(boolean)
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupPropertyChange", args = { boolean.class})
 	public void testObserveGroupPropertyChange() {
 		/*
 		 * 
@@ -324,10 +327,10 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByGroup(boolean,
-	 * GroupId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByGroup(boolean, GroupId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupPropertyChangeByGroup", args = { boolean.class, GroupId.class})
 	public void testObserveGroupPropertyChangeByGroup() {
 		/*
 		 * 
@@ -468,10 +471,10 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests {@linkplain
-	 * EnvironmentImpl#observeGroupPropertyChangeByGroupAndProperty(boolean,
-	 * GroupId, GroupPropertyId)
+	 * EnvironmentImpl#observeGroupPropertyChangeByGroupAndProperty(boolean, GroupId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupPropertyChangeByGroupAndProperty", args = { boolean.class, GroupId.class, GroupPropertyId.class})
 	public void testObserveGroupPropertyChangeByGroupAndProperty() {
 		/*
 		 * Time 0 : GLOBAL_COMPONENT_1 adds groups 0
@@ -609,10 +612,10 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByType(boolean,
-	 * GroupTypeId)
+	 * Tests {@linkplain EnvironmentImpl#observeGroupPropertyChangeByType(boolean, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupPropertyChangeByType", args = { boolean.class, GroupTypeId.class})
 	public void testObserveGroupPropertyChangeByType() {
 		/*
 		 * Time 1 : GLOBAL_COMPONENT_1 adds groups 0 and 1
@@ -761,10 +764,10 @@ public class AT_EnvironmentImpl_19 {
 
 	/**
 	 * Tests {@linkplain
-	 * EnvironmentImpl#observeGroupPropertyChangeByTypeAndProperty(boolean,
-	 * GroupTypeId, GroupPropertyId)
+	 * EnvironmentImpl#observeGroupPropertyChangeByTypeAndProperty(boolean, GroupTypeId, GroupPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupPropertyChangeByTypeAndProperty", args = { boolean.class, GroupTypeId.class, GroupPropertyId.class})
 	public void testObserveGroupPropertyChangeByTypeAndProperty() {
 		/*
 		 * Time 1 : GLOBAL_COMPONENT_1 adds groups 0 and 1
@@ -912,6 +915,7 @@ public class AT_EnvironmentImpl_19 {
 	 * Test of {@link EnvironmentImpl#observeGroupArrival(boolean)}
 	 */
 	@Test
+	@UnitTestMethod(name = "observeGroupArrival", args = { boolean.class})
 	public void testObserveGroupArrival() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -1025,6 +1029,7 @@ public class AT_EnvironmentImpl_19 {
 	 * Tests {@link EnvironmentImpl#personExists(PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "personExists", args = { PersonId.class})
 	public void testPersonExists() {
 		/*
 		 * Assert that each person id that we expect returns true from
@@ -1070,6 +1075,7 @@ public class AT_EnvironmentImpl_19 {
 	 * Tests {@link EnvironmentImpl#personIsInPopulationIndex(PersonId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "personIsInPopulationIndex", args = { PersonId.class, Object.class})
 	public void testPersonIsInPopulationIndex() {
 		/*
 		 * Show that we can verify a person's membership in a population index.

@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.FloatValueContainer;
 /**
  * Test class for {@link FloatValueContainer}
@@ -17,7 +18,10 @@ import gcm.util.containers.FloatValueContainer;
 @UnitTest(target = FloatValueContainer.class)
 public class AT_FloatValueContainer {
 
-	@Test
+	/**
+	 * Test {@link FloatValueContainer} contructor
+	 */
+	@Test	
 	public void testFloatValueContainerConstructor() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 		assertNotNull(floatValueContainer);
@@ -31,7 +35,11 @@ public class AT_FloatValueContainer {
 
 	}
 
+	/**
+	 * Tests {@link FloatValueContainer#getCapacity()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getCapacity", args= {})
 	public void testGetCapacity() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -53,7 +61,11 @@ public class AT_FloatValueContainer {
 		assertTrue(floatValueContainer.getCapacity() >= floatValueContainer.size());
 	}
 
+	/**
+	 * Tests {@link FloatValueContainer#getDefaultValue()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getDefaultValue", args= {})
 	public void testGetDefaultValue() {
 		float defaultValue = 0;
 		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
@@ -69,7 +81,11 @@ public class AT_FloatValueContainer {
 
 	}
 
+	/**
+	 * Test {@link FloatValueContainer#getValue(int)}
+	 */
 	@Test
+	@UnitTestMethod(name = "getValue", args= {int.class})
 	public void testGetValue() {		
 		float defaultValue = -345.34f;
 		FloatValueContainer floatValueContainer = new FloatValueContainer(defaultValue);
@@ -101,7 +117,11 @@ public class AT_FloatValueContainer {
 
 	}
 
+	/**
+	 * Tests {@link FloatValueContainer#setCapacity(int)}
+	 */
 	@Test
+	@UnitTestMethod(name = "setCapacity", args= {int.class})
 	public void testSetCapacity() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -122,7 +142,11 @@ public class AT_FloatValueContainer {
 		assertTrue(floatValueContainer.getCapacity() >= expectedCapacity);
 	}
 
+	/**
+	 * Test {@link FloatValueContainer#setValue(int, float)}
+	 */
 	@Test
+	@UnitTestMethod(name = "setValue", args= {int.class, float.class})
 	public void testSetValue() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
 
@@ -137,7 +161,11 @@ public class AT_FloatValueContainer {
 
 	}
 
+	/**
+	 * Tests {@link FloatValueContainer#size()}
+	 */
 	@Test
+	@UnitTestMethod(name = "size", args= {})
 	public void testSize() {
 		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 100);
 		assertEquals(0, floatValueContainer.size());

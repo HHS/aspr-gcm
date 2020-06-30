@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.ImmutableStat;
 
 /**
@@ -38,11 +39,12 @@ public class AT_ImmutableStat {
 		// System.out.println(AT_ImmutableStat.class.getSimpleName() + " " +
 		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
-	
+
 	/**
 	 * Tests {@link ImmutableStat#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -173,6 +175,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#getMean()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMean", args = {})
 	public void testGetMean() {
 		// covered by testBuilder()
 	}
@@ -181,6 +184,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#getMax()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMax", args = {})
 	public void testGetMax() {
 		// covered by testBuilder()
 	}
@@ -189,6 +193,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#getMin()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMin", args = {})
 	public void testGetMin() {
 		// covered by testBuilder()
 	}
@@ -197,6 +202,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#getStandardDeviation()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getStandardDeviation", args = {})
 	public void testGetStandardDeviation() {
 		// covered by testBuilder()
 	}
@@ -205,6 +211,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#getVariance()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getVariance", args = {})
 	public void testGetVariance() {
 		// covered by testBuilder()
 	}
@@ -213,6 +220,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#size()}
 	 */
 	@Test
+	@UnitTestMethod(name = "size", args = {})
 	public void testSize() {
 		// covered by testBuilder()
 	}
@@ -221,6 +229,7 @@ public class AT_ImmutableStat {
 	 * Tests {@link ImmutableStat#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		ImmutableStat immutableStat = ImmutableStat.builder().setMax(3.4).setMin(1.1).setMean(1.9).setSize(20).setVariance(0.5).build();
 

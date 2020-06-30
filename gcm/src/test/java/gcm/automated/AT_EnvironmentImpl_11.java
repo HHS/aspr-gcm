@@ -50,7 +50,9 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.util.MemoryPartition;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test Unit for {@link EnvironmentImpl} class. See
@@ -85,6 +87,7 @@ public class AT_EnvironmentImpl_11 {
 	 * {@link EnvironmentImpl#transferResourceToPerson(ResourceId, PersonId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "transferResourceToPerson", args = {ResourceId.class, PersonId.class, long.class})
 	public void testTransferResourceToPerson() {
 
 		/*
@@ -263,6 +266,7 @@ public class AT_EnvironmentImpl_11 {
 	 * Tests {@link EnvironmentImpl#getProfiledProxy(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getProfiledProxy", args = {Object.class})
 	public void testGetProfiledProxy() {
 
 		// The first test will show that the proxy is not the same as the
@@ -328,9 +332,10 @@ public class AT_EnvironmentImpl_11 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#isInitialized(Object)}
+	 * Tests {@link EnvironmentImpl#isInitialized()}
 	 */
 	@Test
+	@UnitTestMethod(name = "isInitialized", args = {})
 	public void testIsInitialized() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(2);
@@ -362,9 +367,10 @@ public class AT_EnvironmentImpl_11 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#collectMemoryLinks(Object)}
+	 * Tests {@link EnvironmentImpl#collectMemoryLinks(MemoryPartition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "collectMemoryLinks", args = {MemoryPartition.class})
 	public void testCollectMemoryLinks() {
 
 		// deferred to Context testing
@@ -376,6 +382,7 @@ public class AT_EnvironmentImpl_11 {
 	 * {@link EnvironmentImpl#getPersonPropertyTime(PersonId, PersonPropertyId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPersonPropertyTime", args = {PersonId.class, PersonPropertyId.class})
 	public void testGetPersonPropertyTime() {
 		/*
 		 * For each person property first show that the property time is zero.

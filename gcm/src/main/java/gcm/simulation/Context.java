@@ -26,7 +26,7 @@ import net.jcip.annotations.NotThreadSafe;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = Simulation.class)
+@Source(status = TestStatus.REQUIRED, proxy = Simulation.class)
 @NotThreadSafe
 public final class Context implements MemoryReportParticipant {
 

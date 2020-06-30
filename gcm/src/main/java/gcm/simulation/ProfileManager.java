@@ -37,7 +37,7 @@ import gcm.util.stats.MutableStat;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.PROXY, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class ProfileManager extends BaseElement {
 	/*
 	 * A class representing a node in a tree that mirrors the execution tree for

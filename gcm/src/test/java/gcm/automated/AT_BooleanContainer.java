@@ -9,6 +9,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.BooleanContainer;
 
 /**
@@ -20,6 +21,10 @@ import gcm.util.containers.BooleanContainer;
 @UnitTest(target = BooleanContainer.class)
 public class AT_BooleanContainer {
 
+	
+	/**
+	 * Test {@link BooleanContainer} constructor test
+	 */
 	@Test
 	public void testDefaultValue() {
 		BooleanContainer booleanContainer = new BooleanContainer(true);
@@ -48,7 +53,11 @@ public class AT_BooleanContainer {
 
 	}
 
+	/**
+	 * Test {@link BooleanContainer#get(int)}
+	 */
 	@Test
+	@UnitTestMethod(name="get",args= {int.class})
 	public void testGet() {
 		Random random = new Random(53463457457456456L);
 		int n = 1000;
@@ -79,7 +88,11 @@ public class AT_BooleanContainer {
 
 	}
 
+	/**
+	 * Test {@link BooleanContainer#set(int, boolean)}
+	 */
 	@Test
+	@UnitTestMethod(name="set",args= {int.class,boolean.class})
 	public void testSet() {
 		// proxy via testGet()
 	}

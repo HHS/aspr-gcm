@@ -7,6 +7,7 @@ import org.junit.Test;
 
 import gcm.scenario.ActionType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link ActionType} 
@@ -17,7 +18,11 @@ import gcm.util.annotations.UnitTest;
 @UnitTest(target = ActionType.class)
 public class AT_ActionType {
 
+	/**
+	 * Tests {@link ActionType#toString()}
+	 */
 	@Test
+	@UnitTestMethod(name = "toString", args= {})
 	public void testToString() {
 		for(ActionType actionType : ActionType.values()) {
 			String value = actionType.toString();
@@ -26,13 +31,21 @@ public class AT_ActionType {
 		}
 	}
 	
+	/**
+	 * Test {@link ActionType#valueOf(String)}
+	 */
 	@Test
+	@UnitTestMethod(name = "valueOf", args= {String.class})
 	public void testValueOf() {
 		//nothing to test
 
 	}
 	
+	/**
+	 * Test {@link ActionType#values()}
+	 */
 	@Test
+	@UnitTestMethod(name = "values", args= {})
 	public void testValues() {
 		//nothing to test
 	}

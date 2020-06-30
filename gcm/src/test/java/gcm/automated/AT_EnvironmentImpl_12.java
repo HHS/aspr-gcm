@@ -54,7 +54,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
-
+import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -73,9 +73,8 @@ public class AT_EnvironmentImpl_12 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
 	}
-
 
 	/**
 	 * Tests
@@ -83,6 +82,7 @@ public class AT_EnvironmentImpl_12 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeCompartmentalPersonPropertyChange", args = { boolean.class, CompartmentId.class, PersonPropertyId.class })
 	public void testObserveCompartmentalPersonPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -279,7 +279,7 @@ public class AT_EnvironmentImpl_12 {
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeCompartmentalPersonResourceChange", args = { boolean.class, CompartmentId.class, ResourceId.class })
 	public void testObserveCompartmentalPersonResourceChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -521,6 +521,7 @@ public class AT_EnvironmentImpl_12 {
 	 *
 	 */
 	@Test
+	@UnitTestMethod(name = "observeCompartmentPersonArrival", args = { boolean.class, CompartmentId.class })
 	public void testObserveCompartmentPersonArrival() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -712,7 +713,7 @@ public class AT_EnvironmentImpl_12 {
 	 * 
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeCompartmentPersonDeparture", args = { boolean.class, CompartmentId.class })
 	public void testObserveCompartmentPersonDeparture() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -898,11 +899,11 @@ public class AT_EnvironmentImpl_12 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#observeCompartmentPropertyChange(boolean, CompartmentId, gcm.scenario.CompartmentPropertyId)}
+	 * {@link EnvironmentImpl#observeCompartmentPropertyChange(boolean, CompartmentId, CompartmentPropertyId)}
 	 *
 	 */
 	@Test
-
+	@UnitTestMethod(name = "observeCompartmentPropertyChange", args = { boolean.class, CompartmentId.class, CompartmentPropertyId.class })
 	public void testObserveCompartmentPropertyChange() {
 		/*
 		 * We test for the post conditions by first having the components
@@ -1093,5 +1094,4 @@ public class AT_EnvironmentImpl_12 {
 
 	}
 
-	
 }

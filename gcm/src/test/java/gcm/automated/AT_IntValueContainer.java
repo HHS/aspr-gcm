@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.IntValueContainer;
 import gcm.util.containers.IntValueContainer.IntValueType;
@@ -21,31 +22,7 @@ import gcm.util.containers.IntValueContainer.IntValueType;
 @UnitTest(target = IntValueContainer.class)
 public class AT_IntValueContainer {
 
-	/**
-	 * Test for {@link IntValueContainer construction}
-	 */
-	@Test
-	public void testIntValueContainerConstruction() {
-		long defaultValue = 3452352345L;
-		IntValueContainer intValueContainer = new IntValueContainer(defaultValue);
-		assertNotNull(intValueContainer);
-		assertEquals(defaultValue, intValueContainer.getDefaultValueAsLong());
-
-		int capacity = 1200;
-		intValueContainer = new IntValueContainer(defaultValue, capacity);
-		assertNotNull(intValueContainer);
-		assertEquals(defaultValue, intValueContainer.getDefaultValueAsLong());
-		assertTrue(intValueContainer.getCapacity() >= capacity);
-
-		// the default value is returned for all non-negative indices for which
-		// an overriding assignment has not occured.
-		assertEquals(defaultValue, intValueContainer.getValueAsLong(200));
-
-		// precondition tests
-		int badCapacity = -12;
-		assertException(() -> new IntValueContainer(defaultValue, badCapacity), NegativeArraySizeException.class);
-
-	}
+	
 
 	/**
 	 * Test for {@link IntValueContainer#getValueAsByte(int)}
@@ -516,6 +493,34 @@ public class AT_IntValueContainer {
 		intValueContainer.setLongValue(0, Long.MIN_VALUE);
 
 		assertException(() -> intValueContainer.decrementLongValue(0, l3), ArithmeticException.class);
+	}
+
+	
+	/**
+	 * Test for {@link IntValueContainer#IntValueContainer(long)}
+	 */
+	@Test
+	@UnitTestConstructor( args = {long.class})
+	public void testConstructor_Long() {
+		IntValueContainer intValueContainer = new IntValueContainer(12);
+		assertNotNull(intValueContainer);
+	}
+	
+	/**
+	 * Test for {@link IntValueContainer#IntValueContainer(long, int)}
+	 */
+	@Test
+	@UnitTestConstructor( args = {long.class, int.class})
+	public void testConstructor_LongInt() {
+		IntValueContainer intValueContainer = new IntValueContainer(12,0);
+		assertNotNull(intValueContainer);
+		
+		intValueContainer = new IntValueContainer(12,30);
+		assertNotNull(intValueContainer);
+		
+		assertException(() -> new IntValueContainer(12,-1), NegativeArraySizeException.class);
+
+		
 	}
 
 	

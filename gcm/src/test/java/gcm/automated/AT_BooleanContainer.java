@@ -9,6 +9,7 @@ import java.util.Random;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.BooleanContainer;
 
@@ -21,19 +22,13 @@ import gcm.util.containers.BooleanContainer;
 @UnitTest(target = BooleanContainer.class)
 public class AT_BooleanContainer {
 
-	
 	/**
-	 * Test {@link BooleanContainer} constructor test
+	 * Test {@link BooleanContainer#BooleanContainer(boolean)}
 	 */
 	@Test
-	public void testDefaultValue() {
+	@UnitTestConstructor(args = { boolean.class })
+	public void testConstructor_Boolean() {
 		BooleanContainer booleanContainer = new BooleanContainer(true);
-
-		for (int i = 0; i < 10; i++) {
-			assertTrue(booleanContainer.get(i));
-		}
-
-		booleanContainer = new BooleanContainer(true, 100);
 
 		for (int i = 0; i < 10; i++) {
 			assertTrue(booleanContainer.get(i));
@@ -42,10 +37,25 @@ public class AT_BooleanContainer {
 		booleanContainer = new BooleanContainer(false);
 
 		for (int i = 0; i < 10; i++) {
-			assertFalse(booleanContainer.get(i));		
+			assertFalse(booleanContainer.get(i));
 		}
-		
-		booleanContainer = new BooleanContainer(false,100);
+
+	}
+
+	/**
+	 * Test {@link BooleanContainer#BooleanContainer(boolean, int)}
+	 */
+	@Test
+	@UnitTestConstructor(args = { boolean.class, int.class })
+	public void testConstructor_BooleanInt() {
+
+		BooleanContainer booleanContainer = new BooleanContainer(true, 100);
+
+		for (int i = 0; i < 10; i++) {
+			assertTrue(booleanContainer.get(i));
+		}
+
+		booleanContainer = new BooleanContainer(false, 100);
 
 		for (int i = 0; i < 10; i++) {
 			assertFalse(booleanContainer.get(i));
@@ -57,7 +67,7 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#get(int)}
 	 */
 	@Test
-	@UnitTestMethod(name="get",args= {int.class})
+	@UnitTestMethod(name = "get", args = { int.class })
 	public void testGet() {
 		Random random = new Random(53463457457456456L);
 		int n = 1000;
@@ -92,7 +102,7 @@ public class AT_BooleanContainer {
 	 * Test {@link BooleanContainer#set(int, boolean)}
 	 */
 	@Test
-	@UnitTestMethod(name="set",args= {int.class,boolean.class})
+	@UnitTestMethod(name = "set", args = { int.class, boolean.class })
 	public void testSet() {
 		// proxy via testGet()
 	}

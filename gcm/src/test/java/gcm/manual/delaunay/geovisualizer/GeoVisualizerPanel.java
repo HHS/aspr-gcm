@@ -30,6 +30,7 @@ import javax.swing.Timer;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
+import gcm.util.TimeElapser;
 import gcm.util.dimensiontree.DimensionTree;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
@@ -329,7 +330,9 @@ public class GeoVisualizerPanel extends JPanel {
 			if (recalcPath) {
 				pathLinks.clear();
 				if (pathSourceIndex != pathDestinationIndex) {
+					TimeElapser timeElapser = new TimeElapser();
 					Optional<Path<Edge>> path = Paths.getPath(graph, pathSourceIndex, pathDestinationIndex, this::getEdgeCost, this::getTravelCost);
+					System.out.println("path time\t"+timeElapser.getElapsedMilliSeconds());
 					if (path.isPresent()) {
 						path.get().getEdges().forEach(edge -> pathLinks.add(edge.link));
 					}

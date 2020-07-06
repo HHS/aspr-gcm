@@ -59,15 +59,32 @@ public class LatLonAlt {
 	 * 
 	 * @throws RuntimeException
 	 *             <li>if the vector3d is null
+	 *             <li>if the latitude(v.getX()) is not in the interval [-90,90]
+	 *             <li>if the longitude(v.getY()) is not in the interval [-180,180] 
 	 * @param latLonAlt
 	 */
 	public LatLonAlt(Vector3D vector3d) {
 		if (vector3d == null) {
 			throw new RuntimeException("null Vector3D value");
 		}
+		
 		this.latitude = vector3d.getX();
 		this.longitude = vector3d.getY();
 		this.altitude = vector3d.getZ();
+		
+		if (latitude > 90) {
+			throw new RuntimeException("Latitude > 90 degrees");
+		}
+		if (latitude < -90) {
+			throw new RuntimeException("Latitude < -90 degrees");
+		}
+		if (longitude > 180) {
+			throw new RuntimeException("Longitude > 180 degrees");
+		}
+		if (longitude < -180) {
+			throw new RuntimeException("Longitude < -180 degrees");
+		}
+
 	}
 
 	/**
@@ -85,6 +102,7 @@ public class LatLonAlt {
 		this.latitude = latLon.getLatitude();
 		this.longitude = latLon.getLongitude();
 		this.altitude = 0;
+
 	}
 
 	/**

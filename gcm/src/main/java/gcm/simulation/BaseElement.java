@@ -11,7 +11,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
+@Source(status = TestStatus.REQUIRED)
 public class BaseElement implements Element {
 
 	private boolean initialized;
@@ -30,7 +30,7 @@ public class BaseElement implements Element {
 
 	@Override
 	public void collectMemoryLinks(MemoryPartition memoryPartition) {
-
+		
 	}
 
 }

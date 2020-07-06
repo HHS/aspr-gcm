@@ -4,6 +4,7 @@ import gcm.components.Component;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationType;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.ThreadSafe;
 
 /**
@@ -24,7 +25,7 @@ import net.jcip.annotations.ThreadSafe;
  *
  */
 @ThreadSafe
-@Source
+@Source(status = TestStatus.UNREQUIRED)
 public enum StateChange {
 
 	/**

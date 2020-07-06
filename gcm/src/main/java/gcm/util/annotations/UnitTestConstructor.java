@@ -18,9 +18,7 @@ import java.lang.annotation.Target;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
-public @interface UnitTestMethod {
-	String name();
-	Class<?> target() default Object.class;
+public @interface UnitTestConstructor {
+	Class<?> target() default Object.class;	
 	Class<?>[] args();	
-	
 }

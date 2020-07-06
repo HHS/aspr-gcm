@@ -206,18 +206,18 @@ public final class MutableGraph<N, E> {
 	}
 
 	/**
-	 * Supplies an iterator over all edges between the given nodes.
+	 * Supplies a list over all edges between the given nodes.
 	 * 
 	 * @return
 	 */
 	public List<E> getEdges(N originNode, N destinationNode) {
 		Map<N, Set<E>> map = edgesMap.get(originNode);
 		if (map == null) {
-			return new ArrayList<>(null);
+			return new ArrayList<>();
 		}
 		Set<E> someEdges = map.get(destinationNode);
 		if (someEdges == null) {
-			return new ArrayList<>(null);
+			return new ArrayList<>();
 		}
 		return new ArrayList<>(someEdges);
 	}

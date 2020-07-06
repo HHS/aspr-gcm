@@ -8,20 +8,30 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.DoubleValueContainer;
 @UnitTest(target = DoubleValueContainer.class)
 public class AT_DoubleValueContainer {
 
 	/**
-	 * Tests {@link DoubleValueContainer#}
+	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double)}
 	 */
 	@Test	
-	public void testDoubleValueContainerConstructor() {
+	@UnitTestConstructor(args = {double.class})
+	public void testConstructor_Double() {
 		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0);
 		assertNotNull(doubleValueContainer);
+	}
+	
+	/**
+	 * Tests {@link DoubleValueContainer#DoubleValueContainer(double, int)}
+	 */
+	@Test	
+	@UnitTestConstructor(args = {double.class,int.class})
+	public void testConstructor_DoubleInt() {
 
-		doubleValueContainer = new DoubleValueContainer(0, 1000);
+		DoubleValueContainer doubleValueContainer = new DoubleValueContainer(0, 1000);
 		assertNotNull(doubleValueContainer);
 		assertTrue(doubleValueContainer.getCapacity() >= 1000);
 
@@ -29,6 +39,7 @@ public class AT_DoubleValueContainer {
 		assertException(() -> new DoubleValueContainer(0, -1), NegativeArraySizeException.class);
 
 	}
+
 
 	/**
 	 * Tests {@link DoubleValueContainer#getCapacity()}

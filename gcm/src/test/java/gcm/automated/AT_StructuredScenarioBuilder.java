@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertScenarioException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -33,6 +34,7 @@ import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.MapOption;
+import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
@@ -52,6 +54,8 @@ import gcm.scenario.StructuredScenarioBuilder;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.Environment;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link StructuredScenarioBuilder}
@@ -80,10 +84,21 @@ public class AT_StructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests
-	 * {@link StructuredScenarioBuilder#addBatch(BatchId, gcm.scenario.MaterialId, double, MaterialsProducerId)}
+	 * Tests {@link StructuredScenarioBuilder#StructuredScenarioBuilder()}
 	 */
 	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		StructuredScenarioBuilder structuredScenarioBuilder = new StructuredScenarioBuilder();
+		assertNotNull(structuredScenarioBuilder);				
+	}
+
+	/**
+	 * Tests
+	 * {@link StructuredScenarioBuilder#addBatch(BatchId, MaterialId, double, MaterialsProducerId)}
+	 */
+	@Test
+	@UnitTestMethod(name = "addBatch", args = { BatchId.class, MaterialId.class, double.class, MaterialsProducerId.class })
 	public void testAddBatch() {
 
 		// identifiers and values
@@ -143,6 +158,7 @@ public class AT_StructuredScenarioBuilder {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "addBatchToStage", args = { StageId.class, BatchId.class })
 	public void testAddBatchToStage() {
 		// identifiers and values
 		BatchId batchId = new BatchId(5);
@@ -192,6 +208,7 @@ public class AT_StructuredScenarioBuilder {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "addCompartmentId", args = { CompartmentId.class, Class.class })
 	public void testAddCompartmentId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -220,6 +237,7 @@ public class AT_StructuredScenarioBuilder {
 	 */
 
 	@Test
+	@UnitTestMethod(name = "addGlobalComponentId", args = { GlobalComponentId.class, Class.class })
 	public void testAddGlobalComponentId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -247,6 +265,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#addGroup(GroupId, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		GroupId groupId = new GroupId(45);
@@ -278,6 +297,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#addGroupTypeId(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroupTypeId", args = { GroupTypeId.class })
 	public void testAddGroupTypeId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -296,9 +316,10 @@ public class AT_StructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link StructuredScenarioBuilder#addBatchToStage(StageId, BatchId)}
+	 * Tests {@link StructuredScenarioBuilder#addMaterial(MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterial", args = { MaterialId.class })
 	public void testAddMaterial() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -318,9 +339,11 @@ public class AT_StructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link StructuredScenarioBuilder#addBatchToStage(StageId, BatchId)}
+	 * Tests
+	 * {@link StructuredScenarioBuilder#addMaterialsProducerId(MaterialsProducerId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterialsProducerId", args = { MaterialsProducerId.class, Class.class })
 	public void testAddMaterialsProducerId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -350,6 +373,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#addPerson(PersonId, RegionId, CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPerson", args = { PersonId.class, RegionId.class, CompartmentId.class })
 	public void testAddPerson() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		PersonId personId = new PersonId(45);
@@ -385,6 +409,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#addPersonToGroup(GroupId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
 	public void testAddPersonToGroup() {
 		PersonId personId = new PersonId(1);
 		GroupId groupId = new GroupId(2);
@@ -429,9 +454,10 @@ public class AT_StructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link StructuredScenarioBuilder#addRegionId(RegionId)}
+	 * Tests {@link StructuredScenarioBuilder#addRegionId(RegionId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRegionId", args = { RegionId.class, Class.class })
 	public void testAddRegionId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -460,6 +486,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#addResource(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addResource", args = { ResourceId.class })
 	public void testAddResource() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -481,6 +508,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#addStage(StageId, boolean, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addStage", args = { StageId.class, boolean.class, MaterialsProducerId.class })
 	public void testAddStage() {
 
 		StageId stageId1 = new StageId(50);
@@ -514,9 +542,10 @@ public class AT_StructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link StructuredScenarioBuilder#defineBatchProperty(gcm.scenario.MaterialId, BatchPropertyId, PropertyDefinition)}
+	 * {@link StructuredScenarioBuilder#defineBatchProperty(MaterialId, BatchPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineBatchProperty", args = { MaterialId.class, BatchPropertyId.class, PropertyDefinition.class })
 	public void testDefineBatchProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		TestMaterialId testMaterialId = TestMaterialId.MATERIAL_1;
@@ -549,9 +578,10 @@ public class AT_StructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link StructuredScenarioBuilder#defineCompartmentProperty(CompartmentPropertyId, PropertyDefinition)}
+	 * {@link StructuredScenarioBuilder#defineCompartmentProperty(CompartmentId, CompartmentPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineCompartmentProperty", args = { CompartmentId.class, CompartmentPropertyId.class, PropertyDefinition.class })
 	public void testDefineCompartmentProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -597,6 +627,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#defineGlobalProperty(GlobalPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGlobalProperty", args = { GlobalPropertyId.class, PropertyDefinition.class })
 	public void testDefineGlobalProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -628,6 +659,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#defineGroupProperty(GroupTypeId, GroupPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGroupProperty", args = { GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class })
 	public void testDefineGroupProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -661,6 +693,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#defineMaterialsProducerProperty(MaterialsProducerPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineMaterialsProducerProperty", args = { MaterialsProducerPropertyId.class, PropertyDefinition.class })
 	public void testDefineMaterialsProducerProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -692,6 +725,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#definePersonProperty(PersonPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "definePersonProperty", args = { PersonPropertyId.class, PropertyDefinition.class })
 	public void testDefinePersonProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1;
@@ -719,6 +753,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#defineRegionProperty(RegionPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineRegionProperty", args = { RegionPropertyId.class, PropertyDefinition.class })
 	public void testDefineRegionProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1;
@@ -743,9 +778,10 @@ public class AT_StructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link StructuredScenarioBuilder#defineResourceProperty(ResourcePropertyId, PropertyDefinition)}
+	 * {@link StructuredScenarioBuilder#defineResourceProperty(ResourceId, ResourcePropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineResourceProperty", args = { ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class })
 	public void testDefineResourceProperty() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE5;
@@ -781,6 +817,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setBatchPropertyValue(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setBatchPropertyValue", args = { BatchId.class, BatchPropertyId.class, Object.class })
 	public void testSetBatchPropertyValue() {
 		BatchId batchId1 = new BatchId(1);
 		BatchId batchId2 = new BatchId(2);
@@ -834,6 +871,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setCompartmentMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentMapOption", args = { MapOption.class })
 	public void testSetCompartmentMapOption() {
 		for (MapOption mapOption : MapOption.values()) {
 			ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
@@ -857,6 +895,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setCompartmentPropertyValue(CompartmentId, CompartmentPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentPropertyValue", args = { CompartmentId.class, CompartmentPropertyId.class, Object.class })
 	public void testSetCompartmentPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
@@ -904,6 +943,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setGlobalPropertyValue(GlobalPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGlobalPropertyValue", args = { GlobalPropertyId.class, Object.class })
 	public void testSetGlobalPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -941,6 +981,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setGroupPropertyValue(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGroupPropertyValue", args = { GroupId.class, GroupPropertyId.class, Object.class })
 	public void testSetGroupPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -990,6 +1031,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = { MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class })
 	public void testSetMaterialsProducerPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1039,6 +1081,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setMaterialsProducerResourceLevel(MaterialsProducerId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setMaterialsProducerResourceLevel", args = { MaterialsProducerId.class, ResourceId.class, long.class })
 	public void testSetMaterialsProducerResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1076,6 +1119,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setPersonCompartmentArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonCompartmentArrivalTracking", args = { TimeTrackingPolicy.class })
 	public void testSetPersonCompartmentArrivalTracking() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1100,6 +1144,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setPersonPropertyValue(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonPropertyValue", args = { PersonId.class, PersonPropertyId.class, Object.class })
 	public void testSetPersonPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1150,6 +1195,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setPersonRegionArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonRegionArrivalTracking", args = { TimeTrackingPolicy.class })
 	public void testSetPersonRegionArrivalTracking() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1174,6 +1220,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setPersonResourceLevel(PersonId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonResourceLevel", args = { PersonId.class, ResourceId.class, long.class })
 	public void testSetPersonResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1215,6 +1262,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#setRegionMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionMapOption", args = { MapOption.class })
 	public void testSetRegionMapOption() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1236,6 +1284,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setRegionPropertyValue(RegionId, RegionPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionPropertyValue", args = { RegionId.class, RegionPropertyId.class, Object.class })
 	public void testSetRegionPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1283,6 +1332,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setRegionResourceLevel(RegionId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionResourceLevel", args = { RegionId.class, ResourceId.class, long.class })
 	public void testSetRegionResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1317,6 +1367,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setResourcePropertyValue(ResourceId, ResourcePropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourcePropertyValue", args = { ResourceId.class, ResourcePropertyId.class, Object.class })
 	public void testSetResourcePropertyValue() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
@@ -1364,6 +1415,7 @@ public class AT_StructuredScenarioBuilder {
 	 * {@link StructuredScenarioBuilder#setResourceTimeTracking(ResourceId, TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourceTimeTracking", args = { ResourceId.class, TimeTrackingPolicy.class })
 	public void testSetResourceTimeTracking() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE1;
@@ -1393,6 +1445,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#setScenarioId(ScenarioId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setScenarioId", args = { ScenarioId.class })
 	public void testSetScenarioId() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 		ScenarioId scenarioId = new ScenarioId(644);
@@ -1413,6 +1466,7 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#build() }
 	 */
 	@Test
+	@UnitTestMethod(name = "build", args = {})
 	public void testBuild() {
 		// No test performed: The build method is tested by proxy via the other
 		// test methods.
@@ -1422,10 +1476,11 @@ public class AT_StructuredScenarioBuilder {
 	 * Tests {@link StructuredScenarioBuilder#setSuggestedPopulationSize(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setSuggestedPopulationSize", args = { int.class })
 	public void testSetSuggestedPopulationSize() {
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
-		// precondition: if suggested population size is negative		
+		// precondition: if suggested population size is negative
 		assertScenarioException(() -> scenarioBuilder.setSuggestedPopulationSize(-1), ScenarioErrorType.NEGATIVE_SUGGGESTED_POPULATION);
 
 		for (int i = 0; i < 20; i++) {
@@ -1437,22 +1492,22 @@ public class AT_StructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link StructuredScenarioBuilder#addRandomNumberGeneratorId(gcm.scenario.RandomNumberGeneratorId)}
+	 * Tests
+	 * {@link StructuredScenarioBuilder#addRandomNumberGeneratorId(RandomNumberGeneratorId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRandomNumberGeneratorId", args = { RandomNumberGeneratorId.class })
 	public void testAddRandomNumberGeneratorId() {
-		
-		
+
 		ScenarioBuilder scenarioBuilder = new StructuredScenarioBuilder();
 
-		// precondition : if the generator id is null				
+		// precondition : if the generator id is null
 		assertScenarioException(() -> scenarioBuilder.addRandomNumberGeneratorId(null), ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 		// precondition : if the generator id was previously added
-		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);		
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
 		assertScenarioException(() -> scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN), ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER);
 
-		
 		ScenarioBuilder scenarioBuilder2 = new StructuredScenarioBuilder();
 		Set<RandomNumberGeneratorId> expected = new LinkedHashSet<>();
 		expected.add(RandomGeneratorId.COMET);
@@ -1460,15 +1515,15 @@ public class AT_StructuredScenarioBuilder {
 		expected.add(RandomGeneratorId.DONNER);
 		expected.add(RandomGeneratorId.BLITZEN);
 
-		for(RandomNumberGeneratorId randomNumberGeneratorId : expected) {
+		for (RandomNumberGeneratorId randomNumberGeneratorId : expected) {
 			scenarioBuilder2.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		}
-		
+
 		Scenario scenario = scenarioBuilder2.build();
-		
-		//postcondition: the scenario contains the expected ids
+
+		// postcondition: the scenario contains the expected ids
 		Set<RandomNumberGeneratorId> actual = scenario.getRandomNumberGeneratorIds();
 		assertEquals(expected, actual);
-		
+
 	}
 }

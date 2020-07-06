@@ -28,17 +28,6 @@ public class AT_BinContainer {
 	@Test
 	@UnitTestMethod(name="builder", args= {double.class})
 	public void testBuilder() {
-
-		assertException(() -> BinContainer.builder(0), RuntimeException.class);
-
-		assertException(() -> BinContainer.builder(-0.5), RuntimeException.class);
-	}
-
-	/**
-	 * Tests {@link BinContainer.Builder#addValue(double, int)}
-	 */
-	@Test	
-	public void testAddValue() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
 		builder.addValue(3, 2);
@@ -63,7 +52,9 @@ public class AT_BinContainer {
 		}
 
 		assertEquals(expected, actual);
+		assertException(() -> BinContainer.builder(0), RuntimeException.class);
 
+		assertException(() -> BinContainer.builder(-0.5), RuntimeException.class);
 	}
 
 	/**
@@ -80,8 +71,7 @@ public class AT_BinContainer {
 		builder.addValue(-10, 3);
 		BinContainer binContainer = builder.build();
 
-		assertEquals(8,binContainer.binCount());
-		
+		assertEquals(8,binContainer.binCount());		
 	}
 
 	/**

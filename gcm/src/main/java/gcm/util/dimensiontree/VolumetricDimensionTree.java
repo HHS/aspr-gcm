@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+
 public class VolumetricDimensionTree<T> {
 	private final static int DEFAULTLEAFSIZE = 15;
 
@@ -43,6 +45,7 @@ public class VolumetricDimensionTree<T> {
 		return new Builder();
 	}
 
+	@Source(proxy = VolumetricDimensionTree.class)
 	public static class Builder {
 
 		private InitialTreeSettings initialTreeSettings = new InitialTreeSettings();

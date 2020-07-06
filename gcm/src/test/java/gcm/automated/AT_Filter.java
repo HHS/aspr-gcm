@@ -101,7 +101,7 @@ public class AT_Filter {
 		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
-		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);		
+		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);
 	}
 
 	private static void addStandardComponentsAndTypes(ScenarioBuilder scenarioBuilder) {
@@ -177,14 +177,15 @@ public class AT_Filter {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_Filter.class.getSimpleName() + " "
+		// +SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
 	 * Tests {@link Filter#and(Filter)}
 	 */
 	@Test
-	@UnitTestMethod(name = "and", args= {Filter.class})
+	@UnitTestMethod(name = "and", args = { Filter.class })
 	public void testAnd() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -215,8 +216,8 @@ public class AT_Filter {
 		int testTime = 0;
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			// precondition: if the filter is null			
-			assertModelException(() -> environment.addPopulationIndex(allPeople().and(null),"bad filter"), SimulationErrorType.NULL_FILTER);
+			// precondition: if the filter is null
+			assertModelException(() -> environment.addPopulationIndex(allPeople().and(null), "bad filter"), SimulationErrorType.NULL_FILTER);
 		});
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
@@ -240,7 +241,7 @@ public class AT_Filter {
 			// create the filters
 			Filter filter1 = //
 					property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, 1).and(//
-					property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
+							property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
 
 			Object key = "key";
 			environment.addPopulationIndex(filter1, key);
@@ -276,7 +277,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#or(Filter)}
 	 */
 	@Test
-	@UnitTestMethod(name = "or", args= {Filter.class})
+	@UnitTestMethod(name = "or", args = { Filter.class })
 	public void testOr() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(1);
@@ -310,7 +311,7 @@ public class AT_Filter {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
-			// precondition: if the filter is null			
+			// precondition: if the filter is null
 			Filter badFilter = allPeople().or(null);
 			assertModelException(() -> environment.addPopulationIndex(badFilter, "bad filter"), SimulationErrorType.NULL_FILTER);
 
@@ -336,9 +337,9 @@ public class AT_Filter {
 			}
 
 			// create the filters
-			Filter filter1 =// 
-					property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, 1).or(// 
-					property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
+			Filter filter1 = //
+					property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, 1).or(//
+							property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
 
 			Object key = "key";
 			environment.addPopulationIndex(filter1, key);
@@ -374,9 +375,9 @@ public class AT_Filter {
 	 * Tests {@link Filter#negate()}
 	 */
 	@Test
-	@UnitTestMethod(name = "negate", args= {})
+	@UnitTestMethod(name = "negate", args = {})
 	public void testNegate() {
-		final long seed = SEED_PROVIDER.getSeedValue(14);
+		final long seed = SEED_PROVIDER.getSeedValue(13);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -453,7 +454,7 @@ public class AT_Filter {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Test
-	@UnitTestMethod(name = "property", args= {PersonPropertyId.class, Equality.class, Object.class})
+	@UnitTestMethod(name = "property", args = { PersonPropertyId.class, Equality.class, Object.class })
 	public void testProperty() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(11);
@@ -483,20 +484,20 @@ public class AT_Filter {
 									.setMapOption(MapOption.ARRAY)//
 									.build());
 
-		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_4, //				
+		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_4, //
 				PropertyDefinition	.builder()//
 									.setType(Double.class)//
 									.setDefaultValue(0.0)//
 									.setMapOption(MapOption.ARRAY)//
 									.build());
-		
-		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_5, //				
+
+		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_5, //
 				PropertyDefinition	.builder()//
 									.setType(List.class)//
 									.setDefaultValue(new ArrayList<>())//
 									.setMapOption(MapOption.ARRAY)//
 									.build());
-		
+
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
 
 		Scenario scenario = scenarioBuilder.build();
@@ -507,39 +508,40 @@ public class AT_Filter {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			assertTrue(environment.getPopulationCount() > 0);
-			
+
 			/*
 			 * precondition: if the property id is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(property(null, Equality.EQUAL, 15),"bad filter"), SimulationErrorType.NULL_PERSON_PROPERTY_ID);
+			assertModelException(() -> environment.addPopulationIndex(property(null, Equality.EQUAL, 15), "bad filter"), SimulationErrorType.NULL_PERSON_PROPERTY_ID);
 
 			/*
 			 * precondition: if the equality is null
 			 */
 
-			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, null, 15),"bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, null, 15), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/*
 			 * precondition: if the property value is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, null),"bad filter"), SimulationErrorType.NULL_PERSON_PROPERTY_VALUE);
+			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, null), "bad filter"),
+					SimulationErrorType.NULL_PERSON_PROPERTY_VALUE);
 
 			/*
 			 * precondition: if the property is not defined
 			 */
 			// show that the filter will be evaluated against at least one
 			// person
-			
+
 			Filter undefinedPersonPropertyFilter = property(TestPersonPropertyId.getUnknownPersonPropertyId(), Equality.EQUAL, 15);
 			assertModelException(() -> environment.addPopulationIndex(undefinedPersonPropertyFilter, "undefinedPersonPropertyFilter"), SimulationErrorType.UNKNOWN_PERSON_PROPERTY_ID);
-			
+
 			/*
-			 * precondition : if the property is not compatible with inequality comparisons.
+			 * precondition : if the property is not compatible with inequality
+			 * comparisons.
 			 */
-			
+
 			Filter incomparableFilter = property(TestPersonPropertyId.PERSON_PROPERTY_5, Equality.GREATER_THAN, new ArrayList<>());
 			assertModelException(() -> environment.addPopulationIndex(incomparableFilter, "incomparableFilter"), SimulationErrorType.NON_COMPARABLE_PROPERTY);
-
 
 		});
 
@@ -608,7 +610,7 @@ public class AT_Filter {
 						 * Create the filters
 						 */
 						Object key = "key";
-						
+
 						Filter filter1 = property(personPropertyId, equality, filterPropertyValue);
 						environment.addPopulationIndex(filter1, key);
 
@@ -656,7 +658,6 @@ public class AT_Filter {
 							}
 						}
 
-						
 						Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
 						assertEquals(expectedPeople, actualPeople);
 
@@ -711,7 +712,7 @@ public class AT_Filter {
 							}
 						}
 
-						actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));						
+						actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
 						assertEquals(expectedPeople, actualPeople);
 
 						/*
@@ -738,7 +739,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#allPeople()}
 	 */
 	@Test
-	@UnitTestMethod(name = "allPeople", args= {})
+	@UnitTestMethod(name = "allPeople", args = {})
 	public void testAllPeople() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(6);
@@ -790,7 +791,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#compartment(CompartmentId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "compartment", args= {CompartmentId.class})
+	@UnitTestMethod(name = "compartment", args = { CompartmentId.class })
 	public void testCompartment() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -810,8 +811,8 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if the compartment id is null */
-			Filter nullCompartmentFilter  = compartment(null);
-			assertModelException(() -> environment.addPopulationIndex(nullCompartmentFilter,"nullCompartmentFilter"), SimulationErrorType.NULL_COMPARTMENT_ID);
+			Filter nullCompartmentFilter = compartment(null);
+			assertModelException(() -> environment.addPopulationIndex(nullCompartmentFilter, "nullCompartmentFilter"), SimulationErrorType.NULL_COMPARTMENT_ID);
 
 			/* precondition: if the compartment is unknown */
 			// show that the filter will be evaluated against at least one
@@ -883,7 +884,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupMember(GroupId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "groupMember", args= {GroupId.class})
+	@UnitTestMethod(name = "groupMember", args = { GroupId.class })
 	public void testGroupMember() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(5);
@@ -904,11 +905,11 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if the group id is null */
-			assertModelException(() -> environment.addPopulationIndex(groupMember(null),"bad filter"), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.addPopulationIndex(groupMember(null), "bad filter"), SimulationErrorType.NULL_GROUP_ID);
 
 			/* precondition: if the group is unknown */
 			GroupId groupId = new GroupId(-1);
-			assertModelException(() -> environment.addPopulationIndex(groupMember(groupId),"bad filter"), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.addPopulationIndex(groupMember(groupId), "bad filter"), SimulationErrorType.UNKNOWN_GROUP_ID);
 
 		});
 
@@ -960,7 +961,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupsForPerson(Equality, int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "groupsForPerson", args= {Equality.class, int.class})
+	@UnitTestMethod(name = "groupsForPerson", args = { Equality.class, int.class })
 	public void testGroupsForPerson() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(9);
@@ -982,7 +983,7 @@ public class AT_Filter {
 			/*
 			 * precondition:if equality is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPerson(null, 0),"bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPopulationIndex(groupsForPerson(null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 		});
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
@@ -1084,7 +1085,7 @@ public class AT_Filter {
 	 */
 
 	@Test
-	@UnitTestMethod(name = "groupsForPersonAndGroupType", args= {GroupTypeId.class, Equality.class, int.class})
+	@UnitTestMethod(name = "groupsForPersonAndGroupType", args = { GroupTypeId.class, Equality.class, int.class })
 	public void testGroupsForPersonAndGroupType() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -1108,10 +1109,10 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: >if equality is null */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_1, null, 0),"bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_1, null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/* precondition: if groupTypeId is null */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(null, Equality.EQUAL, 0),"bad filter"), SimulationErrorType.NULL_GROUP_TYPE_ID);
+			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(null, Equality.EQUAL, 0), "bad filter"), SimulationErrorType.NULL_GROUP_TYPE_ID);
 
 			/* precondition: if the group type is not defined */
 			Filter invalidGroupTypeIdFilter = groupsForPersonAndGroupType(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL, 0);
@@ -1173,10 +1174,10 @@ public class AT_Filter {
 			// Create the filter where people must have exactly two groups
 			// of type 1 and fewer than two groups of type 2. Use both
 			// styles of filter construction.
-			final Filter filter1 =// 					
+			final Filter filter1 = //
 					groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_1, Equality.EQUAL, 2)//
-					.and(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_2, Equality.LESS_THAN, 2));//
-					
+																								.and(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_2, Equality.LESS_THAN, 2));//
+
 			final String key = "key";
 			environment.addPopulationIndex(filter1, key);
 
@@ -1237,7 +1238,7 @@ public class AT_Filter {
 	 * Tests {@link Filter#groupTypesForPerson(Equality, int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "groupTypesForPerson", args= {Equality.class, int.class})
+	@UnitTestMethod(name = "groupTypesForPerson", args = { Equality.class, int.class })
 	public void testGroupTypesForPerson() {
 		final long seed = SEED_PROVIDER.getSeedValue(10);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -1257,7 +1258,7 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if equality is null */
-			assertModelException(() ->environment.addPopulationIndex(groupTypesForPerson(null, 0),"bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPopulationIndex(groupTypesForPerson(null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 		});
 
@@ -1379,8 +1380,8 @@ public class AT_Filter {
 	 * Tests {@link Filter#region(RegionId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "region", args= {RegionId[].class})
-	public void testRegion() {
+	@UnitTestMethod(name = "region", args = { RegionId[].class })
+	public void testRegion_RegionId() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -1401,13 +1402,14 @@ public class AT_Filter {
 			/* precondition: if the region id is null */
 			Set<RegionId> regionIds = new LinkedHashSet<>();
 			regionIds.add(null);
-			assertModelException(() -> environment.addPopulationIndex(region(regionIds),"bad filter"), SimulationErrorType.NULL_REGION_ID);
+			assertModelException(() -> environment.addPopulationIndex(region(regionIds), "bad filter"), SimulationErrorType.NULL_REGION_ID);
 
 			/* precondition: if the region id is unknown */
 
 			// show that the filter will be evaluated against at least one
 			// person
 			assertTrue(environment.getPopulationCount() > 0);
+
 			Filter unknownRegionFilter = region(TestRegionId.getUnknownRegionId());
 			assertModelException(() -> environment.addPopulationIndex(unknownRegionFilter, "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
 
@@ -1470,10 +1472,124 @@ public class AT_Filter {
 	}
 
 	/**
+	 * Tests {@link Filter#region(Set)}
+	 */
+	@Test
+	@UnitTestMethod(name = "region", args = { Set.class })
+	public void testRegion_Set() {
+		final long seed = SEED_PROVIDER.getSeedValue(7);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 30);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 0;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			/* precondition: if the region id is null */
+			Set<RegionId> regionIds = new LinkedHashSet<>();
+			regionIds.add(null);
+			assertModelException(() -> environment.addPopulationIndex(region(regionIds), "bad filter"), SimulationErrorType.NULL_REGION_ID);
+
+			/* precondition: if the region id is unknown */
+
+			// show that the filter will be evaluated against at least one
+			// person
+			assertTrue(environment.getPopulationCount() > 0);
+			Set<RegionId> regionIds2 = new LinkedHashSet<>();
+			regionIds2.add(TestRegionId.REGION_1);
+			regionIds2.add(TestRegionId.getUnknownRegionId());
+			Filter unknownRegionFilter = region(regionIds2);
+			assertModelException(() -> environment.addPopulationIndex(unknownRegionFilter, "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
+
+		});
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			final int populationCount = environment.getPopulationCount();
+
+			// derive the people in region 1 and region 2
+			Set<PersonId> expectedPeople = new LinkedHashSet<>(environment.getPeopleInRegion(TestRegionId.REGION_1));
+			// show that there are some people in region 1
+			assertTrue(expectedPeople.size() > 0);
+
+			List<PersonId> peopleInRegion2 = environment.getPeopleInRegion(TestRegionId.REGION_2);
+			// show that there are some people in region 2
+			assertTrue(peopleInRegion2.size() > 0);
+			expectedPeople.addAll(peopleInRegion2);
+
+			// show that there are some people not in region 1 or 2
+			assertTrue((populationCount - expectedPeople.size()) > 0);
+
+			// create filter
+			Set<RegionId> regionIds = new LinkedHashSet<>();
+			regionIds.add(TestRegionId.REGION_1);
+			regionIds.add(TestRegionId.REGION_2);
+			final Filter filter1 = region(regionIds);
+			final Object key = "key";
+			environment.addPopulationIndex(filter1, key);
+
+			// show that the filters match our expectations
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			assertEquals(expectedPeople, actualPeople);
+
+			// move half of the people in region 1 and 2 to region 3
+			int n = environment.getRegionPopulationCount(TestRegionId.REGION_1) / 2;
+			assertTrue(n > 0);
+			List<PersonId> people = environment.getPeopleInRegion(TestRegionId.REGION_1);
+			for (int i = 0; i < n; i++) {
+				final PersonId personId = people.get(i);
+				environment.setPersonRegion(personId, TestRegionId.REGION_3);
+			}
+
+			n = environment.getRegionPopulationCount(TestRegionId.REGION_2) / 2;
+			assertTrue(n > 0);
+			people = environment.getPeopleInRegion(TestRegionId.REGION_2);
+			for (int i = 0; i < n; i++) {
+				final PersonId personId = people.get(i);
+				environment.setPersonRegion(personId, TestRegionId.REGION_3);
+			}
+
+			// move half of the people in region 4 to region 1
+			n = environment.getRegionPopulationCount(TestRegionId.REGION_4) / 2;
+			assertTrue(n > 0);
+			people = environment.getPeopleInRegion(TestRegionId.REGION_4);
+			for (int i = 0; i < n; i++) {
+				final PersonId personId = people.get(i);
+				environment.setPersonRegion(personId, TestRegionId.REGION_1);
+			}
+
+			expectedPeople = new LinkedHashSet<>(environment.getPeopleInRegion(TestRegionId.REGION_1));
+			peopleInRegion2 = environment.getPeopleInRegion(TestRegionId.REGION_2);
+			expectedPeople.addAll(peopleInRegion2);
+
+			// show that the filters match our expectations
+			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			assertEquals(expectedPeople, actualPeople);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
 	 * Tests {@link Filter#resource(ResourceId, Equality, long)}
 	 */
 	@Test
-	@UnitTestMethod(name = "resource", args= {ResourceId.class, Equality.class, long.class})
+	@UnitTestMethod(name = "resource", args = { ResourceId.class, Equality.class, long.class })
 	public void testResource() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -1494,10 +1610,10 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if the resource id is null */
-			assertModelException(() -> environment.addPopulationIndex(resource(null, Equality.EQUAL, 0),"bad filter"), SimulationErrorType.NULL_RESOURCE_ID);
+			assertModelException(() -> environment.addPopulationIndex(resource(null, Equality.EQUAL, 0), "bad filter"), SimulationErrorType.NULL_RESOURCE_ID);
 
 			/* precondition: if the equality is null */
-			assertModelException(() -> environment.addPopulationIndex(resource(TestResourceId.RESOURCE1, null, 0),"bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPopulationIndex(resource(TestResourceId.RESOURCE1, null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/* precondition: if the resource is not defined */
 			Filter undefinedResourceFilter = resource(TestResourceId.getUnknownResourceId(), Equality.EQUAL, 15L);
@@ -1600,9 +1716,9 @@ public class AT_Filter {
 	 * Tests {@link Filter#noPeople()}
 	 */
 	@Test
-	@UnitTestMethod(name = "noPeople", args= {})
+	@UnitTestMethod(name = "noPeople", args = {})
 	public void testNoPeople() {
-		final long seed = SEED_PROVIDER.getSeedValue(100);
+		final long seed = SEED_PROVIDER.getSeedValue(12);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -1617,18 +1733,17 @@ public class AT_Filter {
 
 		int testTime = 0;
 
-		
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			
-			assertTrue(environment.getPopulationCount()>0);
-			
+
+			assertTrue(environment.getPopulationCount() > 0);
+
 			// create filter
 			final Filter filter = noPeople();
 			final Object key = "key";
 			environment.addPopulationIndex(filter, key);
 
 			// show that the filters match our expectations
-			assertEquals(0,	environment.getIndexedPeople(key).size());
+			assertEquals(0, environment.getIndexedPeople(key).size());
 
 		});
 

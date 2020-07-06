@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.FloatValueContainer;
 /**
@@ -18,22 +19,33 @@ import gcm.util.containers.FloatValueContainer;
 @UnitTest(target = FloatValueContainer.class)
 public class AT_FloatValueContainer {
 
+	
+	
 	/**
-	 * Test {@link FloatValueContainer} contructor
+	 * Tests {@link FloatValueContainer#FloatValueContainer(float, int)}
 	 */
-	@Test	
-	public void testFloatValueContainerConstructor() {
-		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
-		assertNotNull(floatValueContainer);
-
-		floatValueContainer = new FloatValueContainer(0, 1000);
+	@Test
+	@UnitTestConstructor(args= {float.class, int.class})
+	public void testConstructor_FloatInt() {
+	
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0, 1000);
 		assertNotNull(floatValueContainer);
 		assertTrue(floatValueContainer.getCapacity() >= 1000);
 
 		// pre conditions
 		assertException(() -> new FloatValueContainer(0, -1), NegativeArraySizeException.class);
-
 	}
+	
+	/**
+	 * Tests {@link FloatValueContainer#FloatValueContainer(float)}
+	 */
+	@Test
+	@UnitTestConstructor(args= {float.class})
+	public void testConstructor_Float() {
+		FloatValueContainer floatValueContainer = new FloatValueContainer(0);
+		assertNotNull(floatValueContainer);
+	}
+
 
 	/**
 	 * Tests {@link FloatValueContainer#getCapacity()}

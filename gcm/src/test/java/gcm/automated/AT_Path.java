@@ -12,6 +12,7 @@ import java.util.List;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.path.Path;
 
 /**
@@ -27,6 +28,7 @@ public class AT_Path {
 	 * Tests {@link Path#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args= {})
 	public void testBuilder() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
@@ -47,6 +49,7 @@ public class AT_Path {
 	 * Tests {@link Path#equals(Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args= {Object.class})
 	public void testEquals() {
 		Path.Builder<Integer> builder = Path.builder();
 		
@@ -86,6 +89,7 @@ public class AT_Path {
 	 * Tests {@link Path#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args= {})
 	public void testHashCode() {
 		Path.Builder<Integer> builder = Path.builder();
 		
@@ -116,6 +120,7 @@ public class AT_Path {
 	 * Tests {@link Path#getEdges()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getEdges", args= {})
 	public void testGetEdges() {
 		Path.Builder<Integer> builder = Path.builder();
 
@@ -142,6 +147,7 @@ public class AT_Path {
 	 * Tests {@link Path#isEmpty()}
 	 */
 	@Test
+	@UnitTestMethod(name = "isEmpty", args= {})
 	public void testIsEmpty() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();
@@ -156,6 +162,7 @@ public class AT_Path {
 	 * Tests {@link Path#length()}
 	 */
 	@Test
+	@UnitTestMethod(name = "length", args= {})
 	public void testLength() {
 		Path.Builder<Integer> builder = Path.builder();
 		Path<Integer> path = builder.build();

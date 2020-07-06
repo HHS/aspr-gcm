@@ -526,7 +526,7 @@ public class EnvironmentSupport {
 	public static void assertAllPlansExecuted(TaskPlanContainer taskPlanContainer) {
 		for (ComponentId componentId : taskPlanContainer.getComponentIds()) {
 			for (TaskPlan taskPlan : taskPlanContainer.getTaskPlans(componentId)) {
-				assertTrue(componentId + ":" + taskPlan.getKey() + " was not executed", taskPlan.planExecuted());
+				assertTrue(componentId + ":" + String.valueOf(taskPlan.getKey()) + " was not executed", taskPlan.planExecuted());
 			}
 		}
 	}

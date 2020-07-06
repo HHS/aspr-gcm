@@ -1,6 +1,7 @@
 package gcm.scenario;
 
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * Enumeration for the control of reverse mapping of properties and other
@@ -9,7 +10,7 @@ import gcm.util.annotations.Source;
  * @author Shawn Hatch
  *
  */
-@Source
+@Source(status = TestStatus.UNREQUIRED)
 public enum MapOption {
 	/**
 	 * The reverse mapping is not supported

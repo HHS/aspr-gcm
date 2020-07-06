@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.MutableStat;
 import gcm.util.stats.Stat;
@@ -259,6 +260,7 @@ public class AT_MutableStat {
 	 * Tests {@link MutableStat#getMin()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMin", args= {})
 	public void testGetMin() {
 		// covered by testAdd()
 	}
@@ -279,6 +281,22 @@ public class AT_MutableStat {
 	@UnitTestMethod(name = "getVariance", args= {})
 	public void testGetVariance() {
 		// covered by testAdd()
+	}
+	
+	
+	/**
+	 * Tests {@link MutableStat#MutableStat()}
+	 */
+	@Test
+	@UnitTestConstructor(args= {})
+	public void testConstructor() {
+		MutableStat mutableStat = new MutableStat();
+		assertEquals(0, mutableStat.size());
+		assertFalse(mutableStat.getMax().isPresent());
+		assertFalse(mutableStat.getMin().isPresent());
+		assertFalse(mutableStat.getMean().isPresent());
+		assertFalse(mutableStat.getStandardDeviation().isPresent());
+		assertFalse(mutableStat.getVariance().isPresent());
 	}
 
 	/**

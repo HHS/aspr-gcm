@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -20,6 +21,8 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Simulation;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link Simulation}
@@ -87,7 +90,7 @@ public class AT_Simulation {
 		@Override
 		public void handle(OutputItem outputItem) {
 			receivedSimulationStatusItems = true;
-			SimulationStatusItem simulationStatusItem = (SimulationStatusItem) outputItem;			
+			SimulationStatusItem simulationStatusItem = (SimulationStatusItem) outputItem;
 			replicationId = simulationStatusItem.getReplicationId();
 			scenarioId = simulationStatusItem.getScenarioId();
 		}
@@ -102,9 +105,20 @@ public class AT_Simulation {
 	}
 
 	/**
+	 * Test {@link Simulation#Simulation()}
+	 */
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		Simulation simulation = new Simulation();
+		assertNotNull(simulation);
+	}
+
+	/**
 	 * Test {@link Simulation#addOutputItemHandler(OutputItemHandler)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addOutputItemHandler", args = { OutputItemHandler.class })
 	public void testAddOutputItemHandler() {
 		Simulation simulation = new Simulation();
 
@@ -132,6 +146,7 @@ public class AT_Simulation {
 	 * Test {@link Simulation#execute()}
 	 */
 	@Test
+	@UnitTestMethod(name = "execute", args = {})
 	public void testExecute() {
 		UnstructuredScenarioBuilder unstructuredScenarioBuilder = new UnstructuredScenarioBuilder();
 		unstructuredScenarioBuilder.setScenarioId(new ScenarioId(45));
@@ -164,6 +179,7 @@ public class AT_Simulation {
 	 * Test {@link Simulation#setReplication(Replication)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setReplication", args = { Replication.class })
 	public void testSetReplication() {
 		UnstructuredScenarioBuilder unstructuredScenarioBuilder = new UnstructuredScenarioBuilder();
 		unstructuredScenarioBuilder.setScenarioId(new ScenarioId(45));
@@ -174,14 +190,15 @@ public class AT_Simulation {
 		Simulation simulation1 = new Simulation();
 		simulation1.setScenario(scenario);
 		assertException(() -> simulation1.execute(), RuntimeException.class);
-		
+
 		// precondition test: if the replication was set to null
 		Simulation simulation2 = new Simulation();
 		simulation2.setScenario(scenario);
 		simulation2.setReplication(null);
 		assertException(() -> simulation2.execute(), RuntimeException.class);
 
-		// postcondition test: show that the replication is used by the simulation
+		// postcondition test: show that the replication is used by the
+		// simulation
 		Simulation simulation3 = new Simulation();
 		TestOutputItemHandler testOutputItemHandler = new TestOutputItemHandler();
 		simulation3.addOutputItemHandler(testOutputItemHandler);
@@ -189,13 +206,14 @@ public class AT_Simulation {
 		simulation3.setScenario(scenario);
 
 		simulation3.execute();
-		assertEquals(replication.getId(),testOutputItemHandler.getRelicationId());
+		assertEquals(replication.getId(), testOutputItemHandler.getRelicationId());
 	}
 
 	/**
 	 * Test {@link Simulation#setScenario(Scenario)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setScenario", args = { Scenario.class })
 	public void testSetScenario() {
 		UnstructuredScenarioBuilder unstructuredScenarioBuilder = new UnstructuredScenarioBuilder();
 		unstructuredScenarioBuilder.setScenarioId(new ScenarioId(45));
@@ -206,14 +224,15 @@ public class AT_Simulation {
 		Simulation simulation1 = new Simulation();
 		simulation1.setReplication(replication);
 		assertException(() -> simulation1.execute(), RuntimeException.class);
-		
+
 		// precondition test: if the scenario was set to null
 		Simulation simulation2 = new Simulation();
 		simulation2.setScenario(null);
 		simulation2.setReplication(replication);
 		assertException(() -> simulation2.execute(), RuntimeException.class);
 
-		// postcondition test: show that the replication is used by the simulation
+		// postcondition test: show that the replication is used by the
+		// simulation
 		Simulation simulation3 = new Simulation();
 		TestOutputItemHandler testOutputItemHandler = new TestOutputItemHandler();
 		simulation3.addOutputItemHandler(testOutputItemHandler);
@@ -221,7 +240,7 @@ public class AT_Simulation {
 		simulation3.setScenario(scenario);
 
 		simulation3.execute();
-		assertEquals(scenario.getScenarioId(),testOutputItemHandler.getScenarioId());
+		assertEquals(scenario.getScenarioId(), testOutputItemHandler.getScenarioId());
 	}
 
 }

@@ -6,6 +6,9 @@ import java.util.TreeMap;
 
 import org.apache.commons.math3.util.FastMath;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
+
 public final class BinContainer {
 	
 
@@ -47,6 +50,7 @@ public final class BinContainer {
 	
 	private final int highIndex;
 
+	@Source(status = TestStatus.REQUIRED, proxy = BinContainer.class)
 	public static class Builder {
 		private final double binSize;
 		private MutableBinContainer mutableBinContainer;
@@ -87,6 +91,7 @@ public final class BinContainer {
 	 * @author Shawn Hatch
 	 *
 	 */
+	@Source(status = TestStatus.REQUIRED, proxy = BinContainer.class)
 	public final static class Bin {
 		private final double lowerBound;
 		private final double upperBound;

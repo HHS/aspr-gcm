@@ -4,6 +4,7 @@ import gcm.output.OutputItem;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
 import net.jcip.annotations.ThreadSafe;
 
@@ -26,6 +27,7 @@ public final class MemoryReportItem implements OutputItem {
 	 *
 	 */
 	@NotThreadSafe
+	@Source(status = TestStatus.REQUIRED, proxy = MemoryReportItem.class)
 	public static class MemoryReportItemBuilder {
 		private Scaffold scaffold = new Scaffold();
 

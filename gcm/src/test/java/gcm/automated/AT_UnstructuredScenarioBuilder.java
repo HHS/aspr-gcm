@@ -3,6 +3,7 @@ package gcm.automated;
 import static gcm.automated.support.ExceptionAssertion.assertScenarioException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -36,6 +37,7 @@ import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
+import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
@@ -54,6 +56,8 @@ import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link UnstructuredScenarioBuilder}
@@ -88,6 +92,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#build() }
 	 */
 	@Test
+	@UnitTestMethod(name = "build", args = {})
 	public void testBuild() {
 		// No test performed: The build method is tested by proxy via the other
 		// test methods.
@@ -95,9 +100,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#addBatch(BatchId, MaterialId, double, gcm.scenario.MaterialsProducerId)}
+	 * {@link UnstructuredScenarioBuilder#addBatch(BatchId, MaterialId, double, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addBatch", args = { BatchId.class, MaterialId.class, double.class, MaterialsProducerId.class })
 	public void testAddBatch() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -181,6 +187,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#addBatchToStage(StageId, BatchId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addBatchToStage", args = { StageId.class, BatchId.class })
 	public void testAddBatchToStage() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		StageId stageId = new StageId(37);
@@ -260,6 +267,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#addCompartmentId(CompartmentId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addCompartmentId", args = { CompartmentId.class, Class.class })
 	public void testAddCompartmentId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_1;
@@ -292,6 +300,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#addGlobalComponentId(GlobalComponentId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGlobalComponentId", args = { GlobalComponentId.class, Class.class })
 	public void testAddGlobalComponentId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GlobalComponentId globalComponentId = TestGlobalComponentId.GLOBAL_COMPONENT_1;
@@ -321,6 +330,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#addGroup(GroupId, GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroup", args = { GroupId.class, GroupTypeId.class })
 	public void testAddGroup() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(15);
@@ -359,6 +369,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#addGroupTypeId(GroupTypeId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addGroupTypeId", args = { GroupTypeId.class })
 	public void testAddGroupTypeId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupTypeId groupTypeId = TestGroupTypeId.GROUP_TYPE_1;
@@ -382,6 +393,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#addMaterial(MaterialId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterial", args = { MaterialId.class })
 	public void testAddMaterial() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		MaterialId materialId = TestMaterialId.MATERIAL_1;
@@ -403,9 +415,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#addMaterialsProducerId(gcm.scenario.MaterialsProducerId, Class)}
+	 * {@link UnstructuredScenarioBuilder#addMaterialsProducerId(MaterialsProducerId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addMaterialsProducerId", args = { MaterialsProducerId.class, Class.class })
 	public void testAddMaterialsProducerId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -437,6 +450,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#addPerson(PersonId, RegionId, CompartmentId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPerson", args = { PersonId.class, RegionId.class, CompartmentId.class })
 	public void testAddPerson() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		PersonId personId = new PersonId(56);
@@ -496,6 +510,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#addPersonToGroup(GroupId, PersonId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addPersonToGroup", args = { GroupId.class, PersonId.class })
 	public void testAddPersonToGroup() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(45);
@@ -564,6 +579,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#addRegionId(RegionId, Class)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRegionId", args = { RegionId.class, Class.class })
 	public void testAddRegionId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		RegionId regionId = TestRegionId.REGION_4;
@@ -593,6 +609,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#addResource(ResourceId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addResource", args = { ResourceId.class })
 	public void testAddResource() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE2;
@@ -613,9 +630,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#addStage(StageId, boolean, gcm.scenario.MaterialsProducerId)}
+	 * {@link UnstructuredScenarioBuilder#addStage(StageId, boolean, MaterialsProducerId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addStage", args = { StageId.class, boolean.class, MaterialsProducerId.class })
 	public void testAddStage() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -715,6 +733,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#defineBatchProperty(MaterialId, BatchPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineBatchProperty", args = {MaterialId.class, BatchPropertyId.class, PropertyDefinition.class})
 	public void testDefineBatchProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		Random random = new Random(47348457892L);
@@ -764,9 +783,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#defineCompartmentProperty(CompartmentPropertyId, PropertyDefinition)}
+	 * {@link UnstructuredScenarioBuilder#defineCompartmentProperty(CompartmentId, CompartmentPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineCompartmentProperty", args = {CompartmentId.class, CompartmentPropertyId.class, PropertyDefinition.class})
 	public void testDefineCompartmentProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		Random random = new Random();
@@ -822,6 +842,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#defineGlobalProperty(GlobalPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGlobalProperty", args = {GlobalPropertyId.class, PropertyDefinition.class})
 	public void testDefineGlobalProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		Random random = new Random();
@@ -863,6 +884,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#defineGroupProperty(GroupTypeId, GroupPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineGroupProperty", args = {GroupTypeId.class, GroupPropertyId.class, PropertyDefinition.class})
 	public void testDefineGroupProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -921,6 +943,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#defineMaterialsProducerProperty(MaterialsProducerPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineMaterialsProducerProperty", args = {MaterialsProducerPropertyId.class, PropertyDefinition.class})
 	public void testDefineMaterialsProducerProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_1;
@@ -963,6 +986,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#definePersonProperty(PersonPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "definePersonProperty", args = {PersonPropertyId.class, PropertyDefinition.class})
 	public void testDefinePersonProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -1005,6 +1029,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#defineRegionProperty(RegionPropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineRegionProperty", args = {RegionPropertyId.class, PropertyDefinition.class})
 	public void testDefineRegionProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		RegionPropertyId regionPropertyId = TestRegionPropertyId.REGION_PROPERTY_1;
@@ -1043,9 +1068,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#defineResourceProperty(ResourcePropertyId, PropertyDefinition)}
+	 * {@link UnstructuredScenarioBuilder#defineResourceProperty(ResourceId, ResourcePropertyId, PropertyDefinition)}
 	 */
 	@Test
+	@UnitTestMethod(name = "defineResourceProperty", args = {ResourceId.class, ResourcePropertyId.class, PropertyDefinition.class})
 	public void testDefineResourceProperty() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE3;
@@ -1150,9 +1176,10 @@ public class AT_UnstructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link UnstructuredScenarioBuilder#setBatchPropertyValue}
+	 * Tests {@link UnstructuredScenarioBuilder#setBatchPropertyValue(BatchId, BatchPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setBatchPropertyValue", args = {BatchId.class, BatchPropertyId.class, Object.class})
 	public void testSetBatchPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		Random random = new Random(5745690788442345906L);
@@ -1240,6 +1267,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setCompartmentMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentMapOption", args = {MapOption.class})
 	public void testSetCompartmentMapOption() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -1267,6 +1295,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setCompartmentPropertyValue(CompartmentId, CompartmentPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setCompartmentPropertyValue", args = {CompartmentId.class, CompartmentPropertyId.class, Object.class})
 	public void testSetCompartmentPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		CompartmentId compartmentId = TestCompartmentId.COMPARTMENT_4;
@@ -1335,6 +1364,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setGlobalPropertyValue(GlobalPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGlobalPropertyValue", args = {GlobalPropertyId.class, Object.class})
 	public void testSetGlobalPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -1385,6 +1415,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setGroupPropertyValue(GroupId, GroupPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setGroupPropertyValue", args = {GroupId.class, GroupPropertyId.class, Object.class})
 	public void testSetGroupPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		GroupId groupId = new GroupId(64);
@@ -1459,9 +1490,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#setMaterialsProducerPropertyValue(gcm.scenario.MaterialsProducerId, MaterialsProducerPropertyId, Object)}
+	 * {@link UnstructuredScenarioBuilder#setMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setMaterialsProducerPropertyValue", args = {MaterialsProducerId.class, MaterialsProducerPropertyId.class, Object.class})
 	public void testSetMaterialsProducerPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -1528,9 +1560,10 @@ public class AT_UnstructuredScenarioBuilder {
 
 	/**
 	 * Tests
-	 * {@link UnstructuredScenarioBuilder#setMaterialsProducerResourceLevel(gcm.scenario.MaterialsProducerId, ResourceId, long)}
+	 * {@link UnstructuredScenarioBuilder#setMaterialsProducerResourceLevel(MaterialsProducerId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setMaterialsProducerResourceLevel", args = {MaterialsProducerId.class, ResourceId.class, long.class})
 	public void testSetMaterialsProducerResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		TestMaterialsProducerId materialsProducerId = TestMaterialsProducerId.MATERIALS_PRODUCER_1;
@@ -1587,6 +1620,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setPersonCompartmentArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonCompartmentArrivalTracking", args = {TimeTrackingPolicy.class})
 	public void testSetPersonCompartmentArrivalTracking() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
@@ -1614,6 +1648,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setPersonPropertyValue(PersonId, PersonPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonPropertyValue", args = {PersonId.class, PersonPropertyId.class, Object.class})
 	public void testSetPersonPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		PersonId personId = new PersonId(68);
@@ -1700,6 +1735,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setPersonRegionArrivalTracking(TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonRegionArrivalTracking", args = {TimeTrackingPolicy.class})
 	public void testSetPersonRegionArrivalTracking() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
@@ -1728,6 +1764,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setPersonResourceLevel(PersonId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setPersonResourceLevel", args = {PersonId.class, ResourceId.class, long.class})
 	public void testSetPersonResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		PersonId personId = new PersonId(76);
@@ -1799,6 +1836,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#setRegionMapOption(MapOption)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionMapOption", args = {MapOption.class})
 	public void testSetRegionMapOption() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		for (MapOption mapOption : MapOption.values()) {
@@ -1824,6 +1862,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setRegionPropertyValue(RegionId, RegionPropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionPropertyValue", args = {RegionId.class, RegionPropertyId.class, Object.class})
 	public void testSetRegionPropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -1893,6 +1932,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setRegionResourceLevel(RegionId, ResourceId, long)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setRegionResourceLevel", args = {RegionId.class, ResourceId.class, long.class})
 	public void testSetRegionResourceLevel() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		RegionId regionId = TestRegionId.REGION_6;
@@ -1950,6 +1990,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setResourcePropertyValue(ResourceId, ResourcePropertyId, Object)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourcePropertyValue", args = {ResourceId.class, ResourcePropertyId.class, Object.class})
 	public void testSetResourcePropertyValue() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE8;
@@ -2018,6 +2059,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * {@link UnstructuredScenarioBuilder#setResourceTimeTracking(ResourceId, TimeTrackingPolicy)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setResourceTimeTracking", args = {ResourceId.class, TimeTrackingPolicy.class})
 	public void testSetResourceTimeTracking() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		ResourceId resourceId = TestResourceId.RESOURCE5;
@@ -2056,6 +2098,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#setScenarioId(ScenarioId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setScenarioId", args = {ScenarioId.class})
 	public void testSetScenarioId() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		ScenarioId scenarioId = new ScenarioId(67);
@@ -2084,6 +2127,7 @@ public class AT_UnstructuredScenarioBuilder {
 	 * Tests {@link UnstructuredScenarioBuilder#setSuggestedPopulationSize(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "setSuggestedPopulationSize", args = {int.class})
 	public void testSetSuggestedPopulationSize() {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
@@ -2100,21 +2144,22 @@ public class AT_UnstructuredScenarioBuilder {
 	}
 
 	/**
-	 * Tests {@link UnstructuredScenarioBuilder#addRandomNumberGeneratorId(gcm.scenario.RandomNumberGeneratorId)}
+	 * Tests
+	 * {@link UnstructuredScenarioBuilder#addRandomNumberGeneratorId(RandomNumberGeneratorId)}
 	 */
 	@Test
+	@UnitTestMethod(name = "addRandomNumberGeneratorId", args = { RandomNumberGeneratorId.class })
 	public void testAddRandomNumberGeneratorId() {
-		
-		
+
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 
 		// precondition : if the generator id is null
-		scenarioBuilder.addRandomNumberGeneratorId(null);		
+		scenarioBuilder.addRandomNumberGeneratorId(null);
 		assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 		// precondition : if the generator id was previously added
 		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
-		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);		
+		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
 		assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER);
 
 		Set<RandomNumberGeneratorId> expected = new LinkedHashSet<>();
@@ -2123,15 +2168,25 @@ public class AT_UnstructuredScenarioBuilder {
 		expected.add(RandomGeneratorId.DONNER);
 		expected.add(RandomGeneratorId.BLITZEN);
 
-		for(RandomNumberGeneratorId randomNumberGeneratorId : expected) {
+		for (RandomNumberGeneratorId randomNumberGeneratorId : expected) {
 			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		}
-		
+
 		Scenario scenario = scenarioBuilder.build();
-		
-		//postcondition: the scenario contains the expected ids
+
+		// postcondition: the scenario contains the expected ids
 		Set<RandomNumberGeneratorId> actual = scenario.getRandomNumberGeneratorIds();
 		assertEquals(expected, actual);
-		
+
+	}
+	
+	/**
+	 * Tests {@link UnstructuredScenarioBuilder#UnstructuredScenarioBuilder()}
+	 */
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		UnstructuredScenarioBuilder unstructuredScenarioBuilder = new UnstructuredScenarioBuilder();
+		assertNotNull(unstructuredScenarioBuilder);				
 	}
 }

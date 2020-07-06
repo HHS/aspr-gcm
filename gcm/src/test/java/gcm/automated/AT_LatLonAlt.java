@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
@@ -39,8 +40,8 @@ public class AT_LatLonAlt {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_LatLonAlt.class.getSimpleName() + " " +
-		// SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_LatLonAlt.class.getSimpleName() + " " +
+//		 SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -176,25 +177,55 @@ public class AT_LatLonAlt {
 	}
 
 	/**
-	 * Tests {@link LatLonAlt constructors}
+	 * Tests {@link LatLonAlt#LatLonAlt(LatLon)}
 	 */
 	@SuppressWarnings("unused")
 	@Test
-	public void testConstructors() {
+	@UnitTestConstructor(args = {LatLon.class})
+	public void testConstructor_LatLon() {
+		final long seed = SEED_PROVIDER.getSeedValue(8);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		for (int i = 0; i < 100; i++) {
+			double latitude = randomGenerator.nextDouble() * 180 - 90;
+			double longitude = randomGenerator.nextDouble() * 360 - 180;
+			
+			LatLon latLon = new LatLon(latitude, longitude);
+			LatLonAlt latLonAlt = new LatLonAlt(latLon);
+			
+			assertEquals(latitude, latLonAlt.getLatitude(), TOLERANCE);
+			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
+			assertEquals(0, latLonAlt.getAltitude(), 0);
+		}
+
+		// pre-condition tests
+		assertException(() -> {
+			Vector3D v = null;
+			new LatLonAlt(v);
+		}, RuntimeException.class);
+
+	}
+
+	/**
+	 * Tests {@link LatLonAlt#LatLonAlt(LatLon)}
+	 * 
+	 * Tests {@link LatLonAlt#LatLonAlt(Vector3D)}
+	 * 
+	 * Tests {@link LatLonAlt#LatLonAlt(double, double, double)}
+	 */
+	@SuppressWarnings("unused")
+	@Test
+	@UnitTestConstructor(args = {Vector3D.class})
+	public void testConstructor_Vector3D() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		for (int i = 0; i < 100; i++) {
 			double latitude = randomGenerator.nextDouble() * 180 - 90;
 			double longitude = randomGenerator.nextDouble() * 360 - 180;
 			double altitude = randomGenerator.nextDouble() * 10000 - 5000;
-			LatLon latLon = new LatLon(latitude, longitude);
-			LatLonAlt latLonAlt = new LatLonAlt(latLon);
-			assertEquals(latitude, latLonAlt.getLatitude(), TOLERANCE);
-			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
-			assertEquals(0, latLonAlt.getAltitude(), 0);
-
+			
 			Vector3D v = new Vector3D(latitude, longitude, altitude);
-			latLonAlt = new LatLonAlt(v);
+			LatLonAlt latLonAlt = new LatLonAlt(v);
+			
 			assertEquals(latitude, latLonAlt.getLatitude(), TOLERANCE);
 			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
 			assertEquals(altitude, latLonAlt.getAltitude(), TOLERANCE);
@@ -204,12 +235,37 @@ public class AT_LatLonAlt {
 		assertException(() -> {
 			Vector3D v = null;
 			new LatLonAlt(v);
-		}, RuntimeException.class);
+		}, RuntimeException.class);		
 
-		assertException(() -> {
-			LatLon latLon = null;
-			new LatLonAlt(latLon);
-		}, RuntimeException.class);
+		assertException(() -> new LatLonAlt(new Vector3D(-91, 0, 1000)), RuntimeException.class);
+
+		assertException(() -> new LatLonAlt(new Vector3D(91, 0, 1000)), RuntimeException.class);
+
+		assertException(() -> new LatLonAlt(new Vector3D(0, 181, 1000)), RuntimeException.class);
+
+		assertException(() -> new LatLonAlt(new Vector3D(0, -181, 1000)), RuntimeException.class);
+
+	}
+	
+	/**
+	 * Tests {@link LatLonAlt#LatLonAlt(double, double, double)}
+	 */	
+	@Test
+	@UnitTestConstructor(args = {double.class, double.class, double.class})
+	public void testConstructor_Doubles() {
+		final long seed = SEED_PROVIDER.getSeedValue(7);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		for (int i = 0; i < 100; i++) {
+			double latitude = randomGenerator.nextDouble() * 180 - 90;
+			double longitude = randomGenerator.nextDouble() * 360 - 180;
+			double altitude = randomGenerator.nextDouble() * 10000 - 5000;
+			
+			LatLonAlt latLonAlt = new LatLonAlt(latitude,longitude,altitude);
+			assertEquals(latitude, latLonAlt.getLatitude(), TOLERANCE);
+			assertEquals(longitude, latLonAlt.getLongitude(), TOLERANCE);
+			assertEquals(altitude, latLonAlt.getAltitude(), TOLERANCE);
+			
+		}
 
 		assertException(() -> new LatLonAlt(-91, 0, 1000), RuntimeException.class);
 
@@ -220,7 +276,6 @@ public class AT_LatLonAlt {
 		assertException(() -> new LatLonAlt(0, -181, 1000), RuntimeException.class);
 
 	}
-
 	/**
 	 * Tests {@link LatLonAlt#toVector3D()}
 	 */

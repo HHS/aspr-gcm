@@ -16,12 +16,20 @@ import gcm.scenario.ComponentId;
  *
  */
 public final class TaskPlanContainer {
-	
+
 	private int masterKey;
 
 	private final Map<ComponentId, List<TaskPlan>> taskPlanMap = new LinkedHashMap<>();
 
+	public TaskPlan addKeylessTaskPlan(final ComponentId componentId, final double scheduledTime, Task task) {
+		return addTaskPlan(componentId, scheduledTime, task, false);
+	}
+
 	public TaskPlan addTaskPlan(final ComponentId componentId, final double scheduledTime, Task task) {
+		return addTaskPlan(componentId, scheduledTime, task, true);
+	}
+
+	private TaskPlan addTaskPlan(final ComponentId componentId, final double scheduledTime, Task task, boolean useKey) {
 		if (componentId == null) {
 			throw new RuntimeException("null component id");
 		}
@@ -33,7 +41,13 @@ public final class TaskPlanContainer {
 			list = new ArrayList<>();
 			taskPlanMap.put(componentId, list);
 		}
-		TaskPlan taskPlan = new TaskPlan(scheduledTime, masterKey++, task);
+		TaskPlan taskPlan;
+		if (useKey) {
+			taskPlan = new TaskPlan(scheduledTime, masterKey++, task);
+		}else {
+			taskPlan = new TaskPlan(scheduledTime, null, task);
+		}
+		
 		list.add(taskPlan);
 		return taskPlan;
 	}
@@ -46,8 +60,8 @@ public final class TaskPlanContainer {
 		}
 		return result;
 	}
-	
-	public List<ComponentId> getComponentIds(){
+
+	public List<ComponentId> getComponentIds() {
 		return new ArrayList<>(taskPlanMap.keySet());
 	}
 

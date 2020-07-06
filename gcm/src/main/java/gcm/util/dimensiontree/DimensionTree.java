@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.internal.CommonState;
 import gcm.util.dimensiontree.internal.Group;
 import gcm.util.dimensiontree.internal.NearestMemberQuery;
@@ -61,6 +63,7 @@ public final class DimensionTree<T> {
 		private boolean fastRemovals = false;
 	}
 
+	@Source(status = TestStatus.REQUIRED, proxy = DimensionTree.class)
 	public static class Builder {
 
 		private Scaffold scaffold = new Scaffold();

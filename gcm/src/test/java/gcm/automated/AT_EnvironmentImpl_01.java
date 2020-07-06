@@ -47,6 +47,7 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
+import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Filter;
@@ -54,6 +55,7 @@ import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
@@ -63,8 +65,8 @@ public class AT_EnvironmentImpl_01 {
 	private static SeedProvider SEED_PROVIDER;
 
 	@BeforeClass
-	public static void beforeClass() {		
-		SEED_PROVIDER = new SeedProvider(EnvironmentSupport.getMetaSeed(1));		
+	public static void beforeClass() {
+		SEED_PROVIDER = new SeedProvider(EnvironmentSupport.getMetaSeed(1));
 	}
 
 	/**
@@ -73,15 +75,15 @@ public class AT_EnvironmentImpl_01 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_EnvironmentImpl_01.class.getSimpleName() + " "
+		// + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
-	
 	/**
 	 * Tests {@link EnvironmentImpl#addGroup(GroupTypeId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "addGroup", args = {GroupTypeId.class})
+	@UnitTestMethod(name = "addGroup", args = { GroupTypeId.class })
 	public void testAddGroup() {
 		/*
 		 * Assert that the groups can be added
@@ -136,7 +138,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addPerson(RegionId, CompartmentId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "addPerson", args = {RegionId.class, CompartmentId.class})
+	@UnitTestMethod(name = "addPerson", args = { RegionId.class, CompartmentId.class })
 	public void testAddPerson() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -217,7 +219,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#addPersonToGroup(PersonId, GroupId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "addPersonToGroup", args = {PersonId.class, GroupId.class})
+	@UnitTestMethod(name = "addPersonToGroup", args = { PersonId.class, GroupId.class })
 	public void testAddPersonToGroup() {
 		/*
 		 * Assert that people can be added to groups
@@ -314,8 +316,63 @@ public class AT_EnvironmentImpl_01 {
 	 *
 	 */
 	@Test
-	@UnitTestMethod(name = "addPlan", args = {Plan.class, double.class})
-	public void testAddPlan() {
+	@UnitTestMethod(name = "addPlan", args = { Plan.class, double.class })
+	public void testAddPlan_WithoutKey() {
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		/*
+		 * We demonstrate that a plan is added successfully by showing that the
+		 * plan gets executed at the appropriate time. Note that the plan will
+		 * NOT have a key.
+		 */
+		taskPlanContainer.addKeylessTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			// check that the time of execution is correct
+			assertEquals(1.0, environment.getTime(), 0);
+		});
+
+		/*
+		 * We now test preconditions
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			// if the plan is null
+			assertModelException(() -> environment.addPlan(null, 1000), SimulationErrorType.NULL_PLAN);
+
+			// if the plan time is in the past
+			assertModelException(() -> environment.addPlan(new EmptyTaskPlan(400, "key2"), 0), SimulationErrorType.PAST_PLANNING_TIME);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests {@link EnvironmentImpl#addPlan(Plan, double, Object)
+	 *
+	 */
+	@Test
+	@UnitTestMethod(name = "addPlan", args = { Plan.class, double.class, Object.class })
+	public void testAddPlan_WithKey() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -374,7 +431,7 @@ public class AT_EnvironmentImpl_01 {
 	 *
 	 */
 	@Test
-	@UnitTestMethod(name = "addPopulationIndex", args = {Filter.class, Object.class})
+	@UnitTestMethod(name = "addPopulationIndex", args = { Filter.class, Object.class })
 	public void testAddPopulationIndex() {
 
 		/*
@@ -406,11 +463,7 @@ public class AT_EnvironmentImpl_01 {
 			 * have at least 3 units of resource 3
 			 */
 
-			
-			Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(
-			resource(TestResourceId.RESOURCE3, Equality.GREATER_THAN_EQUAL, 3));
-			
-			 
+			Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(resource(TestResourceId.RESOURCE3, Equality.GREATER_THAN_EQUAL, 3));
 
 			/*
 			 * add the index to the environment
@@ -472,12 +525,12 @@ public class AT_EnvironmentImpl_01 {
 		assertAllPlansExecuted(taskPlanContainer);
 	}
 
-
 	/**
-	 * Tests {@link EnvironmentImpl#addResourceToRegion(ResourceId, RegionId, long)}
+	 * Tests
+	 * {@link EnvironmentImpl#addResourceToRegion(ResourceId, RegionId, long)}
 	 */
 	@Test
-	@UnitTestMethod(name = "addResourceToRegion", args = {ResourceId.class, RegionId.class, long.class})
+	@UnitTestMethod(name = "addResourceToRegion", args = { ResourceId.class, RegionId.class, long.class })
 	public void testAddResourceToRegion() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -588,7 +641,7 @@ public class AT_EnvironmentImpl_01 {
 	 * Tests {@link EnvironmentImpl#batchExists(BatchId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "batchExists", args = {BatchId.class})
+	@UnitTestMethod(name = "batchExists", args = { BatchId.class })
 	public void testBatchExists() {
 		/*
 		 * Show that batches exist as expected before construction, after
@@ -634,6 +687,25 @@ public class AT_EnvironmentImpl_01 {
 
 		assertAllPlansExecuted(taskPlanContainer);
 
+	}
+
+	/**
+	 * Test {@link EnvironmentImpl#init(Context)}
+	 */
+	@Test
+	@UnitTestMethod(name = "init", args = { Context.class })
+	public void testInit() {
+		// implicitly tested by every EnvironmentImpl test
+	}
+	
+
+	/**
+	 * Test {@link EnvironmentImpl#EnvironmentImpl()}
+	 */
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		// implicitly tested by every EnvironmentImpl test
 	}
 
 }

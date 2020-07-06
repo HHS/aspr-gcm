@@ -11,6 +11,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonAlt;
@@ -144,10 +145,40 @@ public class AT_LatLon {
 	}
 
 	/**
-	 * Tests {@link LatLon constructors}
+	 * Tests {@link LatLon#LatLon(double, double)}
 	 */
 	@Test
-	public void testConstructors() {
+	@UnitTestConstructor(args= {double.class, double.class})
+	public void testConstructor_Doubles() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		for (int i = 0; i < 100; i++) {
+			double latitude = randomGenerator.nextDouble() * 180 - 90;
+			double longitude = randomGenerator.nextDouble() * 360 - 180;
+			LatLon latLon = new LatLon(latitude, longitude);
+			assertEquals(latitude, latLon.getLatitude(), TOLERANCE);
+			assertEquals(longitude, latLon.getLongitude(), TOLERANCE);
+		}
+
+		// pre-condition tests
+
+		assertException(() -> new LatLon(-91, 0), RuntimeException.class);
+
+		assertException(() -> new LatLon(91, 0), RuntimeException.class);
+
+		assertException(() -> new LatLon(0, 181), RuntimeException.class);
+
+		assertException(() -> new LatLon(0, -181), RuntimeException.class);
+
+	}
+	
+	/**
+	 * Tests {@link LatLon#LatLon(LatLonAlt)}
+	 */
+	@Test
+	@UnitTestConstructor(args= {LatLonAlt.class})
+	public void testConstructor_LatLonAlt() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -164,14 +195,7 @@ public class AT_LatLon {
 		// pre-condition tests
 		assertException(() -> new LatLon(null), RuntimeException.class);
 
-		assertException(() -> new LatLon(-91, 0), RuntimeException.class);
-
-		assertException(() -> new LatLon(91, 0), RuntimeException.class);
-
-		assertException(() -> new LatLon(0, 181), RuntimeException.class);
-
-		assertException(() -> new LatLon(0, -181), RuntimeException.class);
-
 	}
+
 
 }

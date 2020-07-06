@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.path.ArrayPathSolver;
@@ -46,7 +48,7 @@ public class AT_ArrayPathSolver {
 			return edge.cost();
 		}
 	};
-	
+
 	private static class Edge {
 		private final Node originNode;
 		private final Node destinationNode;
@@ -85,15 +87,25 @@ public class AT_ArrayPathSolver {
 		}
 
 	}
+
 	/**
 	 * Tests
-	 * {@link ArrayPathSolver#getPath(Object, Object)}
+	 * {@link ArrayPathSolver#ArrayPathSolver(Graph, EdgeCostEvaluator, TravelCostEvaluator)}
 	 */
 	@Test
-	@UnitTestMethod(name="getPath",args={Object.class,Object.class})
+	@UnitTestConstructor(args = { Graph.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
+	public void testConstructor() {
+		Graph.Builder<String, Integer> builder = Graph.builder();		
+		ArrayPathSolver<String, Integer> arrayPathSolver = new ArrayPathSolver<>(builder.build(), (e)->0.0, (n1,n2)->0);
+		assertNotNull(arrayPathSolver);
+	}
+
+	/**
+	 * Tests {@link ArrayPathSolver#getPath(Object, Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "getPath", args = { Object.class, Object.class })
 	public void testGetPath() {
-		
-		
 
 		// create a few nodes
 		Node nodeA = new Node("A", new Vector2D(15, 7));
@@ -130,7 +142,7 @@ public class AT_ArrayPathSolver {
 		Graph.Builder<Node, Edge> graphBuilder = Graph.builder();
 		edges.forEach(edge -> graphBuilder.addEdge(edge, edge.originNode, edge.destinationNode));
 		Graph<Node, Edge> graph = graphBuilder.build();
-		
+
 		PathSolver<Node, Edge> pathSolver = new ArrayPathSolver<>(graph, EDGE_COST_EVALUATOR, TRAVEL_COST_EVALUATOR);
 
 		Path.Builder<Edge> pathBuilder = Path.builder();

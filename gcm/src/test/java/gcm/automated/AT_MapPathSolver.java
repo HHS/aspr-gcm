@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.path.MapPathSolver;
@@ -86,6 +88,19 @@ public class AT_MapPathSolver {
 
 	}
 
+	/**
+	 * Tests
+	 * {@link MapPathSolver#MapPathSolver(Graph, EdgeCostEvaluator, TravelCostEvaluator)}
+	 */
+	@Test
+	@UnitTestConstructor(args = { Graph.class, EdgeCostEvaluator.class, TravelCostEvaluator.class })
+	public void testConstructor() {
+		Graph.Builder<String, Integer> builder = Graph.builder();		
+		MapPathSolver<String, Integer> arrayPathSolver = new MapPathSolver<>(builder.build(), (e)->0.0, (n1,n2)->0);
+		assertNotNull(arrayPathSolver);
+	}
+
+	
 	/**
 	 * Tests {@link MapPathSolver#getPath(Object, Object)}
 	 */

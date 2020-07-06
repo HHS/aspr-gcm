@@ -180,13 +180,49 @@ public class AT_Graph {
 		assertFalse(graph.containsNode("D"));
 	}
 
-	/**
-	 * Tests {@link Graph#edgeCount()} Tests
-	 * {@link Graph#edgeCount(Object, Object)}
+	/**  
+	 * Tests {@link Graph#edgeCount(Object, Object)}
 	 */
 	@Test
 	@UnitTestMethod(name = "edgeCount", args= {Object.class,Object.class})
-	public void testEdgeCount() {
+	public void testEdgeCount_Objects() {
+		Graph.Builder<String, String> builder = Graph.builder();
+		builder.addEdge("E1", "B", "C");
+		builder.addEdge("E2", "C", "B");
+		builder.addEdge("E3", "B", "C");
+		builder.addEdge("E4", "B", "A");
+		builder.addEdge("E5", "B", "D");
+		builder.addEdge("E6", "A", "B");
+		builder.addEdge("E7", "A", "A");
+
+		Graph<String, String> graph = builder.build();
+		assertEquals(1, graph.edgeCount("A","A"));
+		assertEquals(1, graph.edgeCount("A","B"));
+		assertEquals(0, graph.edgeCount("A","C"));
+		assertEquals(0, graph.edgeCount("A","D"));
+		assertEquals(1, graph.edgeCount("B","A"));
+		assertEquals(0, graph.edgeCount("B","B"));
+		assertEquals(2, graph.edgeCount("B","C"));
+		assertEquals(1, graph.edgeCount("B","D"));
+		assertEquals(0, graph.edgeCount("C","A"));
+		assertEquals(1, graph.edgeCount("C","B"));
+		assertEquals(0, graph.edgeCount("C","C"));
+		assertEquals(0, graph.edgeCount("C","D"));
+		assertEquals(0, graph.edgeCount("D","A"));
+		assertEquals(0, graph.edgeCount("D","B"));
+		assertEquals(0, graph.edgeCount("D","C"));
+		assertEquals(0, graph.edgeCount("D","D"));
+		
+		
+
+	}
+	
+	/**
+	 * Tests {@link Graph#edgeCount()}
+	 */
+	@Test
+	@UnitTestMethod(name = "edgeCount", args= {})
+	public void testEdgeCount_NoArgs() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A", "B");
 
@@ -270,12 +306,11 @@ public class AT_Graph {
 	}
 
 	/**
-	 * Tests {@link Graph#getEdges()} Tests
-	 * {@link Graph#getEdges(Object, Object)}
+	 * Tests {@link Graph#getEdges()} 
 	 */
 	@Test
-	@UnitTestMethod(name = "getEdges", args= {Object.class,Object.class})
-	public void testGetEdges() {
+	@UnitTestMethod(name = "getEdges", args= {})
+	public void testGetEdges_NoArgs() {
 		Graph.Builder<String, String> builder = Graph.builder();
 		builder.addEdge("A->B", "A","B");
 		builder.addEdge("B->C", "B","C");
@@ -292,6 +327,97 @@ public class AT_Graph {
 		
 		Set<String> actual = graph.getEdges().stream().collect(Collectors.toSet());
 		assertEquals(expected, actual);
+	}
+	/**
+	 * Tests{@link Graph#getEdges(Object, Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "getEdges", args= {Object.class,Object.class})
+	public void testGetEdges_Objects() {
+		Graph.Builder<String, String> builder = Graph.builder();
+		builder.addEdge("E1", "B", "C");
+		builder.addEdge("E2", "C", "B");
+		builder.addEdge("E3", "B", "C");
+		builder.addEdge("E4", "B", "A");
+		builder.addEdge("E5", "B", "D");
+		builder.addEdge("E6", "A", "B");
+		builder.addEdge("E7", "A", "A");
+		Graph<String, String> graph = builder.build();
+		
+		Set<String> expected = new LinkedHashSet<>();;
+		Set<String> actual;		
+		
+		expected.clear();
+		expected.add("E7");
+		actual = graph.getEdges("A","A").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
+		expected.clear();
+		expected.add("E6");
+		actual = graph.getEdges("A","B").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();		
+		actual = graph.getEdges("A","C").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();		
+		actual = graph.getEdges("A","D").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
+		expected.clear();	
+		expected.add("E4");
+		actual = graph.getEdges("B","A").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();		
+		actual = graph.getEdges("B","B").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();	
+		expected.add("E1");
+		expected.add("E3");
+		actual = graph.getEdges("B","C").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
+		expected.clear();	
+		expected.add("E5");
+		actual = graph.getEdges("B","D").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
+		expected.clear();
+		actual = graph.getEdges("C","A").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
+		expected.clear();
+		expected.add("E2");
+		actual = graph.getEdges("C","B").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("C","C").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("C","D").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("D","A").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("D","B").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("D","C").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+
+		expected.clear();
+		actual = graph.getEdges("D","D").stream().collect(Collectors.toSet());
+		assertEquals(expected, actual);
+		
 	}
 
 	/**

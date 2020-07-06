@@ -50,7 +50,6 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.util.MemoryPartition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -330,52 +329,7 @@ public class AT_EnvironmentImpl_11 {
 		assertAllPlansExecuted(taskPlanContainer);
 
 	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#isInitialized()}
-	 */
-	@Test
-	@UnitTestMethod(name = "isInitialized", args = {})
-	public void testIsInitialized() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(2);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
-		addStandardComponentsAndTypes(scenarioBuilder);
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_1, 1, (environment) -> {
-			if (environment instanceof EnvironmentImpl) {
-				EnvironmentImpl environmentImpl = (EnvironmentImpl) environment;
-				assertTrue(environmentImpl.isInitialized());
-			}
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#collectMemoryLinks(MemoryPartition)}
-	 */
-	@Test
-	@UnitTestMethod(name = "collectMemoryLinks", args = {MemoryPartition.class})
-	public void testCollectMemoryLinks() {
-
-		// deferred to Context testing
-
-	}
+	
 
 	/**
 	 * Tests
@@ -392,7 +346,7 @@ public class AT_EnvironmentImpl_11 {
 		 * set them and not the current time.
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(3);
+		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();

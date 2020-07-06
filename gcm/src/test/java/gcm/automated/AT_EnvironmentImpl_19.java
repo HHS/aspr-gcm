@@ -904,14 +904,6 @@ public class AT_EnvironmentImpl_19 {
 	}
 
 	/**
-	 * Test of {@link EnvironmentImpl#init(gcm.simulation.Context)}
-	 */
-	@Test
-	public void testInit() {
-		// Implicitly tested by all other tests that use a simulation instance
-	}
-
-	/**
 	 * Test of {@link EnvironmentImpl#observeGroupArrival(boolean)}
 	 */
 	@Test

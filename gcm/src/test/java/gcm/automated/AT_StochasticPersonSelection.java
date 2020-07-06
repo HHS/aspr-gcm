@@ -1,12 +1,17 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
 import gcm.scenario.PersonId;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link StochasticPersonSelection}
@@ -16,7 +21,12 @@ import gcm.util.annotations.UnitTest;
  */
 @UnitTest(target = StochasticPersonSelection.class)
 public class AT_StochasticPersonSelection {
+
+	/**
+	 * Tests {@link StochasticPersonSelection#errorOccured()}
+	 */
 	@Test
+	@UnitTestMethod(name = "errorOccured", args = {})
 	public void testErrorOccured() {
 		// show that a constructed StochasticPersonSelection contains the values
 		// used to create it
@@ -32,10 +42,34 @@ public class AT_StochasticPersonSelection {
 		stochasticPersonSelection = new StochasticPersonSelection(personId, errorOccured);
 		assertEquals(errorOccured, stochasticPersonSelection.errorOccured());
 
+	}
+
+	/**
+	 * Test
+	 * {@link StochasticPersonSelection#StochasticPersonSelection(PersonId, boolean)}
+	 */
+	@Test
+	@UnitTestConstructor(args = {PersonId.class, boolean.class})
+	public void testConstructor() {
+		PersonId personId = new PersonId(7);
+
+		StochasticPersonSelection stochasticPersonSelection = new StochasticPersonSelection(personId, false);
+		assertNotNull(stochasticPersonSelection);
+		assertEquals(personId, stochasticPersonSelection.getPersonId());
+		assertFalse(stochasticPersonSelection.errorOccured());
+		
+		stochasticPersonSelection = new StochasticPersonSelection(personId, true);
+		assertNotNull(stochasticPersonSelection);
+		assertEquals(personId, stochasticPersonSelection.getPersonId());
+		assertTrue(stochasticPersonSelection.errorOccured());
 		
 	}
-	
+
+	/**
+	 * Test {@link StochasticPersonSelection#getPersonId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getPersonId", args = {})
 	public void testGetPersonId() {
 		// show that a constructed StochasticPersonSelection contains the values
 		// used to create it
@@ -51,7 +85,6 @@ public class AT_StochasticPersonSelection {
 		stochasticPersonSelection = new StochasticPersonSelection(personId, errorOccured);
 		assertEquals(personId, stochasticPersonSelection.getPersonId());
 
-		
 	}
 
 }

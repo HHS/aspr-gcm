@@ -38,6 +38,7 @@ public final class PropertyDefinition {
 	 * @author Shawn Hatch
 	 *
 	 */
+	@Source(proxy=PropertyDefinition.class)
 	public static class Builder {
 		private Scaffold scaffold = new Scaffold();
 

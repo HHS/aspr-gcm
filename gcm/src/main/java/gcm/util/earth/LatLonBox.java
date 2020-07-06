@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.util.FastMath;
 
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
 import net.jcip.annotations.Immutable;
@@ -34,6 +35,7 @@ public final class LatLonBox {
 	 * @author Shawn Hatch
 	 *
 	 */
+	@Source(status = TestStatus.REQUIRED, proxy = LatLonBox.class)
 	public static class LatLonBoxBuilder {
 
 		private LatLonBoxBuilder() {

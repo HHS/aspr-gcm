@@ -61,9 +61,9 @@ import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
-import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link Simulation}
@@ -165,6 +165,7 @@ public class AT_Simulation_SetScenario {
 		public void close(Environment environment) {
 
 		}
+		
 
 	}
 
@@ -357,11 +358,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests {@link Scenario#getBatchAmount(BatchId)}
-	 */
-	@Test
-	public void testGetBatchAmount() {
+	private void testGetBatchAmount() {
 		RandomGenerator randomGenerator = getRandomGenerator(0);
 
 		/*
@@ -399,11 +396,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getBatchIds()}
-	 */
-	@Test
-	public void testGetBatchIds() {
+	private void testGetBatchIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(1);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -446,11 +439,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getBatchMaterial(BatchId)}
-	 */
-	@Test
-	public void testGetBatchMaterial() {
+	private void testGetBatchMaterial() {
 		RandomGenerator randomGenerator = getRandomGenerator(2);
 
 		/*
@@ -488,11 +477,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getBatchMaterialsProducer(BatchId)}
-	 */
-	@Test
-	public void testGetBatchMaterialsProducer() {
+	private void testGetBatchMaterialsProducer() {
 		RandomGenerator randomGenerator = getRandomGenerator(3);
 
 		/*
@@ -573,12 +558,7 @@ public class AT_Simulation_SetScenario {
 		return result;
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getBatchPropertyDefinition(MaterialId, BatchPropertyId)}
-	 */
-	@Test
-	public void testGetBatchPropertyDefinition() {
+	private void testGetBatchPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(4);
 
 		/*
@@ -611,11 +591,8 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getBatchPropertyIds(MaterialId)}
-	 */
-	@Test
-	public void testGetBatchPropertyIds() {
+	
+	private void testGetBatchPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(5);
 
 		/*
@@ -644,12 +621,8 @@ public class AT_Simulation_SetScenario {
 			}
 		});
 	}
-
-	/**
-	 * Tests {@link Scenario#getBatchPropertyValue(BatchId, BatchPropertyId)}
-	 */
-	@Test
-	public void testGetBatchPropertyValue() {
+	
+	private void testGetBatchPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(6);
 
 		/*
@@ -714,11 +687,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getCompartmentIds()}
-	 */
-	@Test
-	public void testGetCompartmentIds() {
+	private void testGetCompartmentIds() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (CompartmentId compartmentId : TestCompartmentId.values()) {
 			scenarioBuilder.addCompartmentId(compartmentId, EmptyComponent.class);
@@ -734,11 +703,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getCompartmentComponentClass(CompartmentId)}
-	 */
-	@Test
-	public void testGetCompartmentComponenClass() {
+	private void testGetCompartmentComponenClass() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (CompartmentId compartmentId : TestCompartmentId.values()) {
 			scenarioBuilder.addCompartmentId(compartmentId, EmptyComponent.class);
@@ -755,12 +720,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionComponentClass(RegionId)}
-	 * {@link EnvironmentImpl#getRegionComponentClass(RegionId)}
-	 */
-	@Test
-	public void testGetRegionComponenClass() {
+	private void testGetRegionComponenClass() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (RegionId regionId : TestRegionId.values()) {
 			scenarioBuilder.addRegionId(regionId, EmptyComponent.class);
@@ -776,12 +736,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getMaterialsProducerComponentClass(MaterialsProducerId)}
-	 */
-	@Test
-	public void testGetMaterialsProducerComponenClass() {
+	private void testGetMaterialsProducerComponenClass() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (MaterialsProducerId materialsProducerId : TestMaterialsProducerId.values()) {
 			scenarioBuilder.addMaterialsProducerId(materialsProducerId, EmptyComponent.class);
@@ -797,11 +752,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGlobalComponentClass(GlobalComponentId)}
-	 */
-	@Test
-	public void testGetGlobalComponenClass() {
+	private void testGetGlobalComponenClass() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (GlobalComponentId globalComponentId : TestGlobalComponentId.values()) {
 			scenarioBuilder.addGlobalComponentId(globalComponentId, EmptyComponent.class);
@@ -817,11 +768,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getCompartmentMapOption()}
-	 */
-	@Test
-	public void testGetCompartmentMapOption() {
+	private void testGetCompartmentMapOption() {
 		for (MapOption mapOption : MapOption.values()) {
 			ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 			scenarioBuilder.setCompartmentMapOption(mapOption);
@@ -834,12 +781,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getCompartmentPropertyDefinition(CompartmentPropertyId)}
-	 */
-	@Test
-	public void testGetCompartmentPropertyDefinition() {
+	private void testGetCompartmentPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(7);
 
 		/*
@@ -875,11 +817,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getCompartmentPropertyIds()}
-	 */
-	@Test
-	public void testGetCompartmentPropertyIds() {
+	private void testGetCompartmentPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(8);
 
 		/*
@@ -909,12 +847,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getCompartmentPropertyValue(CompartmentId, CompartmentPropertyId)}
-	 */
-	@Test
-	public void testGetCompartmentPropertyValue() {
+	private void testGetCompartmentPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(9);
 
 		/*
@@ -962,11 +895,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGlobalComponentIds()}
-	 */
-	@Test
-	public void testGetGlobalComponentIds() {
+	private void testGetGlobalComponentIds() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
 		for (GlobalComponentId globalComponentId : TestGlobalComponentId.values()) {
@@ -985,11 +914,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGlobalPropertyDefinition(GlobalPropertyId)}
-	 */
-	@Test
-	public void testGetGlobalPropertyDefinition() {
+	private void testGetGlobalPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(10);
 
 		/*
@@ -1016,11 +941,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGlobalPropertyIds()}
-	 */
-	@Test
-	public void testGetGlobalPropertyIds() {
+	private void testGetGlobalPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(11);
 
 		/*
@@ -1046,11 +967,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGlobalPropertyValue(GlobalPropertyId)}
-	 */
-	@Test
-	public void testGetGlobalPropertyValue() {
+	private void testGetGlobalPropertyValue() {
 
 		RandomGenerator randomGenerator = getRandomGenerator(12);
 
@@ -1089,11 +1006,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupIds()}
-	 */
-	@Test
-	public void testGetGroupIds() {
+	private void testGetGroupIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(13);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -1136,11 +1049,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupMembers(GroupId)}
-	 */
-	@Test
-	public void testGetGroupMembers() {
+	private void testGetGroupMembers() {
 		RandomGenerator randomGenerator = getRandomGenerator(14);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -1214,12 +1123,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getGroupPropertyDefinition(GroupTypeId, GroupPropertyId)}
-	 */
-	@Test
-	public void testGetGroupPropertyDefinition() {
+	private void testGetGroupPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(15);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -1253,11 +1157,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupPropertyValue(GroupId, GroupPropertyId)}
-	 */
-	@Test
-	public void testGetGroupPropertyValue() {
+	private void testGetGroupPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(16);
 
 		// build a scenario with just the group properties defined
@@ -1324,11 +1224,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupTypeId(GroupId)}
-	 */
-	@Test
-	public void testGetGroupTypeId() {
+	private void testGetGroupTypeId() {
 		RandomGenerator randomGenerator = getRandomGenerator(17);
 
 		// build a scenario with some groups
@@ -1362,11 +1258,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupTypeIds()}
-	 */
-	@Test
-	public void testGetGroupTypeIds() {
+	private void testGetGroupTypeIds() {
 		// build a scenario with some group types
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 
@@ -1388,11 +1280,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getGroupPropertyIds(GroupTypeId)}
-	 */
-	@Test
-	public void testGetGroupPropertyIds() {
+	private void testGetGroupPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(18);
 
 		/*
@@ -1427,11 +1315,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getMaterialIds()}
-	 */
-	@Test
-	public void testGetMaterialIds() {
+	private void testGetMaterialIds() {
 		/*
 		 * Create a scenario with materials
 		 */
@@ -1454,11 +1338,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getMaterialsProducerIds()}
-	 */
-	@Test
-	public void testGetMaterialsProducerIds() {
+	private void testGetMaterialsProducerIds() {
 		/*
 		 * Create a scenario with some materials producers
 		 */
@@ -1482,12 +1362,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getMaterialsProducerPropertyDefinition(MaterialsProducerPropertyId)}
-	 */
-	@Test
-	public void testGetMaterialsProducerPropertyDefinition() {
+	private void testGetMaterialsProducerPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(19);
 		/*
 		 * Create a scenario with some materials producer property definitions
@@ -1515,11 +1390,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getMaterialsProducerPropertyIds()}
-	 */
-	@Test
-	public void testGetMaterialsProducerPropertyIds() {
+	private void testGetMaterialsProducerPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(20);
 		/*
 		 * Create a scenario with some materials producer property definitions
@@ -1546,12 +1417,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getMaterialsProducerPropertyValue(MaterialsProducerId, MaterialsProducerPropertyId)}
-	 */
-	@Test
-	public void testGetMaterialsProducerPropertyValue() {
+	private void testGetMaterialsProducerPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(21);
 		/*
 		 * Create a scenario with some materials producer's having property
@@ -1601,12 +1467,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getMaterialsProducerResourceLevel(MaterialsProducerId, ResourceId)}
-	 */
-	@Test
-	public void testGetMaterialsProducerResourceLevel() {
+	private void testGetMaterialsProducerResourceLevel() {
 		RandomGenerator randomGenerator = getRandomGenerator(22);
 		/*
 		 * Create a scenario with some materials producers having non-zero
@@ -1646,11 +1507,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPeopleIds()}
-	 */
-	@Test
-	public void testGetPeopleIds() {
+	private void testGetPeopleIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(23);
 		/*
 		 * Create a scenario with some people
@@ -1689,11 +1546,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonCompartment(PersonId)
-	 */
-	@Test
-	public void testGetPersonCompartment() {
+	private void testGetPersonCompartment() {
 		RandomGenerator randomGenerator = getRandomGenerator(24);
 		/*
 		 * Create a scenario with some people
@@ -1732,11 +1585,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonCompartmentArrivalTrackingPolicy()}
-	 */
-	@Test
-	public void testGetPersonCompartmentArrivalTrackingPolicy() {
+	private void testGetPersonCompartmentArrivalTrackingPolicy() {
 
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			/*
@@ -1756,11 +1605,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonPropertyDefinition(PersonPropertyId)}
-	 */
-	@Test
-	public void testGetPersonPropertyDefinition() {
+	private void testGetPersonPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(25);
 
 		/*
@@ -1787,11 +1632,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonPropertyIds()}
-	 */
-	@Test
-	public void testGetPersonPropertyIds() {
+	private void testGetPersonPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(26);
 
 		/*
@@ -1816,11 +1657,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonPropertyValue(PersonId, PersonPropertyId)}
-	 */
-	@Test
-	public void testGetPersonPropertyValue() {
+	private void testGetPersonPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(27);
 		/*
 		 * Create a scenario with some people having various person properties
@@ -1883,11 +1720,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonRegion(PersonId)}
-	 */
-	@Test
-	public void testGetPersonRegion() {
+	private void testGetPersonRegion() {
 		RandomGenerator randomGenerator = getRandomGenerator(28);
 		/*
 		 * Create a scenario with some people
@@ -1926,11 +1759,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonRegionArrivalTrackingPolicy()}
-	 */
-	@Test
-	public void testGetPersonRegionArrivalTrackingPolicy() {
+	private void testGetPersonRegionArrivalTrackingPolicy() {
 
 		for (TimeTrackingPolicy timeTrackingPolicy : TimeTrackingPolicy.values()) {
 			/*
@@ -1950,11 +1779,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonResourceLevel(PersonId, ResourceId)}
-	 */
-	@Test
-	public void testGetPersonResourceLevel() {
+	private void testGetPersonResourceLevel() {
 		RandomGenerator randomGenerator = getRandomGenerator(29);
 		/*
 		 * Create a scenario with some people having non-zero resource levels
@@ -2011,11 +1836,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getPersonResourceTimeTrackingPolicy
-	 */
-	@Test
-	public void testGetPersonResourceTimeTrackingPolicy() {
+	private void testGetPersonResourceTimeTrackingPolicy() {
 		RandomGenerator randomGenerator = getRandomGenerator(30);
 		/*
 		 * Create a scenario with the person resource time tracking policy
@@ -2047,11 +1868,8 @@ public class AT_Simulation_SetScenario {
 
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionIds()}
-	 */
-	@Test
-	public void testGetRegionIds() {
+
+	private void testGetRegionIds() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (RegionId regionId : TestRegionId.values()) {
 			scenarioBuilder.addRegionId(regionId, EmptyComponent.class);
@@ -2066,11 +1884,8 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionMapOption()}
-	 */
-	@Test
-	public void testGetRegionMapOption() {
+
+	private void testGetRegionMapOption() {
 		for (MapOption mapOption : MapOption.values()) {
 			ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 			scenarioBuilder.setRegionMapOption(mapOption);
@@ -2083,11 +1898,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionPropertyDefinition(RegionPropertyId)}
-	 */
-	@Test
-	public void testGetRegionPropertyDefinition() {
+	private void testGetRegionPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(31);
 
 		/*
@@ -2114,11 +1925,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionPropertyIds()}
-	 */
-	@Test
-	public void testGetRegionPropertyIds() {
+	private void testGetRegionPropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(32);
 
 		/*
@@ -2141,11 +1948,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionPropertyValue(RegionId, RegionPropertyId)}
-	 */
-	@Test
-	public void testGetRegionPropertyValue() {
+	private void testGetRegionPropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(33);
 
 		/*
@@ -2194,11 +1997,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getRegionResourceLevel(RegionId, ResourceId)}
-	 */
-	@Test
-	public void testGetRegionResourceLevel() {
+	private void testGetRegionResourceLevel() {
 		RandomGenerator randomGenerator = getRandomGenerator(34);
 		/*
 		 * Create a scenario with some regions having non-zero resource levels
@@ -2238,11 +2037,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getResourceIds()}
-	 */
-	@Test
-	public void testGetResourceIds() {
+	private void testGetResourceIds() {
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
 		for (ResourceId resoureId : TestResourceId.values()) {
 			scenarioBuilder.addResource(resoureId);
@@ -2257,11 +2052,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getResourcePropertyDefinition(ResourcePropertyId)}
-	 */
-	@Test
-	public void testGetResourcePropertyDefinition() {
+	private void testGetResourcePropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(35);
 
 		/*
@@ -2292,11 +2083,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getResourcePropertyIds()}
-	 */
-	@Test
-	public void testGetResourcePropertyIds() {
+	private void testGetResourcePropertyIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(36);
 
 		/*
@@ -2324,12 +2111,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests
-	 * {@link Scenario#getResourcePropertyValue(ResourceId, ResourcePropertyId)}
-	 */
-	@Test
-	public void testGetResourcePropertyValue() {
+	private void testGetResourcePropertyValue() {
 		RandomGenerator randomGenerator = getRandomGenerator(37);
 
 		/*
@@ -2382,11 +2164,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getScenarioId()}
-	 */
-	@Test
-	public void testGetScenarioId() {
+	private void testGetScenarioId() {
 		RandomGenerator randomGenerator = getRandomGenerator(38);
 
 		for (int i = 0; i < 1000; i++) {
@@ -2406,11 +2184,7 @@ public class AT_Simulation_SetScenario {
 		}
 	}
 
-	/**
-	 * Tests {@link Scenario#getStageBatches()}
-	 */
-	@Test
-	public void testGetStageBatches() {
+	private void testGetStageBatches() {
 		RandomGenerator randomGenerator = getRandomGenerator(39);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -2474,11 +2248,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getStageIds()}
-	 */
-	@Test
-	public void testGetStageIds() {
+	private void testGetStageIds() {
 		RandomGenerator randomGenerator = getRandomGenerator(40);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -2515,11 +2285,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#getStageMaterialsProducer(StageId)}
-	 */
-	@Test
-	public void testGetStageMaterialsProducer() {
+	private void testGetStageMaterialsProducer() {
 		RandomGenerator randomGenerator = getRandomGenerator(41);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -2554,11 +2320,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	/**
-	 * Tests {@link Scenario#isStageOffered(StageId)}
-	 */
-	@Test
-	public void testIsStageOffered() {
+	private void testIsStageOffered() {
 		RandomGenerator randomGenerator = getRandomGenerator(42);
 
 		ScenarioBuilder scenarioBuilder = getScenarioBuilder();
@@ -2591,6 +2353,72 @@ public class AT_Simulation_SetScenario {
 			}
 
 		});
+	}
+	
+	/**
+	 * Tests {@link Simulation#setScenario(Scenario)}
+	 */
+	@Test
+	@UnitTestMethod(name="setScenario", args= {Scenario.class})
+	public void test() {
+		testGetBatchAmount();
+		testGetBatchIds();
+		testGetBatchMaterial();
+		testGetBatchMaterialsProducer();
+		testGetBatchPropertyDefinition();
+		testGetBatchPropertyIds();
+		testGetBatchPropertyValue();
+		testGetCompartmentComponenClass();
+		testGetCompartmentIds();
+		testGetCompartmentMapOption();
+		testGetCompartmentPropertyDefinition();
+		testGetCompartmentPropertyIds();
+		testGetCompartmentPropertyValue();
+		testGetGlobalComponenClass();
+		testGetGlobalComponentIds();
+		testGetGlobalPropertyDefinition();
+		testGetGlobalPropertyIds();
+		testGetGlobalPropertyValue();
+		testGetGroupIds();
+		testGetGroupMembers();
+		testGetGroupPropertyDefinition();
+		testGetGroupPropertyIds();
+		testGetGroupPropertyValue();
+		testGetGroupTypeId();
+		testGetGroupTypeIds();
+		testGetMaterialIds();
+		testGetMaterialsProducerComponenClass();
+		testGetMaterialsProducerIds();
+		testGetMaterialsProducerPropertyDefinition();
+		testGetMaterialsProducerPropertyIds();
+		testGetMaterialsProducerPropertyValue();
+		testGetMaterialsProducerResourceLevel();
+		testGetPeopleIds();
+		testGetPersonCompartment();
+		testGetPersonCompartmentArrivalTrackingPolicy();
+		testGetPersonPropertyDefinition();
+		testGetPersonPropertyIds();
+		testGetPersonPropertyValue();
+		testGetPersonRegion();
+		testGetPersonRegionArrivalTrackingPolicy();
+		testGetPersonResourceLevel();
+		testGetPersonResourceTimeTrackingPolicy();
+		testGetRegionComponenClass();
+		testGetRegionIds();
+		testGetRegionMapOption();
+		testGetRegionPropertyDefinition();
+		testGetRegionPropertyIds();
+		testGetRegionPropertyValue();
+		testGetRegionResourceLevel();
+		testGetResourceIds();
+		testGetResourcePropertyDefinition();
+		testGetResourcePropertyIds();
+		testGetResourcePropertyValue();
+		testGetScenarioId();
+		testGetStageBatches();
+		testGetStageIds();
+		testGetStageMaterialsProducer();
+		testIsStageOffered();	
 	}
 	
 }

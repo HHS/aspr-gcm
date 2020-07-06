@@ -67,7 +67,11 @@ public class TaskComponent implements Component {
 		List<TaskPlan> taskPlans = taskPlanContainer.getTaskPlans(id);
 
 		for (final TaskPlan taskPlan : taskPlans) {
-			environment.addPlan(taskPlan, taskPlan.getScheduledTime(), taskPlan.getKey());
+			if (taskPlan.getKey() != null) {
+				environment.addPlan(taskPlan, taskPlan.getScheduledTime(), taskPlan.getKey());
+			}else {
+				environment.addPlan(taskPlan, taskPlan.getScheduledTime());
+			}
 		}
 
 		if (environment.getGlobalPropertyIds().contains(TestGlobalPropertyId.OBSERVATION_CONTAINER_PROPERTY_ID)) {

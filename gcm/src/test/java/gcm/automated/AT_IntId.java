@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import gcm.scenario.IntId;
 import gcm.scenario.PersonId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
@@ -31,6 +33,20 @@ public class AT_IntId {
 		for (int i = 0; i < 1000; i++) {
 			PersonId personId = new PersonId(i);
 			assertEquals(i, personId.getValue());
+		}
+	}
+
+	/**
+	 * Tests {@link IntId#IntId(int))}
+	 */
+	@Test
+	@UnitTestConstructor(args = { int.class })
+	public void testConstructor() {
+		for (int i = 0; i < 100; i++) {
+			int value = i - 50;
+			IntId intId = new IntId(value);
+			assertNotNull(intId);
+			assertEquals(value, intId.getValue());
 		}
 	}
 

@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.spherical.Chirality;
 import gcm.util.spherical.MalformedSphericalArcException;
 import gcm.util.spherical.SphericalArc;
@@ -50,7 +52,8 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#SphericalArc(SphericalPoint, SphericalPoint)}
 	 */
 	@Test
-	public void testConstructors() {
+	@UnitTestConstructor(args = { SphericalPoint.class, SphericalPoint.class })
+	public void testConstructor() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -77,6 +80,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#getLength()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getLength", args = {})
 	public void testGetLength() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		for (int i = 0; i < 100; i++) {
@@ -105,6 +109,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#distanceTo(SphericalPoint)}
 	 */
 	@Test
+	@UnitTestMethod(name = "distanceTo", args = { SphericalPoint.class })
 	public void testDistanceTo() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -231,6 +236,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#getInterSection(SphericalArc)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getInterSection", args = { SphericalArc.class })
 	public void testGetInterSection() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -339,6 +345,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#getSphericalPoint(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalPoint", args = { int.class })
 	public void testGetSphericalPoint() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -375,6 +382,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#intersectsArc(SphericalArc)}
 	 */
 	@Test
+	@UnitTestMethod(name = "intersectsArc", args = { SphericalArc.class })
 	public void testIntersectsArc() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -474,6 +482,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#getChirality(SphericalPoint)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getChirality", args = { SphericalPoint.class })
 	public void testGetChirality() {
 		final long seed = SEED_PROVIDER.getSeedValue(7);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -521,6 +530,7 @@ public class AT_SphericalArc {
 	 * Tests {@link SphericalArc#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);

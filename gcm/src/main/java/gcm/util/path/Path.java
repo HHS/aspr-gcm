@@ -30,8 +30,8 @@ import net.jcip.annotations.Immutable;
 @Source(status = TestStatus.REQUIRED)
 @Immutable
 public final class Path<E> {
-	//TODO rewrite class doc
-	
+	// TODO rewrite class doc
+
 	/**
 	 * Returns a new instance of the Builder class
 	 */
@@ -39,9 +39,11 @@ public final class Path<E> {
 		return new Builder<>();
 	}
 
+	@Source(status = TestStatus.REQUIRED, proxy = Path.class)
 	public static class Builder<T> {
-		
-		private Builder() {}
+
+		private Builder() {
+		}
 
 		private List<T> edges = new ArrayList<>();
 
@@ -66,8 +68,8 @@ public final class Path<E> {
 	private final List<E> edges;
 
 	/**
-	 * Returns a list over the edges in the path walk. Note that the path
-	 * may cross itself (revisit nodes) and even repeat edges.
+	 * Returns a list over the edges in the path walk. Note that the path may
+	 * cross itself (revisit nodes) and even repeat edges.
 	 * 
 	 */
 	public List<E> getEdges() {
@@ -86,8 +88,6 @@ public final class Path<E> {
 		return edges.size();
 	}
 
-	
-	
 	/**
 	 * Returns true if and only if the path contains no edges
 	 * 
@@ -127,7 +127,5 @@ public final class Path<E> {
 		}
 		return true;
 	}
-	
-	
 
 }

@@ -12,7 +12,14 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
 @Source(status = TestStatus.REQUIRED)
-public class Graphs {
+public final class Graphs {
+	
+	//hidden constructor
+	private Graphs() {
+		
+	}
+	
+	@Source(status = TestStatus.UNREQUIRED)
 	public static enum GraphCyclisity {
 		/**
 		 * The graph contains no sources or sinks. Empty graphs are cyclic.
@@ -101,6 +108,7 @@ public class Graphs {
 	 * @author Shawn Hatch
 	 * 
 	 */
+	@Source(status = TestStatus.UNREQUIRED)
 	public static enum GraphConnectedness {
 		STRONGLYCONNECTED, WEAKLYCONNECTED, DISCONNECTED
 	}

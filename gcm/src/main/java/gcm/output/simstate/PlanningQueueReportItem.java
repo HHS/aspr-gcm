@@ -6,6 +6,7 @@ import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.simulation.Plan;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.stats.ImmutableStat;
 import gcm.util.stats.Stat;
 import net.jcip.annotations.Immutable;
@@ -51,6 +52,7 @@ public final class PlanningQueueReportItem implements OutputItem {
 	 *
 	 */
 	@NotThreadSafe
+	@Source(status = TestStatus.REQUIRED, proxy = PlanningQueueReportItem.class)
 	public static class PlanningQueueReportItemBuilder {
 		private Scaffold scaffold = new Scaffold();
 

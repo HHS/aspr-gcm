@@ -3,6 +3,7 @@ package gcm.automated;
 import static gcm.automated.support.ExceptionAssertion.assertScenarioException;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.Environment;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
@@ -4495,6 +4497,16 @@ public class AT_ExperimentBuilder {
 		}
 
 		return result;
+	}
+	
+	/**
+	 * Test {@link ExperimentBuilder#ExperimentBuilder()}
+	 */
+	@Test
+	@UnitTestConstructor( args = {})
+	public void testConstructor() {
+		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
+		assertNotNull(experimentBuilder);
 	}
 
 	/**

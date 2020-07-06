@@ -14,6 +14,7 @@ import org.junit.Test;
 import gcm.scenario.IntId;
 import gcm.scenario.PersonId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.HashIntSet;
 import gcm.util.containers.IntSet;
@@ -154,10 +155,11 @@ public class AT_HashIntSet {
 
 	
 	/**
-	 * Test for {@link HashIntSet constructors}
+	 * Test for {@link HashIntSet#HashIntSet()}
 	 */
 	@Test
-	public void testConstructors() {
+	@UnitTestConstructor(args= {})
+	public void testConstructor() {
 		IntSet<PersonId> intSet = new HashIntSet<>();
 		assertEquals(0, intSet.size());
 	}

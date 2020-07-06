@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import gcm.util.TimeElapser;
 
 /**
- * A asynchronous, static utility for piping text lines from System.in to
+ * An asynchronous, static utility for piping text lines from System.in to
  * registered listeners. Primarily used to delay progress of an application so
  * that inspections can be made of the stable state of the application by
  * profiling software.

@@ -7,6 +7,7 @@ import gcm.automated.AT_AbstractComponent;
 import gcm.automated.AT_ActionType;
 import gcm.automated.AT_ArrayIntSet;
 import gcm.automated.AT_ArrayPathSolver;
+import gcm.automated.AT_BaseElement;
 import gcm.automated.AT_BinContainer;
 import gcm.automated.AT_BooleanContainer;
 import gcm.automated.AT_DimensionTree;
@@ -44,7 +45,6 @@ import gcm.automated.AT_FloatValueContainer;
 import gcm.automated.AT_GeoLocator;
 import gcm.automated.AT_Graph;
 import gcm.automated.AT_GraphDepthEvaluator;
-import gcm.automated.AT_GraphPathSolver;
 import gcm.automated.AT_Graphs;
 import gcm.automated.AT_HashIntSet;
 import gcm.automated.AT_ImmutableStat;
@@ -53,7 +53,6 @@ import gcm.automated.AT_IntValueContainer;
 import gcm.automated.AT_LatLon;
 import gcm.automated.AT_LatLonAlt;
 import gcm.automated.AT_LatLonBox;
-import gcm.automated.AT_MapOption;
 import gcm.automated.AT_MapPathSolver;
 import gcm.automated.AT_MemoryLink;
 import gcm.automated.AT_MemoryPartition;
@@ -68,19 +67,17 @@ import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
 import gcm.automated.AT_PropertyDefinition;
+import gcm.automated.AT_Replication;
 import gcm.automated.AT_ReplicationImpl;
-import gcm.automated.AT_ReportPeriod;
 import gcm.automated.AT_Simulation;
-import gcm.automated.AT_Simulation_SetScenario;
 import gcm.automated.AT_SimulationErrorType;
+import gcm.automated.AT_Simulation_SetScenario;
 import gcm.automated.AT_SphericalArc;
 import gcm.automated.AT_SphericalPoint;
 import gcm.automated.AT_SphericalPolygon;
 import gcm.automated.AT_SphericalTriangle;
-import gcm.automated.AT_StateChange;
 import gcm.automated.AT_StochasticPersonSelection;
 import gcm.automated.AT_StructuredScenarioBuilder;
-import gcm.automated.AT_TimeTrackingPolicy;
 import gcm.automated.AT_UnstructuredScenarioBuilder;
 import gcm.automated.AT_Vector2D;
 import gcm.automated.AT_Vector3D;
@@ -136,10 +133,6 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_EnumContainer.class,
 	AT_StructuredScenarioBuilder.class,
 	AT_UnstructuredScenarioBuilder.class,	
-	AT_TimeTrackingPolicy.class,
-	AT_ReportPeriod.class,
-	AT_StateChange.class,
-	AT_MapOption.class,
 	AT_SimulationErrorType.class,
 	AT_ActionType.class,
 	AT_Equality.class,
@@ -155,7 +148,6 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_PlanningQueueReportItem.class,
 	AT_MemoryReportItem.class,
 	AT_DimensionTree.class,
-	AT_GraphPathSolver.class,
 	AT_LatLon.class,
 	AT_LatLonAlt.class,
 	AT_LatLonBox.class,
@@ -180,7 +172,9 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_ArrayPathSolver.class,
 	AT_BinContainer.class,
 	AT_ImmutableStat.class,
-	AT_Simulation.class
+	AT_Simulation.class,
+	AT_BaseElement.class,
+	AT_Replication.class
 	})
 
 public class SuiteTest {

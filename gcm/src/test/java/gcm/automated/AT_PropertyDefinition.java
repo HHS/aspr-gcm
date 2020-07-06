@@ -20,6 +20,7 @@ import gcm.scenario.PropertyDefinition;
 import gcm.scenario.PropertyDefinition.Builder;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Unit test for {@link PropertyDefinition}
@@ -141,6 +142,7 @@ public class AT_PropertyDefinition {
 	 * contract.
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEqualsContact() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -197,6 +199,7 @@ public class AT_PropertyDefinition {
 	 * Tests {@link PropertyDefinition#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -214,9 +217,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getDefaultValue()}
+	 * Tests {@link PropertyDefinition#getDefaultValue()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getDefaultValue", args = {})
 	public void testGetDefaultValue() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -270,9 +274,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getPropertyValuesAreMutability()}
+	 * Tests {@link PropertyDefinition#getPropertyValuesAreMutability()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPropertyValuesAreMutability", args = {})
 	public void testGetPropertyValuesAreMutability() {
 		/*
 		 * Show that a property definition defaults
@@ -298,9 +303,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getMapOption()}
+	 * Tests {@link PropertyDefinition#getMapOption()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getMapOption", args = {})
 	public void testGetMapOption() {
 
 		/*
@@ -319,9 +325,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getTimeTrackingPolicy()}
+	 * Tests {@link PropertyDefinition#getTimeTrackingPolicy()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getTimeTrackingPolicy", args = {})
 	public void testGetTimeTrackingPolicy() {
 
 		/*
@@ -343,6 +350,7 @@ public class AT_PropertyDefinition {
 	 * test for {@link PropertyDefinition#getType()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getType", args = {})
 	public void testGetType() {
 
 		/*
@@ -383,9 +391,10 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * test for {@link PropertyDefinition#getPropertyValuesAreMutability()}
+	 * Tests {@link PropertyDefinition#getPropertyValuesAreMutability()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPropertyValuesAreMutability", args = {})
 	public void testPropertyValuesAreMutable() {
 
 		/*
@@ -433,30 +442,12 @@ public class AT_PropertyDefinition {
 
 	}
 
+	
 	/**
-	 * test for {@link PropertyDefinition} constructors
+	 * Tests {@link PropertyDefinition#equals(Object)}
 	 */
 	@Test
-	public void testBuilderDefaults() {
-
-		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(Integer.class)//
-																	.setDefaultValue(17)//
-																	.build();//
-
-		assertEquals(MapOption.NONE, propertyDefinition.getMapOption());
-		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
-		assertEquals(true, propertyDefinition.getPropertyValuesAreMutability());
-
-		assertException(() -> {
-			PropertyDefinition	.builder()//
-								.setDefaultValue(17)//
-								.build();//
-		}, RuntimeException.class);
-
-	}
-
-	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
@@ -527,7 +518,11 @@ public class AT_PropertyDefinition {
 
 	}
 
+	/**
+	 * Tests {@link PropertyDefinition#hashCode()}
+	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 		PropertyDefinition propertyDefinition1 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
@@ -552,14 +547,27 @@ public class AT_PropertyDefinition {
 	 * test for {@link PropertyDefinition#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 
+		
+		
+
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("default value")//
+																	.setType(Integer.class)//
+																	.setDefaultValue(17)//
 																	.build();//
 
 		assertNotNull(propertyDefinition);
+		assertEquals(MapOption.NONE, propertyDefinition.getMapOption());
+		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
+		assertEquals(true, propertyDefinition.getPropertyValuesAreMutability());
+
+		assertException(() -> {
+			PropertyDefinition	.builder()//
+								.setDefaultValue(17)//
+								.build();//
+		}, RuntimeException.class);
 
 		// if the class type of the definition is not assigned or null
 		assertException(() -> {

@@ -2,11 +2,13 @@ package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 
 import gcm.util.MemoryLink;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
@@ -29,6 +31,19 @@ public class AT_MemoryLink {
 		String descriptor = "mem link relationship";
 		MemoryLink memoryLink = new MemoryLink(parent, child, descriptor);
 		assertEquals(child, memoryLink.getChild());
+	}
+	
+	/**
+	 * Tests {@link MemoryLink#MemoryLink(Object, Object, String)}
+	 */
+	@Test
+	@UnitTestConstructor(args = {Object.class, Object.class, String.class})
+	public void testConstructor() {
+		String parent = "parent";
+		String child = "child";
+		String descriptor = "mem link relationship";
+		MemoryLink memoryLink = new MemoryLink(parent, child, descriptor);
+		assertNotNull(memoryLink);
 	}
 
 	/**

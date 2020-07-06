@@ -15,6 +15,7 @@ import org.junit.Test;
 import gcm.scenario.IntId;
 import gcm.scenario.PersonId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.ArrayIntSet;
 import gcm.util.containers.IntSet;
@@ -182,10 +183,11 @@ public class AT_ArrayIntSet {
 	}
 
 	/**
-	 * Test for {@link ArrayIntSet constructors}
+	 * Test for {@link ArrayIntSet#ArrayIntSet()}
 	 */
 	@Test
-	public void testConstructors() {
+	@UnitTestConstructor(args= {})
+	public void testConstructor_Empty() {
 		IntSet<PersonId> intSet = new ArrayIntSet<>();
 		assertEquals(0, intSet.size());
 
@@ -203,6 +205,31 @@ public class AT_ArrayIntSet {
 		 */
 		assertException(() -> new ArrayIntSet<>(0), Exception.class);
 		assertException(() -> new ArrayIntSet<>(0, true), Exception.class);
+	}
+	/**
+	 * Test for {@link ArrayIntSet#ArrayIntSet(boolean)}
+	 */
+	@Test
+	@UnitTestConstructor(args= {boolean.class})
+	public void testConstructor_Boolean() {
+		//covered by empty constructor test
+	}
+
+	/**
+	 * Test for {@link ArrayIntSet#ArrayIntSet(float)}
+	 */
+	@Test
+	@UnitTestConstructor(args= {float.class})
+	public void testConstructor_Float() {
+		//covered by empty constructor test	}
+	}
+	/**
+	 * Test for {@link ArrayIntSet#ArrayIntSet(float, boolean)}
+	 */
+	@Test
+	@UnitTestConstructor(args= {float.class, boolean.class})
+	public void testConstructor_FloatBoolean() {
+		//covered by empty constructor test	}
 	}
 
 	/**

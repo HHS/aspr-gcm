@@ -19,6 +19,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.spherical.Chirality;
@@ -85,6 +86,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
@@ -175,9 +177,10 @@ public class AT_SphericalPolygon {
 	}
 
 	/**
-	 * Tests {@link SphericalPolygon#containsPosition()}
+	 * Tests {@link SphericalPolygon#containsPosition(SphericalPoint)}
 	 */
 	@Test
+	@UnitTestMethod(name = "containsPosition", args = {SphericalPoint.class})
 	public void testContainsPosition() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -238,6 +241,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getChirality()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getChirality", args = {})
 	public void testGetChirality() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -252,6 +256,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getCentroid()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCentroid", args = {})
 	public void testGetCentroid() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -280,6 +285,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getRadius()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRadius", args = {})
 	public void testGetRadius() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -305,6 +311,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getSphericalArcs()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalArcs", args = {})
 	public void testGetSphericalArcs() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -385,6 +392,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getSphericalPoints()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalPoints", args = {})
 	public void testGetSphericalPoints() {
 		Earth earth = Earth.fromMeanRadius();
 
@@ -418,6 +426,7 @@ public class AT_SphericalPolygon {
 	 * Tests {@link SphericalPolygon#getSphericalTriangles()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalTriangles", args = {})
 	public void testGetSphericalTriangles() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -458,20 +467,14 @@ public class AT_SphericalPolygon {
 		assertTrue(intersectionCount < 900);
 
 	}
-
+	
 	/**
-	 * Tests {@link SphericalPolygon#intersects(SphericalArc)} Tests
-	 * {@link SphericalPolygon#intersects(SphericalPolygon)} Tests
-	 * {@link SphericalPolygon#intersects(SphericalTriangle)}
+	 * Tests {@link SphericalPolygon#intersects(SphericalArc)}
+	 *  
 	 */
 	@Test
-	public void testIntersects() {
-		testIntersects_Arcs();
-		testIntersects_Triangles();
-		testIntersects_Polygons();
-	}
-
-	private void testIntersects_Arcs() {
+	@UnitTestMethod(name = "intersects", args = {SphericalArc.class})
+	public void testIntersects_Arcs() {
 		final long seed = SEED_PROVIDER.getSeedValue(7);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -518,7 +521,12 @@ public class AT_SphericalPolygon {
 
 	}
 
-	private void testIntersects_Triangles() {
+	/**
+	 * Tests {@link SphericalPolygon#intersects(SphericalTriangle)}
+	 */
+	@Test
+	@UnitTestMethod(name = "intersects", args = {SphericalTriangle.class})
+	public void testIntersects_Triangles() {
 		final long seed = SEED_PROVIDER.getSeedValue(8);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -569,7 +577,12 @@ public class AT_SphericalPolygon {
 
 	}
 
-	private void testIntersects_Polygons() {
+	/**
+	 * Tests {@link SphericalPolygon#intersects(SphericalPolygon)}
+	 */
+	@Test
+	@UnitTestMethod(name = "intersects", args = {SphericalPolygon.class})
+	public void testIntersects_Polygons() {
 		final long seed = SEED_PROVIDER.getSeedValue(9);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 

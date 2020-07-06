@@ -11,6 +11,7 @@ import org.junit.Test;
 import gcm.util.MultiKey;
 import gcm.util.MultiKey.MultiKeyBuilder;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
@@ -134,10 +135,11 @@ public class AT_MultiKey {
 	}
 
 	/**
-	 * Tests {@link MultiKey#MultiKeyBuilder}
+	 * Tests {@link MultiKey.MultiKeyBuilder#MultiKeyBuilder()}
 	 */
 	@Test
-	public void testMultiKeyBuilder() {
+	@UnitTestConstructor(target = MultiKeyBuilder.class, args= {})
+	public void testMultiKeyBuilder_Constructor() {
 		/*
 		 * We will show that the MultiKeyBuilder produces the expected MultiKey
 		 * values and is reusable.
@@ -180,12 +182,31 @@ public class AT_MultiKey {
 		assertEquals(constructorMultiKey, builderMultiKey);
 
 	}
+	
+	/**
+	 * Tests {@link MultiKey.MultiKeyBuilder#addKey(Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "addKey", target = MultiKeyBuilder.class, args= {Object.class})
+	public void testMultiKeyBuilder_AddKey() {
+		//covered by testMultiKeyBuilder_Constructor
+	}
+
+	/**
+	 * Tests {@link MultiKey.MultiKeyBuilder#build()}
+	 */
+	@Test
+	@UnitTestMethod(name = "build", target = MultiKeyBuilder.class, args= {})
+	public void testMultiKeyBuilder_Build() {
+		//covered by testMultiKeyBuilder_Constructor
+	}
 
 	/**
 	 * Tests {@link MultiKey#MultiKey(Object...)}
 	 */
 	@Test
-	public void testMultiKeyConstructor() {
+	@UnitTestConstructor(args = {Object[].class})
+	public void testConstructor() {
 		/*
 		 * We will show that the MultiKey constructor produces the expected
 		 * MultiKey

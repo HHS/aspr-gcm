@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.graph.Graph;
 import gcm.util.path.Path;
 import gcm.util.path.Paths;
@@ -28,9 +29,10 @@ import gcm.util.vector.Vector2D;
 public class AT_Paths {
 
 	/**
-	 * Tests {@link Paths#getCost(EdgeCostEvaluator)}
+	 * Tests {@link Paths#getCost(Path, EdgeCostEvaluator)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCost", args= {Path.class, EdgeCostEvaluator.class})
 	public void testGetCost() {
 		Path.Builder<String> builder = Path.builder();
 		Path<String> path = builder.build();
@@ -118,6 +120,7 @@ public class AT_Paths {
 	 * {@link Paths#getPath(Graph, Object, Object, EdgeCostEvaluator, TravelCostEvaluator)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getPath", args= {Graph.class, Object.class, Object.class, EdgeCostEvaluator.class, TravelCostEvaluator.class})
 	public void testGetPath() {
 
 		// create a few nodes

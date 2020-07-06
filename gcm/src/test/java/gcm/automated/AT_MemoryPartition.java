@@ -1,6 +1,7 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import gcm.util.MemoryLink;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
@@ -44,6 +46,16 @@ public class AT_MemoryPartition {
 		assertTrue(expectedMemoryLinks.containsAll(actualMemoryLinks));
 	}
 
+	/**
+	 * Tests {@link MemoryPartition#MemoryPartition()}
+	 */
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructor() {
+		MemoryPartition memoryPartition = new MemoryPartition();
+		assertNotNull(memoryPartition);
+	}
+	
 	/**
 	 * Tests {@link MemoryPartition#addMemoryLink(Object, Object, String)}
 	 */

@@ -3,6 +3,7 @@ package gcm.util.containers;
 import java.util.Arrays;
 
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * A container that maps non-negative int index values to bytes, shorts, ints or
@@ -23,6 +24,7 @@ public final class IntValueContainer {
 	 * Java. It
 	 *
 	 */
+	@Source(status = TestStatus.REQUIRED, proxy = IntValueContainer.class)
 	public static enum IntValueType {
 
 		BYTE(Byte.MIN_VALUE, Byte.MAX_VALUE), SHORT(Short.MIN_VALUE, Short.MAX_VALUE), INT(Integer.MIN_VALUE, Integer.MAX_VALUE), LONG(Long.MIN_VALUE, Long.MAX_VALUE);

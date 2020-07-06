@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.spherical.Chirality;
 import gcm.util.spherical.MalformedSphericalTriangleException;
 import gcm.util.spherical.SphericalArc;
@@ -41,7 +43,8 @@ public class AT_SphericalTriangle {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(AT_SphericalTriangle.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		// System.out.println(AT_SphericalTriangle.class.getSimpleName() + " " +
+		// SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -49,6 +52,7 @@ public class AT_SphericalTriangle {
 	 * {@link SphericalTriangle#SphericalTriangle(SphericalPoint, SphericalPoint, SphericalPoint)}
 	 */
 	@Test
+	@UnitTestConstructor(args = { SphericalPoint.class, SphericalPoint.class, SphericalPoint.class })
 	public void testConstructor() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -82,6 +86,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#contains(SphericalPoint)}
 	 */
 	@Test
+	@UnitTestMethod(name = "contains", args = { SphericalPoint.class })
 	public void testContains() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -159,6 +164,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#distanceTo(SphericalPoint)}
 	 */
 	@Test
+	@UnitTestMethod(name = "distanceTo", args = { SphericalPoint.class })
 	public void testDistanceTo() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -230,6 +236,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getArea()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getArea", args = {})
 	public void testGetArea() {
 		final long seed = SEED_PROVIDER.getSeedValue(2);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -284,6 +291,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getCentroid()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getCentroid", args = {})
 	public void testGetCentroid() {
 		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -349,6 +357,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getChirality()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getChirality", args = {})
 	public void testGetChirality() {
 		final long seed = SEED_PROVIDER.getSeedValue(7);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -392,6 +401,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getRadius()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getRadius", args = {})
 	public void testGetRadius() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -433,6 +443,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getSphericalArc(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalArc", args = { int.class })
 	public void testGetSphericalArc() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -489,6 +500,7 @@ public class AT_SphericalTriangle {
 	 * Tests {@link SphericalTriangle#getSphericalPoint(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSphericalPoint", args = { int.class })
 	public void testGetSphericalPoint() {
 		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -526,17 +538,11 @@ public class AT_SphericalTriangle {
 	}
 
 	/**
-	 * Tests {@link SphericalTriangle#intersects(SphericalArc)}
-	 * 
 	 * Tests {@link SphericalTriangle#intersects(SphericalTriangle)}
 	 */
 	@Test
-	public void testIntersects() {
-		testIntersectsArc();
-		testIntersectsTriangle();
-	}
-
-	private void testIntersectsTriangle() {
+	@UnitTestMethod(name = "intersects", args = { SphericalTriangle.class })
+	public void testIntersects_Triangle() {
 		final long seed = SEED_PROVIDER.getSeedValue(9);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
@@ -602,7 +608,7 @@ public class AT_SphericalTriangle {
 				expected |= sphericalTriangle1.intersects(sphericalTriangle2.getSphericalArc(j));
 				expected |= sphericalTriangle2.intersects(sphericalTriangle1.getSphericalArc(j));
 			}
-			if(expected) {
+			if (expected) {
 				intersectionCount++;
 			}
 
@@ -611,18 +617,24 @@ public class AT_SphericalTriangle {
 			assertEquals(expected, actual);
 
 		}
-		
-		assertTrue(intersectionCount>100);
-		assertTrue(intersectionCount<900);
+
+		assertTrue(intersectionCount > 100);
+		assertTrue(intersectionCount < 900);
 	}
-	
-	private void testIntersectsArc() {
+
+	/**
+	 * Tests {@link SphericalTriangle#intersects(SphericalArc)}
+	 */
+	@Test
+	@UnitTestMethod(name = "intersects", args = { SphericalArc.class })
+	public void testIntersects_Arc() {
 		final long seed = SEED_PROVIDER.getSeedValue(10);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		int intersectionCount = 0;
 		for (int i = 0; i < 1000; i++) {
-			// Generate a randomized spherical triangle and a randomize spherical arc
+			// Generate a randomized spherical triangle and a randomize
+			// spherical arc
 
 			double x0 = randomGenerator.nextDouble() * 2 - 1;
 			double y0 = randomGenerator.nextDouble() * 2 - 1;
@@ -661,21 +673,19 @@ public class AT_SphericalTriangle {
 			Vector3D v4 = new Vector3D(x4, y4, z4);
 			SphericalPoint sphericalPoint4 = new SphericalPoint(v4);
 
-			
-
 			SphericalArc sphericalArc = new SphericalArc(sphericalPoint3, sphericalPoint4);
 
 			// Does any point of the arc lie inside the triangle?
 			boolean expected = false;
 			for (int j = 0; j < 2; j++) {
-				expected |= sphericalTriangle.contains(sphericalArc.getSphericalPoint(j));				
+				expected |= sphericalTriangle.contains(sphericalArc.getSphericalPoint(j));
 			}
 
 			// Does any arc of the triangle cross the arc?
 			for (int j = 0; j < 3; j++) {
-				expected |= sphericalTriangle.getSphericalArc(j).intersectsArc(sphericalArc);				
+				expected |= sphericalTriangle.getSphericalArc(j).intersectsArc(sphericalArc);
 			}
-			if(expected) {
+			if (expected) {
 				intersectionCount++;
 			}
 
@@ -684,7 +694,7 @@ public class AT_SphericalTriangle {
 			assertEquals(expected, actual);
 
 		}
-		assertTrue(intersectionCount>100);
-		assertTrue(intersectionCount<900);
+		assertTrue(intersectionCount > 100);
+		assertTrue(intersectionCount < 900);
 	}
 }

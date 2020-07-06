@@ -40,6 +40,7 @@ public class SphericalPolygon {
 	 * @author Shawn Hatch
 	 *
 	 */
+	@Source(proxy = SphericalPolygon.class)
 	public static class Builder {
 
 		/**

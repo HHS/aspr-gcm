@@ -1,4 +1,4 @@
-package gcm.methodexamination;
+package gcm.util.annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -17,9 +17,7 @@ import java.lang.annotation.Target;
 
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-public @interface ExampleAnnotation {
-	String x();	
-	String y();
-	String z();
+@Target({ ElementType.CONSTRUCTOR })
+public @interface SourceConstructor {
+	TestStatus status() default TestStatus.REQUIRED;	
 }

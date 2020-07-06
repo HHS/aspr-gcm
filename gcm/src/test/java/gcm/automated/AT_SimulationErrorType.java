@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link SimulationErrorType}
@@ -20,18 +21,11 @@ import gcm.util.annotations.UnitTest;
 @UnitTest(target = SimulationErrorType.class)
 public class AT_SimulationErrorType {
 
+	/**
+	 * Tests {@link SimulationErrorType#getDescription()}
+	 */
 	@Test
-	public void testValueOf() {
-		// nothing to test
-
-	}
-
-	@Test
-	public void testValues() {
-		// nothing to test
-	}
-
-	@Test
+	@UnitTestMethod(name = "getDescription", args = {})
 	public void testGetDescription() {
 		// show that each ErrorType has a non-null, non-empty description
 		for (SimulationErrorType simulationErrorType : SimulationErrorType.values()) {
@@ -45,4 +39,23 @@ public class AT_SimulationErrorType {
 			assertTrue("Duplicate ErrorType description: " + simulationErrorType.getDescription(), descriptions.add(simulationErrorType.getDescription().toLowerCase()));
 		}
 	}
+
+	/**
+	 * Tests {@link SimulationErrorType#valueOf(String)}
+	 */
+	@Test
+	@UnitTestMethod(name = "valueOf", args = { String.class })
+	public void testValueOf() {
+		// nothing to test
+	}
+
+	/**
+	 * Tests {@link SimulationErrorType#values()}
+	 */
+	@Test
+	@UnitTestMethod(name = "values", args = {})
+	public void testValues() {
+		// nothing to test
+	}
+
 }

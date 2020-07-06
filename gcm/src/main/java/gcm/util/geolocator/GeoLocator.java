@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
 
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.dimensiontree.DimensionTree;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLonAlt;
@@ -63,6 +65,7 @@ public class GeoLocator<T> {
 	 *
 	 * @param <T>
 	 */
+	@Source(status = TestStatus.REQUIRED, proxy = GeoLocator.class)
 	public static class Builder<T> {
 		private Scaffold<T> scaffold = new Scaffold<>();
 

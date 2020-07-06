@@ -12,6 +12,7 @@ import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.simulation.Plan;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.Stat;
 
 /**
@@ -44,7 +45,11 @@ public class AT_PlanningQueueReportItem {
 		return planningQueueReportItemBuilder;
 	}
 
+	/**
+	 * Tests {@link PlanningQueueReportItem#getComponentId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getComponentId", args= {})
 	public void testGetComponentId() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		ComponentId componentId = new ComponentId() {
@@ -54,7 +59,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(componentId, planningQueueReportItem.getComponentId());
 	}
 
+	/**
+	 * Tests {@link PlanningQueueReportItem#getEndTime()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getEndTime", args= {})
 	public void testGetEndTime() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		double endTime = 53445;
@@ -63,14 +72,22 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(endTime, planningQueueReportItem.getEndTime(), 0);
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#getPlanningClass()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getPlanningClass", args= {})
 	public void testGetPlanningClass() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
 		assertEquals(TestPlan.class, planningQueueReportItem.getPlanningClass());
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#getReplicationId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getReplicationId", args= {})
 	public void testGetReplicationId() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		ReplicationId replicationId = new ReplicationId(766);
@@ -79,7 +96,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(replicationId, planningQueueReportItem.getReplicationId());
 	}
 	
+	/**
+	 * Tests {@link PlanningQueueReportItem#getAdditionCount()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getAdditionCount", args= {})
 	public void testGetAdditionCount() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		long additionCount = 34534645745L;
@@ -88,7 +109,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(additionCount, planningQueueReportItem.getAdditionCount());
 	}
 	
+	/**
+	 * Test {@link PlanningQueueReportItem#getRemovalCount()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getRemovalCount", args= {})
 	public void testGetRemovalCount() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		long removalCount = 34534645745L;
@@ -96,8 +121,11 @@ public class AT_PlanningQueueReportItem {
 		PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
 		assertEquals(removalCount, planningQueueReportItem.getRemovalCount());
 	}
-	
+	/**
+	 * Tests {@link PlanningQueueReportItem#getCancellationCount()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getCancellationCount", args= {})
 	public void testGetCancellationCount() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		long cancellationCount = 34534645745L;
@@ -106,7 +134,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(cancellationCount, planningQueueReportItem.getCancellationCount());
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#getScenarioId()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getScenarioId", args= {})
 	public void testGetScenarioId() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		ScenarioId scenarioId = new ScenarioId(236);
@@ -115,7 +147,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(scenarioId, planningQueueReportItem.getScenarioId());
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#getStartTime()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getStartTime", args= {})
 	public void testGetStartTime() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 		double startTime = 200.4;
@@ -124,7 +160,11 @@ public class AT_PlanningQueueReportItem {
 		assertEquals(startTime, planningQueueReportItem.getStartTime(), 0);
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#getStat()}
+	 */
 	@Test
+	@UnitTestMethod(name = "getStat", args= {})
 	public void testGetStat() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 
@@ -162,7 +202,11 @@ public class AT_PlanningQueueReportItem {
 
 	}
 
+	/**
+	 * Test {@link PlanningQueueReportItem#isKeyed()}
+	 */
 	@Test
+	@UnitTestMethod(name = "isKeyed", args= {})
 	public void testIsKeyed() {
 		PlanningQueueReportItemBuilder planningQueueReportItemBuilder = getPlanningQueueReportItemBuilder();
 

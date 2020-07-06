@@ -46,6 +46,7 @@ public final class ImmutableStat implements Stat {
 	 *
 	 */
 	@NotThreadSafe
+	@Source(proxy = ImmutableStat.class)
 	public static class Builder {
 		private Builder() {
 			

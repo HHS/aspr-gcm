@@ -1,8 +1,16 @@
 package gcm;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -10,171 +18,569 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Test;
 import org.junit.runners.Suite.SuiteClasses;
 
-import gcm.script.SourceClassRec;
-import gcm.script.SourceFileInvestigator;
-import gcm.script.SourceMethodRec;
-import gcm.script.TestClassRec;
-import gcm.script.TestFileInvestigator;
-import gcm.script.TestMethodRec;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.SourceConstructor;
+import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
+import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * A script covering the details of the GCM Test Plan. It produces a console
  * report that measures the completeness/status of the test classes. It does not
  * measure the correctness of any test, but rather shows which tests exist and
  * their status.
- * 
+ *
  * @author Shawn Hatch
  *
  */
 public class TestPlanScript {
+	private static boolean isJavaFile(Path file) {
+		return Files.isRegularFile(file) && file.toString().endsWith(".java");
+	}
 
-	private static class InfoReport {
-		private String title;
-		private List<String> infos = new ArrayList<>();
+	private static String getClassName(Path sourcePath, Path file) {
+		return file.toString().substring(sourcePath.toString().length() + 1, file.toString().length() - 5).replace(File.separator, ".");
+	}
 
-		private InfoReport(String title) {
-			this.title = title;
-		}
-
-		public void print() {
-			System.out.println();
-
-			System.out.println("Infomation: " + title);
-			for (String info : infos) {
-				String[] strings = info.split("\n");
-				boolean first = true;
-				for (String string : strings) {
-					if (first) {
-						first = false;
-						System.out.println("\t" + string);
-					} else {
-						System.out.println("\t" + "\t" + string);
-					}
-				}
-			}
-		}
-
-		public void addInfo(String info) {
-			infos.add(info);
+	/**
+	 * Assumes that the source path and file are consistent
+	 */
+	private static Class<?> getClassFromFile(Path sourcePath, Path file) {
+		try {
+			String className = getClassName(sourcePath, file);
+			return Class.forName(className);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
-	private static class TestReport {
-		private String question;
-		private List<String> warnings = new ArrayList<>();
-		private String affirmation;
+	private enum WarningType {
 
-		private TestReport(String question, String affirmation) {
-			this.question = question;
-			this.affirmation = affirmation;
+		SOURCE_METHOD_CANNOT_BE_RESOLVED("The source method for a test method cannot be resolved"),
+
+		SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED("The source constructor for a test method cannot be resolved"),
+
+		PROXY_LEADS_OUTSIDE_SOURCE_FOLDER("Source class marked with proxy coverage leads to a class not in the source folder"),
+
+		PROXY_HAS_LOWER_TEST_STATUS("Source class marked with proxy coverage leads to a class that has a lower test status"),
+
+		CIRCULAR_PROXIES("Source class marked with proxy coverage leads to a circular proxy relationship"),
+
+		TEST_CLASS_LINKED_OUTSIDE_SOURCE("Test class linked to source class that is not in the source folder"),
+
+		TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD("Test method linked to unknown source method"),
+
+		TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR("Test method linked to unknown source contructor"),
+
+		TEST_METHOD_LINKED_TO_PROXIED_SOURCE("Test method linked to source method that is proxied to another source class"),
+
+		TEST_METHOD_TESTS_SOURCE_METHOD_THAT_DOES_NOT_REQUIRE_A_TEST("Test method tests source method that does not require a test"),
+
+		TEST_METHOD_TESTS_SOURCE_CONSTRUCTOR_THAT_DOES_NOT_REQUIRE_A_TEST("Test method tests source constructor that does not require a test"),
+
+		SOURCE_METHOD_REQUIRES_TEST("Source method requires a test method but does not have one"),
+
+		SOURCE_CONSTRUCTOR_REQUIRES_TEST("Source constructor requires a test method but does not have one"),
+
+		SUITE_CLASS_MISSING_TEST_CLASS("Test class not listed in the Suite Test"),
+
+		SUITE_CLASS_CONTAINS_NON_TEST_CLASS("Suite Test contains non test class"),
+
+		UNIT_TEST_ANNOTATION_LACKS_SOURCE_CLASS("Unit test annotation lacks source class reference"),
+
+		UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION("Test method is marked with @UnitTestConstructor but does not have a corresponding @Test annotation"),
+
+		UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION("Test method is marked with @UnitTestMethod but does not have a corresponding @Test annotation"),
+
+		UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT("Test method is marked with borth @UnitTestMethod and @UnitTestConstructor annotations"),
+
+		TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION("Test method is marked with @Test but does not have a corresponding @UnitTestMethod or @UnitTestConstructor"),
+
+		NONSTATIC_SUBCLASS("Non-static public subclasses are not testable");
+
+		private final String description;
+
+		private WarningType(String description) {
+			this.description = description;
+		}
+	}
+
+	private Map<WarningType, List<String>> warningMap = new LinkedHashMap<>();
+
+	private void addWarning(WarningType warningType, Object details) {
+		warningMap.get(warningType).add(details.toString());
+	}
+
+	private final static class SourceClassRec {
+
+		private final Class<?> sourceClass;
+		private final TestStatus testStatus;
+		private final Class<?> proxyClass;
+
+		public SourceClassRec(final Class<?> sourceClass, TestStatus testStatus, Class<?> proxyClass) {
+			this.sourceClass = sourceClass;
+			this.testStatus = testStatus;
+			this.proxyClass = proxyClass;
 		}
 
-		public void print() {
-			System.out.println();
-			if (warnings.size() == 0) {
-				System.out.println("Affirmation: " + affirmation);
-			} else {
-				System.out.println("Question: " + question + " -> " + warnings.size() + " warning(s)");
-				for (String warning : warnings) {
-					String[] strings = warning.split("\n");
-					boolean first = true;
-					for (String string : strings) {
-						if (first) {
-							first = false;
-							System.out.println("\t" + "WARNING: " + string);
-						} else {
-							System.out.println("\t" + "\t" + string);
-						}
-					}
+		public Class<?> getProxyClass() {
+			return proxyClass;
+		}
 
+		public Class<?> getSourceClass() {
+			return sourceClass;
+		}
+
+		public TestStatus getTestStatus() {
+			return testStatus;
+		}
+	}
+
+	private Source getSource(Class<?> c) {
+		Class<?> target = c;
+		while (target != null) {
+			Source source = target.getAnnotation(Source.class);
+			if (source != null) {
+				return source;
+			}
+			target = target.getDeclaringClass();
+		}
+		return null;
+	}
+
+	private void probeClass(Class<?> c) {
+
+		TestStatus testStatus;
+		Class<?> proxyClass;
+		// final Source source = c.getAnnotation(Source.class);
+		final Source source = getSource(c);
+		if (source != null) {
+			testStatus = source.status();
+			if (source.proxy() != Object.class) {
+				proxyClass = source.proxy();
+			} else {
+				proxyClass = null;
+			}
+		} else {
+			testStatus = TestStatus.REQUIRED;
+			proxyClass = null;
+		}
+
+		final SourceClassRec sourceClassRec = new SourceClassRec(c, testStatus, proxyClass);
+		sourceClassRecs.put(sourceClassRec.getSourceClass(), sourceClassRec);
+
+		final Method[] methods = c.getMethods();
+		for (final Method method : methods) {
+
+			boolean addRec = method.getDeclaringClass().equals(c);
+			addRec &= !method.isBridge();
+			addRec &= !method.isSynthetic();
+			addRec &= !(Modifier.isAbstract(method.getModifiers()) && c.isInterface());
+
+			if (addRec) {
+				TestStatus methodTestStatus = testStatus;
+				SourceMethod sourceMethod = method.getAnnotation(SourceMethod.class);
+				if (sourceMethod != null) {
+					methodTestStatus = sourceMethod.status();
 				}
+				final SourceMethodRec sourceMethodRec = new SourceMethodRec(method, methodTestStatus, proxyClass != null);
+				sourceMethodRecs.put(sourceMethodRec.getMethod(), sourceMethodRec);
 			}
 		}
 
-		public void addWarning(String warning) {
-			warnings.add(warning);
+		Constructor<?>[] constructors = c.getConstructors();
+		for (final Constructor<?> constructor : constructors) {
+			boolean addRec = constructor.getDeclaringClass().equals(c);
+			addRec &= !constructor.isSynthetic();
+			if (addRec) {
+				TestStatus constructorTestStatus = testStatus;
+				SourceConstructor sourceConstructor = constructor.getAnnotation(SourceConstructor.class);
+				if (sourceConstructor != null) {
+					testStatus = sourceConstructor.status();
+				}
+				final SourceConstructorRec sourceConstructorRec = new SourceConstructorRec(constructor, constructorTestStatus, proxyClass != null);
+				sourceConstructorRecs.put(sourceConstructorRec.getConstructor(), sourceConstructorRec);
+			}
 		}
+
+	}
+
+	private Set<Class<?>> getClasses(Class<?> c) {
+		Set<Class<?>> result = new LinkedHashSet<>();
+		getClasses(c, result);
+		return result;
+	}
+
+	private void getClasses(Class<?> c, Set<Class<?>> set) {
+		if (c.isAnnotation()) {
+			return;
+		}
+		set.add(c);
+		Class<?>[] declaredClasses = c.getDeclaredClasses();
+		for (Class<?> subClass : declaredClasses) {
+			if (Modifier.isPublic(subClass.getModifiers())) {
+				if (Modifier.isStatic(subClass.getModifiers())) {
+					getClasses(subClass, set);
+				} else {
+					addWarning(WarningType.NONSTATIC_SUBCLASS, subClass);
+				}
+			}
+		}
+	}
+
+	private final class SourceFileVisitor extends SimpleFileVisitor<Path> {
+		@Override
+		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attr) {
+			if (isJavaFile(file)) {
+				final Class<?> c = getClassFromFile(sourcePath, file);
+				for (Class<?> c2 : getClasses(c)) {
+					probeClass(c2);
+				}
+			}
+			return FileVisitResult.CONTINUE;
+		}
+	}
+
+	private final static class SourceConstructorRec {
+
+		private final Constructor<?> constructor;
+
+		private final boolean isProxied;
+
+		private final TestStatus testStatus;
+
+		public SourceConstructorRec(final Constructor<?> constructor, TestStatus testStatus, boolean isProxied) {
+			this.constructor = constructor;
+			this.testStatus = testStatus;
+			this.isProxied = isProxied;
+		}
+
+		public Constructor<?> getConstructor() {
+			return constructor;
+		}
+
+		public TestStatus getTestStatus() {
+			return testStatus;
+		}
+
+		public boolean isProxied() {
+			return isProxied;
+		}
+
+	}
+
+	private final static class SourceMethodRec {
+
+		private final Method method;
+
+		private final boolean isProxied;
+
+		private final TestStatus testStatus;
+
+		public SourceMethodRec(final Method method, TestStatus testStatus, boolean isProxied) {
+			this.method = method;
+			this.testStatus = testStatus;
+			this.isProxied = isProxied;
+		}
+
+		public Method getMethod() {
+			return method;
+		}
+
+		public TestStatus getTestStatus() {
+			return testStatus;
+		}
+
+		public boolean isProxied() {
+			return isProxied;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("SourceMethodRec [method=");
+			builder.append(method);
+			builder.append(", isProxied=");
+			builder.append(isProxied);
+			builder.append(", testStatus=");
+			builder.append(testStatus);
+			builder.append("]");
+			return builder.toString();
+		}
+
+	}
+
+	private final static class TestClassRec {
+
+		private final Class<?> testClass;
+
+		private final Class<?> sourceClass;
+
+		public TestClassRec(final Class<?> testClass) {
+			final UnitTest unitTest = testClass.getAnnotation(UnitTest.class);
+			this.testClass = testClass;
+			sourceClass = unitTest.target();
+		}
+
+		public Class<?> getSourceClass() {
+			return sourceClass;
+		}
+
+		public Class<?> getTestClass() {
+			return testClass;
+		}
+
+	}
+
+	private final class TestFileVisitor extends SimpleFileVisitor<Path> {
+		@Override
+		public FileVisitResult visitFile(final Path file, final BasicFileAttributes attr) {
+			/*
+			 * For a file to be a test file, it must be 1) a java file and 2) be
+			 * annotated with a UnitTest annotation.
+			 * 
+			 * The UnitTest annotation must have a non-null source class
+			 * reference. The validity of the source class reference is examined
+			 * in the downstream process after all TestClassRecs have been
+			 * loaded.
+			 * 
+			 * 
+			 */
+
+			if (isJavaFile(file)) {
+				final Class<?> c = getClassFromFile(testPath, file);
+
+				final UnitTest unitTest = c.getAnnotation(UnitTest.class);
+				if (unitTest != null) {
+					if (unitTest.target() == null) {
+						addWarning(WarningType.UNIT_TEST_ANNOTATION_LACKS_SOURCE_CLASS, c.getCanonicalName());
+					} else {
+						final TestClassRec testClassRec = new TestClassRec(c);
+						testClassRecs.put(testClassRec.getTestClass(), testClassRec);
+						final Method[] methods = c.getMethods();
+						for (final Method testMethod : methods) {
+							final Test test = testMethod.getAnnotation(Test.class);
+							final UnitTestMethod unitTestMethod = testMethod.getAnnotation(UnitTestMethod.class);
+							final UnitTestConstructor unitTestConstructor = testMethod.getAnnotation(UnitTestConstructor.class);
+
+							if (test == null) {
+								if (unitTestMethod == null) {
+									if (unitTestConstructor == null) {
+										// case 0
+										// ignore the method, it is benign
+									} else {
+										// case 1
+										addWarning(WarningType.UNIT_CONSTRUCTOR_ANNOTATION_WITHOUT_TEST_ANNOTATION, testMethod);
+									}
+								} else {
+									if (unitTestConstructor == null) {
+										// case 2
+										addWarning(WarningType.UNIT_METHOD_ANNOTATION_WITHOUT_TEST_ANNOTATION, testMethod);
+									} else {
+										// case 3
+										addWarning(WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT, testMethod);
+									}
+								}
+							} else {
+								if (unitTestMethod == null) {
+									if (unitTestConstructor == null) {
+										// case 4
+										addWarning(WarningType.TEST_ANNOTATION_WITHOUT_UNIT_ANNOTATION, testMethod);
+									} else {
+										// case 5
+										// add the unit constructor rec
+										Constructor<?> sourceConstructor;
+										try {
+											if (unitTestConstructor.target() != Object.class) {
+												sourceConstructor = unitTestConstructor.target().getConstructor(unitTestConstructor.args());
+											} else {
+												sourceConstructor = unitTest.target().getConstructor(unitTestConstructor.args());
+											}
+										} catch (NoSuchMethodException | SecurityException e) {
+											sourceConstructor = null;
+										}
+										if (sourceConstructor != null) {
+											final TestConstructorRec testConstructorRec = new TestConstructorRec(testMethod, sourceConstructor);
+											testConstructorRecs.put(testConstructorRec.getSourceConstructor(), testConstructorRec);
+										} else {
+											addWarning(WarningType.SOURCE_CONSTRUCTOR_CANNOT_BE_RESOLVED, testMethod);
+										}
+
+									}
+								} else {
+									if (unitTestConstructor == null) {
+										// case 6
+										// add the unit method rec
+
+										Method sourceMethod;
+										try {
+											if (unitTestMethod.target() != Object.class) {
+												sourceMethod = unitTestMethod.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
+											} else {
+												sourceMethod = unitTest.target().getMethod(unitTestMethod.name(), unitTestMethod.args());
+											}
+										} catch (NoSuchMethodException | SecurityException e) {
+											sourceMethod = null;
+										}
+										if (sourceMethod != null) {
+											final TestMethodRec testMethodRec = new TestMethodRec(testMethod, sourceMethod);
+											testMethodRecs.put(testMethodRec.getSourceMethod(), testMethodRec);
+										} else {
+											addWarning(WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED, testMethod);
+										}
+									} else {
+										// case 7
+										addWarning(WarningType.UNIT_CONSTRUCTOR_AND_METHOD_ANNOTATIONS_PRESENT, testMethod);
+									}
+								}
+							}
+
+							// if ((test != null) && (unitTestMethod != null)) {
+							// Method sourceMethod;
+							// try {
+							// sourceMethod =
+							// unitTest.target().getMethod(unitTestMethod.name(),
+							// unitTestMethod.args());
+							// } catch (NoSuchMethodException |
+							// SecurityException e) {
+							// sourceMethod = null;
+							// }
+							// if (sourceMethod != null) {
+							// final TestMethodRec testMethodRec = new
+							// TestMethodRec(testMethod, sourceMethod);
+							// testMethodRecs.put(testMethodRec.getSourceMethod(),
+							// testMethodRec);
+							// } else {
+							// addWarning(WarningType.SOURCE_METHOD_CANNOT_BE_RESOLVED,
+							// testMethod);
+							// }
+							// }
+
+						}
+					}
+				}
+			}
+			return FileVisitResult.CONTINUE;
+		}
+	}
+
+	private final static class TestMethodRec {
+
+		private final Method testMethod;
+
+		private final Method sourceMethod;
+
+		public TestMethodRec(final Method testMethod, Method sourceMethod) {
+			this.testMethod = testMethod;
+			this.sourceMethod = sourceMethod;
+		}
+
+		public Method getSourceMethod() {
+			return sourceMethod;
+		}
+
+		public Method getTestMethod() {
+			return testMethod;
+		}
+	}
+
+	private final static class TestConstructorRec {
+
+		private final Method testMethod;
+
+		private final Constructor<?> sourceConstructor;
+
+		public TestConstructorRec(final Method testMethod, Constructor<?> sourceConstructor) {
+			this.testMethod = testMethod;
+			this.sourceConstructor = sourceConstructor;
+		}
+
+		public Constructor<?> getSourceConstructor() {
+			return sourceConstructor;
+		}
+
+		public Method getTestMethod() {
+			return testMethod;
+		}
+	}
+
+	public static void main(final String[] args) {
+
+		// Should point to src/main/java
+		final Path sourcePath = Paths.get(args[0]);
+
+		// Should point to src/test/java
+		final Path testPath = Paths.get(args[1]);
+
+		final TestPlanScript testPlanScript = new TestPlanScript(sourcePath, testPath);
+		testPlanScript.execute();
 	}
 
 	private final Path sourcePath;
 
 	private final Path testPath;
 
-	private TestPlanScript(Path sourcePath, Path testPath) {
+	private Map<Class<?>, SourceClassRec> sourceClassRecs = new LinkedHashMap<>();
+
+	private Map<Method, SourceMethodRec> sourceMethodRecs = new LinkedHashMap<>();
+
+	private Map<Constructor<?>, SourceConstructorRec> sourceConstructorRecs = new LinkedHashMap<>();
+
+	private Map<Class<?>, TestClassRec> testClassRecs = new LinkedHashMap<>();
+
+	private Map<Method, TestMethodRec> testMethodRecs = new LinkedHashMap<>();
+
+	private Map<Constructor<?>, TestConstructorRec> testConstructorRecs = new LinkedHashMap<>();
+
+	private TestPlanScript(final Path sourcePath, final Path testPath) {
+		for (WarningType warningType : WarningType.values()) {
+			warningMap.put(warningType, new ArrayList<String>());
+		}
 		this.sourcePath = sourcePath;
 		this.testPath = testPath;
 	}
 
-	public static void main(String[] args) {
-		
-		// Should point to src/main/java
-		Path sourcePath = Paths.get(args[0]);
-		
-		
-		// Should point to src/test/java
-		Path testPath = Paths.get(args[1]);
-
-		TestPlanScript testPlanScript = new TestPlanScript(sourcePath, testPath);
-		testPlanScript.execute();
-	}
-
-	private List<SourceClassRec> sourceClassRecs;
-	private List<TestClassRec> testClassRecs;
-
-	private void loadSourceClassRecs() {
-		sourceClassRecs = SourceFileInvestigator.getSourceClassRecs(sourcePath);
-		sourceClassRecs.sort((a, b) -> a.getSourceClass().getSimpleName().compareTo(b.getSourceClass().getSimpleName()));
-	}
-
-	private void loadTestClassRecs() {
-		testClassRecs = TestFileInvestigator.getTestClassRecs(testPath);
-	}
-
-	private void linkSourceAndTestClasses() {
-		Map<Class<?>, List<TestClassRec>> testClassMap = new LinkedHashMap<>();
-		for (TestClassRec testClassRec : testClassRecs) {
-			Class<?> sourceClass = testClassRec.getSourceClass();
-			List<TestClassRec> list = testClassMap.get(sourceClass);
-			if (list == null) {
-				list = new ArrayList<>();
-				testClassMap.put(sourceClass, list);
-			}
-			list.add(testClassRec);
-		}
-
-		Map<Class<?>, SourceClassRec> sourceClassMap = new LinkedHashMap<>();
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			sourceClassMap.put(sourceClassRec.getSourceClass(), sourceClassRec);
-		}
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			List<TestClassRec> list = testClassMap.get(sourceClassRec.getSourceClass());
-			if (list != null) {
-				for (TestClassRec testClassRec : list) {
-					sourceClassRec.addTestClassRec(testClassRec);
+	private void reportWarnings() {
+		boolean noWarnings = true;
+		for (WarningType warningType : WarningType.values()) {
+			List<String> warnings = warningMap.get(warningType);
+			if (!warnings.isEmpty()) {
+				noWarnings = false;
+				System.out.println("(" + warnings.size() + ")" + warningType.description);
+				int n = warnings.size();
+				for (int i = 0; i < n; i++) {
+					String warning = warnings.get(i);
+					System.out.println("\t" + warning);
 				}
+				System.out.println();
+			}
+		}
+		if(noWarnings) {
+			System.out.println("Test code is consistent with source code");
+		}
+	}
+
+	private void validateTestClassRecs() {
+		// Show that every test class links to a source class
+		for (TestClassRec testClassRec : testClassRecs.values()) {
+			if (!sourceClassRecs.containsKey(testClassRec.getSourceClass())) {
+				addWarning(WarningType.TEST_CLASS_LINKED_OUTSIDE_SOURCE, testClassRec.getTestClass().getCanonicalName());
 			}
 		}
 
-		for (TestClassRec testClassRec : testClassRecs) {
-			SourceClassRec sourceClassRec = sourceClassMap.get(testClassRec.getSourceClass());
-			testClassRec.setSourceClassRec(sourceClassRec);
-		}
+		// Show that the test classes are in one to one correspondence with the
+		// contents of the suite test file
 
-	}
-
-	private void demonstrateTestSuiteCompleteness() {
-		TestReport testReport = new TestReport("Does the SuiteTest have all of the automated tests and only the automated tests?", "The SuiteTest matches the automated test classes");
 		SuiteClasses suiteClasses = SuiteTest.class.getAnnotation(SuiteClasses.class);
 
 		Set<Class<?>> automatedTestClasses = new LinkedHashSet<>();
-		for (TestClassRec testClassRec : testClassRecs) {
-			if (testClassRec.isAutomated()) {
-				automatedTestClasses.add(testClassRec.getTestClass());
-			}
+		for (TestClassRec testClassRec : testClassRecs.values()) {
+			automatedTestClasses.add(testClassRec.getTestClass());
 		}
 
 		Class<?>[] value = suiteClasses.value();
@@ -185,303 +591,151 @@ public class TestPlanScript {
 
 		for (Class<?> c : automatedTestClasses) {
 			if (!coveredClasses.contains(c)) {
-				testReport.addWarning("Automated test class " + c.getSimpleName() + " is not listed in the Suite Test");
+				addWarning(WarningType.SUITE_CLASS_MISSING_TEST_CLASS, c.getCanonicalName());
 			}
 		}
 
 		for (Class<?> c : coveredClasses) {
 			if (!automatedTestClasses.contains(c)) {
-				testReport.addWarning("Suite Test contains class " + c.getSimpleName() + " but that is not an automated test");
+				addWarning(WarningType.SUITE_CLASS_CONTAINS_NON_TEST_CLASS, c.getCanonicalName());
 			}
 		}
-		testReport.print();
+
 	}
 
-	private void demonstrateSourceClassesHaveAtLeastOneTest() {
-		TestReport testReport = new TestReport("Does each source class that requires a test class have one?", "All source class that require a test class have one");
+	private void validateSourceClassRecs() {
+		// show that every proxied source class rec leads to through to other
+		// source class recs, terminating in a non-proxied source class rec with
+		// each succeeding parent record having a non-decreasing status
 
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED && sourceClassRec.getProxyClass() == null) {
-				if (sourceClassRec.getTestClassRecs().size() == 0) {
-					testReport.addWarning(sourceClassRec.getSourceClass().getSimpleName() + " has no test classes");
-				}
-			}
-		}
-
-		testReport.print();
-	}
-
-	private void demonstrateSourceClassesHaveNoMoreThanOneTestClass() {
-		TestReport testReport = new TestReport("Does any source class have a mix of automated and manual test classes?", "All source classes have only automated or only manual test classes");
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			int automatedTestClassCount = 0;
-			for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
-				if (testClassRec.isAutomated()) {
-					automatedTestClassCount++;
-				}
-			}
-			int manualTestClassCount = sourceClassRec.getTestClassRecs().size() - automatedTestClassCount;
-
-			if (automatedTestClassCount > 0 && manualTestClassCount > 0) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(sourceClassRec.getSourceClass().toGenericString());
-				sb.append(" has a mix of automated and manual tests");
-				sb.append("\n");
-				for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
-					sb.append(testClassRec.getTestClass().toGenericString());
-					sb.append("\n");
-				}
-				testReport.addWarning(sb.toString());
-			}
-
-		}
-		testReport.print();
-	}
-
-	private void demonstrateThatSourceClassesThatDontNeedTestsDontHaveTests() {
-		TestReport testReport = new TestReport("Does any source class that should not have a test class have one?", "No source class that should not have a test class has one");
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getTestStatus() != TestStatus.REQUIRED) {
-				if (sourceClassRec.getTestClassRecs().size() > 0) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(sourceClassRec.getSourceClass().toGenericString());
-					sb.append(" has test(s) although the status for this class is ");
-					sb.append(sourceClassRec.getTestStatus());
-					sb.append("\n");
-					for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
-						sb.append(testClassRec.getTestClass().toGenericString());
-						sb.append("\n");
-					}
-					testReport.addWarning(sb.toString());
-				}
-			}
-		}
-		testReport.print();
-	}
-
-//	private void demonstrateProxiedSourceClassesHaveAProxyStatus() {
-//		TestReport testReport = new TestReport("Does each source class that has a non-default proxy class have a PROXY status",
-//				"All source classes that have a non-default proxy class have their status as PROXY");
-//		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-//			if (sourceClassRec.getProxyClass() != null) {
-//				if (sourceClassRec.getTestStatus() != TestStatus.PROXY) {
-//					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has a non-default proxy class but is marked with status = " + sourceClassRec.getTestStatus());
-//				}
-//			}
-//		}
-//		testReport.print();
-//	}
-
-	private void demonstrateEachProxiedSourceClassHasALegitimateProxyClass() {
-		TestReport testReport = new TestReport("Does each proxied source class have a proxy class that corresponds to another known source class",
-				"All proxied source classes have proxy classes that correspond to known source classes");
-
-		Map<Class<?>, SourceClassRec> map = new LinkedHashMap<>();
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			map.put(sourceClassRec.getSourceClass(), sourceClassRec);
-		}
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getProxyClass() != null) {
-				if (!map.containsKey(sourceClassRec.getProxyClass())) {
-					testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " does not have a legitimate proxy class = " + sourceClassRec.getProxyClass().toGenericString());
-				}
-			}
-		}
-
-		testReport.print();
-	}
-
-	private void demonstrateEachProxiedSourceClassLinksToATestedSourceClass() {
-		TestReport testReport = new TestReport("Does each proxied source class link to a tested source class", "All proxied source classes link to tested source classes");
-
-		Map<Class<?>, SourceClassRec> map = new LinkedHashMap<>();
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			map.put(sourceClassRec.getSourceClass(), sourceClassRec);
-		}
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			
-			//if (sourceClassRec.getTestStatus() == TestStatus.PROXY) {
-			if (sourceClassRec.getProxyClass() != null) {
-				SourceClassRec s = sourceClassRec;
-				Set<SourceClassRec> visitedSourceClassRecs = new LinkedHashSet<>();
-				visitedSourceClassRecs.add(s);
-				boolean circularProxies = false;
-				//while (s != null && s.getTestStatus() == TestStatus.PROXY && !circularProxies) {
-				while (s != null && s.getProxyClass() != null && !circularProxies) {
-					s = map.get(s.getProxyClass());
-					if (s == null) {
-						testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has unresolved proxy linkage ending in a non-source class");
-					} else {
-						circularProxies |= !visitedSourceClassRecs.add(s);
-						if (circularProxies) {
-							testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has circular proxy linkage");
-						} else {
-							switch (s.getTestStatus()) {
-							case UNEXPECTED:
-							case UNREQUIRED:
-								testReport.addWarning(sourceClassRec.getSourceClass().toGenericString() + " has proxy linkage ending in a source class that does not require a test");
-								break;
-							default:
-								// do nothing
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		testReport.print();
-	}
-
-	private void demonstrateEachTestClassHasALegitimateSourceClass() {
-		TestReport testReport = new TestReport("Does any test class not have a legitimate source class?", "All test classes have a known source class");
-
-		for (TestClassRec testClassRec : testClassRecs) {
-			if (testClassRec.getSourceClassRec() == null) {
-				testReport.addWarning(testClassRec.getTestClass().toGenericString() + " does not correspond to a known source class");
-			}
-		}
-
-		testReport.print();
-	}
-
-	private void informSourceClassStatus() {
-		InfoReport infoReport = new InfoReport("Summary of source class status");
-		Map<TestStatus, List<SourceClassRec>> map = new LinkedHashMap<>();
-
-		for (TestStatus testStatus : TestStatus.values()) {
-			map.put(testStatus, new ArrayList<>());
-		}
-
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			map.get(sourceClassRec.getTestStatus()).add(sourceClassRec);
-		}
-
-		for (TestStatus testStatus : TestStatus.values()) {
-			List<SourceClassRec> list = map.get(testStatus);
-			if (list.size() > 0) {
-				StringBuilder sb = new StringBuilder();
-				sb.append("Classes marked " + testStatus);
-				sb.append("\n");
-				for (SourceClassRec sourceClassRec : list) {
-					sb.append(sourceClassRec.getSourceClass().toGenericString());
-					sb.append("\n");
-				}
-				infoReport.addInfo(sb.toString());
-			}
-		}
-		infoReport.print();
-	}
-
-	private void informOverloadedSourceMethods() {
-		InfoReport infoReport = new InfoReport("Overloaded methods in the source classes");
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			for (SourceMethodRec sourceMethodRec : sourceClassRec.getSourceMethodRecs()) {
-				if (sourceMethodRec.getMethodCount() > 1) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(sourceMethodRec.getSourceClassRec().getSourceClass().getSimpleName());
-					sb.append(".");
-					sb.append(sourceMethodRec.getName());
-					sb.append("\n");
-					for (int i = 0; i < sourceMethodRec.getMethodCount(); i++) {
-						Method method = sourceMethodRec.getMethod(i);
-						sb.append(method.toGenericString());
-						sb.append("\n");
-					}
-					infoReport.addInfo(sb.toString());
-				}
-			}
-
-		}
-		infoReport.print();
-	}
-
-	private void testSourceMethodCoverage(SourceClassRec sourceClassRec, TestReport testReport) {
-		for (SourceMethodRec sourceMethodRec : sourceClassRec.getSourceMethodRecs()) {			
-			String sourceMethodName = sourceMethodRec.getName();			
-			String testMethodName = "test" + sourceMethodName.substring(0, 1).toUpperCase();
-			testMethodName += sourceMethodName.substring(1, sourceMethodName.length());
-			
-			boolean testMethodFound = false;
-			for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
-				TestMethodRec testMethodRec = testClassRec.getTestMethodRec(testMethodName);
-				if (testMethodRec != null) {
-					testMethodFound = true;
+		for (SourceClassRec sourceClassRec : sourceClassRecs.values()) {
+			TestStatus testStatus = sourceClassRec.getTestStatus();
+			SourceClassRec s = sourceClassRec;
+			Set<SourceClassRec> visitedSourceClassRecs = new LinkedHashSet<>();
+			while (true) {
+				if (s == null) {
+					addWarning(WarningType.PROXY_LEADS_OUTSIDE_SOURCE_FOLDER, sourceClassRec.getSourceClass().getCanonicalName());
 					break;
 				}
-			}
-
-			if (!testMethodFound) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(sourceMethodRec.getSourceClassRec().getSourceClass().getSimpleName());
-				sb.append(".");
-				sb.append(sourceMethodName);
-				if (sourceClassRec.getTestClassRecs().size() > 0) {
-					sb.append(" does not have a test method under ");
-					boolean first = true;
-					for (TestClassRec testClassRec : sourceClassRec.getTestClassRecs()) {
-						if (first) {
-							first = false;
-						} else {
-							sb.append(", ");
-						}
-						sb.append(testClassRec.getTestClass().getSimpleName());
-					}
-				} else {
-					sb.append(" does not have a test method");
+				TestStatus nextTestStatus = s.getTestStatus();
+				if (nextTestStatus.compareTo(testStatus) > 0) {
+					addWarning(WarningType.PROXY_HAS_LOWER_TEST_STATUS, sourceClassRec.getSourceClass().getCanonicalName());
+					break;
 				}
-				testReport.addWarning(sb.toString());
+				testStatus = nextTestStatus;
+				if (!visitedSourceClassRecs.add(s)) {
+					addWarning(WarningType.CIRCULAR_PROXIES, sourceClassRec.getSourceClass().getCanonicalName());
+					break;
+				}
+				if (s.getProxyClass() == null) {
+					// we have terminated in a non-proxy class
+					break;
+				}
+				s = sourceClassRecs.get(s.getProxyClass());
+			}
+		}
+
+	}
+
+	private void validateTestMethodRecs() {
+		// show that each test method links to a source method that is required
+		// and non-proxied
+		for (TestMethodRec testMethodRec : testMethodRecs.values()) {
+			SourceMethodRec sourceMethodRec = sourceMethodRecs.get(testMethodRec.getSourceMethod());
+			if (sourceMethodRec == null) {
+				addWarning(WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_METHOD, testMethodRec.getTestMethod());
+			} else {
+				if (sourceMethodRec.isProxied()) {
+					addWarning(WarningType.TEST_METHOD_LINKED_TO_PROXIED_SOURCE, testMethodRec.getTestMethod());
+				} else {
+					if (sourceMethodRec.getTestStatus() != TestStatus.REQUIRED) {
+						addWarning(WarningType.TEST_METHOD_TESTS_SOURCE_METHOD_THAT_DOES_NOT_REQUIRE_A_TEST, testMethodRec.getTestMethod());
+					}
+				}
 			}
 		}
 	}
 
-	private void demonstrateEachSourceMethodHasATestMethod() {
-		TestReport testReport = new TestReport("Does each source method of a source class that requires a test and has at least one test class have a test method?", "All source methods that are associated with at least one test class that require a test have test methods");
-		for (SourceClassRec sourceClassRec : sourceClassRecs) {
-			if (sourceClassRec.getTestStatus() == TestStatus.REQUIRED) {
-				//if there are no test classes, then leave that to another test
-				if(sourceClassRec.getTestClassRecs().size()>0) {				
-					testSourceMethodCoverage(sourceClassRec, testReport);	
-				}				
+	private void validateTestConstructorRecs() {
+		// show that each test constructor rec links to a source constructor
+		// that is required
+		// and non-proxied
+		for (TestConstructorRec testConstructorRec : testConstructorRecs.values()) {
+			SourceConstructorRec sourceConstructorRec = sourceConstructorRecs.get(testConstructorRec.getSourceConstructor());
+			if (sourceConstructorRec == null) {
+				addWarning(WarningType.TEST_METHOD_NOT_MAPPED_TO_PROPER_SOURCE_CONSTRUCTOR, testConstructorRec.getTestMethod());
+			} else {
+				if (sourceConstructorRec.isProxied()) {
+					addWarning(WarningType.TEST_METHOD_LINKED_TO_PROXIED_SOURCE, testConstructorRec.getTestMethod());
+				} else {
+					if (sourceConstructorRec.getTestStatus() != TestStatus.REQUIRED) {
+						addWarning(WarningType.TEST_METHOD_TESTS_SOURCE_CONSTRUCTOR_THAT_DOES_NOT_REQUIRE_A_TEST, testConstructorRec.getTestMethod());
+					}
+				}
 			}
 		}
-		testReport.print();
+	}
+
+	private void validateSourceMethodRecs() {
+		for (SourceMethodRec sourceMethodRec : sourceMethodRecs.values()) {
+			if (!sourceMethodRec.isProxied() && sourceMethodRec.testStatus == TestStatus.REQUIRED) {
+				TestMethodRec testMethodRec = testMethodRecs.get(sourceMethodRec.getMethod());
+				if (testMethodRec == null) {
+					addWarning(WarningType.SOURCE_METHOD_REQUIRES_TEST, sourceMethodRec.getMethod());
+				}
+			}
+		}
+	}
+
+	private void validateSourceConstructorRecs() {
+		for (SourceConstructorRec sourceConstructorRec : sourceConstructorRecs.values()) {
+			if (!sourceConstructorRec.isProxied() && sourceConstructorRec.testStatus == TestStatus.REQUIRED) {
+				TestConstructorRec testConstructorRec = testConstructorRecs.get(sourceConstructorRec.getConstructor());
+				if (testConstructorRec == null) {
+					addWarning(WarningType.SOURCE_CONSTRUCTOR_REQUIRES_TEST, sourceConstructorRec.getConstructor());
+				}
+			}
+		}
+	}
+
+	private void loadSourceClasses() {
+		final SourceFileVisitor sourceFileVisitor = new SourceFileVisitor();
+		try {
+			Files.walkFileTree(sourcePath, sourceFileVisitor);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private void loadTestClasses() {
+		final TestFileVisitor testFileVisitor = new TestFileVisitor();
+		try {
+			Files.walkFileTree(testPath, testFileVisitor);
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private void execute() {
 
-		loadSourceClassRecs();
+		loadSourceClasses();
 
-		loadTestClassRecs();
+		loadTestClasses();
 
-		linkSourceAndTestClasses();
+		validateSourceClassRecs();
 
-		informSourceClassStatus();
+		validateTestClassRecs();
 
-		informOverloadedSourceMethods();
+		validateTestMethodRecs();
 
-		demonstrateSourceClassesHaveAtLeastOneTest();
+		validateTestConstructorRecs();
 
-		demonstrateSourceClassesHaveNoMoreThanOneTestClass();
+		validateSourceMethodRecs();
 
-		demonstrateThatSourceClassesThatDontNeedTestsDontHaveTests();
+		validateSourceConstructorRecs();
 
-//		demonstrateProxiedSourceClassesHaveAProxyStatus();
-
-		demonstrateEachProxiedSourceClassHasALegitimateProxyClass();
-
-		demonstrateEachProxiedSourceClassLinksToATestedSourceClass();
-
-		demonstrateEachTestClassHasALegitimateSourceClass();
-		
-		demonstrateEachSourceMethodHasATestMethod();
-
-		demonstrateTestSuiteCompleteness();
+		reportWarnings();
 
 	}
+
 }

@@ -1,17 +1,16 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import java.util.List;
-
-import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.random.Well44497b;
 import org.junit.Test;
 
 import gcm.replication.Replication;
 import gcm.replication.ReplicationImpl;
 import gcm.scenario.ReplicationId;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 
 /**
  * Test class for {@link ReplicationImpl}
@@ -26,6 +25,7 @@ public class AT_ReplicationImpl {
 	 * Tests {@link ReplicationImpl#getSeed()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getSeed", args= {})
 	public void testGetSeed() {
 		int[] ids = { 17, 2344, -12352356, 776785768, 2, 0 };
 		long[] seeds = { 340983453345L, 34563455L, 97735136456L, 36694567567L, 234333456L, 8876867225L };
@@ -39,10 +39,29 @@ public class AT_ReplicationImpl {
 		}
 
 	}
+	
+	/**
+	 * Tests {@link ReplicationImpl#ReplicationImpl(ReplicationId, Long)}
+	 */
+	@Test
+	@UnitTestConstructor( args= {ReplicationId.class, Long.class})
+	public void testConstructor() {
+		
+		ReplicationId replicationId = new ReplicationId(45);
+		Long seed = 34624564564L;
+		ReplicationImpl replicationImpl = new ReplicationImpl(replicationId, seed);
+		
+		assertNotNull(replicationImpl);
+		assertEquals(replicationId,replicationImpl.getId());
+		assertEquals(seed,replicationImpl.getSeed());
+		
+	}
+	
 	/**
 	 * Tests {@link ReplicationImpl#getId()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getId", args= {})
 	public void testGetId() {
 		int[] ids = { 17, 2344, -12352356, 776785768, 2, 0 };
 		long[] seeds = { 340983453345L, 34563455L, 97735136456L, 36694567567L, 234333456L, 8876867225L };
@@ -56,37 +75,5 @@ public class AT_ReplicationImpl {
 		}
 
 	}
-
-	private static void testGetReplicationsInvocation(final int replicationCount, final long seed) {
-
-		final List<Replication> replications = Replication.getReplications(replicationCount, seed);
-
-		final RandomGenerator randomGenerator = new Well44497b(seed);
-		assertEquals(replicationCount, replications.size());
-		for (int i = 0; i < replications.size(); i++) {
-			final Replication replication = replications.get(i);
-			final int expectedId = i + 1;
-			assertEquals(expectedId, replication.getId().getValue());
-			assertEquals(randomGenerator.nextLong(), (long) replication.getSeed());
-		}
-
-	}
-
-	/**
-	 * Tests several instances of a List of Replications built by the
-	 * ReplicationFactory and asserts that the inputs to the factory match both
-	 * the number of Replications built, but also the expected field values for
-	 * each replication. Note that we have a strong expectation as to the field
-	 * values of the replications since the ReplicationFactory documentation
-	 * states that it is using a Well44497b random generator.
-	 */
-	@Test
-	public void testGetReplications() {
-		testGetReplicationsInvocation(0, 6346345456764L);
-		testGetReplicationsInvocation(1, 457567566764L);
-		testGetReplicationsInvocation(10, -3567856456764L);
-		testGetReplicationsInvocation(17, 2745644564568889L);
-		testGetReplicationsInvocation(35, -8856756785456L);
-
-	}
+	
 }

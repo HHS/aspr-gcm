@@ -13,6 +13,8 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.spherical.Chirality;
 import gcm.util.vector.MutableVector2D;
 import gcm.util.vector.MutableVector3D;
@@ -46,33 +48,15 @@ public class AT_Vector2D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector2D#add(double, double)}
-	 * 
 	 * Tests {@linkplain Vector2D#add(Vector2D)}
 	 */
 	@Test
-	public void testAdd() {
+	@UnitTestMethod(name = "add", args = { Vector2D.class })
+	public void testAdd_Vector2D() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(0);
+		final long seed = SEED_PROVIDER.getSeedValue(29);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		// Tests {@linkplain Vector2D#add(double, double)}
-		for (int i = 0; i < 100; i++) {
-			double x1 = randomGenerator.nextDouble() * 1000 - 500;
-			double y1 = randomGenerator.nextDouble() * 1000 - 500;
-
-			Vector2D v1 = new Vector2D(x1, y1);
-
-			double x2 = randomGenerator.nextDouble() * 1000 - 500;
-			double y2 = randomGenerator.nextDouble() * 1000 - 500;
-
-			Vector2D v2 = v1.add(x2, y2);
-
-			assertEquals(x1 + x2, v2.getX(), 0);
-			assertEquals(y1 + y2, v2.getY(), 0);
-		}
-
-		// Tests {@linkplain Vector2D#add(Vector2D)}
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -92,27 +76,55 @@ public class AT_Vector2D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector2D#Vector2D()}
+	 * Tests {@linkplain Vector2D#add(double, double)}
 	 * 
-	 * Tests {@linkplain Vector2D#Vector2D(MutableVector2D)}
-	 * 
-	 * Tests {@linkplain Vector2D#Vector2D(Vector2D)}
-	 * 
-	 * Tests {@linkplain Vector2D#Vector2D(double, double)}
-	 * 
+	 * Tests {@linkplain Vector2D#add(Vector2D)}
 	 */
 	@Test
-	public void testConstructors() {
+	@UnitTestMethod(name = "add", args = { double.class, double.class })
+	public void testAdd_Doubles() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(1);
+		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		// Tests {@linkplain Vector2D#Vector2D()}
+		for (int i = 0; i < 100; i++) {
+			double x1 = randomGenerator.nextDouble() * 1000 - 500;
+			double y1 = randomGenerator.nextDouble() * 1000 - 500;
+
+			Vector2D v1 = new Vector2D(x1, y1);
+
+			double x2 = randomGenerator.nextDouble() * 1000 - 500;
+			double y2 = randomGenerator.nextDouble() * 1000 - 500;
+
+			Vector2D v2 = v1.add(x2, y2);
+
+			assertEquals(x1 + x2, v2.getX(), 0);
+			assertEquals(y1 + y2, v2.getY(), 0);
+		}
+
+	}
+
+	/**
+	 * Tests {@linkplain Vector2D#Vector2D()}
+	 */
+	@Test
+	@UnitTestConstructor(args = {})
+	public void testConstructors_Empty() {
 		Vector2D v = new Vector2D();
 		assertEquals(0, v.getX(), 0);
 		assertEquals(0, v.getY(), 0);
+	}
 
-		// Tests {@linkplain Vector2D#Vector2D(MutableVector2D)}
+	/**
+	 * Tests {@linkplain Vector2D#Vector2D(MutableVector2D)}
+	 */
+	@Test
+	@UnitTestConstructor(args = { MutableVector2D.class })
+	public void testConstructors_MutableVector2D() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(31);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
@@ -124,7 +136,18 @@ public class AT_Vector2D {
 			assertEquals(v2.getY(), y, 0);
 		}
 
-		// Tests {@linkplain Vector2D#Vector2D(Vector2D)}
+	}
+
+	/**
+	 * Tests {@linkplain Vector2D#Vector2D(Vector2D)}
+	 */
+	@Test
+	@UnitTestConstructor(args = { Vector2D.class })
+	public void testConstructors_Vector2D() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(32);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
@@ -136,7 +159,18 @@ public class AT_Vector2D {
 			assertEquals(v2.getY(), y, 0);
 		}
 
-		// Tests {@linkplain Vector2D#Vector2D(double, double)}
+	}
+
+	/**
+	 * Tests {@linkplain Vector2D#Vector2D(double, double)}
+	 */
+	@Test
+	@UnitTestConstructor(args = { double.class, double.class })
+	public void testConstructors_Doubles() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(1);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
 		for (int i = 0; i < 100; i++) {
 			double x = randomGenerator.nextDouble() * 1000 - 500;
 			double y = randomGenerator.nextDouble() * 1000 - 500;
@@ -153,6 +187,7 @@ public class AT_Vector2D {
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "addScaled", args = { Vector2D.class, double.class })
 	public void testAddScaled() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(2);
@@ -184,6 +219,7 @@ public class AT_Vector2D {
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "angle", args = { Vector2D.class })
 	public void testAngle() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -217,6 +253,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#cross(Vector2D)}
 	 */
 	@Test
+	@UnitTestMethod(name = "cross", args = { Vector2D.class })
 	public void testCross() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(5);
@@ -251,6 +288,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#distanceTo(Vector2D)}
 	 */
 	@Test
+	@UnitTestMethod(name = "distanceTo", args = { Vector2D.class })
 	public void testDistanceTo() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(6);
@@ -282,6 +320,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#dot(Vector2D))}
 	 */
 	@Test
+	@UnitTestMethod(name = "dot", args = { Vector2D.class })
 	public void testDot() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(7);
@@ -312,6 +351,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#get(int)}
 	 */
 	@Test
+	@UnitTestMethod(name = "get", args = { int.class })
 	public void testGet() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(9);
@@ -334,6 +374,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#getX()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getX", args = {})
 	public void testGetX() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(12);
@@ -354,6 +395,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#getY()}
 	 */
 	@Test
+	@UnitTestMethod(name = "getY", args = {})
 	public void testGetY() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(10);
@@ -374,6 +416,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#scale(double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "scale", args = { double.class })
 	public void testScale() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(13);
@@ -396,16 +439,14 @@ public class AT_Vector2D {
 
 	/**
 	 * Tests {@linkplain Vector2D#sub(Vector2D)}
-	 * 
-	 * Tests {@linkplain Vector2D#sub(double, double)}
 	 */
 	@Test
-	public void testSub() {
+	@UnitTestMethod(name = "sub", args = { Vector2D.class })
+	public void testSub_Vector2D() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(17);
+		final long seed = SEED_PROVIDER.getSeedValue(30);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		// Tests {@linkplain Vector2D#sub(Vector2D)}
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -422,7 +463,18 @@ public class AT_Vector2D {
 			assertEquals(y1 - y2, v1.getY(), 0);
 		}
 
-		// Tests {@linkplain Vector2D#sub(double, double)}
+	}
+
+	/**
+	 * Tests {@linkplain Vector2D#sub(double, double)}
+	 */
+	@Test
+	@UnitTestMethod(name = "sub", args = { double.class, double.class })
+	public void testSub_Doubles() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(17);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
 		for (int i = 0; i < 100; i++) {
 			double x1 = randomGenerator.nextDouble() * 1000 - 500;
 			double y1 = randomGenerator.nextDouble() * 1000 - 500;
@@ -444,6 +496,7 @@ public class AT_Vector2D {
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "isInfinite", args = {})
 	public void testIsInfinite() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(18);
@@ -481,6 +534,7 @@ public class AT_Vector2D {
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "isNaN", args = {})
 	public void testIsNaN() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(19);
@@ -506,10 +560,11 @@ public class AT_Vector2D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector2D#isInfinite()}
+	 * Tests {@linkplain Vector2D#isFinite()}
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "isFinite", args = {})
 	public void testIsFinite() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(20);
@@ -573,6 +628,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#squareDistanceTo(Vector2D)}
 	 */
 	@Test
+	@UnitTestMethod(name = "squareDistanceTo", args = { Vector2D.class })
 	public void testSquareDistanceTo() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(21);
@@ -602,6 +658,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#reverse()}
 	 */
 	@Test
+	@UnitTestMethod(name = "reverse", args = {})
 	public void testReverse() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(22);
@@ -624,6 +681,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#length()}
 	 */
 	@Test
+	@UnitTestMethod(name = "length", args = {})
 	public void testLength() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(23);
@@ -646,6 +704,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#squareLength()}
 	 */
 	@Test
+	@UnitTestMethod(name = "squareLength", args = {})
 	public void testSquareLength() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(24);
@@ -668,6 +727,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#toArray()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toArray", args = {})
 	public void testToArray() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(25);
@@ -690,6 +750,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#normalize()}
 	 */
 	@Test
+	@UnitTestMethod(name = "normalize", args = {})
 	public void testNormalize() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(26);
@@ -709,9 +770,10 @@ public class AT_Vector2D {
 	}
 
 	/**
-	 * Tests {@linkplain Vector2D#equals()}
+	 * Tests {@linkplain Vector2D#equals(Object))}
 	 */
 	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(27);
@@ -747,6 +809,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#hashCode()}
 	 */
 	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(28);
@@ -770,6 +833,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#toString()}
 	 */
 	@Test
+	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(14);
@@ -795,6 +859,7 @@ public class AT_Vector2D {
 	 * 
 	 */
 	@Test
+	@UnitTestMethod(name = "rotate", args = { double.class })
 	public void testRotate() {
 		final long seed = SEED_PROVIDER.getSeedValue(15);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -845,6 +910,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#rotateToward(Vector2D, double)}
 	 */
 	@Test
+	@UnitTestMethod(name = "rotateToward", args = { Vector2D.class, double.class })
 	public void testRotateToward() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(11);
@@ -894,6 +960,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#perpendicularRotation(Chirality)}
 	 */
 	@Test
+	@UnitTestMethod(name = "perpendicularRotation", args = { Chirality.class })
 	public void testPerpendicularRotation() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(16);
@@ -929,6 +996,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#isNormal()}
 	 */
 	@Test
+	@UnitTestMethod(name = "isNormal", args = {})
 	public void testIsNormal() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(8);
@@ -960,6 +1028,7 @@ public class AT_Vector2D {
 	 * Tests {@linkplain Vector2D#isPerpendicularTo(Vector2D)}
 	 */
 	@Test
+	@UnitTestMethod(name = "isPerpendicularTo", args = { Vector2D.class })
 	public void testIsPerpendicularTo() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(4);

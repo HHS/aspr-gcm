@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
@@ -16,12 +17,14 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 @Source
 public final class MultiKey {
+	
 
 	/**
 	 * A convenience builder class for MultiKey for situations where it is not
 	 * practical to use the ellipsis based constructor.
 	 *
 	 */
+	@Source(status= TestStatus.REQUIRED)
 	public static class MultiKeyBuilder {
 
 		private List<Object> keys = new ArrayList<>();

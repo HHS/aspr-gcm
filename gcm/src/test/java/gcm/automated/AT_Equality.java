@@ -74,4 +74,24 @@ public class AT_Equality {
 		assertEquals(Equality.GREATER_THAN_EQUAL, Equality.getNegation(Equality.LESS_THAN));
 		assertEquals(Equality.GREATER_THAN, Equality.getNegation(Equality.LESS_THAN_EQUAL));
 	}
+	
+	/**
+	 * Tests {@link Equality#valueOf(String)}
+	 */	
+	@Test
+	@UnitTestMethod(name = "valueOf", args = {String.class})
+	public void testValueOf() {
+		//nothing to test
+	}
+	
+
+	/**
+	 * Tests {@link Equality#values()}
+	 */
+	@Test
+	@UnitTestMethod(name = "values", args = {})
+	public void testValues() {
+		//nothing to test
+	}
+
 }

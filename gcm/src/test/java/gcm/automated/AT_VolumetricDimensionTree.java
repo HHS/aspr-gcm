@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestMethod;
 import gcm.util.dimensiontree.VolumetricDimensionTree;
 import gcm.util.vector.Vector2D;
 
@@ -94,6 +95,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#getMembersInSphere(double, double[])
 	 */
 	@Test
+	@UnitTestMethod(name = "getMembersInSphere", args = { double.class, double[].class})
 	public void testGetMembersInSphere() {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -142,6 +144,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#getAll()
 	 */
 	@Test
+	@UnitTestMethod(name = "getAll", args = { })
 	public void testGetAll() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -176,9 +179,10 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#add(double[], double, Object)
 	 */
 	@Test
+	@UnitTestMethod(name = "add", args = { double[].class, double.class, Object.class })
 	public void testAdd() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(4);
+		final long seed = SEED_PROVIDER.getSeedValue(44);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		VolumetricDimensionTree<Record> tree = //
@@ -228,6 +232,7 @@ public class AT_VolumetricDimensionTree {
 	 * Tests {@link VolumetricDimensionTree#contains(Object)
 	 */
 	@Test
+	@UnitTestMethod(name = "contains", args = { Object.class})
 	public void testContains() {
 		final long seed = SEED_PROVIDER.getSeedValue(3);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -263,13 +268,14 @@ public class AT_VolumetricDimensionTree {
 	}
 
 	/**
-	 * Tests {@link VolumetricDimensionTree#remove(Object) Tests
-	 * {@link VolumetricDimensionTree#remove(double, Object)
+	 * Tests {@link VolumetricDimensionTree#remove(Object) 
+	 * 
 	 */
 	@Test
-	public void testRemove() {
+	@UnitTestMethod(name = "remove", args = { Object.class})
+	public void testRemove_Object() {
 
-		final long seed = SEED_PROVIDER.getSeedValue(2);
+		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		VolumetricDimensionTree<Record> tree = //
@@ -302,11 +308,53 @@ public class AT_VolumetricDimensionTree {
 		}
 
 	}
-	
+
+	/**
+	 * Tests {@link VolumetricDimensionTree#remove(double, Object)
+	 */
+	@Test
+	@UnitTestMethod(name = "remove", args = { double.class, Object.class})
+	public void testRemove() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(2);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		VolumetricDimensionTree<Record> tree = //
+				VolumetricDimensionTree	.builder()//
+										.setLowerBounds(new double[] { 0, 0 })//
+										.setUpperBounds(new double[] { 100, 100 })//
+										.build(); //
+
+		List<Record> records = new ArrayList<>();
+
+		int n = 1000;
+		for (int i = 0; i < n; i++) {
+			Vector2D position = new Vector2D(randomGenerator.nextDouble() * 100, randomGenerator.nextDouble() * 100);
+			double radius = randomGenerator.nextDouble() * 10;
+			Record record = new Record(i, position, radius);
+			records.add(record);
+		}
+
+		for (int i = 0; i < records.size(); i++) {
+			Record record = records.get(i);
+			if (i % 2 == 0) {
+				tree.add(record.position.toArray(), record.radius, record);
+			}
+		}
+
+		for (int i = 0; i < records.size(); i++) {
+			Record record = records.get(i);
+			boolean removed = tree.remove(record.radius,record);
+			assertEquals(i % 2 == 0, removed);
+		}
+
+	}
+
 	/**
 	 * Tests {@link VolumetricDimensionTree#builder()}
 	 */
 	@Test
+	@UnitTestMethod(name = "builder", args = { })
 	public void testBuilder() {
 		/*
 		 * Precondition tests

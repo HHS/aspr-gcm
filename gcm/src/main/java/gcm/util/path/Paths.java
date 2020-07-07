@@ -2,11 +2,11 @@ package gcm.util.path;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.PriorityQueue;
 
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -46,135 +46,139 @@ import gcm.util.path.Path.Builder;
  */
 @Source(status = TestStatus.REQUIRED)
 public final class Paths {
-	
-	public interface EdgeCostEvaluator<E> {		
+
+	public interface EdgeCostEvaluator<E> {
 		public double getEdgeCost(E edge);
 	}
-	
-	public static interface TravelCostEvaluator<N> {		
+
+	public static interface TravelCostEvaluator<N> {
 		public double getMinimumCost(N originNode, N destination);
 	}
-	
-	
-	private static class Node<E> {
-		
-		boolean visited;
-		
-		double cost;
-		
-		double auxillaryCost;
-		
-		E edge;
-		
-		double totalCost() {
-			return cost + auxillaryCost;
+
+	private static class CostedNode<N, E> {
+
+		CostedNode(N n, double auxillaryCost) {
+			this.n = n;
+			this.auxillaryCost = auxillaryCost;
 		}
+		
+		private boolean visited;
+
+		private final N n;
+
+		private double cost = -1;
+
+		private final double auxillaryCost;
+
+		private E edge;
+
 	}
-	
+
+	private static class PrioritizedNode<N, E> implements Comparable<PrioritizedNode<N, E>> {
+
+		private PrioritizedNode(CostedNode<N, E> nodeWrapper) {
+			this.costedNode = nodeWrapper;
+			this.cost = nodeWrapper.cost + nodeWrapper.auxillaryCost;
+		}
+
+		private final CostedNode<N, E> costedNode;
+
+		private final double cost;
+
+		@Override
+		public int compareTo(PrioritizedNode<N, E> other) {
+			return Double.compare(cost, other.cost);
+		}
+
+	}
+
 	private Paths() {
-		
+
 	}
-		
-	public static <N,E> Optional<Path<E>> getPath(
-			Graph<N, E> graph,
-			N originNode,
-			N destinationNode,
-			EdgeCostEvaluator<E> edgeCostEvaluator,
-			TravelCostEvaluator<N> travelCostEvaluator) {
-		
+
+	/**
+	 * Returns an Optional containing a Path of E if such path could be found.
+	 * Requires a non-null EdgeCostEvaluator.
+	 */
+	public static <N, E> Optional<Path<E>> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
+
 		if (!graph.containsNode(originNode)) {
 			return Optional.empty();
 		}
-		
+
 		if (!graph.containsNode(destinationNode)) {
 			return Optional.empty();
 		}
-		
-		final Map<N, Node<E>> map = new LinkedHashMap<>();
-		List<N> visitList = new ArrayList<>();
-		
-		visitList.add(originNode);
-		Node<E> origin = new Node<>();
-		
-		origin.auxillaryCost = travelCostEvaluator.getMinimumCost(originNode, destinationNode);
-		
-		map.put(originNode, origin);
-		
-		Comparator<N> comp = new Comparator<N>() {
-			@Override
-			public int compare(N o1, N o2) {
-				double cost1 = map.get(o1).totalCost();
-				double cost2 = map.get(o2).totalCost();
-				if (cost1 < cost2) {
-					return -1;
-				}
-				if (cost2 < cost1) {
-					return 1;
-				}
-				return 0;
-			}
-		};
-		
-		while (visitList.size() > 0) {
-			// sort the visitList
-			Collections.sort(visitList, comp);
-			
+
+		final Map<N, CostedNode<N, E>> map = new HashMap<>();
+		PriorityQueue<PrioritizedNode<N, E>> priorityQueue = new PriorityQueue<>();
+
+		CostedNode<N, E> originNodeWrapper = new CostedNode<>(originNode, travelCostEvaluator.getMinimumCost(originNode, destinationNode));
+		map.put(originNode, originNodeWrapper);
+
+		// Note that the first node placed on the queue will be unvisited and
+		// therefore has an invalid cost. This should not matter since it is the
+		// only node on the queue
+		priorityQueue.add(new PrioritizedNode<>(originNodeWrapper));
+
+		while (!priorityQueue.isEmpty()) {
+
 			// pop off the first element
-			N node = visitList.get(0);
-			visitList.remove(0);
-			Node<E> pushNode = map.get(node);
-			
-			Node<E> destination = map.get(destinationNode);
-			if (destination != null) {
-				if (destination.visited) {
-					if (pushNode.cost >= destination.cost) {
+			CostedNode<N, E> pushNodeWrapper = priorityQueue.remove().costedNode;
+			if(pushNodeWrapper.visited) {
+				continue;
+			}
+			pushNodeWrapper.visited = true;
+
+			CostedNode<N, E> destinationNodeWrapper = map.get(destinationNode);
+			if (destinationNodeWrapper != null) {
+				if (destinationNodeWrapper.cost >= 0) {
+					if (pushNodeWrapper.cost >= destinationNodeWrapper.cost) {
 						break;
 					}
 				}
 			}
-			
-			for(E edge : graph.getOutboundEdges(node)) {				
+
+			for (E edge : graph.getOutboundEdges(pushNodeWrapper.n)) {
+				N targetNode = graph.getDestinationNode(edge);
+				CostedNode<N, E> targetNodeWrapper = map.get(targetNode);
 				double edgeCost = edgeCostEvaluator.getEdgeCost(edge);
-				
-				if(Double.isInfinite(edgeCost)){
+
+				if (Double.isInfinite(edgeCost)) {
 					continue;
 				}
-				edgeCost += pushNode.cost;
-				N targetNode = graph.getDestinationNode(edge);
-				Node<E> target = map.get(targetNode);
-				if (target == null) {
-					target = new Node<>();
-					target.cost = edgeCost;
-					if (travelCostEvaluator != null) {
-						target.auxillaryCost = travelCostEvaluator.getMinimumCost(targetNode, destinationNode);
-					}
-					target.edge = edge;
-					target.visited = true;
-					map.put(targetNode, target);
-					visitList.add(targetNode);
+				edgeCost += pushNodeWrapper.cost;
+				
+				
+				if (targetNodeWrapper == null) {
+					targetNodeWrapper = new CostedNode<>(targetNode, travelCostEvaluator.getMinimumCost(targetNode, destinationNode));
+					targetNodeWrapper.cost = edgeCost;
+					targetNodeWrapper.edge = edge;
+					map.put(targetNode, targetNodeWrapper);
+					priorityQueue.add(new PrioritizedNode<>(targetNodeWrapper));
 				} else {
-					if ((!target.visited) || (edgeCost < target.cost)) {
-						target.visited = true;
-						target.cost = edgeCost;
-						target.edge = edge;
+					if ((targetNodeWrapper.cost < 0) || (edgeCost < targetNodeWrapper.cost)) {
+						targetNodeWrapper.cost = edgeCost;
+						targetNodeWrapper.edge = edge;
+						priorityQueue.add(new PrioritizedNode<>(targetNodeWrapper));
 					}
 				}
 			}
 		}
-		
-		Node<E> destination = map.get(destinationNode);
+
+		CostedNode<N, E> destinationWrapper = map.get(destinationNode);
 		List<E> edges = new ArrayList<>();
 		// assess whether we have a solution
-		
-		if ((destination != null) && (destination.visited)) {
-			
+
+		if ((destinationWrapper != null) && (destinationWrapper.cost >= 0)) {
+
 			N node = destinationNode;
-			
+
 			while (true) {
-				
-				Node<E> visitedNode = map.get(node);
-				E edge = visitedNode.edge;
-				visitedNode.edge = null;
+
+				CostedNode<N, E> visitedNodeWrapper = map.get(node);
+				E edge = visitedNodeWrapper.edge;
+				visitedNodeWrapper.edge = null;
 				if (edge == null) {
 					break;
 				}
@@ -186,25 +190,26 @@ public final class Paths {
 			}
 			Collections.reverse(edges);
 		}
-		
-		if(edges.isEmpty()) {
+
+		if (edges.isEmpty()) {
 			return Optional.empty();
 		}
-		
+
 		Builder<E> builder = Path.builder();
-		for(E edge : edges) {
+		for (E edge : edges) {
 			builder.addEdge(edge);
 		}
-		
+
 		return Optional.of(builder.build());
 	}
-	
+
+
 	public static <E> double getCost(Path<E> path, EdgeCostEvaluator<E> edgeCostEvaluator) {
 		double result = 0;
-		for(E edge : path.getEdges()){
+		for (E edge : path.getEdges()) {
 			result += edgeCostEvaluator.getEdgeCost(edge);
 		}
-		return result;		
+		return result;
 	}
-	
+
 }

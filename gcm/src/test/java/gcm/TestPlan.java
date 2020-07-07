@@ -38,7 +38,7 @@ import gcm.util.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-public class TestPlanScript {
+public class TestPlan {
 	private static boolean isJavaFile(Path file) {
 		return Files.isRegularFile(file) && file.toString().endsWith(".java");
 	}
@@ -517,8 +517,8 @@ public class TestPlanScript {
 		// Should point to src/test/java
 		final Path testPath = Paths.get(args[1]);
 
-		final TestPlanScript testPlanScript = new TestPlanScript(sourcePath, testPath);
-		testPlanScript.execute();
+		final TestPlan testPlan = new TestPlan(sourcePath, testPath);
+		testPlan.execute();
 	}
 
 	private final Path sourcePath;
@@ -537,7 +537,7 @@ public class TestPlanScript {
 
 	private Map<Constructor<?>, TestConstructorRec> testConstructorRecs = new LinkedHashMap<>();
 
-	private TestPlanScript(final Path sourcePath, final Path testPath) {
+	private TestPlan(final Path sourcePath, final Path testPath) {
 		for (WarningType warningType : WarningType.values()) {
 			warningMap.put(warningType, new ArrayList<String>());
 		}

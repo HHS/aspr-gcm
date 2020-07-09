@@ -12,7 +12,6 @@ import java.util.Random;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 import org.apache.commons.math3.util.Pair;
-import org.junit.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.manual.delaunay.planarvisualizer.PlanarVisualzerFrame;
@@ -42,8 +41,8 @@ public class MT_CircleTest {
 		return circle2d;
 	}
 
-	@Test
-	public void testWithStats() {
+	
+	private void testWithStats() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -85,7 +84,8 @@ public class MT_CircleTest {
 	 */
 	@SuppressWarnings("unused")	
 	public static void main(String[] args) {		
-
+		new MT_CircleTest().testWithStats();
+		
 		Random random = new Random();
 
 		int seedIndex = random.nextInt(1000);
@@ -133,6 +133,10 @@ public class MT_CircleTest {
 		}
 
 		new PlanarVisualzerFrame(dataMap, pairs);
+	}
+	
+	private MT_CircleTest() {
+		
 	}
 
 	

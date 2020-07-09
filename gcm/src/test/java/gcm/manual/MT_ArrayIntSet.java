@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.junit.Test;
-
 import gcm.scenario.PersonId;
 import gcm.util.MemSizer;
 import gcm.util.TimeElapser;
@@ -180,8 +178,8 @@ public class MT_ArrayIntSet {
 	 * Conducts a test of ArrayIntSet performance as a function of target depth
 	 * against a baseline performance based on LinkedHashSet.
 	 */
-	@Test
-	public void test() {
+	
+	private void test() {
 
 		for (int targetDepth = 55; targetDepth < 100; targetDepth += 5) {
 			float f = targetDepth;
@@ -223,6 +221,14 @@ public class MT_ArrayIntSet {
 		sb.append("\t");
 		sb.append(intSetPerformance.memorySizeAtEnd);
 		System.out.println(sb);
+	}
+	
+	private MT_ArrayIntSet() {
+		
+	}
+	
+	public static void main(String[] args) {
+		new MT_ArrayIntSet().test();
 	}
 
 }

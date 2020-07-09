@@ -6,8 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 
-import org.junit.Test;
-
 import gcm.util.MemSizer;
 import gcm.util.containers.BooleanContainer;
 
@@ -70,8 +68,8 @@ public class MT_BooleanContainer {
 
 	}
 
-	@Test
-	public void test() {
+	
+	private void test() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("populationSize");
 		sb.append("\t");
@@ -94,19 +92,28 @@ public class MT_BooleanContainer {
 		}
 	}
 
-	@Test
-	public void testMemory() {
+	
+	private void testMemory() {
 		BooleanContainer booleanContainer = new BooleanContainer(false);
 		Random random = new Random();
 		for (int i = 0; i < 100_000; i++) {
 			booleanContainer.set(i, random.nextBoolean());
 		}
-		
-		MemSizer memSizer = new MemSizer(false);		
+
+		MemSizer memSizer = new MemSizer(false);
 		memSizer.excludeClass(Class.class);
 		long byteCount = memSizer.getByteCount(booleanContainer);
-		System.out.println("byteCount = "+byteCount);
+		System.out.println("byteCount = " + byteCount);
+
+	}
+	
+	private MT_BooleanContainer() {
 		
-		
+	}
+
+	public static void main(String[] args) {
+		MT_BooleanContainer mt_BooleanContainer = new MT_BooleanContainer();
+		mt_BooleanContainer.test();
+		mt_BooleanContainer.testMemory();
 	}
 }

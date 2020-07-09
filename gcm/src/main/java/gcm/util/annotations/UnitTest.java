@@ -20,5 +20,4 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 public @interface UnitTest {
 	Class<?> target();	
-	boolean automated() default true;
 }

@@ -44,9 +44,6 @@ public class SimClient {
 		System.out.println();
 		System.out.println("Example of an agent using custom registered handlers");
 		sim.sendEvent(new Vector2DEvent(4.5,20.7), "Exposed2");
-
 	}
-	
-	
 	
 }

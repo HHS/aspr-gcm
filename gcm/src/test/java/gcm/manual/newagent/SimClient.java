@@ -11,17 +11,20 @@ public class SimClient {
 	public void execute() {
 		Sim sim = new Sim();
 		
+		//Registering event handling base on agent type -- the "type" is fully defined by the client
 		sim.registerEventHandler(AgentType.INFECTED, ValueEvent.class, AgentBehaviorProvider::handleValueEvent_INFECTED);
 		sim.registerEventHandler(AgentType.EXPOSED, ValueEvent.class, AgentBehaviorProvider::handleValueEvent_EXPOSED);
 		sim.registerEventHandler(AgentType.EXPOSED, Vector2DEvent.class, AgentBehaviorProvider::handleVectorEvent_EXPOSED);
 		sim.registerEventHandler(AgentType.RECOVERED, MessageEvent.class, AgentBehaviorProvider::handleMessageEvent_RECOVERED);
 		
+		//Addition of agents to the sim -- the agent ids are fully defined by the client
 		sim.addAgent(AgentType.EXPOSED, "Exposed1");
 		sim.addAgent(AgentType.EXPOSED, "Exposed2");
 		sim.addAgent(AgentType.INFECTED, "Infected1");
 		sim.addAgent(AgentType.INFECTED, "Infected2");
 		sim.addAgent(AgentType.RECOVERED, "Recoved1");
 		
+		//Individual agents can define event handling that overrides the registered behaviors above
 		sim.registerCustomEventHandler("Exposed2", Vector2DEvent.class, AgentBehaviorProvider::handleVectorEvent_EXPOSED_custom);
 		
 		
@@ -39,7 +42,7 @@ public class SimClient {
 		sim.sendEvent(new Vector3DEvent(1.0,2.0,3.0), "Exposed2");
 		
 		System.out.println();
-		System.out.println("Example of agents using custom registered handlers");
+		System.out.println("Example of an agent using custom registered handlers");
 		sim.sendEvent(new Vector2DEvent(4.5,20.7), "Exposed2");
 
 	}

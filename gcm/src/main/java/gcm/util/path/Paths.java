@@ -61,7 +61,7 @@ public final class Paths {
 			this.n = n;
 			this.auxillaryCost = auxillaryCost;
 		}
-		
+
 		private boolean visited;
 
 		private final N n;
@@ -100,7 +100,8 @@ public final class Paths {
 	 * Returns an Optional containing a Path of E if such path could be found.
 	 * Requires a non-null EdgeCostEvaluator.
 	 */
-	public static <N, E> Optional<Path<E>> getPath(Graph<N, E> graph, N originNode, N destinationNode, EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
+	public static <N, E> Optional<Path<E>> getPath(Graph<N, E> graph, N originNode, N destinationNode,
+			EdgeCostEvaluator<E> edgeCostEvaluator, TravelCostEvaluator<N> travelCostEvaluator) {
 
 		if (!graph.containsNode(originNode)) {
 			return Optional.empty();
@@ -113,7 +114,8 @@ public final class Paths {
 		final Map<N, CostedNode<N, E>> map = new HashMap<>();
 		PriorityQueue<PrioritizedNode<N, E>> priorityQueue = new PriorityQueue<>();
 
-		CostedNode<N, E> originNodeWrapper = new CostedNode<>(originNode, travelCostEvaluator.getMinimumCost(originNode, destinationNode));
+		CostedNode<N, E> originNodeWrapper = new CostedNode<>(originNode,
+				travelCostEvaluator.getMinimumCost(originNode, destinationNode));
 		map.put(originNode, originNodeWrapper);
 
 		// Note that the first node placed on the queue will be unvisited and
@@ -125,7 +127,7 @@ public final class Paths {
 
 			// pop off the first element
 			CostedNode<N, E> pushNodeWrapper = priorityQueue.remove().costedNode;
-			if(pushNodeWrapper.visited) {
+			if (pushNodeWrapper.visited) {
 				continue;
 			}
 			pushNodeWrapper.visited = true;
@@ -147,11 +149,13 @@ public final class Paths {
 				if (Double.isInfinite(edgeCost)) {
 					continue;
 				}
-				edgeCost += pushNodeWrapper.cost;
-				
-				
+				if (pushNodeWrapper.cost >= 0) {
+					edgeCost += pushNodeWrapper.cost;
+				}
+
 				if (targetNodeWrapper == null) {
-					targetNodeWrapper = new CostedNode<>(targetNode, travelCostEvaluator.getMinimumCost(targetNode, destinationNode));
+					targetNodeWrapper = new CostedNode<>(targetNode,
+							travelCostEvaluator.getMinimumCost(targetNode, destinationNode));
 					targetNodeWrapper.cost = edgeCost;
 					targetNodeWrapper.edge = edge;
 					map.put(targetNode, targetNodeWrapper);
@@ -202,7 +206,6 @@ public final class Paths {
 
 		return Optional.of(builder.build());
 	}
-
 
 	public static <E> double getCost(Path<E> path, EdgeCostEvaluator<E> edgeCostEvaluator) {
 		double result = 0;

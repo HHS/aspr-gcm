@@ -82,7 +82,6 @@ public class MT_CircleTest {
 	/**
 	 * Non-JUnit test that displays the various solutions in a swing application
 	 */
-	@SuppressWarnings("unused")	
 	public static void main(String[] args) {		
 		new MT_CircleTest().testWithStats();
 		

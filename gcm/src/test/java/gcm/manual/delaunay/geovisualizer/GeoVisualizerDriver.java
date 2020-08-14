@@ -41,7 +41,6 @@ public class GeoVisualizerDriver {
 
 	}
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
 
 		Path tractsFile = Paths.get(args[0]);

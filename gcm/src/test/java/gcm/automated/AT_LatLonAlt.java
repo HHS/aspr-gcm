@@ -178,8 +178,7 @@ public class AT_LatLonAlt {
 
 	/**
 	 * Tests {@link LatLonAlt#LatLonAlt(LatLon)}
-	 */
-	@SuppressWarnings("unused")
+	 */	
 	@Test
 	@UnitTestConstructor(args = {LatLon.class})
 	public void testConstructor_LatLon() {
@@ -212,7 +211,6 @@ public class AT_LatLonAlt {
 	 * 
 	 * Tests {@link LatLonAlt#LatLonAlt(double, double, double)}
 	 */
-	@SuppressWarnings("unused")
 	@Test
 	@UnitTestConstructor(args = {Vector3D.class})
 	public void testConstructor_Vector3D() {

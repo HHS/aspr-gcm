@@ -14,7 +14,6 @@ import gcm.util.vector.Vector2D;
 
 public class PlanarVisualizerDriver {
 
-	@SuppressWarnings("unused")
 	public static void main(String[] args) {
 		long seed = 147623563453456L;
 		RandomGenerator randomGenerator = new Well44497b(seed);

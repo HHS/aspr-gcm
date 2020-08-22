@@ -37,7 +37,7 @@ public interface IndexedPopulationManager extends Element {
 	public void addIndex(final ComponentId componentId, final Filter filter, final Object key);
 
 	/**
-	 * Returns the list of person identifiers in the index for the given keys.
+	 * Returns the list of person identifiers in the index for the given key.
 	 *
 	 * @throws ModelException
 	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}

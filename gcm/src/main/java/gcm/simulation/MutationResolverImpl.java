@@ -72,6 +72,7 @@ import gcm.util.annotations.TestStatus;
 public final class MutationResolverImpl extends BaseElement implements MutationResolver {
 
 	private IndexedPopulationManager indexedPopulationManager;
+	private PopulationPartitionManager populationPartitionManager;
 	private ObservationManager observationManager;
 	private MaterialsManager materialsManager;
 	private ReportsManager reportsManager;
@@ -98,6 +99,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		materialsManager = context.getMaterialsManager();
 		personLocationManger = context.getPersonLocationManger();
 		indexedPopulationManager = context.getIndexedPopulationManager();
+		populationPartitionManager = context.getPopulationPartitionManager();
 		resourceManager = context.getResourceManager();
 		personGroupManger = context.getPersonGroupManger();
 		eventManager = context.getEventManager();
@@ -115,11 +117,10 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		resourceIds = scenario.getResourceIds();
 
 		/*
-		 * Load the remaining data from the scenario that generally corresponds
-		 * to mutations available to components so that reporting will properly
-		 * reflect these data. The adding of resources directly to people and
-		 * material producers is covered here but do not correspond to mutations
-		 * allowed to components.
+		 * Load the remaining data from the scenario that generally corresponds to
+		 * mutations available to components so that reporting will properly reflect
+		 * these data. The adding of resources directly to people and material producers
+		 * is covered here but do not correspond to mutations allowed to components.
 		 */
 
 		loadGlobalPropertyValues(scenario);
@@ -181,7 +182,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId,
+			final Object regionPropertyValue) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			propertyManager.setRegionPropertyValue(regionId, regionPropertyId, regionPropertyValue);
@@ -194,21 +196,26 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 	private void loadMaterialsProducerPropertyValues(final Scenario scenario) {
 		for (final MaterialsProducerId materialsProducerId : scenario.getMaterialsProducerIds()) {
-			for (final MaterialsProducerPropertyId materialsProducerPropertyId : scenario.getMaterialsProducerPropertyIds()) {
-				final Object materialsProducerPropertyValue = scenario.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+			for (final MaterialsProducerPropertyId materialsProducerPropertyId : scenario
+					.getMaterialsProducerPropertyIds()) {
+				final Object materialsProducerPropertyValue = scenario
+						.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
 				if (materialsProducerPropertyValue != null) {
-					setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+					setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId,
+							materialsProducerPropertyValue);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId,
 			final Object materialsProducerPropertyValue) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
-			propertyManager.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+			propertyManager.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId,
+					materialsProducerPropertyValue);
 			observationManager.handleMaterialsProducerPropertyChange(materialsProducerId, materialsProducerPropertyId);
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
@@ -218,8 +225,10 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 	private void loadCompartmentPropertyValues(final Scenario scenario) {
 		for (final CompartmentId compartmentId : scenario.getCompartmentIds()) {
-			for (final CompartmentPropertyId compartmentPropertyId : scenario.getCompartmentPropertyIds(compartmentId)) {
-				final Object compartmentPropertyValue = scenario.getCompartmentPropertyValue(compartmentId, compartmentPropertyId);
+			for (final CompartmentPropertyId compartmentPropertyId : scenario
+					.getCompartmentPropertyIds(compartmentId)) {
+				final Object compartmentPropertyValue = scenario.getCompartmentPropertyValue(compartmentId,
+						compartmentPropertyId);
 				if (compartmentPropertyValue != null) {
 					setCompartmentPropertyValue(compartmentId, compartmentPropertyId, compartmentPropertyValue);
 				}
@@ -228,7 +237,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
+	public void setCompartmentPropertyValue(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			propertyManager.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, compartmentPropertyValue);
@@ -251,7 +261,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId,
+			final Object resourcePropertyValue) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			propertyManager.setResourcePropertyValue(resourceId, resourcePropertyId, resourcePropertyValue);
@@ -312,7 +323,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public BatchId createBatch(final MaterialsProducerId materialsProducerId, final MaterialId materialId, final double amount) {
+	public BatchId createBatch(final MaterialsProducerId materialsProducerId, final MaterialId materialId,
+			final double amount) {
 		BatchId batchId;
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
@@ -351,7 +363,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
+	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId,
+			final Object batchPropertyValue) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			propertyManager.setBatchPropertyValue(batchId, batchPropertyId, batchPropertyValue);
@@ -364,8 +377,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	private void loadStageOfferings(Scenario scenario, Map<StageId, StageId> scenarioToSimStageMap) {
 
 		/*
-		 * The stage offer state cannot be set until all of the batches have
-		 * been associated with their stages.
+		 * The stage offer state cannot be set until all of the batches have been
+		 * associated with their stages.
 		 */
 		for (StageId scenarioStageId : scenario.getStageIds()) {
 			StageId simulationStageId = scenarioToSimStageMap.get(scenarioStageId);
@@ -389,8 +402,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 	private Map<PersonId, PersonId> loadPeople(final Scenario scenario) {
 		/*
-		 * Build the map that will translate the person ids recorded in the
-		 * scenario into a contiguous set of integers starting with zero.
+		 * Build the map that will translate the person ids recorded in the scenario
+		 * into a contiguous set of integers starting with zero.
 		 */
 		List<PersonId> scenarioPeopleIds = new ArrayList<>(scenario.getPeopleIds());
 		Collections.sort(scenarioPeopleIds);
@@ -417,6 +430,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonAddition(personId);
+		populationPartitionManager.handlePersonAddition(personId);
 		reportsManager.handlePersonAddition(personId);
 		return personId;
 	}
@@ -434,7 +448,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		Object oldValue;
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
@@ -444,7 +459,9 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue, personPropertyValue);
+		indexedPopulationManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
+				personPropertyValue);
+		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId);
 		reportsManager.handlePersonPropertyValueAssignment(personId, personPropertyId, oldValue);
 	}
 
@@ -485,7 +502,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	/*
 	 * Only called during scenario loading
 	 */
-	private void addResourceToMaterialsProducer(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
+	private void addResourceToMaterialsProducer(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId, final long amount) {
 		resourceManager.incrementMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
 		observationManager.handleMaterialsProducerResourceChange(materialsProducerId, resourceId);
 		reportsManager.handleMaterialsProducerResourceAddition(materialsProducerId, resourceId, amount);
@@ -509,14 +527,15 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	private void addResourceToPerson(final PersonId personId, final ResourceId resourceId, final long amount) {
 		resourceManager.incrementPersonResourceLevel(resourceId, personId, amount);
 		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
+		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		observationManager.handlePersonResourceChange(personId, resourceId);
 		reportsManager.handlePersonResourceAddition(personId, resourceId, amount);
 	}
 
 	private Map<GroupId, GroupId> loadGroups(final Scenario scenario) {
 		/*
-		 * Build the map that will translate the group ids recorded in the
-		 * scenario into a contiguous set of integers starting with zero.
+		 * Build the map that will translate the group ids recorded in the scenario into
+		 * a contiguous set of integers starting with zero.
 		 */
 
 		List<GroupId> scenarioGroupIds = new ArrayList<>(scenario.getGroupIds());
@@ -544,7 +563,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		return groupId;
 	}
 
-	private void loadGroupMembership(final Scenario scenario, Map<PersonId, PersonId> scenarioToSimPeopleMap, Map<GroupId, GroupId> scenarioToSimGroupMap) {
+	private void loadGroupMembership(final Scenario scenario, Map<PersonId, PersonId> scenarioToSimPeopleMap,
+			Map<GroupId, GroupId> scenarioToSimGroupMap) {
 		for (final GroupId scenarioGroupId : scenario.getGroupIds()) {
 			Set<PersonId> scenarioGroupMembers = scenario.getGroupMembers(scenarioGroupId);
 			GroupId simulationGroupId = scenarioToSimGroupMap.get(scenarioGroupId);
@@ -565,6 +585,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupAddition(groupId, personId);
+		populationPartitionManager.handleGroupMembershipChange(personId);
 		reportsManager.handleGroupMembershipAddition(groupId, personId);
 	}
 
@@ -614,10 +635,11 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
 		indexedPopulationManager.addIndex(componentId, filter, key);
+		//TODO why do we observe index removal and not addition?
 	}
 	/*
-	 * Creates the information needed to support reports after the stage has
-	 * been removed from the simulation
+	 * Creates the information needed to support reports after the stage has been
+	 * removed from the simulation
 	 */
 
 	private StageInfo getStageInfo(StageId stageId, boolean includeBatchInfo) {
@@ -686,8 +708,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	/*
-	 * Creates the information needed to support reports after the batch has
-	 * been removed from the simulation
+	 * Creates the information needed to support reports after the batch has been
+	 * removed from the simulation
 	 */
 	private BatchInfo getBatchInfo(BatchId batchId) {
 		BatchInfoBuilder batchInfoBuilder = new BatchInfoBuilder();
@@ -697,7 +719,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		batchInfoBuilder.setMaterialId(materialsManager.getBatchMaterial(batchId));
 		batchInfoBuilder.setStageId(materialsManager.getBatchStageId(batchId));
 		batchInfoBuilder.setMaterialsProducerId(materialsManager.getBatchProducer(batchId));
-		Set<BatchPropertyId> batchPropertyIds = materialToBatchPropertyIdsMap.get(materialsManager.getBatchMaterial(batchId));
+		Set<BatchPropertyId> batchPropertyIds = materialToBatchPropertyIdsMap
+				.get(materialsManager.getBatchMaterial(batchId));
 		for (final BatchPropertyId batchPropertyId : batchPropertyIds) {
 			Object batchPropertyValue = propertyManager.getBatchPropertyValue(batchId, batchPropertyId);
 			batchInfoBuilder.setPropertyValue(batchPropertyId, batchPropertyValue);
@@ -779,7 +802,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeCompartmentalPersonPropertyChange(final boolean observe, final CompartmentId compartmentId, final PersonPropertyId personPropertyId) {
+	public void observeCompartmentalPersonPropertyChange(final boolean observe, final CompartmentId compartmentId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeCompartmentalPersonPropertyChange(observe, compartmentId, personPropertyId);
@@ -789,7 +813,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeCompartmentalPersonResourceChange(final boolean observe, final CompartmentId compartmentId, final ResourceId resourceId) {
+	public void observeCompartmentalPersonResourceChange(final boolean observe, final CompartmentId compartmentId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeCompartmentalPersonResourceChange(observe, compartmentId, resourceId);
@@ -819,7 +844,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeCompartmentPropertyChange(final boolean observe, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public void observeCompartmentPropertyChange(final boolean observe, final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeCompartmentPropertyChange(observe, compartmentId, compartmentPropertyId);
@@ -879,10 +905,13 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeMaterialsProducerPropertyChange(final boolean observe, final MaterialsProducerId materialProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public void observeMaterialsProducerPropertyChange(final boolean observe,
+			final MaterialsProducerId materialProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
-			observationManager.observeMaterialsProducerPropertyChange(observe, materialProducerId, materialsProducerPropertyId);
+			observationManager.observeMaterialsProducerPropertyChange(observe, materialProducerId,
+					materialsProducerPropertyId);
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
@@ -899,10 +928,12 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeMaterialsProducerResourceChangeByMaterialsProducerId(final boolean observe, final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
+	public void observeMaterialsProducerResourceChangeByMaterialsProducerId(final boolean observe,
+			final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
-			observationManager.observeMaterialsProducerResourceChangeByResourceId(observe, materialsProducerId, resourceId);
+			observationManager.observeMaterialsProducerResourceChangeByResourceId(observe, materialsProducerId,
+					resourceId);
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
@@ -919,7 +950,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observePersonPropertyChange(final boolean observe, final PersonId personId, final PersonPropertyId personPropertyId) {
+	public void observePersonPropertyChange(final boolean observe, final PersonId personId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeIndividualPersonPropertyChange(observe, personId, personPropertyId);
@@ -939,7 +971,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observePersonResourceChange(final boolean observe, final PersonId personId, final ResourceId resourceId) {
+	public void observePersonResourceChange(final boolean observe, final PersonId personId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeIndividualPersonResourceChange(observe, personId, resourceId);
@@ -949,7 +982,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeRegionPersonPropertyChange(final boolean observe, final RegionId regionId, final PersonPropertyId personPropertyId) {
+	public void observeRegionPersonPropertyChange(final boolean observe, final RegionId regionId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeRegionPersonPropertyChange(observe, regionId, personPropertyId);
@@ -959,7 +993,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeRegionPersonResourceChange(final boolean observe, final RegionId regionId, final ResourceId resourceId) {
+	public void observeRegionPersonResourceChange(final boolean observe, final RegionId regionId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeRegionPersonResourceChange(observe, regionId, resourceId);
@@ -987,8 +1022,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 	}
-	
-	
+
 	@Override
 	public void observeGlobalRegionPropertyChange(final boolean observe, final RegionPropertyId regionPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
@@ -999,9 +1033,9 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 	}
 
-	
 	@Override
-	public void observeRegionPropertyChange(final boolean observe, final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	public void observeRegionPropertyChange(final boolean observe, final RegionId regionId,
+			final RegionPropertyId regionPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeRegionPropertyChange(observe, regionId, regionPropertyId);
@@ -1011,7 +1045,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeRegionResourceChange(final boolean observe, final RegionId regionId, final ResourceId resourceId) {
+	public void observeRegionResourceChange(final boolean observe, final RegionId regionId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeRegionResourceChange(observe, regionId, resourceId);
@@ -1021,7 +1056,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeResourcePropertyChange(final boolean observe, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public void observeResourcePropertyChange(final boolean observe, final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeResourcePropertyChange(observe, resourceId, resourcePropertyId);
@@ -1099,6 +1135,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 			for (PersonId personId : peopleForGroup) {
 				indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
+				populationPartitionManager.handleGroupMembershipChange(personId);
 			}
 			personGroupManger.removeGroup(groupId);
 			propertyManager.handleGroupRemoval(groupId);
@@ -1140,20 +1177,19 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 				personInfoBuilder.setPersonCompartmentId(compartmentId);
 				personInfoBuilder.setPersonId(personId);
 				/*
-				 * Before we drop the person, we collect the person's property
-				 * values in a local map so that we can pass it to the state
-				 * change listeners.
+				 * Before we drop the person, we collect the person's property values in a local
+				 * map so that we can pass it to the state change listeners.
 				 */
 
 				for (final PersonPropertyId personPropertyId : personPropertyIds) {
-					final Object personPropertyValue = propertyManager.getPersonPropertyValue(personId, personPropertyId);
+					final Object personPropertyValue = propertyManager.getPersonPropertyValue(personId,
+							personPropertyId);
 					personInfoBuilder.setPersonPropertyValue(personPropertyId, personPropertyValue);
 				}
 
 				/*
-				 * Before we drop the person, we collect the person's resource
-				 * values in a local map so that we can pass it to the state
-				 * change listeners.
+				 * Before we drop the person, we collect the person's resource values in a local
+				 * map so that we can pass it to the state change listeners.
 				 */
 
 				for (final ResourceId resourceId : resourceIds) {
@@ -1164,6 +1200,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			}
 
 			indexedPopulationManager.handlePersonRemoval(personId);
+			populationPartitionManager.handlePersonRemoval(personId);
 			propertyManager.handlePersonRemoval(personId);
 			if (observationManagerRequiresPersonInfo) {
 				observationManager.handlePersonRemovalByPersonInfo(personInfo);
@@ -1193,6 +1230,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
+		populationPartitionManager.handleGroupMembershipChange(personId);
 		reportsManager.handleGroupMembershipRemoval(groupId, personId);
 	}
 
@@ -1229,6 +1267,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 
 		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
+		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handlePersonResourceRemoval(personId, resourceId, amount);
 	}
 
@@ -1256,6 +1295,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonCompartmentChange(personId, oldCompartmentId, compartmentId);
+		populationPartitionManager.handlePersonCompartmentChange(personId);
 		reportsManager.handleCompartmentAssignment(personId, oldCompartmentId);
 	}
 
@@ -1271,6 +1311,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonRegionChange(personId, oldRegionId, regionId);
+		populationPartitionManager.handlePersonRegionChange(personId);
 		reportsManager.handleRegionAssignment(personId, oldRegionId);
 	}
 
@@ -1286,7 +1327,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void transferOfferedStageToMaterialsProducer(final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	public void transferOfferedStageToMaterialsProducer(final StageId stageId,
+			final MaterialsProducerId materialsProducerId) {
 		MaterialsProducerId stageProducer;
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
@@ -1303,7 +1345,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void transferProducedResourceToRegion(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final RegionId regionId, final long amount) {
+	public void transferProducedResourceToRegion(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId, final RegionId regionId, final long amount) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			resourceManager.decrementMaterialsProducerResourceLevel(materialsProducerId, resourceId, amount);
@@ -1313,11 +1356,13 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		reportsManager.handleTransferResourceFromMaterialsProducerToRegion(materialsProducerId, regionId, resourceId, amount);
+		reportsManager.handleTransferResourceFromMaterialsProducerToRegion(materialsProducerId, regionId, resourceId,
+				amount);
 	}
 
 	@Override
-	public void transferResourceBetweenRegions(final ResourceId resourceId, final RegionId sourceRegionId, final RegionId destinationRegionId, final long amount) {
+	public void transferResourceBetweenRegions(final ResourceId resourceId, final RegionId sourceRegionId,
+			final RegionId destinationRegionId, final long amount) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			resourceManager.decrementRegionResourceLevel(sourceRegionId, resourceId, amount);
@@ -1343,6 +1388,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
+		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handlePersonResourceTransferToRegion(personId, resourceId, amount);
 	}
 
@@ -1359,6 +1405,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
+		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handleRegionResourceTransferToPerson(personId, resourceId, amount);
 	}
 
@@ -1383,7 +1430,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupArrivalByGroupAndPerson(final boolean observe, final GroupId groupId, final PersonId personId) {
+	public void observeGroupArrivalByGroupAndPerson(final boolean observe, final GroupId groupId,
+			final PersonId personId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupArrivalByGroupAndPerson(observe, groupId, personId);
@@ -1414,7 +1462,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupArrivalByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId, final PersonId personId) {
+	public void observeGroupArrivalByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId,
+			final PersonId personId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupArrivalByTypeAndPerson(observe, groupTypeId, personId);
@@ -1464,7 +1513,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupDepartureByGroupAndPerson(final boolean observe, final GroupId groupId, final PersonId personId) {
+	public void observeGroupDepartureByGroupAndPerson(final boolean observe, final GroupId groupId,
+			final PersonId personId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupDepartureByGroupAndPerson(observe, groupId, personId);
@@ -1494,7 +1544,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupDepartureByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId, final PersonId personId) {
+	public void observeGroupDepartureByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId,
+			final PersonId personId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupDepartureByTypeAndPerson(observe, groupTypeId, personId);
@@ -1554,7 +1605,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupPropertyChangeByGroupAndProperty(final boolean observe, final GroupPropertyId groupPropertyId, final GroupId groupId) {
+	public void observeGroupPropertyChangeByGroupAndProperty(final boolean observe,
+			final GroupPropertyId groupPropertyId, final GroupId groupId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupPropertyChangeByGroupAndProperty(observe, groupPropertyId, groupId);
@@ -1574,7 +1626,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeGroupPropertyChangeByTypeAndProperty(final boolean observe, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
+	public void observeGroupPropertyChangeByTypeAndProperty(final boolean observe, final GroupTypeId groupTypeId,
+			final GroupPropertyId groupPropertyId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeGroupPropertyChangeByTypeAndProperty(observe, groupTypeId, groupPropertyId);
@@ -1595,7 +1648,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeStageTransferBySourceMaterialsProducerId(boolean observe, MaterialsProducerId sourceMaterialsProducerId) {
+	public void observeStageTransferBySourceMaterialsProducerId(boolean observe,
+			MaterialsProducerId sourceMaterialsProducerId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			observationManager.observeStageTransferBySourceMaterialsProducerId(observe, sourceMaterialsProducerId);
@@ -1606,10 +1660,12 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observeStageTransferByDestinationMaterialsProducerId(boolean observe, MaterialsProducerId destinationMaterialsProducerId) {
+	public void observeStageTransferByDestinationMaterialsProducerId(boolean observe,
+			MaterialsProducerId destinationMaterialsProducerId) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
-			observationManager.observeStageTransferByDestinationMaterialsProducerId(observe, destinationMaterialsProducerId);
+			observationManager.observeStageTransferByDestinationMaterialsProducerId(observe,
+					destinationMaterialsProducerId);
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
@@ -1617,7 +1673,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void addGlobalComponent(GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
+	public void addGlobalComponent(GlobalComponentId globalComponentId,
+			Class<? extends Component> globalComponentClass) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
 			componentManager.addGlobalComponent(globalComponentId, globalComponentClass);
@@ -1625,6 +1682,24 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
+	}
+
+	@Override
+	public void addPopulationPartition(ComponentId componentId,
+			PopulationPartitionDefinition populationPartitionDefinition, Object key) {
+		//TODO -- review methods that require callbacks and perhaps lock down external write access?
+		// externalAccessManager.acquireExternalReadAccessLock();
+		// try {
+		//
+		// } finally {
+		// externalAccessManager.releaseExternalReadAccessLock();
+		// }
+		populationPartitionManager.addPopulationPartition(componentId, populationPartitionDefinition, key);
+	}
+
+	@Override
+	public void removePopulationPartition(Object key) {		
+		populationPartitionManager.removePartition(key);		
 	}
 
 }

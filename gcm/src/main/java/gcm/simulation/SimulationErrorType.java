@@ -104,7 +104,16 @@ public enum SimulationErrorType {
 	UNKNOWN_RESOURCE_ID("Unknown resource id"),
 	UNKNOWN_RESOURCE_PROPERTY_ID("Unknown resource property id"),
 	UNKNOWN_STAGE_ID("Unknown stage id"),
-	UNOFFERED_STAGE_NOT_TRANSFERABLE("Unoffered stages are not transferable");
+	UNOFFERED_STAGE_NOT_TRANSFERABLE("Unoffered stages are not transferable"),
+	
+	NULL_POPULATION_PARTITION_KEY("Null population partition key"),
+	UNKNOWN_POPULATION_PARTITION_KEY("No population partition found"),
+	NULL_POPULATION_PARTITION_QUERY("Null population query"),
+	NULL_POPULATION_PARTITION_DEFINITION("Null population definition"),
+	DUPLICATE_POPULATION_PARTITION("Duplicate population partition key"),
+	POPULATION_PARTITION_DELETION_BY_NON_OWNER("A population partition can only be deleted by its owner"),	
+	INCOMPATIBLE_POPULATION_PARTITION_QUERY("The population query is incompatible with the selected population partition definition");
+	 
 
 	private final String description;
 

@@ -9,7 +9,7 @@ import gcm.util.annotations.Source;
  * potentially encounter temporary invariant condition violations and must guard
  * against access to its inconsistent state.
  * 
- * GCM has many modeler contributed items such as filters, components and a host
+ * GCM has many modeler contributed items such as filters, partitions, components and a host
  * of identifiers. During a mutation, GCM may call back to these contributed
  * items resulting in an item querying or mutating the state of GCM while GCM is
  * in an inconsistent state. It can be difficult to reason out in detail when
@@ -19,10 +19,10 @@ import gcm.util.annotations.Source;
  * 
  * A common solution is to create a guard variable for each invariant condition
  * and its associated data structures. In practice, this can be difficult to
- * maintain. Often invariant conditions might cross over natural boundaries
+ * maintain. Often, invariant conditions might cross over natural boundaries
  * within GCM's various sub-management classes. Finally, these guards themselves
  * would likely have to be managed in data structures that are keyed with
- * modeler generated identifiers and are thus subject to callbacks, further
+ * modeler-generated identifiers and are thus subject to callbacks, further
  * complicating the reasoning needed to assure that an inconsistent state cannot
  * be accessed.
  * 

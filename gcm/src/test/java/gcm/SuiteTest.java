@@ -38,6 +38,7 @@ import gcm.automated.AT_EnvironmentImpl_21;
 import gcm.automated.AT_EnvironmentImpl_22;
 import gcm.automated.AT_EnvironmentImpl_23;
 import gcm.automated.AT_EnvironmentImpl_24;
+import gcm.automated.AT_EnvironmentImpl_25;
 import gcm.automated.AT_Equality;
 import gcm.automated.AT_ExperimentBuilder;
 import gcm.automated.AT_Filter;
@@ -46,6 +47,7 @@ import gcm.automated.AT_GeoLocator;
 import gcm.automated.AT_Graph;
 import gcm.automated.AT_GraphDepthEvaluator;
 import gcm.automated.AT_Graphs;
+import gcm.automated.AT_GroupTypeCountMap;
 import gcm.automated.AT_HashIntSet;
 import gcm.automated.AT_ImmutableStat;
 import gcm.automated.AT_IntId;
@@ -66,6 +68,8 @@ import gcm.automated.AT_ObjectValueContainer;
 import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
+import gcm.automated.AT_PopulationPartitionDefinition;
+import gcm.automated.AT_PopulationPartitionQuery;
 import gcm.automated.AT_PropertyDefinition;
 import gcm.automated.AT_Replication;
 import gcm.automated.AT_ReplicationImpl;
@@ -121,6 +125,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_EnvironmentImpl_22.class,
 	AT_EnvironmentImpl_23.class,
 	AT_EnvironmentImpl_24.class,
+	AT_EnvironmentImpl_25.class,
 	AT_MultiKey.class,
 	AT_Filter.class,
 	AT_IntValueContainer.class,
@@ -174,7 +179,10 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_ImmutableStat.class,
 	AT_Simulation.class,
 	AT_BaseElement.class,
-	AT_Replication.class
+	AT_Replication.class,
+	AT_GroupTypeCountMap.class,
+	AT_PopulationPartitionDefinition.class,
+	AT_PopulationPartitionQuery.class
 	})
 
 public class SuiteTest {

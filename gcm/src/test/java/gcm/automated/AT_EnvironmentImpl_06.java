@@ -200,7 +200,7 @@ public class AT_EnvironmentImpl_06 {
 				final Object key = new Object();
 				environment.addPopulationIndex(Filter.compartment(testCompartmentId), key);
 
-				final int actualNumberOfPeopleInCompartment = environment.getIndexedPeople(key).size();
+				final int actualNumberOfPeopleInCompartment = environment.getIndexSize(key);
 
 				assertEquals(expectedNumberOfPeopleInCompartment, actualNumberOfPeopleInCompartment);
 				environment.removePopulationIndex(key);

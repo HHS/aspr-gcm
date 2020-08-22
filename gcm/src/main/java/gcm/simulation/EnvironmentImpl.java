@@ -100,22 +100,31 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	private Context context;
 
 	/*
-	 * The IndexedPopulationManager maintains the population indexes. The
-	 * Environment works with the components to create the indices, but once
+	 * The PopulationPartitionManager maintains the population partitions. The
+	 * Environment works with the components to create the partitions, but once
 	 * created delegates custody to the manager. Then environment informs the
-	 * manager of changes that are relevant to index management without having
-	 * to know the actual indices.
+	 * manager of changes that are relevant to partition management without having
+	 * to know the actual partitions.
+	 */
+	private PopulationPartitionManager populationPartitionManager;
+
+	/*
+	 * The IndexedPopulationManager maintains the population indexes. The
+	 * Environment works with the components to create the indices, but once created
+	 * delegates custody to the manager. Then environment informs the manager of
+	 * changes that are relevant to index management without having to know the
+	 * actual indices.
 	 */
 	private IndexedPopulationManager indexedPopulationManager;
 
 	/*
 	 * The ObservableEnvironment is a sub-interface of the Environment interface
-	 * that exposes only the non-mutative parts of the environment that are
-	 * possibly needed by State Change Listeners and other contributed items
-	 * that do not need mutation access. This is done so that we need only pass
-	 * the absolute minimum of information when a state change occurs. We leave
-	 * it to the state change listeners to fill in whatever information they
-	 * need from the ObservableEnvironment.
+	 * that exposes only the non-mutative parts of the environment that are possibly
+	 * needed by State Change Listeners and other contributed items that do not need
+	 * mutation access. This is done so that we need only pass the absolute minimum
+	 * of information when a state change occurs. We leave it to the state change
+	 * listeners to fill in whatever information they need from the
+	 * ObservableEnvironment.
 	 */
 	private ObservableEnvironment observableEnvironment;
 
@@ -157,8 +166,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	/*
 	 * The external access manager MUST be used for every mutation and query and
-	 * prevents callbacks from corrupting state during the execution of
-	 * mutations.
+	 * prevents callbacks from corrupting state during the execution of mutations.
 	 */
 	private ExternalAccessManager externalAccessManager;
 
@@ -287,7 +295,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validateEqualityCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Equality equality) {
+	private void validateEqualityCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition,
+			final Equality equality) {
 
 		if (equality == Equality.EQUAL) {
 			return;
@@ -297,14 +306,17 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 		if (!Comparable.class.isAssignableFrom(propertyDefinition.getType())) {
-			throwModelException(SimulationErrorType.NON_COMPARABLE_PROPERTY, "Property values for " + propertyId + " are not comparable via " + equality);
+			throwModelException(SimulationErrorType.NON_COMPARABLE_PROPERTY,
+					"Property values for " + propertyId + " are not comparable via " + equality);
 		}
 	}
 
-	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition, final Object propertyValue) {
+	private void validateValueCompatibility(final Object propertyId, final PropertyDefinition propertyDefinition,
+			final Object propertyValue) {
 		if (!propertyDefinition.getType().isAssignableFrom(propertyValue.getClass())) {
 			throwModelException(SimulationErrorType.INCOMPATIBLE_VALUE,
-					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName() + " and does not match definition of " + propertyId);
+					"Property value " + propertyValue + " is not of type " + propertyDefinition.getType().getName()
+							+ " and does not match definition of " + propertyId);
 		}
 	}
 
@@ -342,7 +354,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			final MaterialsProducerId materialsProducerId = materialsManager.getStageProducer(stageId);
 			validateFocalComponent(false, false, false, false, null, null, materialsProducerId);
 			validateNonnegativeResourceAmount(amount);
-			long currentResourceLevel = resourceManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+			long currentResourceLevel = resourceManager.getMaterialsProducerResourceLevel(materialsProducerId,
+					resourceId);
 			validateResourceAdditionValue(currentResourceLevel, amount);
 			mutationResolver.convertStageToResource(stageId, resourceId, amount);
 		} finally {
@@ -358,7 +371,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateFocalComponent(false, false, false, true, null, null, null);
 			validateMaterialId(materialId);
 			validateNonnegativeFiniteMaterialAmount(amount);
-			final MaterialsProducerId materialsProducerId = (MaterialsProducerId) componentManager.getFocalComponentId();
+			final MaterialsProducerId materialsProducerId = (MaterialsProducerId) componentManager
+					.getFocalComponentId();
 			return mutationResolver.createBatch(materialsProducerId, materialId, amount);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
@@ -370,7 +384,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateFocalComponent(false, false, false, true, null, null, null);
-			final MaterialsProducerId materialsProducerId = (MaterialsProducerId) componentManager.getFocalComponentId();
+			final MaterialsProducerId materialsProducerId = (MaterialsProducerId) componentManager
+					.getFocalComponentId();
 			return mutationResolver.createStage(materialsProducerId);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
@@ -440,7 +455,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public PropertyDefinition getBatchPropertyDefinition(final MaterialId materialId, final BatchPropertyId batchPropertyId) {
+	public PropertyDefinition getBatchPropertyDefinition(final MaterialId materialId,
+			final BatchPropertyId batchPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialId(materialId);
@@ -515,14 +531,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final PersonId sourcePersonId, final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction) {
+	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final PersonId sourcePersonId,
+			final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonExists(sourcePersonId);
 			validateGroupExists(groupId);
 			validateBiWeightingFunctionNotNull(biWeightingFunction);
 
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContact(groupId, sourcePersonId, excludeSourcePerson, biWeightingFunction);
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContact(groupId,
+					sourcePersonId, excludeSourcePerson, biWeightingFunction);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -535,7 +553,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId, final PersonId sourcePersonId, final boolean excludeSourcePerson,
+	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId,
+			final PersonId sourcePersonId, final boolean excludeSourcePerson,
 			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -544,8 +563,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateBiWeightingFunctionNotNull(biWeightingFunction);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContactFromGenerator(groupId, sourcePersonId, excludeSourcePerson, biWeightingFunction,
-					randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
+					.getBiWeightedContactFromGenerator(groupId, sourcePersonId, excludeSourcePerson,
+							biWeightingFunction, randomNumberGeneratorId);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -600,7 +620,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public PropertyDefinition getCompartmentPropertyDefinition(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public PropertyDefinition getCompartmentPropertyDefinition(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateCompartmentId(compartmentId);
@@ -623,7 +644,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public double getCompartmentPropertyTime(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public double getCompartmentPropertyTime(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateCompartmentId(compartmentId);
@@ -635,7 +657,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public <T> T getCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public <T> T getCompartmentPropertyValue(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateCompartmentId(compartmentId);
@@ -787,7 +810,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public PropertyDefinition getGroupPropertyDefinition(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
+	public PropertyDefinition getGroupPropertyDefinition(final GroupTypeId groupTypeId,
+			final GroupPropertyId groupPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupTypeId(groupTypeId);
@@ -948,7 +972,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public List<BatchId> getInventoryBatchesByMaterialId(final MaterialsProducerId materialsProducerId, final MaterialId materialId) {
+	public List<BatchId> getInventoryBatchesByMaterialId(final MaterialsProducerId materialsProducerId,
+			final MaterialId materialId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
@@ -980,7 +1005,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public PropertyDefinition getMaterialsProducerPropertyDefinition(final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public PropertyDefinition getMaterialsProducerPropertyDefinition(
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerPropertyId(materialsProducerPropertyId);
@@ -1001,7 +1027,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public double getMaterialsProducerPropertyTime(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public double getMaterialsProducerPropertyTime(final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
@@ -1013,7 +1040,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public <T> T getMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public <T> T getMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
@@ -1025,7 +1053,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public long getMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
+	public long getMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
@@ -1037,7 +1066,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public double getMaterialsProducerResourceTime(final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
+	public double getMaterialsProducerResourceTime(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
@@ -1049,12 +1079,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getMonoWeightedGroupContact(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction) {
+	public Optional<PersonId> getMonoWeightedGroupContact(final GroupId groupId,
+			final MonoWeightingFunction monoWeightingFunction) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validateMonoWeightingFunctionNotNull(monoWeightingFunction);
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getMonoWeightedContact(groupId, monoWeightingFunction);
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
+					.getMonoWeightedContact(groupId, monoWeightingFunction);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -1066,13 +1098,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getMonoWeightedGroupContactFromGenerator(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getMonoWeightedGroupContactFromGenerator(final GroupId groupId,
+			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validateMonoWeightingFunctionNotNull(monoWeightingFunction);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getMonoWeightedContactFromGenerator(groupId, monoWeightingFunction, randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
+					.getMonoWeightedContactFromGenerator(groupId, monoWeightingFunction, randomNumberGeneratorId);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -1100,7 +1134,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusion(final GroupId groupId, final PersonId excludedPersonId) {
+	public Optional<PersonId> getNonWeightedGroupContactWithExclusion(final GroupId groupId,
+			final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
@@ -1116,12 +1151,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactFromGenerator(final GroupId groupId, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getNonWeightedGroupContactFromGenerator(final GroupId groupId,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, null, randomNumberGeneratorId);
+			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, null,
+					randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1133,13 +1170,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId, final PersonId excludedPersonId, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId,
+			final PersonId excludedPersonId, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, excludedPersonId, randomNumberGeneratorId);
+			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, excludedPersonId,
+					randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1236,11 +1275,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonPropertyId(personPropertyId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getPersonPropertyDefinition(personPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getPersonPropertyDefinition(personPropertyId);
 			validatePersonPropertyValueNotNull(personPropertyValue);
 			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 			return propertyManager.getPeopleWithPropertyValue(personPropertyId, personPropertyValue);
@@ -1250,11 +1291,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonPropertyId(personPropertyId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getPersonPropertyDefinition(personPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getPersonPropertyDefinition(personPropertyId);
 			validatePersonPropertyValueNotNull(personPropertyValue);
 			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 			return propertyManager.getPersonCountForPropertyValue(personPropertyId, personPropertyValue);
@@ -1525,13 +1568,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonFromGenerator(final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getRandomIndexedPersonFromGenerator(final Object key,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(null, key, randomNumberGeneratorId);
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(null, key,
+					randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1542,14 +1587,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(final PersonId excludedPersonId, final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(final PersonId excludedPersonId,
+			final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(excludedPersonId, key, randomNumberGeneratorId);
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(excludedPersonId,
+					key, randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1691,7 +1738,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public PropertyDefinition getResourcePropertyDefinition(final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateResourceId(resourceId);
@@ -1822,9 +1870,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	/*
-	 * Initializes(loads into local data structures) the scenario and
-	 * replication data as well as constructs the simulations components using
-	 * the ComponentFactory
+	 * Initializes(loads into local data structures) the scenario and replication
+	 * data as well as constructs the simulations components using the
+	 * ComponentFactory
 	 */
 	@Override
 	public void init(final Context context) {
@@ -1836,6 +1884,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		componentManager = context.getComponentManager();
 		eventManager = context.getEventManager();
 		indexedPopulationManager = context.getIndexedPopulationManager();
+		populationPartitionManager = context.getPopulationPartitionManager();
 
 		observableEnvironment = context.getObservableEnvironment();
 		propertyDefinitionManager = context.getPropertyDefinitionsManager();
@@ -1936,7 +1985,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeCompartmentalPersonPropertyChange(final boolean observe, final CompartmentId compartmentId, final PersonPropertyId personPropertyId) {
+	public void observeCompartmentalPersonPropertyChange(final boolean observe, final CompartmentId compartmentId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -1949,7 +1999,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeCompartmentalPersonResourceChange(final boolean observe, final CompartmentId compartmentId, final ResourceId resourceId) {
+	public void observeCompartmentalPersonResourceChange(final boolean observe, final CompartmentId compartmentId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -1986,7 +2037,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeCompartmentPropertyChange(final boolean observe, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public void observeCompartmentPropertyChange(final boolean observe, final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2057,26 +2109,31 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeMaterialsProducerPropertyChange(final boolean observe, final MaterialsProducerId materialProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public void observeMaterialsProducerPropertyChange(final boolean observe,
+			final MaterialsProducerId materialProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
 			validateMaterialsProducerId(materialProducerId);
 			validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-			mutationResolver.observeMaterialsProducerPropertyChange(observe, materialProducerId, materialsProducerPropertyId);
+			mutationResolver.observeMaterialsProducerPropertyChange(observe, materialProducerId,
+					materialsProducerPropertyId);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
 	}
 
 	@Override
-	public void observeMaterialsProducerResourceChangeByMaterialsProducerId(final boolean observe, final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
+	public void observeMaterialsProducerResourceChangeByMaterialsProducerId(final boolean observe,
+			final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
 			validateMaterialsProducerId(materialsProducerId);
 			validateResourceId(resourceId);
-			mutationResolver.observeMaterialsProducerResourceChangeByMaterialsProducerId(observe, materialsProducerId, resourceId);
+			mutationResolver.observeMaterialsProducerResourceChangeByMaterialsProducerId(observe, materialsProducerId,
+					resourceId);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -2107,7 +2164,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observePersonPropertyChange(final boolean observe, final PersonId personId, final PersonPropertyId personPropertyId) {
+	public void observePersonPropertyChange(final boolean observe, final PersonId personId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2132,7 +2190,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observePersonResourceChange(final boolean observe, final PersonId personId, final ResourceId resourceId) {
+	public void observePersonResourceChange(final boolean observe, final PersonId personId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2169,7 +2228,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeRegionPersonPropertyChange(final boolean observe, final RegionId regionId, final PersonPropertyId personPropertyId) {
+	public void observeRegionPersonPropertyChange(final boolean observe, final RegionId regionId,
+			final PersonPropertyId personPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2182,7 +2242,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeRegionPersonResourceChange(final boolean observe, final RegionId regionId, final ResourceId resourceId) {
+	public void observeRegionPersonResourceChange(final boolean observe, final RegionId regionId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2193,11 +2254,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseWriteAccess();
 		}
 	}
-	
+
 	@Override
 	public void observeGlobalRegionPropertyChange(final boolean observe, final RegionPropertyId regionPropertyId) {
 		externalAccessManager.acquireWriteAccess();
-		try {			
+		try {
 			validateRegionPropertyId(regionPropertyId);
 			mutationResolver.observeGlobalRegionPropertyChange(observe, regionPropertyId);
 		} finally {
@@ -2205,10 +2266,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	
-	
 	@Override
-	public void observeRegionPropertyChange(final boolean observe, final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	public void observeRegionPropertyChange(final boolean observe, final RegionId regionId,
+			final RegionPropertyId regionPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateRegionId(regionId);
@@ -2220,7 +2280,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeRegionResourceChange(final boolean observe, final RegionId regionId, final ResourceId resourceId) {
+	public void observeRegionResourceChange(final boolean observe, final RegionId regionId,
+			final ResourceId resourceId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2233,7 +2294,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeResourcePropertyChange(final boolean observe, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public void observeResourcePropertyChange(final boolean observe, final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -2426,14 +2488,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
+	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId,
+			final Object batchPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateBatchId(batchId);
 			final MaterialId materialId = materialsManager.getBatchMaterial(batchId);
 			validateBatchPropertyId(materialId, batchPropertyId);
 			final MaterialsProducerId materialsProducerId = materialsManager.getBatchProducer(batchId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getBatchPropertyDefinition(materialId, batchPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getBatchPropertyDefinition(materialId, batchPropertyId);
 			validatePropertyMutability(propertyDefinition);
 			validateBatchPropertyValueNotNull(batchPropertyValue);
 			validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
@@ -2446,17 +2510,20 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
+	public void setCompartmentPropertyValue(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateCompartmentId(compartmentId);
 			validateCompartmentProperty(compartmentId, compartmentPropertyId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
 			validatePropertyMutability(propertyDefinition);
 			validateCompartmentPropertyValueNotNull(compartmentPropertyValue);
 			validateValueCompatibility(compartmentPropertyId, propertyDefinition, compartmentPropertyValue);
 			validateFocalComponent(true, false, false, false, null, compartmentId, null);
-			mutationResolver.setCompartmentPropertyValue(compartmentId, compartmentPropertyId, compartmentPropertyValue);
+			mutationResolver.setCompartmentPropertyValue(compartmentId, compartmentPropertyId,
+					compartmentPropertyValue);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -2468,7 +2535,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validateGlobalPropertyId(globalPropertyId);
 			validateGlobalPropertyValueNotNull(globalPropertyValue);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getGlobalPropertyDefinition(globalPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getGlobalPropertyDefinition(globalPropertyId);
 			validatePropertyMutability(propertyDefinition);
 			validateValueCompatibility(globalPropertyId, propertyDefinition, globalPropertyValue);
 			validateFocalComponent(true, false, false, false, null, null, null);
@@ -2479,13 +2547,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateGroupExists(groupId);
 			final GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
 			validateGroupPropertyId(groupTypeId, groupPropertyId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
 			validatePropertyMutability(propertyDefinition);
 			validateGroupPropertyValueNotNull(groupPropertyValue);
 			validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
@@ -2497,18 +2567,21 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId,
 			final Object materialsProducerPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateMaterialsProducerId(materialsProducerId);
 			validateMaterialsProducerPropertyId(materialsProducerPropertyId);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
 			validatePropertyMutability(propertyDefinition);
 			validateMaterialProducerPropertyValueNotNull(materialsProducerPropertyValue);
 			validateValueCompatibility(materialsProducerPropertyId, propertyDefinition, materialsProducerPropertyValue);
 			validateFocalComponent(true, false, false, false, null, null, materialsProducerId);
-			mutationResolver.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+			mutationResolver.setMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId,
+					materialsProducerPropertyValue);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -2532,13 +2605,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validatePersonExists(personId);
 			validatePersonPropertyId(personPropertyId);
 			validatePersonPropertyValueNotNull(personPropertyValue);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getPersonPropertyDefinition(personPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getPersonPropertyDefinition(personPropertyId);
 			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 			validatePropertyMutability(propertyDefinition);
 			final RegionId regionId = personLocationManger.getPersonRegion(personId);
@@ -2569,13 +2644,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId,
+			final Object regionPropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateRegionId(regionId);
 			validateRegionPropertyId(regionPropertyId);
 			validateRegionPropertyValueNotNull(regionPropertyValue);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getRegionPropertyDefinition(regionPropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getRegionPropertyDefinition(regionPropertyId);
 			validateValueCompatibility(regionPropertyId, propertyDefinition, regionPropertyValue);
 			validatePropertyMutability(propertyDefinition);
 			validateFocalComponent(true, false, false, false, regionId, null, null);
@@ -2586,13 +2663,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId,
+			final Object resourcePropertyValue) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateResourceId(resourceId);
 			validateResourcePropertyId(resourceId, resourcePropertyId);
 			validateResourcePropertyValueNotNull(resourcePropertyValue);
-			final PropertyDefinition propertyDefinition = propertyDefinitionManager.getResourcePropertyDefinition(resourceId, resourcePropertyId);
+			final PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 			validateValueCompatibility(resourcePropertyId, propertyDefinition, resourcePropertyValue);
 			validatePropertyMutability(propertyDefinition);
 			validateFocalComponent(true, false, false, false, null, null, null);
@@ -2728,7 +2807,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void transferOfferedStageToMaterialsProducer(final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	public void transferOfferedStageToMaterialsProducer(final StageId stageId,
+			final MaterialsProducerId materialsProducerId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateStageId(stageId);
@@ -2743,7 +2823,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void transferProducedResourceToRegion(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final RegionId regionId, final long amount) {
+	public void transferProducedResourceToRegion(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId, final RegionId regionId, final long amount) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateResourceId(resourceId);
@@ -2761,7 +2842,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void transferResourceBetweenRegions(final ResourceId resourceId, final RegionId sourceRegionId, final RegionId destinationRegionId, final long amount) {
+	public void transferResourceBetweenRegions(final ResourceId resourceId, final RegionId sourceRegionId,
+			final RegionId destinationRegionId, final long amount) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateRegionId(sourceRegionId);
@@ -2879,11 +2961,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 * <li>{@link SimulationErrorType#NULL_COMPARTMENT_ID} if the compartment id
-	 * is null
+	 * <li>{@link SimulationErrorType#NULL_COMPARTMENT_ID} if the compartment id is
+	 * null
 	 *
-	 * <li>{@link SimulationErrorType#UNKNOWN_COMPARTMENT_ID} if the compartment
-	 * id does not correspond to a known compartment
+	 * <li>{@link SimulationErrorType#UNKNOWN_COMPARTMENT_ID} if the compartment id
+	 * does not correspond to a known compartment
 	 */
 	private void validateCompartmentId(final CompartmentId compartmentId) {
 		if (compartmentId == null) {
@@ -2901,7 +2983,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validateCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	private void validateCompartmentProperty(final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
 
 		if (compartmentPropertyId == null) {
 			throwModelException(SimulationErrorType.NULL_COMPARTMENT_PROPERTY_ID);
@@ -2926,7 +3009,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	}
 
-	private void validateDifferentRegionsForResourceTransfer(final RegionId sourceRegionId, final RegionId destinationRegionId) {
+	private void validateDifferentRegionsForResourceTransfer(final RegionId sourceRegionId,
+			final RegionId destinationRegionId) {
 		if (sourceRegionId.equals(destinationRegionId)) {
 			throwModelException(SimulationErrorType.REFLEXIVE_RESOURCE_TRANSFER);
 		}
@@ -2984,13 +3068,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateEquality(equality);
 			validatePersonPropertyValueNotNull(personPropertyValue);
 
-			PropertyDefinition propertyDefinition = propertyDefinitionManager.getPersonPropertyDefinition(personPropertyId);
+			PropertyDefinition propertyDefinition = propertyDefinitionManager
+					.getPersonPropertyDefinition(personPropertyId);
 			validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
 			validateEqualityCompatibility(personPropertyId, propertyDefinition, equality);
 			break;
 		case REGION:
 			RegionFilterInfo regionFilterInfo = (RegionFilterInfo) filterInfo;
-			regionFilterInfo.getRegionIds().forEach(regionId->validateRegionId(regionId));
+			regionFilterInfo.getRegionIds().forEach(regionId -> validateRegionId(regionId));
 			break;
 		case RESOURCE:
 			ResourceFilterInfo resourceFilterInfo = (ResourceFilterInfo) filterInfo;
@@ -3008,14 +3093,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 		/*
-		 * Get a FilterInfo for the filter, decompose it into all its indivual
-		 * children and validate each child
+		 * Get a FilterInfo for the filter, decompose it into all its indivual children
+		 * and validate each child
 		 */
 		FilterInfo.getHierarchyAsList(FilterInfo.build(filter)).forEach(this::validateFilterInfo);
 	}
 
-	private void validateFocalComponent(final boolean globalAllowed, final boolean allRegionsAllowed, final boolean allCompartmentsAllowed, final boolean allMaterialsProducersAllowed,
-			final RegionId regionId, final CompartmentId compartmentId, final MaterialsProducerId materialsProducerId) {
+	private void validateFocalComponent(final boolean globalAllowed, final boolean allRegionsAllowed,
+			final boolean allCompartmentsAllowed, final boolean allMaterialsProducersAllowed, final RegionId regionId,
+			final CompartmentId compartmentId, final MaterialsProducerId materialsProducerId) {
 		/*
 		 * Determine the type of the current focus
 		 */
@@ -3110,10 +3196,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 * Validates that the group exists
 	 *
 	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#NULL_GROUP_ID} if the group id
-	 *             is null
-	 *             <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if the group
-	 *             does not exist
+	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
+	 *                        group id is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
+	 *                        the group does not exist
 	 *
 	 *
 	 */
@@ -3142,11 +3228,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 *             <li>{@link SimulationErrorType#NULL_GROUP_TYPE_ID} if the
-	 *             group type id is null
+	 *                        <li>{@link SimulationErrorType#NULL_GROUP_TYPE_ID} if
+	 *                        the group type id is null
 	 *
-	 *             <li>{@link SimulationErrorType#UNKNOWN_GROUP_TYPE_ID} if the
-	 *             group type id is unknown
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_TYPE_ID}
+	 *                        if the group type id is unknown
 	 */
 	private void validateGroupTypeId(final GroupTypeId groupTypeId) {
 
@@ -3165,11 +3251,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 * <li>{@link SimulationErrorType#NULL_MATERIAL_ID} if the material id is
-	 * null
+	 * <li>{@link SimulationErrorType#NULL_MATERIAL_ID} if the material id is null
 	 *
-	 * <li>{@link SimulationErrorType#UNKNOWN_MATERIAL_ID} if the material id
-	 * does not correspond to a known material
+	 * <li>{@link SimulationErrorType#UNKNOWN_MATERIAL_ID} if the material id does
+	 * not correspond to a known material
 	 */
 	private void validateMaterialId(final MaterialId materialId) {
 		if (materialId == null) {
@@ -3191,8 +3276,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	}
 
-	private void validateMaterialsProducerHasSufficientResource(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
-		final long materialsProducerResourceLevel = resourceManager.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+	private void validateMaterialsProducerHasSufficientResource(final MaterialsProducerId materialsProducerId,
+			final ResourceId resourceId, final long amount) {
+		final long materialsProducerResourceLevel = resourceManager
+				.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
 		if (materialsProducerResourceLevel < amount) {
 			throwModelException(SimulationErrorType.INSUFFICIENT_RESOURCES_AVAILABLE);
 		}
@@ -3203,8 +3290,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 * <li>{@link SimulationErrorType#NULL_MATERIALS_PRODUCER_ID} if the
-	 * materials Producer id is null
+	 * <li>{@link SimulationErrorType#NULL_MATERIALS_PRODUCER_ID} if the materials
+	 * Producer id is null
 	 *
 	 * <li>{@link SimulationErrorType#UNKNOWN_MATERIALS_PRODUCER_ID} if the
 	 * materials Producer id does not correspond to a known material producer
@@ -3224,7 +3311,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			throwModelException(SimulationErrorType.NULL_MATERIALS_PRODUCER_PROPERTY_ID);
 		}
 		if (!materialsProducerPropertyIds.contains(materialsProducerPropertyId)) {
-			throwModelException(SimulationErrorType.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
+			throwModelException(SimulationErrorType.UNKNOWN_MATERIALS_PRODUCER_PROPERTY_ID,
+					materialsProducerPropertyId);
 		}
 	}
 
@@ -3272,7 +3360,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validatePersonHasSufficientResources(final ResourceId resourceId, final PersonId personId, final long amount) {
+	private void validatePersonHasSufficientResources(final ResourceId resourceId, final PersonId personId,
+			final long amount) {
 		final long oldValue = resourceManager.getPersonResourceLevel(resourceId, personId);
 		if (oldValue < amount) {
 			throwModelException(SimulationErrorType.INSUFFICIENT_RESOURCES_AVAILABLE);
@@ -3281,7 +3370,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validatePersonInGroup(final PersonId personId, final GroupId groupId) {
 		if (!personGroupManger.isGroupMember(groupId, personId)) {
-			throwModelException(SimulationErrorType.NON_GROUP_MEMBERSHIP, "Person " + personId + " is not a member of group " + groupId);
+			throwModelException(SimulationErrorType.NON_GROUP_MEMBERSHIP,
+					"Person " + personId + " is not a member of group " + groupId);
 		}
 	}
 
@@ -3294,7 +3384,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validatePersonNotInGroup(final PersonId personId, final GroupId groupId) {
 		if (personGroupManger.isGroupMember(groupId, personId)) {
-			throwModelException(SimulationErrorType.DUPLICATE_GROUP_MEMBERSHIP, "Person " + personId + " is already a member of group " + groupId);
+			throwModelException(SimulationErrorType.DUPLICATE_GROUP_MEMBERSHIP,
+					"Person " + personId + " is already a member of group " + groupId);
 		}
 	}
 
@@ -3306,7 +3397,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	private void validatePersonPropertyAssignmentTimesTracked(final PersonPropertyId personPropertyId) {
-		final PropertyDefinition personPropertyDefinition = propertyDefinitionManager.getPersonPropertyDefinition(personPropertyId);
+		final PropertyDefinition personPropertyDefinition = propertyDefinitionManager
+				.getPersonPropertyDefinition(personPropertyId);
 		if (personPropertyDefinition.getTimeTrackingPolicy() != TimeTrackingPolicy.TRACK_TIME) {
 			throwModelException(SimulationErrorType.PROPERTY_ASSIGNMENT_TIME_NOT_TRACKED);
 		}
@@ -3398,7 +3490,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validateProducersMatchForShift(final BatchId sourceBatchId, final BatchId destinationBatchId) {
 		final MaterialsProducerId sourceMaterialsProducerId = materialsManager.getBatchProducer(sourceBatchId);
-		final MaterialsProducerId destinationMaterialsProducerId = materialsManager.getBatchProducer(destinationBatchId);
+		final MaterialsProducerId destinationMaterialsProducerId = materialsManager
+				.getBatchProducer(destinationBatchId);
 
 		if (!sourceMaterialsProducerId.equals(destinationMaterialsProducerId)) {
 			throwModelException(SimulationErrorType.BATCH_SHIFT_WITH_MULTIPLE_OWNERS);
@@ -3406,7 +3499,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	}
 
-	private void validateRegionHasSufficientResources(final ResourceId resourceId, final RegionId regionId, final long amount) {
+	private void validateRegionHasSufficientResources(final ResourceId resourceId, final RegionId regionId,
+			final long amount) {
 		final long currentAmount = resourceManager.getRegionResourceLevel(regionId, resourceId);
 		if (currentAmount < amount) {
 			throwModelException(SimulationErrorType.INSUFFICIENT_RESOURCES_AVAILABLE);
@@ -3420,8 +3514,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * <li>{@link SimulationErrorType#NULL_REGION_ID} if the region id is null
 	 *
-	 * <li>{@link SimulationErrorType#UNKNOWN_REGION_ID} if the region id does
-	 * not correspond to a known region
+	 * <li>{@link SimulationErrorType#UNKNOWN_REGION_ID} if the region id does not
+	 * correspond to a known region
 	 */
 	private void validateRegionId(final RegionId regionId) {
 
@@ -3448,11 +3542,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 * <li>{@link SimulationErrorType#NULL_RESOURCE_ID} if the resource id is
-	 * null
+	 * <li>{@link SimulationErrorType#NULL_RESOURCE_ID} if the resource id is null
 	 *
-	 * <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if the resource id
-	 * does not correspond to a known resource
+	 * <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if the resource id does
+	 * not correspond to a known resource
 	 */
 	private void validateResourceId(final ResourceId resourceId) {
 		if (resourceId == null) {
@@ -3468,19 +3561,19 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 *
 	 * @throws ModelException
 	 *
-	 * <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID} if the
-	 * random number generator id is null
+	 * <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID} if the random
+	 * number generator id is null
 	 *
 	 * <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID} if the
 	 * random number generator id does not correspond to a known random number
 	 * generator id
 	 */
-	private void validateRandomNumberGeneratorId(final RandomNumberGeneratorId resourceId) {
-		if (resourceId == null) {
+	private void validateRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId) {
+		if (randomNumberGeneratorId == null) {
 			throwModelException(SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 		}
-		if (!randomNumberGeneratorIds.contains(resourceId)) {
-			throwModelException(SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, resourceId);
+		if (!randomNumberGeneratorIds.contains(randomNumberGeneratorId)) {
+			throwModelException(SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
 		}
 	}
 
@@ -3543,7 +3636,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validateStageNotOwnedByReceivingMaterialsProducer(final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	private void validateStageNotOwnedByReceivingMaterialsProducer(final StageId stageId,
+			final MaterialsProducerId materialsProducerId) {
 		final MaterialsProducerId stageProducer = materialsManager.getStageProducer(stageId);
 		if (materialsProducerId.equals(stageProducer)) {
 			throwModelException(SimulationErrorType.REFLEXIVE_STAGE_TRANSFER);
@@ -3635,7 +3729,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupArrivalByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId, final PersonId personId) {
+	public void observeGroupArrivalByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId,
+			final PersonId personId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3648,7 +3743,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupArrivalByGroupAndPerson(final boolean observe, final GroupId groupId, final PersonId personId) {
+	public void observeGroupArrivalByGroupAndPerson(final boolean observe, final GroupId groupId,
+			final PersonId personId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3708,7 +3804,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupDepartureByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId, final PersonId personId) {
+	public void observeGroupDepartureByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId,
+			final PersonId personId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3721,7 +3818,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupDepartureByGroupAndPerson(final boolean observe, final GroupId groupId, final PersonId personId) {
+	public void observeGroupDepartureByGroupAndPerson(final boolean observe, final GroupId groupId,
+			final PersonId personId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3815,7 +3913,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupPropertyChangeByTypeAndProperty(final boolean observe, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId) {
+	public void observeGroupPropertyChangeByTypeAndProperty(final boolean observe, final GroupTypeId groupTypeId,
+			final GroupPropertyId groupPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3840,7 +3939,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeGroupPropertyChangeByGroupAndProperty(final boolean observe, final GroupId groupId, final GroupPropertyId groupPropertyId) {
+	public void observeGroupPropertyChangeByGroupAndProperty(final boolean observe, final GroupId groupId,
+			final GroupPropertyId groupPropertyId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
@@ -3892,7 +3992,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeStageTransferBySourceMaterialsProducerId(boolean observe, MaterialsProducerId sourceMaterialsProducerId) {
+	public void observeStageTransferBySourceMaterialsProducerId(boolean observe,
+			MaterialsProducerId sourceMaterialsProducerId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateMaterialsProducerId(sourceMaterialsProducerId);
@@ -3905,12 +4006,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void observeStageTransferByDestinationMaterialsProducerId(boolean observe, MaterialsProducerId destinationMaterialsProducerId) {
+	public void observeStageTransferByDestinationMaterialsProducerId(boolean observe,
+			MaterialsProducerId destinationMaterialsProducerId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateMaterialsProducerId(destinationMaterialsProducerId);
 			validateComponentHasFocus();
-			mutationResolver.observeStageTransferByDestinationMaterialsProducerId(observe, destinationMaterialsProducerId);
+			mutationResolver.observeStageTransferByDestinationMaterialsProducerId(observe,
+					destinationMaterialsProducerId);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -3948,7 +4051,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void addGlobalComponent(GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
+	public void addGlobalComponent(GlobalComponentId globalComponentId,
+			Class<? extends Component> globalComponentClass) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateNewGlobalComponentId(globalComponentId);
@@ -3959,4 +4063,212 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
+	private void validatePopulationPartitionExists(final Object key) {
+		if (!populationPartitionManager.populationPartitionExists(key)) {
+			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY, key);
+		}
+	}
+
+	private void validatePopulationPartitionQuery(Object key, PopulationPartitionQuery populationPartitionQuery) {
+		if (populationPartitionQuery == null) {
+			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_QUERY, key);
+		}
+		if (!populationPartitionManager.validatePopulationPartitionQuery(key, populationPartitionQuery)) {
+			throwModelException(SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY, key);
+		}
+	}
+
+	@Override
+	public List<PersonId> getPartitionPeople(Object key, PopulationPartitionQuery populationPartitionQuery) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			return populationPartitionManager.getPartitionPeople(key, populationPartitionQuery);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	private void validatePopulationPartitionDefinition(
+			final PopulationPartitionDefinition populationPartitionDefinition) {
+		if (populationPartitionDefinition == null) {
+			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
+		}
+
+		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
+			validatePersonPropertyId(personPropertyId);
+		}
+
+		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
+			validateResourceId(resourceId);
+		}
+
+	}
+
+	private void validatePopulationPartitionKeyNotNull(final Object key) {
+		if (key == null) {
+			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+		}
+	}
+
+	private void validatePopulationPartitionDoesNotExist(final Object key) {
+		if (populationPartitionManager.populationPartitionExists(key)) {
+			throwModelException(SimulationErrorType.DUPLICATE_POPULATION_PARTITION, key);
+		}
+	}
+
+	@Override
+	public void addPopulationPartition(PopulationPartitionDefinition populationPartitionDefinition, Object key) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validateComponentHasFocus();
+			validatePopulationPartitionDefinition(populationPartitionDefinition);
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionDoesNotExist(key);
+			mutationResolver.addPopulationPartition(componentManager.getFocalComponentId(),
+					populationPartitionDefinition, key);
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}
+	}
+
+	@Override
+	public int getPartitionSize(final Object key, PopulationPartitionQuery populationPartitionQuery) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			return populationPartitionManager.getPartitionSize(key, populationPartitionQuery);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	private void validatePopulationPartitionIsOwnedByFocalComponent(final Object key) {
+		if (!populationPartitionManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {
+			throwModelException(SimulationErrorType.POPULATION_PARTITION_DELETION_BY_NON_OWNER, key);
+		}
+	}
+
+	@Override
+	public void removePopulationPartition(final Object key) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionIsOwnedByFocalComponent(key);
+			mutationResolver.removePopulationPartition(key);
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}
+	}
+
+	@Override
+	public boolean populationPartitionExists(Object key) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			return populationPartitionManager.populationPartitionExists(key);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	@Override
+	public boolean personIsInPopulationPartition(PersonId personId, Object key,
+			PopulationPartitionQuery populationPartitionQuery) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePersonExists(personId);
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			return populationPartitionManager.personInPartition(personId, key, populationPartitionQuery);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	@Override
+	public Optional<PersonId> getRandomPartitionedPerson(Object key,
+			PopulationPartitionQuery populationPartitionQuery) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(null, key,
+					populationPartitionQuery);
+			if (personId == null) {
+				return Optional.empty();
+			}
+			return Optional.of(personId);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	@Override
+	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(Object key,
+			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(null, key,
+					populationPartitionQuery, randomNumberGeneratorId);
+			if (personId == null) {
+				return Optional.empty();
+			}
+			return Optional.of(personId);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	@Override
+	public Optional<PersonId> getRandomPartitionedPersonWithExclusion(PersonId excludedPersonId, Object key,
+			PopulationPartitionQuery populationPartitionQuery) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validatePersonExists(excludedPersonId);
+			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(excludedPersonId, key,
+					populationPartitionQuery);
+			if (personId == null) {
+				return Optional.empty();
+			}
+			return Optional.of(personId);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	@Override
+	public Optional<PersonId> getRandomPartitionedPersonWithExclusionFromGenerator(PersonId excludedPersonId,
+			Object key, PopulationPartitionQuery populationPartitionQuery,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validatePersonExists(excludedPersonId);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(excludedPersonId,
+					key, populationPartitionQuery, randomNumberGeneratorId);
+			if (personId == null) {
+				return Optional.empty();
+			}
+			return Optional.of(personId);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
 }

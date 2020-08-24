@@ -8,6 +8,7 @@ import java.util.Set;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
 public final class PopulationPartitionQuery {
@@ -75,6 +76,7 @@ public final class PopulationPartitionQuery {
 	}
 
 	@Override
+	@SourceMethod(status = TestStatus.UNREQUIRED)
 	public String toString() {
 		return "PopulationPartitionQuery [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel
 				+ ", groupLabel=" + groupLabel + ", personPropertyLabels=" + personPropertyLabels

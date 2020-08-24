@@ -4237,8 +4237,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
 			validatePersonExists(excludedPersonId);
+			validatePopulationPartitionQuery(key, populationPartitionQuery);			
 			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(excludedPersonId, key,
 					populationPartitionQuery);
 			if (personId == null) {

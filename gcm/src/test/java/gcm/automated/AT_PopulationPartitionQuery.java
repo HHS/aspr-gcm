@@ -3,7 +3,9 @@ package gcm.automated;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -186,8 +188,8 @@ public class AT_PopulationPartitionQuery {
 	}
 
 	/**
-	 * Tests
-	 * {@linkplain PopulationPartitionQuery#getPersonPropertyLabel(gcm.scenario.PersonPropertyId)
+	 * Tests {@linkplain
+	 * PopulationPartitionQuery#getPersonPropertyLabel(gcm.scenario.PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyLabel", args = { PersonPropertyId.class })
@@ -227,4 +229,44 @@ public class AT_PopulationPartitionQuery {
 			assertEquals(expectedResourceLabel, actualResourceLabel);
 		}
 	}
+
+	/**
+	 * Tests {@linkplain PopulationPartitionQuery#equals(Object)
+	 */
+	@Test
+	@UnitTestMethod(name = "equals", args = { Object.class })
+	public void testEquals() {
+		PopulationPartitionQuery partitionQuery1 = PopulationPartitionQuery.builder()
+				.setCompartmentLabel("compartment label").build();
+
+		PopulationPartitionQuery partitionQuery2 = PopulationPartitionQuery.builder()
+				.setCompartmentLabel("compartment label").build();
+
+		PopulationPartitionQuery partitionQuery3 = PopulationPartitionQuery.builder()
+				.setRegionLabel("compartment label").build();
+
+		assertFalse(partitionQuery1 == partitionQuery2);
+		assertTrue(partitionQuery1.equals(partitionQuery1));
+		assertTrue(partitionQuery1.equals(partitionQuery2));
+		assertTrue(partitionQuery2.equals(partitionQuery1));
+		assertFalse(partitionQuery1.equals(partitionQuery3));
+
+	}
+
+	/**
+	 * Tests {@linkplain PopulationPartitionQuery#hashCode()
+	 */
+	@Test
+	@UnitTestMethod(name = "hashCode", args = {})
+	public void testHashCode() {
+		PopulationPartitionQuery partitionQuery1 = PopulationPartitionQuery.builder()
+				.setCompartmentLabel("compartment label").build();
+
+		PopulationPartitionQuery partitionQuery2 = PopulationPartitionQuery.builder()
+				.setCompartmentLabel("compartment label").build();
+		
+		assertFalse(partitionQuery1 == partitionQuery2);
+		assertEquals(partitionQuery1.hashCode(), partitionQuery2.hashCode());
+	}
+
 }

@@ -55,21 +55,18 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 				componentId);
 
 		populationPartitions.put(key, populationPartition);
-
-		for (PersonId personId : context.getPersonIdManager().getPeople()) {
-			populationPartition.handleAddPerson(personId);
-		}
+		
+		populationPartition.init();
 	}
 
 	@Override
 	public List<PersonId> getPartitionPeople(Object key, PopulationPartitionQuery populationPartitionQuery) {
-		// TODO list vs set
-		return new ArrayList<>(populationPartitions.get(key).getPeople(populationPartitionQuery));
+		return populationPartitions.get(key).getPeople(populationPartitionQuery);
 	}
 
 	@Override
 	public int getPartitionSize(Object key, PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).getPeople(populationPartitionQuery).size();
+		return populationPartitions.get(key).getPeopleCount(populationPartitionQuery);
 	}
 
 	@Override
@@ -87,7 +84,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 
 	@Override
 	public boolean personInPartition(PersonId personId, Object key, PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).getPeople(populationPartitionQuery).contains(personId);
+		return populationPartitions.get(key).contains(personId, populationPartitionQuery);
 	}
 
 	@Override

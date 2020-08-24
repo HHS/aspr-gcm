@@ -3,10 +3,8 @@ package gcm.simulation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -18,6 +16,8 @@ import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
+import gcm.util.containers.BasePeopleContainer;
+import gcm.util.containers.PeopleContainer;
 
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PopulationPartition {
@@ -25,10 +25,10 @@ public final class PopulationPartition {
 	private static class Key {
 		private Object[] keys;
 
-		private Key(Key key) {			
+		private Key(Key key) {
 			this.keys = Arrays.copyOf(key.keys, key.keys.length);
 		}
-		
+
 		private Key(int size) {
 			keys = new Object[size];
 		}
@@ -80,17 +80,22 @@ public final class PopulationPartition {
 
 	private Map<ResourceId, Integer> resourceLabelIndexes = new LinkedHashMap<>();
 
-	private Map<Key, Set<PersonId>> keyToPeopleMap = new LinkedHashMap<>();
+	// private Map<Key, Set<PersonId>> keyToPeopleMap = new LinkedHashMap<>();
+	private Map<Key, PeopleContainer> keyToPeopleMap = new LinkedHashMap<>();
 
 	private List<Key> personToKeyMap = new ArrayList<>();
 
-	private Map<Key,Key> keyMap = new LinkedHashMap<>();
+	private Map<Key, Key> keyMap = new LinkedHashMap<>();
 
 	private ComponentId owningComponentId;
 
 	private final PopulationPartitionDefinition populationPartitionDefinition;
 
 	private final Environment environment;
+
+	private PersonIdManager personIdManager;
+
+	private final Context context;
 
 	public ComponentId getOwningComponentId() {
 		return owningComponentId;
@@ -100,6 +105,8 @@ public final class PopulationPartition {
 
 	public PopulationPartition(final Context context, final PopulationPartitionDefinition populationPartitionDefinition,
 			final ComponentId owningComponentId) {
+		this.context = context;
+		this.personIdManager = context.getPersonIdManager();
 		this.stochasticsManager = context.getStochasticsManager();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.populationPartitionDefinition = populationPartitionDefinition;
@@ -139,7 +146,7 @@ public final class PopulationPartition {
 	}
 
 	private Key buildKey(Key key, int index, Object newLabel) {
-		Key result = new Key(key);				
+		Key result = new Key(key);
 		result.keys[index] = newLabel;
 		return result;
 	}
@@ -185,7 +192,7 @@ public final class PopulationPartition {
 		if (cleanedKey == null) {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
-			keyToPeopleMap.put(cleanedKey, new LinkedHashSet<>());
+			keyToPeopleMap.put(cleanedKey, new BasePeopleContainer(context));
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
 		keyToPeopleMap.get(cleanedKey).add(personId);
@@ -198,9 +205,9 @@ public final class PopulationPartition {
 	public void handleRemovePerson(PersonId personId) {
 		Key key = personToKeyMap.get(personId.getValue());
 		personToKeyMap.set(personId.getValue(), null);
-		Set<PersonId> people = keyToPeopleMap.get(key);
-		people.remove(personId);
-		if (people.isEmpty()) {
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		peopleContainer.remove(personId);
+		if (peopleContainer.size() == 0) {
 			keyToPeopleMap.remove(key);
 			keyMap.remove(key);
 		}
@@ -364,7 +371,7 @@ public final class PopulationPartition {
 		if (cleanedNewKey == null) {
 			cleanedNewKey = newKey;
 			keyMap.put(cleanedNewKey, cleanedNewKey);
-			keyToPeopleMap.put(cleanedNewKey, new LinkedHashSet<>());
+			keyToPeopleMap.put(cleanedNewKey, new BasePeopleContainer(context));
 		}
 		keyToPeopleMap.get(currentKey).remove(personId);
 		keyToPeopleMap.get(cleanedNewKey).add(personId);
@@ -407,25 +414,31 @@ public final class PopulationPartition {
 	 */
 	public PersonId getRandomPersonId(final PersonId excludedPersonId,
 			PopulationPartitionQuery populationPartitionQuery) {
-		Set<PersonId> people = getPeople(populationPartitionQuery);
+		
+		Key key = getKey(populationPartitionQuery);
+
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		
+		if (peopleContainer == null) {
+			return null;
+		}
 
 		/*
 		 * Since we are potentially excluding a person, we need to determine how many
 		 * candidates are available. To avoid an infinite loop, we must not have zero
 		 * candidates.
 		 */
-		int candidateCount = people.size();
+		int candidateCount = peopleContainer.size();
 		if (excludedPersonId != null) {
-			if (people.contains(excludedPersonId)) {
+			if (peopleContainer.contains(excludedPersonId)) {
 				candidateCount--;
 			}
 		}
 		PersonId result = null;
 		if (candidateCount > 0) {
+			RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
 			while (true) {
-				RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-				List<PersonId> candidates = new ArrayList<>(people);
-				result = candidates.get(randomGenerator.nextInt(candidates.size()));
+				result = peopleContainer.getRandomPersonId(randomGenerator);				
 				if (!result.equals(excludedPersonId)) {
 					break;
 				}
@@ -443,42 +456,51 @@ public final class PopulationPartition {
 
 	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
 			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
-		Set<PersonId> people = getPeople(populationPartitionQuery);
+		
+		Key key = getKey(populationPartitionQuery);
+
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		
+		if (peopleContainer == null) {
+			return null;
+		}
 
 		/*
 		 * Since we are potentially excluding a person, we need to determine how many
 		 * candidates are available. To avoid an infinite loop, we must not have zero
 		 * candidates.
 		 */
-		int candidateCount = people.size();
+		int candidateCount = peopleContainer.size();
 		if (excludedPersonId != null) {
-			if (people.contains(excludedPersonId)) {
+			if (peopleContainer.contains(excludedPersonId)) {
 				candidateCount--;
 			}
 		}
 		PersonId result = null;
 		if (candidateCount > 0) {
+			RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 			while (true) {
-				RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-				List<PersonId> candidates = new ArrayList<>(people);
-				result = candidates.get(randomGenerator.nextInt(candidates.size()));
+				result = peopleContainer.getRandomPersonId(randomGenerator);				
 				if (!result.equals(excludedPersonId)) {
 					break;
 				}
 			}
 		}
 		return result;
+		
 	}
 
-	/**
-	 * 
-	 * 
-	 * Precondition: the population partition query must match the population
-	 * partition definition
-	 * 
-	 */
-	public Set<PersonId> getPeople(PopulationPartitionQuery populationPartitionQuery) {
+	public int getPeopleCount(PopulationPartitionQuery populationPartitionQuery) {
+		Key key = getKey(populationPartitionQuery);
 
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		if (peopleContainer == null) {
+			return 0;
+		}
+		return peopleContainer.size();
+	}
+
+	private Key getKey(PopulationPartitionQuery populationPartitionQuery) {
 		Key key = new Key(keySize);
 		int index = 0;
 		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
@@ -498,17 +520,49 @@ public final class PopulationPartition {
 		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
 			key.keys[index++] = populationPartitionQuery.getPersonResourceLabel(resourceId);
 		}
-		
+
 		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
 			Object groupLabel = populationPartitionQuery.getGroupLabel();
 			key.keys[index++] = groupLabel;
 		}
+		return key;
+	}
+	
+	public boolean contains(PersonId personId, PopulationPartitionQuery populationPartitionQuery) {
 
-		Set<PersonId> result = keyToPeopleMap.get(key);
-		if (result == null) {
-			result = new LinkedHashSet<>();
+		Key key = getKey(populationPartitionQuery);
+
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		
+		if (peopleContainer == null) {
+			return false;
 		}
-		return result;
+		return peopleContainer.contains(personId);
+	}
+
+	/**
+	 * 
+	 * 
+	 * Precondition: the population partition query must match the population
+	 * partition definition
+	 * 
+	 */
+	public List<PersonId> getPeople(PopulationPartitionQuery populationPartitionQuery) {
+
+		Key key = getKey(populationPartitionQuery);
+
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		
+		if (peopleContainer == null) {
+			return new ArrayList<>();
+		}
+		return peopleContainer.getPeople();
+	}
+
+	public void init() {
+		for (PersonId personId : personIdManager.getPeople()) {
+			handleAddPerson(personId);
+		}
 	}
 
 }

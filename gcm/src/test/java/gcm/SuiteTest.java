@@ -82,6 +82,7 @@ import gcm.automated.AT_SphericalPolygon;
 import gcm.automated.AT_SphericalTriangle;
 import gcm.automated.AT_StochasticPersonSelection;
 import gcm.automated.AT_StructuredScenarioBuilder;
+import gcm.automated.AT_Tuplator;
 import gcm.automated.AT_UnstructuredScenarioBuilder;
 import gcm.automated.AT_Vector2D;
 import gcm.automated.AT_Vector3D;
@@ -182,7 +183,8 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_Replication.class,
 	AT_GroupTypeCountMap.class,
 	AT_PopulationPartitionDefinition.class,
-	AT_PopulationPartitionQuery.class
+	AT_PopulationPartitionQuery.class,
+	AT_Tuplator.class
 	})
 
 public class SuiteTest {

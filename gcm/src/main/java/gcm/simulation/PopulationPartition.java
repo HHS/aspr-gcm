@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -14,6 +15,7 @@ import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
+import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.containers.BasePeopleContainer;
@@ -22,8 +24,56 @@ import gcm.util.containers.PeopleContainer;
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PopulationPartition {
 
+	private static class LabelCounter {
+		int count;
+	}
+
+	private static class LabelManager {
+
+		private Map<Object, LabelCounter> labels = new LinkedHashMap<>();
+		private List<Object> labelList = new ArrayList<>();
+
+		public void addLabel(Object label) {
+			LabelCounter labelCounter = labels.get(label);
+			if (labelCounter == null) {
+				labelList.add(label);
+				labelCounter = new LabelCounter();
+				labels.put(label, labelCounter);
+			}
+			labelCounter.count++;
+		}
+
+		public void removeLabel(Object label) {
+			LabelCounter labelCounter = labels.get(label);
+			labelCounter.count--;
+			if (labelCounter.count == 0) {
+				labels.remove(label);
+				labelList.remove(label);
+			}
+		}
+
+		public int getLabelCount() {
+			return labelList.size();
+		}
+
+		public Object getLabel(int index) {
+			return labelList.get(index);
+		}
+
+	}
+
 	private static class Key {
+
 		private Object[] keys;
+
+		public boolean isPartialKey() {
+			for (int i = 0; i < keys.length; i++) {
+				if (keys[i] == null) {
+					return true;
+				}
+			}
+			return false;
+		}
 
 		private Key(Key key) {
 			this.keys = Arrays.copyOf(key.keys, key.keys.length);
@@ -66,6 +116,11 @@ public final class PopulationPartition {
 			return true;
 		}
 
+		@Override
+		public String toString() {
+			return "Key [keys=" + Arrays.toString(keys) + "]";
+		}
+
 	}
 
 	private final int keySize;
@@ -80,12 +135,13 @@ public final class PopulationPartition {
 
 	private Map<ResourceId, Integer> resourceLabelIndexes = new LinkedHashMap<>();
 
-	// private Map<Key, Set<PersonId>> keyToPeopleMap = new LinkedHashMap<>();
 	private Map<Key, PeopleContainer> keyToPeopleMap = new LinkedHashMap<>();
 
 	private List<Key> personToKeyMap = new ArrayList<>();
 
 	private Map<Key, Key> keyMap = new LinkedHashMap<>();
+
+	private LabelManager[] labelManagers;
 
 	private ComponentId owningComponentId;
 
@@ -143,6 +199,11 @@ public final class PopulationPartition {
 		}
 
 		keySize = size;
+
+		labelManagers = new LabelManager[keySize];
+		for (int i = 0; i < keySize; i++) {
+			labelManagers[i] = new LabelManager();
+		}
 	}
 
 	private Key buildKey(Key key, int index, Object newLabel) {
@@ -193,6 +254,11 @@ public final class PopulationPartition {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
 			keyToPeopleMap.put(cleanedKey, new BasePeopleContainer(context));
+
+		}
+		for (int i = 0; i < keySize; i++) {
+			LabelManager labelManager = labelManagers[i];
+			labelManager.addLabel(cleanedKey.keys[i]);
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
 		keyToPeopleMap.get(cleanedKey).add(personId);
@@ -211,10 +277,14 @@ public final class PopulationPartition {
 			keyToPeopleMap.remove(key);
 			keyMap.remove(key);
 		}
+		for (int i = 0; i < keySize; i++) {
+			LabelManager labelManager = labelManagers[i];
+			labelManager.removeLabel(key.keys[i]);
+		}
+
 	}
 
 	public void handleRegionChange(PersonId personId) {
-
 		if (regionLabelIndex < 0) {
 			return;
 		}
@@ -235,6 +305,10 @@ public final class PopulationPartition {
 		if (currentRegionLabel.equals(newRegionLabel)) {
 			return;
 		}
+
+		LabelManager labelManager = labelManagers[regionLabelIndex];
+		labelManager.removeLabel(currentRegionLabel);
+		labelManager.addLabel(newRegionLabel);
 
 		// build the new key from the person
 		Key newKey = buildKey(currentKey, regionLabelIndex, newRegionLabel);
@@ -265,6 +339,10 @@ public final class PopulationPartition {
 			return;
 		}
 
+		LabelManager labelManager = labelManagers[personPropertyLabelIndex];
+		labelManager.removeLabel(currentPropertyLabel);
+		labelManager.addLabel(newPropertyLabel);
+
 		// build the new key from the person
 		Key newKey = buildKey(currentKey, personPropertyLabelIndex, newPropertyLabel);
 
@@ -294,6 +372,10 @@ public final class PopulationPartition {
 			return;
 		}
 
+		LabelManager labelManager = labelManagers[resourceLabelIndex];
+		labelManager.removeLabel(currentResourceLabel);
+		labelManager.addLabel(newResourceLabel);
+
 		// build the new key from the person
 		Key newKey = buildKey(currentKey, resourceLabelIndex, newResourceLabel);
 
@@ -301,7 +383,6 @@ public final class PopulationPartition {
 	}
 
 	public void handleCompartmentChange(PersonId personId) {
-
 		if (compartmentLabelIndex < 0) {
 			return;
 		}
@@ -322,6 +403,9 @@ public final class PopulationPartition {
 		if (currentCompartmentLabel.equals(newCompartmentLabel)) {
 			return;
 		}
+		LabelManager labelManager = labelManagers[compartmentLabelIndex];
+		labelManager.removeLabel(currentCompartmentLabel);
+		labelManager.addLabel(newCompartmentLabel);
 
 		// build the new key from the person
 		Key newKey = buildKey(currentKey, compartmentLabelIndex, newCompartmentLabel);
@@ -330,7 +414,6 @@ public final class PopulationPartition {
 	}
 
 	public void handleGroupMembershipChange(PersonId personId) {
-
 		if (groupLabelIndex < 0) {
 			return;
 		}
@@ -360,6 +443,10 @@ public final class PopulationPartition {
 			return;
 		}
 
+		LabelManager labelManager = labelManagers[groupLabelIndex];
+		labelManager.removeLabel(currentGroupLabel);
+		labelManager.addLabel(newGroupLabel);
+
 		// build the new key from the person
 		Key newKey = buildKey(currentKey, groupLabelIndex, newGroupLabel);
 
@@ -381,29 +468,79 @@ public final class PopulationPartition {
 	public boolean validatePopulationPartitionQuery(PopulationPartitionQuery populationPartitionQuery) {
 		boolean b1 = populationPartitionDefinition.getRegionPartitionFunction() == null;
 		boolean b2 = populationPartitionQuery.getRegionLabel() == null;
-		if (b1 != b2) {
+		if (b1 && !b2) {
 			return false;
 		}
 
 		b1 = populationPartitionDefinition.getCompartmentPartitionFunction() == null;
 		b2 = populationPartitionQuery.getCompartmentLabel() == null;
-		if (b1 != b2) {
+		if (b1 && !b2) {
 			return false;
 		}
 
-		b1 = populationPartitionDefinition.getPersonPropertyIds()
-				.equals(populationPartitionQuery.getPersonPropertyIds());
-		if (!b1) {
-			return false;
+		Set<PersonPropertyId> allowedPersonPropertyIds = populationPartitionDefinition.getPersonPropertyIds();
+		for (PersonPropertyId personPropertyId : populationPartitionQuery.getPersonPropertyIds()) {
+			if (!allowedPersonPropertyIds.contains(personPropertyId)) {
+				return false;
+			}
 		}
 
-		b1 = populationPartitionDefinition.getPersonResourceIds()
-				.equals(populationPartitionQuery.getPersonResourceIds());
-		if (!b1) {
-			return false;
+		Set<ResourceId> allowedPersonResourceIds = populationPartitionDefinition.getPersonResourceIds();
+		for (ResourceId resourceId : populationPartitionQuery.getPersonResourceIds()) {
+			if (!allowedPersonResourceIds.contains(resourceId)) {
+				return false;
+			}
 		}
 
 		return true;
+	}
+
+	/*
+	 * Returns a list of non-partial keys from the given partial key where each full
+	 * key is currently present in the key map and is associated with a Population Container.
+	 */
+	private List<Key> getFullKeys(Key partialKey) {
+
+		List<Key> result = new ArrayList<>();
+
+		int dimensionCount = 0;
+		for (int i = 0; i < keySize; i++) {
+			if (partialKey.keys[i] == null) {
+				dimensionCount++;
+			}
+		}
+		int[] tuple = new int[dimensionCount];
+		int[] keyIndexes = new int[dimensionCount];
+		int index = 0;
+		for (int i = 0; i < keySize; i++) {
+			if (partialKey.keys[i] == null) {
+				keyIndexes[index++] = i;
+			}
+		}
+
+		Tuplator.Builder builder = Tuplator.builder();
+		for (int i = 0; i < dimensionCount; i++) {
+			int labelIndex = keyIndexes[i];
+			LabelManager labelManager = labelManagers[labelIndex];
+			builder.addDimension(labelManager.getLabelCount());
+		}
+		Tuplator tuplator = builder.build();
+
+		for (int i = 0; i < tuplator.size(); i++) {
+			tuplator.getTuple(i, tuple);
+			Key fullKey = new Key(partialKey);
+			for (int j = 0; j < dimensionCount; j++) {
+				LabelManager labelManager = labelManagers[keyIndexes[j]];
+				fullKey.keys[keyIndexes[j]] = labelManager.getLabel(tuple[j]);
+			}
+			fullKey = keyMap.get(fullKey);
+			if (fullKey != null) {
+				result.add(fullKey);
+			}
+		}
+
+		return result;
+
 	}
 
 	/**
@@ -414,11 +551,30 @@ public final class PopulationPartition {
 	 */
 	public PersonId getRandomPersonId(final PersonId excludedPersonId,
 			PopulationPartitionQuery populationPartitionQuery) {
-		
-		Key key = getKey(populationPartitionQuery);
 
+		Key key = getKey(populationPartitionQuery);
+		Key selectedKey = key;
+		if (key.isPartialKey()) {
+			List<Key> fullKeys = getFullKeys(key);
+			int personCount = 0;
+			RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
+
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				personCount += peopleContainer.size();
+				double selectionProbabilty = (double) peopleContainer.size() / personCount;
+				if (randomGenerator.nextDouble() <= selectionProbabilty) {
+					selectedKey = fullKey;
+				}
+			}
+		}
+		return getRandomPersonId(excludedPersonId, selectedKey);
+
+	}
+
+	private PersonId getRandomPersonId(final PersonId excludedPersonId, Key key) {
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		
+
 		if (peopleContainer == null) {
 			return null;
 		}
@@ -438,7 +594,7 @@ public final class PopulationPartition {
 		if (candidateCount > 0) {
 			RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
 			while (true) {
-				result = peopleContainer.getRandomPersonId(randomGenerator);				
+				result = peopleContainer.getRandomPersonId(randomGenerator);
 				if (!result.equals(excludedPersonId)) {
 					break;
 				}
@@ -456,11 +612,33 @@ public final class PopulationPartition {
 
 	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
 			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
-		
+
 		Key key = getKey(populationPartitionQuery);
+		Key selectedKey = key;
+		if (key.isPartialKey()) {
+			List<Key> fullKeys = getFullKeys(key);
+			int personCount = 0;
+			RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+
+				personCount += peopleContainer.size();
+				double selectionProbabilty = (double) peopleContainer.size() / personCount;
+				if (randomGenerator.nextDouble() <= selectionProbabilty) {
+					selectedKey = fullKey;
+				}
+			}
+		}
+		return getRandomPersonIdFromGenerator(excludedPersonId, selectedKey, randomNumberGeneratorId);
+
+	}
+
+	private PersonId getRandomPersonIdFromGenerator(final PersonId excludedPersonId, Key key,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
 
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		
+
 		if (peopleContainer == null) {
 			return null;
 		}
@@ -480,24 +658,37 @@ public final class PopulationPartition {
 		if (candidateCount > 0) {
 			RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 			while (true) {
-				result = peopleContainer.getRandomPersonId(randomGenerator);				
+				result = peopleContainer.getRandomPersonId(randomGenerator);
 				if (!result.equals(excludedPersonId)) {
 					break;
 				}
 			}
 		}
 		return result;
-		
 	}
 
 	public int getPeopleCount(PopulationPartitionQuery populationPartitionQuery) {
 		Key key = getKey(populationPartitionQuery);
 
-		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		if (peopleContainer == null) {
-			return 0;
+		if (key.isPartialKey()) {
+			List<Key> fullKeys = getFullKeys(key);
+
+			int result = 0;
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				if (peopleContainer != null) {
+					result += peopleContainer.size();
+				}
+			}
+			return result;
+		} else {
+
+			PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+			if (peopleContainer == null) {
+				return 0;
+			}
+			return peopleContainer.size();
 		}
-		return peopleContainer.size();
 	}
 
 	private Key getKey(PopulationPartitionQuery populationPartitionQuery) {
@@ -527,17 +718,27 @@ public final class PopulationPartition {
 		}
 		return key;
 	}
-	
-	public boolean contains(PersonId personId, PopulationPartitionQuery populationPartitionQuery) {
 
+	public boolean contains(PersonId personId, PopulationPartitionQuery populationPartitionQuery) {
 		Key key = getKey(populationPartitionQuery);
 
-		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		
-		if (peopleContainer == null) {
+		if (key.isPartialKey()) {
+			List<Key> fullKeys = getFullKeys(key);
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				if (peopleContainer != null && peopleContainer.contains(personId)) {
+					return true;
+				}
+			}
 			return false;
+		} else {
+			PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+
+			if (peopleContainer == null) {
+				return false;
+			}
+			return peopleContainer.contains(personId);
 		}
-		return peopleContainer.contains(personId);
 	}
 
 	/**
@@ -551,12 +752,24 @@ public final class PopulationPartition {
 
 		Key key = getKey(populationPartitionQuery);
 
-		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		
-		if (peopleContainer == null) {
-			return new ArrayList<>();
+		if (key.isPartialKey()) {
+			List<Key> fullKeys = getFullKeys(key);
+			List<PersonId> result = new ArrayList<>();
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				if (peopleContainer != null) {
+					result.addAll(peopleContainer.getPeople());
+				}
+			}
+			return result;
+		} else {
+			PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+
+			if (peopleContainer == null) {
+				return new ArrayList<>();
+			}
+			return peopleContainer.getPeople();
 		}
-		return peopleContainer.getPeople();
 	}
 
 	public void init() {

@@ -3093,7 +3093,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 		/*
-		 * Get a FilterInfo for the filter, decompose it into all its indivual children
+		 * Get a FilterInfo for the filter, decompose it into all its individual children
 		 * and validate each child
 		 */
 		FilterInfo.getHierarchyAsList(FilterInfo.build(filter)).forEach(this::validateFilterInfo);
@@ -4073,6 +4073,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		if (populationPartitionQuery == null) {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_QUERY, key);
 		}
+		if (!populationPartitionManager.populationPartitionExists(key)) {
+			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+		}
+		
 		if (!populationPartitionManager.validatePopulationPartitionQuery(key, populationPartitionQuery)) {
 			throwModelException(SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY, key);
 		}

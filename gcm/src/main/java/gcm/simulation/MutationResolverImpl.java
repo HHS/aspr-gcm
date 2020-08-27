@@ -38,7 +38,7 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.StageId;
-import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -1688,7 +1688,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 	@Override
 	public void addPopulationPartition(ComponentId componentId,
-			PopulationPartitionDefinition populationPartitionDefinition, Object key) {
+			Partition partition, Object key) {
 		//TODO -- review methods that require callbacks and perhaps lock down external write access?
 		// externalAccessManager.acquireExternalReadAccessLock();
 		// try {
@@ -1696,7 +1696,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// } finally {
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
-		populationPartitionManager.addPopulationPartition(componentId, populationPartitionDefinition, key);
+		populationPartitionManager.addPopulationPartition(componentId, partition, key);
 	}
 
 	@Override

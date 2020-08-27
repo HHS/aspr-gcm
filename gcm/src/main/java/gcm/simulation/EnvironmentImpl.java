@@ -48,7 +48,7 @@ import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
 import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -4099,16 +4099,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	private void validatePopulationPartitionDefinition(
-			final PopulationPartitionDefinition populationPartitionDefinition) {
-		if (populationPartitionDefinition == null) {
+			final Partition partition) {
+		if (partition == null) {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 		}
 
-		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
 			validatePersonPropertyId(personPropertyId);
 		}
 
-		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
+		for (ResourceId resourceId : partition.getPersonResourceIds()) {
 			validateResourceId(resourceId);
 		}
 
@@ -4127,15 +4127,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public void addPopulationPartition(PopulationPartitionDefinition populationPartitionDefinition, Object key) {
+	public void addPopulationPartition(Partition partition, Object key) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
-			validatePopulationPartitionDefinition(populationPartitionDefinition);
+			validatePopulationPartitionDefinition(partition);
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionDoesNotExist(key);
 			mutationResolver.addPopulationPartition(componentManager.getFocalComponentId(),
-					populationPartitionDefinition, key);
+					partition, key);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}

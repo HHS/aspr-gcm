@@ -60,7 +60,7 @@ import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;
-import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.Partition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -320,9 +320,9 @@ public class AT_EnvironmentImpl_25 {
 		return expectedPartitioning;
 	}
 
-	private static PopulationPartitionDefinition createPopulationPartitionDefinition(
+	private static Partition createPopulationPartitionDefinition(
 			Set<PartitionChoice> partionChoices) {
-		PopulationPartitionDefinition.Builder builder = PopulationPartitionDefinition.builder();//
+		Partition.Builder builder = Partition.builder();//
 
 		for (PartitionChoice partitionChoice : partionChoices) {
 			switch (partitionChoice) {
@@ -401,11 +401,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -447,10 +447,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
 			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
@@ -508,11 +508,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -560,7 +560,7 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partitionDefinition = Partition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
@@ -575,10 +575,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0)
 					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
@@ -654,11 +654,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -728,7 +728,7 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partitionDefinition = Partition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
@@ -749,10 +749,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = 
 					compartment(0)
@@ -825,11 +825,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -874,10 +874,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0)
 					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
@@ -908,10 +908,10 @@ public class AT_EnvironmentImpl_25 {
 
 	/**
 	 * Tests {@link
-	 * EnvironmentImpl#addPopulationPartition(PopulationPartitionDefinition, Object)
+	 * EnvironmentImpl#addPopulationPartition(Partition, Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "addPopulationPartition", args = { PopulationPartitionDefinition.class, Object.class })
+	@UnitTestMethod(name = "addPopulationPartition", args = { Partition.class, Object.class })
 	public void testAddPopulationPartition() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
@@ -932,23 +932,23 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -966,32 +966,32 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key1 = "key1";
 			Object key2 = "key2";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 
-			PopulationPartitionDefinition badPersonPropertyPopulationPartitionDefinition = PopulationPartitionDefinition
+			Partition badPersonPropertyPopulationPartitionDefinition = Partition
 					.builder().setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.getUnknownPersonPropertyId(), property1Function)
 					.build();
 
-			PopulationPartitionDefinition badResourcePopulationPartitionDefinition = PopulationPartitionDefinition
+			Partition badResourcePopulationPartitionDefinition = Partition
 					.builder().setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonResourcePartition(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction)
 					.build();
 
-			environment.addPopulationPartition(populationPartitionDefinition, key1);
+			environment.addPopulationPartition(partition, key1);
 
 			// if the population partition definition is null
 			assertModelException(() -> environment.addPopulationPartition(null, key2),
 					SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 
 			// if the key is null
-			assertModelException(() -> environment.addPopulationPartition(populationPartitionDefinition, null),
+			assertModelException(() -> environment.addPopulationPartition(partition, null),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 
 			// if the key corresponds to an existing population partition
-			assertModelException(() -> environment.addPopulationPartition(populationPartitionDefinition, key1),
+			assertModelException(() -> environment.addPopulationPartition(partition, key1),
 					SimulationErrorType.DUPLICATE_POPULATION_PARTITION);
 
 			// if the definition contains an unknown person property id
@@ -1038,23 +1038,23 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -1112,23 +1112,23 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
-			populationPartitionDefinition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			partition = createPopulationPartitionDefinition(partitionChoices);
+			environment.addPopulationPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePopulationPartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -1176,11 +1176,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1232,10 +1232,10 @@ public class AT_EnvironmentImpl_25 {
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0)
 					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
@@ -1307,11 +1307,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1363,7 +1363,7 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partitionDefinition = Partition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
@@ -1378,10 +1378,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0)
 					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
@@ -1445,11 +1445,11 @@ public class AT_EnvironmentImpl_25 {
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
 
 			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+			Partition partition = createPopulationPartitionDefinition(
 					partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
+			environment.addPopulationPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1517,7 +1517,7 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partitionDefinition = Partition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
@@ -1538,10 +1538,10 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+			Partition partition = Partition.builder()
 					.setCompartmentPartition(compartmentPartitionFunction)
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
+			environment.addPopulationPartition(partition, key3);
 
 			LabelSet labelSet = compartment(0)
 					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));

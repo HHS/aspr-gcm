@@ -150,7 +150,7 @@ public final class PopulationPartition {
 
 	private ComponentId owningComponentId;
 
-	private final PopulationPartitionDefinition populationPartitionDefinition;
+	private final Partition partition;
 
 	private final Environment environment;
 
@@ -164,22 +164,22 @@ public final class PopulationPartition {
 
 	private final StochasticsManager stochasticsManager;
 
-	public PopulationPartition(final Context context, final PopulationPartitionDefinition populationPartitionDefinition,
+	public PopulationPartition(final Context context, final Partition partition,
 			final ComponentId owningComponentId) {
 		this.context = context;
 		this.personIdManager = context.getPersonIdManager();
 		this.stochasticsManager = context.getStochasticsManager();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
-		this.populationPartitionDefinition = populationPartitionDefinition;
+		this.partition = partition;
 		this.environment = context.getEnvironment();
 		this.owningComponentId = owningComponentId;
 		int size = 0;
 
-		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
+		if (partition.getRegionPartitionFunction() != null) {
 			regionLabelIndex = size++;
 		}
 
-		if (populationPartitionDefinition.getCompartmentPartitionFunction() != null) {
+		if (partition.getCompartmentPartitionFunction() != null) {
 			compartmentLabelIndex = size++;
 		}
 
@@ -187,7 +187,7 @@ public final class PopulationPartition {
 			personPropertyLabelIndexes.put(personPropertyId, -1);
 		}
 
-		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
 			personPropertyLabelIndexes.put(personPropertyId, size++);
 		}
 
@@ -195,11 +195,11 @@ public final class PopulationPartition {
 			resourceLabelIndexes.put(resourceId, -1);
 		}
 
-		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
+		for (ResourceId resourceId : partition.getPersonResourceIds()) {
 			resourceLabelIndexes.put(resourceId, size++);
 		}
 
-		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
+		if (partition.getGroupPartitionFunction() != null) {
 			groupLabelIndex = size++;
 		}
 
@@ -223,26 +223,26 @@ public final class PopulationPartition {
 		}
 		int index = 0;
 		Key key = new Key(keySize);
-		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
-			key.keys[index++] = populationPartitionDefinition.getRegionPartitionFunction()
+		if (partition.getRegionPartitionFunction() != null) {
+			key.keys[index++] = partition.getRegionPartitionFunction()
 					.apply(environment.getPersonRegion(personId));
 		}
-		if (populationPartitionDefinition.getCompartmentPartitionFunction() != null) {
-			key.keys[index++] = populationPartitionDefinition.getCompartmentPartitionFunction()
+		if (partition.getCompartmentPartitionFunction() != null) {
+			key.keys[index++] = partition.getCompartmentPartitionFunction()
 					.apply(environment.getPersonCompartment(personId));
 		}
 
-		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
-			key.keys[index++] = populationPartitionDefinition.getPersonPropertyPartitionFunction(personPropertyId)
+		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
+			key.keys[index++] = partition.getPersonPropertyPartitionFunction(personPropertyId)
 					.apply(environment.getPersonPropertyValue(personId, personPropertyId));
 		}
 
-		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
-			key.keys[index++] = populationPartitionDefinition.getPersonResourcePartitionFunction(resourceId)
+		for (ResourceId resourceId : partition.getPersonResourceIds()) {
+			key.keys[index++] = partition.getPersonResourcePartitionFunction(resourceId)
 					.apply(environment.getPersonResourceLevel(personId, resourceId));
 		}
 
-		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
+		if (partition.getGroupPartitionFunction() != null) {
 
 			GroupTypeCountMap.Builder builder = GroupTypeCountMap.builder();
 			for (GroupTypeId groupTypeId : environment.getGroupTypeIds()) {
@@ -251,7 +251,7 @@ public final class PopulationPartition {
 			}
 			GroupTypeCountMap groupTypeCountMap = builder.build();
 
-			key.keys[index++] = populationPartitionDefinition.getGroupPartitionFunction().apply(groupTypeCountMap);
+			key.keys[index++] = partition.getGroupPartitionFunction().apply(groupTypeCountMap);
 		}
 
 		Key cleanedKey = keyMap.get(key);
@@ -299,7 +299,7 @@ public final class PopulationPartition {
 		Object currentRegionLabel = currentKey.keys[regionLabelIndex];
 
 		// get the new label
-		Object newRegionLabel = populationPartitionDefinition.getRegionPartitionFunction()
+		Object newRegionLabel = partition.getRegionPartitionFunction()
 				.apply(environment.getPersonRegion(personId));
 
 		if (newRegionLabel == null) {
@@ -332,7 +332,7 @@ public final class PopulationPartition {
 		Object currentPropertyLabel = currentKey.keys[personPropertyLabelIndex];
 
 		// get the new label
-		Object newPropertyLabel = populationPartitionDefinition.getPersonPropertyPartitionFunction(personPropertyId)
+		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId)
 				.apply(environment.getPersonPropertyValue(personId, personPropertyId));
 
 		if (newPropertyLabel == null) {
@@ -365,7 +365,7 @@ public final class PopulationPartition {
 		Object currentResourceLabel = currentKey.keys[resourceLabelIndex];
 
 		// get the new label
-		Object newResourceLabel = populationPartitionDefinition.getPersonResourcePartitionFunction(resourceId)
+		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId)
 				.apply(environment.getPersonResourceLevel(personId, resourceId));
 
 		if (newResourceLabel == null) {
@@ -397,7 +397,7 @@ public final class PopulationPartition {
 		Object currentCompartmentLabel = currentKey.keys[compartmentLabelIndex];
 
 		// get the new label
-		Object newCompartmentLabel = populationPartitionDefinition.getCompartmentPartitionFunction()
+		Object newCompartmentLabel = partition.getCompartmentPartitionFunction()
 				.apply(environment.getPersonCompartment(personId));
 
 		if (newCompartmentLabel == null) {
@@ -437,7 +437,7 @@ public final class PopulationPartition {
 
 		GroupTypeCountMap groupTypeCountMap = builder.build();
 
-		Object newGroupLabel = populationPartitionDefinition.getGroupPartitionFunction().apply(groupTypeCountMap);
+		Object newGroupLabel = partition.getGroupPartitionFunction().apply(groupTypeCountMap);
 
 		if (newGroupLabel == null) {
 			throw new RuntimeException("change to model exception");
@@ -471,26 +471,26 @@ public final class PopulationPartition {
 	}
 
 	public boolean validateLabelSetInfo(LabelSetInfo labelSetInfo) {
-		boolean b1 = populationPartitionDefinition.getRegionPartitionFunction() == null;
+		boolean b1 = partition.getRegionPartitionFunction() == null;
 		boolean b2 = labelSetInfo.getRegionLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
-		b1 = populationPartitionDefinition.getCompartmentPartitionFunction() == null;
+		b1 = partition.getCompartmentPartitionFunction() == null;
 		b2 = labelSetInfo.getCompartmentLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
-		Set<PersonPropertyId> allowedPersonPropertyIds = populationPartitionDefinition.getPersonPropertyIds();
+		Set<PersonPropertyId> allowedPersonPropertyIds = partition.getPersonPropertyIds();
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
 			if (!allowedPersonPropertyIds.contains(personPropertyId)) {
 				return false;
 			}
 		}
 
-		Set<ResourceId> allowedPersonResourceIds = populationPartitionDefinition.getPersonResourceIds();
+		Set<ResourceId> allowedPersonResourceIds = partition.getPersonResourceIds();
 		for (ResourceId resourceId : labelSetInfo.getPersonResourceIds()) {
 			if (!allowedPersonResourceIds.contains(resourceId)) {
 				return false;
@@ -702,25 +702,25 @@ public final class PopulationPartition {
 	private Key getKey(LabelSetInfo labelSetInfo) {
 		Key key = new Key(keySize);
 		int index = 0;
-		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
+		if (partition.getRegionPartitionFunction() != null) {
 			Object regionLabel = labelSetInfo.getRegionLabel();
 			key.keys[index++] = regionLabel;
 		}
 
-		if (populationPartitionDefinition.getCompartmentPartitionFunction() != null) {
+		if (partition.getCompartmentPartitionFunction() != null) {
 			Object compartmentLabel = labelSetInfo.getCompartmentLabel();
 			key.keys[index++] = compartmentLabel;
 		}
 
-		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
 			key.keys[index++] = labelSetInfo.getPersonPropertyLabel(personPropertyId);
 		}
 
-		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
+		for (ResourceId resourceId : partition.getPersonResourceIds()) {
 			key.keys[index++] = labelSetInfo.getPersonResourceLabel(resourceId);
 		}
 
-		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
+		if (partition.getGroupPartitionFunction() != null) {
 			Object groupLabel = labelSetInfo.getGroupLabel();
 			key.keys[index++] = groupLabel;
 		}

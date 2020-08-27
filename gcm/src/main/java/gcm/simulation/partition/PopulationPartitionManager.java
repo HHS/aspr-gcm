@@ -36,7 +36,7 @@ public interface PopulationPartitionManager extends Element {
 	 */
 
 	public void addPopulationPartition(final ComponentId componentId,
-			final PopulationPartitionDefinition populationPartitionDefinition, final Object key);
+			final Partition partition, final Object key);
 
 	/**
 	 * Returns the list of person identifiers in the partition for the given key.

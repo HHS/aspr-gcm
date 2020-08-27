@@ -23,7 +23,7 @@ import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.StageId;
-import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.Partition;
 import gcm.util.annotations.Source;
 
 /**
@@ -238,7 +238,7 @@ public interface MutationResolver extends Element {
 	
 	public void addGlobalComponent(GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass);
 
-	public void addPopulationPartition(ComponentId componentId, final PopulationPartitionDefinition populationPartitionDefinition, final Object key);
+	public void addPopulationPartition(ComponentId componentId, final Partition partition, final Object key);
 	
 	public void removePopulationPartition(Object key);
 }

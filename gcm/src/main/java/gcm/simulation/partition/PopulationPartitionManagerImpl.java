@@ -35,13 +35,13 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public void addPopulationPartition(ComponentId componentId, PopulationPartitionDefinition populationPartitionDefinition,
+	public void addPopulationPartition(ComponentId componentId, Partition partition,
 			Object key) {
 		if (componentId == null) {
 			throw new RuntimeException("null component id");
 		}
 
-		if (populationPartitionDefinition == null) {
+		if (partition == null) {
 			throw new RuntimeException("null population partition definition");
 		}
 
@@ -53,7 +53,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 			throw new RuntimeException("duplicate key");
 		}
 
-		PopulationPartition populationPartition = new PopulationPartition(context, populationPartitionDefinition,
+		PopulationPartition populationPartition = new PopulationPartition(context, partition,
 				componentId);
 
 		populationPartitions.put(key, populationPartition);

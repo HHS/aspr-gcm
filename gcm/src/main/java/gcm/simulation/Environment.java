@@ -36,7 +36,7 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.Partition;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -3817,7 +3817,7 @@ public interface Environment extends Element {
 	 * 
 	 *
 	 */
-	public void addPopulationPartition(PopulationPartitionDefinition populationPartitionDefinition, Object key);
+	public void addPopulationPartition(Partition partition, Object key);
 
 	/**
 	 * Returns the size of an indexed population.

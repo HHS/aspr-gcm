@@ -13,9 +13,9 @@ import gcm.scenario.ResourceId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-public final class PopulationPartitionDefinition {
+public final class Partition {
 
-	private PopulationPartitionDefinition() {
+	private Partition() {
 	}
 
 	private Function<GroupTypeCountMap, Object> groupPartitionFunction;
@@ -54,7 +54,7 @@ public final class PopulationPartitionDefinition {
 
 	/**
 	 * Returns an unmodifiable set of {@link ResourceId} values associated with this
-	 * {@link PopulationPartitionDefinition}
+	 * {@link Partition}
 	 * 
 	 */
 	public Set<ResourceId> getPersonResourceIds() {
@@ -63,56 +63,56 @@ public final class PopulationPartitionDefinition {
 
 	/**
 	 * Returns an unmodifiable set of {@link PersonPropertyId} values associated
-	 * with this {@link PopulationPartitionDefinition}
+	 * with this {@link Partition}
 	 * 
 	 */
 	public Set<PersonPropertyId> getPersonPropertyIds() {
 		return Collections.unmodifiableSet(personPropertyPartitionFunctions.keySet());
 	}
 
-	@Source(status = TestStatus.REQUIRED, proxy = PopulationPartitionDefinition.class)
+	@Source(status = TestStatus.REQUIRED, proxy = Partition.class)
 	public static final class Builder {
 
-		private PopulationPartitionDefinition populationPartitionDefinition = new PopulationPartitionDefinition();
+		private Partition partition = new Partition();
 
 		// hidden constructor
 		private Builder() {
 
 		}
 
-		public PopulationPartitionDefinition build() {
+		public Partition build() {
 			try {
-				return populationPartitionDefinition;
+				return partition;
 			} finally {
-				populationPartitionDefinition = new PopulationPartitionDefinition();
+				partition = new Partition();
 			}
 		}
 
 		public Builder setGroupPartitionFunction(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
-			populationPartitionDefinition.groupPartitionFunction = groupPartitionFunction;
+			partition.groupPartitionFunction = groupPartitionFunction;
 			return this;
 		}
 
 		public Builder setCompartmentPartition(Function<CompartmentId, Object> compartmentPartitionFunction) {
-			populationPartitionDefinition.compartmentPartitionFunction = compartmentPartitionFunction;
+			partition.compartmentPartitionFunction = compartmentPartitionFunction;
 			return this;
 		}
 
 		public Builder setRegionPartition(Function<RegionId, Object> regionPartitionFunction) {
-			populationPartitionDefinition.regionPartitionFunction = regionPartitionFunction;
+			partition.regionPartitionFunction = regionPartitionFunction;
 			return this;
 		}
 
 		public Builder setPersonPropertyPartition(PersonPropertyId personPropertyId,
 				Function<Object, Object> personPropertyPartitionFunction) {
-			populationPartitionDefinition.personPropertyPartitionFunctions.put(personPropertyId,
+			partition.personPropertyPartitionFunctions.put(personPropertyId,
 					personPropertyPartitionFunction);
 			return this;
 		}
 
 		public Builder setPersonResourcePartition(ResourceId resourceId,
 				Function<Long, Object> personResourcePartitionFunction) {
-			populationPartitionDefinition.personResourcePartitionFunctions.put(resourceId,
+			partition.personResourcePartitionFunctions.put(resourceId,
 					personResourcePartitionFunction);
 			return this;
 		}

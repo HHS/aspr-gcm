@@ -4069,27 +4069,27 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validatePopulationPartitionQuery(Object key, PopulationPartitionQuery populationPartitionQuery) {
-		if (populationPartitionQuery == null) {
+	private void validatelabelSet(Object key, LabelSet labelSet) {
+		if (labelSet == null) {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_QUERY, key);
 		}
 		if (!populationPartitionManager.populationPartitionExists(key)) {
 			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 		}
 		
-		if (!populationPartitionManager.validatePopulationPartitionQuery(key, populationPartitionQuery)) {
+		if (!populationPartitionManager.validateLabelSet(key, labelSet)) {
 			throwModelException(SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY, key);
 		}
 	}
 
 	@Override
-	public List<PersonId> getPartitionPeople(Object key, PopulationPartitionQuery populationPartitionQuery) {
+	public List<PersonId> getPartitionPeople(Object key, LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
-			return populationPartitionManager.getPartitionPeople(key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
+			return populationPartitionManager.getPartitionPeople(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4139,13 +4139,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public int getPartitionSize(final Object key, PopulationPartitionQuery populationPartitionQuery) {
+	public int getPartitionSize(final Object key, LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
-			return populationPartitionManager.getPartitionSize(key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
+			return populationPartitionManager.getPartitionSize(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4182,14 +4182,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public boolean personIsInPopulationPartition(PersonId personId, Object key,
-			PopulationPartitionQuery populationPartitionQuery) {
+			LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonExists(personId);
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
-			return populationPartitionManager.personInPartition(personId, key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
+			return populationPartitionManager.personInPartition(personId, key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4197,14 +4197,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public Optional<PersonId> getRandomPartitionedPerson(Object key,
-			PopulationPartitionQuery populationPartitionQuery) {
+			LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
 			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(null, key,
-					populationPartitionQuery);
+					labelSet);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4216,15 +4216,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(Object key,
-			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
+			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(null, key,
-					populationPartitionQuery, randomNumberGeneratorId);
+					labelSet, randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4236,15 +4236,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusion(PersonId excludedPersonId, Object key,
-			PopulationPartitionQuery populationPartitionQuery) {
+			LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePersonExists(excludedPersonId);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);			
+			validatelabelSet(key, labelSet);			
 			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(excludedPersonId, key,
-					populationPartitionQuery);
+					labelSet);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4256,17 +4256,17 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusionFromGenerator(PersonId excludedPersonId,
-			Object key, PopulationPartitionQuery populationPartitionQuery,
+			Object key, LabelSet labelSet,
 			RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatePopulationPartitionQuery(key, populationPartitionQuery);
+			validatelabelSet(key, labelSet);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(excludedPersonId,
-					key, populationPartitionQuery, randomNumberGeneratorId);
+					key, labelSet, randomNumberGeneratorId);
 			if (personId == null) {
 				return Optional.empty();
 			}

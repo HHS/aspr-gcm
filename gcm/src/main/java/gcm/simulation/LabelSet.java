@@ -11,7 +11,7 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
-public final class PopulationPartitionQuery {
+public final class LabelSet {
 
 	@Override
 	public int hashCode() {
@@ -36,7 +36,7 @@ public final class PopulationPartitionQuery {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		PopulationPartitionQuery other = (PopulationPartitionQuery) obj;
+		LabelSet other = (LabelSet) obj;
 		if (compartmentLabel == null) {
 			if (other.compartmentLabel != null) {
 				return false;
@@ -78,7 +78,7 @@ public final class PopulationPartitionQuery {
 	@Override
 	@SourceMethod(status = TestStatus.UNREQUIRED)
 	public String toString() {
-		return "PopulationPartitionQuery [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel
+		return "labelSet [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel
 				+ ", groupLabel=" + groupLabel + ", personPropertyLabels=" + personPropertyLabels
 				+ ", personResourceLabels=" + personResourceLabels + "]";
 	}
@@ -111,7 +111,7 @@ public final class PopulationPartitionQuery {
 
 	/**
 	 * Returns an unmodifiable set of {@link PersonPropertyId} values associated
-	 * with this {@link PopulationPartitionQuery}
+	 * with this {@link LabelSet}
 	 * 
 	 */
 	public Set<PersonPropertyId> getPersonPropertyIds() {
@@ -120,7 +120,7 @@ public final class PopulationPartitionQuery {
 
 	/**
 	 * Returns an unmodifiable set of {@link ResourceId} values associated with this
-	 * {@link PopulationPartitionQuery}
+	 * {@link LabelSet}
 	 * 
 	 */
 	public Set<ResourceId> getPersonResourceIds() {
@@ -131,7 +131,7 @@ public final class PopulationPartitionQuery {
 		return regionLabel;
 	}
 
-	private PopulationPartitionQuery() {
+	private LabelSet() {
 
 	}
 
@@ -139,19 +139,19 @@ public final class PopulationPartitionQuery {
 		return new Builder();
 	}
 
-	@Source(status = TestStatus.REQUIRED, proxy = PopulationPartitionQuery.class)
+	@Source(status = TestStatus.REQUIRED, proxy = LabelSet.class)
 	public final static class Builder {
 
 		private Builder() {
 		}
 
-		private PopulationPartitionQuery populationPartitionQuery = new PopulationPartitionQuery();
+		private LabelSet labelSet = new LabelSet();
 
-		public PopulationPartitionQuery build() {
+		public LabelSet build() {
 			try {
-				return populationPartitionQuery;
+				return labelSet;
 			} finally {
-				populationPartitionQuery = new PopulationPartitionQuery();
+				labelSet = new LabelSet();
 			}
 		}
 
@@ -159,7 +159,7 @@ public final class PopulationPartitionQuery {
 		 * Sets the compartment label. Allows null labels.
 		 */
 		public Builder setCompartmentLabel(Object compartmentLabel) {
-			populationPartitionQuery.compartmentLabel = compartmentLabel;
+			labelSet.compartmentLabel = compartmentLabel;
 			return this;
 		}
 
@@ -167,7 +167,7 @@ public final class PopulationPartitionQuery {
 		 * Sets the group label. Allows null labels.
 		 */
 		public Builder setGroupLabel(Object groupLabel) {
-			populationPartitionQuery.groupLabel = groupLabel;
+			labelSet.groupLabel = groupLabel;
 			return this;
 		}
 
@@ -175,7 +175,7 @@ public final class PopulationPartitionQuery {
 		 * Sets the region label. Allows null labels.
 		 */
 		public Builder setRegionLabel(Object regionLabel) {
-			populationPartitionQuery.regionLabel = regionLabel;
+			labelSet.regionLabel = regionLabel;
 			return this;
 		}
 
@@ -192,9 +192,9 @@ public final class PopulationPartitionQuery {
 			}
 
 			if (personPropertyLabel != null) {
-				populationPartitionQuery.personPropertyLabels.put(personPropertyId, personPropertyLabel);
+				labelSet.personPropertyLabels.put(personPropertyId, personPropertyLabel);
 			} else {
-				populationPartitionQuery.personPropertyLabels.remove(personPropertyId);
+				labelSet.personPropertyLabels.remove(personPropertyId);
 			}
 			return this;
 		}
@@ -211,9 +211,9 @@ public final class PopulationPartitionQuery {
 				throw new IllegalArgumentException("resource id is null");
 			}
 			if (personResourceLabel != null) {
-				populationPartitionQuery.personResourceLabels.put(resourceId, personResourceLabel);
+				labelSet.personResourceLabels.put(resourceId, personResourceLabel);
 			} else {
-				populationPartitionQuery.personResourceLabels.remove(resourceId);
+				labelSet.personResourceLabels.remove(resourceId);
 			}
 			return this;
 		}

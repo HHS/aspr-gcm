@@ -42,7 +42,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public List<PersonId> getPartitionPeople(final Object key, PopulationPartitionQuery populationPartitionQuery);
+	public List<PersonId> getPartitionPeople(final Object key, LabelSet labelSet);
 
 	/**
 	 * Returns the number of people in the index for the given key.
@@ -51,7 +51,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public int getPartitionSize(final Object key, PopulationPartitionQuery populationPartitionQuery);
+	public int getPartitionSize(final Object key, LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
@@ -64,7 +64,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        if the keys are not associated with a population index
 	 */
 	public PersonId getRandomPartitionedPerson(final PersonId excludedPersonId, final Object key,
-			PopulationPartitionQuery populationPartitionQuery);
+			LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
@@ -78,7 +78,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        if the keys are not associated with a population index
 	 */
 	public PersonId getRandomPartionedPersonFromGenerator(final PersonId excludedPersonId, final Object key,
-			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId);
+			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns true if and only if the person is contained in the population
@@ -86,7 +86,7 @@ public interface PopulationPartitionManager extends Element {
 	 * population.
 	 */
 	public boolean personInPartition(final PersonId personId, final Object key,
-			PopulationPartitionQuery populationPartitionQuery);
+			LabelSet labelSet);
 
 	/**
 	 * Adds a person into all population indices that apply to that person. This
@@ -160,9 +160,9 @@ public interface PopulationPartitionManager extends Element {
 	public ComponentId getOwningComponent(final Object key);
 
 	/**
-	 * Returns true if and only if the given population PopulationPartitionQuery is
+	 * Returns true if and only if the given population labelSet is
 	 * compatible with the PopulationPartitionDefinition associated with the key
 	 */
-	public boolean validatePopulationPartitionQuery(Object key, PopulationPartitionQuery populationPartitionQuery);
+	public boolean validateLabelSet(Object key, LabelSet labelSet);
 
 }

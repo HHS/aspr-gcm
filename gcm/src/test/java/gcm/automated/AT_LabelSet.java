@@ -20,19 +20,19 @@ import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestResourceId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
-import gcm.simulation.PopulationPartitionQuery;
+import gcm.simulation.LabelSet;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
- * Test class for {@link PopulationPartitionQuery}
+ * Test class for {@link LabelSet}
  * 
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PopulationPartitionQuery.class)
+@UnitTest(target = LabelSet.class)
 
-public class AT_PopulationPartitionQuery {
+public class AT_LabelSet {
 	private static SeedProvider SEED_PROVIDER;
 
 	@BeforeClass
@@ -47,11 +47,11 @@ public class AT_PopulationPartitionQuery {
 	@AfterClass
 	public static void afterClass() {
 //		System.out.println(
-//				AT_PopulationPartitionQuery.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//				AT_labelSet.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getPersonPropertyIds()
+	 * Tests {@linkplain LabelSet#getPersonPropertyIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
@@ -59,7 +59,7 @@ public class AT_PopulationPartitionQuery {
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		PopulationPartitionQuery.Builder builder = PopulationPartitionQuery.builder();
+		LabelSet.Builder builder = LabelSet.builder();
 
 		for (int i = 0; i < 20; i++) {
 			Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
@@ -71,21 +71,21 @@ public class AT_PopulationPartitionQuery {
 				}
 			}
 
-			PopulationPartitionQuery populationPartitionQuery = builder.build();
-			Set<PersonPropertyId> actualPersonPropertyIds = populationPartitionQuery.getPersonPropertyIds();
+			LabelSet labelSet = builder.build();
+			Set<PersonPropertyId> actualPersonPropertyIds = labelSet.getPersonPropertyIds();
 			assertEquals(expectedPersonPropertyIds, actualPersonPropertyIds);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#builder()
+	 * Tests {@linkplain LabelSet#builder()
 	 */
 	@Test
 	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
 
-		PopulationPartitionQuery populationPartitionQuery = //
-				PopulationPartitionQuery.builder()//
+		LabelSet labelSet = //
+				LabelSet.builder()//
 						.setCompartmentLabel("compartment")//
 						.setRegionLabel("region")//
 						.setGroupLabel("group")//
@@ -94,17 +94,17 @@ public class AT_PopulationPartitionQuery {
 						.setPersonResourceLabel(TestResourceId.RESOURCE2, 2342L)//
 						.build();//
 
-		assertNotNull(populationPartitionQuery);
+		assertNotNull(labelSet);
 
 		// precondition tests
 		assertException(() -> {
-			PopulationPartitionQuery.builder()//
+			LabelSet.builder()//
 					.setPersonPropertyLabel(null, "label")//
 					.build();//
 		}, RuntimeException.class);
 
 		assertException(() -> {
-			PopulationPartitionQuery.builder()//
+			LabelSet.builder()//
 					.setPersonResourceLabel(null, "label")//
 					.build();//
 		}, RuntimeException.class);
@@ -112,7 +112,7 @@ public class AT_PopulationPartitionQuery {
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getPersonResourceIds()
+	 * Tests {@linkplain LabelSet#getPersonResourceIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourceIds", args = {})
@@ -120,7 +120,7 @@ public class AT_PopulationPartitionQuery {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
-		PopulationPartitionQuery.Builder builder = PopulationPartitionQuery.builder();
+		LabelSet.Builder builder = LabelSet.builder();
 
 		for (int i = 0; i < 20; i++) {
 			Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
@@ -132,117 +132,117 @@ public class AT_PopulationPartitionQuery {
 				}
 			}
 
-			PopulationPartitionQuery populationPartitionQuery = builder.build();
-			Set<ResourceId> actualResourceIds = populationPartitionQuery.getPersonResourceIds();
+			LabelSet labelSet = builder.build();
+			Set<ResourceId> actualResourceIds = labelSet.getPersonResourceIds();
 			assertEquals(expectedResourceIds, actualResourceIds);
 		}
 
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getGroupLabel()
+	 * Tests {@linkplain LabelSet#getGroupLabel()
 	 */
 	@Test
 	@UnitTestMethod(name = "getGroupLabel", args = {})
 	public void testGetGroupLabel() {
 		Object expectedGroupLabel = "Group Label";
 
-		PopulationPartitionQuery populationPartitionQuery = //
-				PopulationPartitionQuery.builder()//
+		LabelSet labelSet = //
+				LabelSet.builder()//
 						.setGroupLabel(expectedGroupLabel)//
 						.build();//
-		Object actualGroupLabel = populationPartitionQuery.getGroupLabel();
+		Object actualGroupLabel = labelSet.getGroupLabel();
 		assertEquals(expectedGroupLabel, actualGroupLabel);
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getRegionLabel()
+	 * Tests {@linkplain LabelSet#getRegionLabel()
 	 */
 	@Test
 	@UnitTestMethod(name = "getRegionLabel", args = {})
 	public void testGetRegionLabel() {
 		Object expectedRegionLabel = "Region Label";
 
-		PopulationPartitionQuery populationPartitionQuery = //
-				PopulationPartitionQuery.builder()//
+		LabelSet labelSet = //
+				LabelSet.builder()//
 						.setRegionLabel(expectedRegionLabel)//
 						.build();//
-		Object actualRegionLabel = populationPartitionQuery.getRegionLabel();
+		Object actualRegionLabel = labelSet.getRegionLabel();
 		assertEquals(expectedRegionLabel, actualRegionLabel);
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getCompartmentLabel()
+	 * Tests {@linkplain LabelSet#getCompartmentLabel()
 	 */
 	@Test
 	@UnitTestMethod(name = "getCompartmentLabel", args = {})
 	public void testGetCompartmentLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
 
-		PopulationPartitionQuery populationPartitionQuery = //
-				PopulationPartitionQuery.builder()//
+		LabelSet labelSet = //
+				LabelSet.builder()//
 						.setCompartmentLabel(expectedCompartmentLabel)//
 						.build();//
-		Object actualCompartmentLabel = populationPartitionQuery.getCompartmentLabel();
+		Object actualCompartmentLabel = labelSet.getCompartmentLabel();
 		assertEquals(expectedCompartmentLabel, actualCompartmentLabel);
 	}
 
 	/**
 	 * Tests {@linkplain
-	 * PopulationPartitionQuery#getPersonPropertyLabel(gcm.scenario.PersonPropertyId)
+	 * LabelSet#getPersonPropertyLabel(gcm.scenario.PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyLabel", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyLabel() {
-		PopulationPartitionQuery.Builder builder = PopulationPartitionQuery.builder();
+		LabelSet.Builder builder = LabelSet.builder();
 
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			builder.setPersonPropertyLabel(testPersonPropertyId, testPersonPropertyId.toString());
 		}
 
-		PopulationPartitionQuery populationPartitionQuery = builder.build();
+		LabelSet labelSet = builder.build();
 
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			Object expectedPersonPropertyLabel = testPersonPropertyId.toString();
-			Object actualPersonPropertyLabel = populationPartitionQuery.getPersonPropertyLabel(testPersonPropertyId);
+			Object actualPersonPropertyLabel = labelSet.getPersonPropertyLabel(testPersonPropertyId);
 			assertEquals(expectedPersonPropertyLabel, actualPersonPropertyLabel);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#getPersonResourceLabel(ResourceId)
+	 * Tests {@linkplain LabelSet#getPersonResourceLabel(ResourceId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourceLabel", args = { ResourceId.class })
 	public void testGetPersonResourceLabel() {
-		PopulationPartitionQuery.Builder builder = PopulationPartitionQuery.builder();
+		LabelSet.Builder builder = LabelSet.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			builder.setPersonResourceLabel(testResourceId, testResourceId.toString());
 		}
 
-		PopulationPartitionQuery populationPartitionQuery = builder.build();
+		LabelSet labelSet = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Object expectedResourceLabel = testResourceId.toString();
-			Object actualResourceLabel = populationPartitionQuery.getPersonResourceLabel(testResourceId);
+			Object actualResourceLabel = labelSet.getPersonResourceLabel(testResourceId);
 			assertEquals(expectedResourceLabel, actualResourceLabel);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#equals(Object)
+	 * Tests {@linkplain LabelSet#equals(Object)
 	 */
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		PopulationPartitionQuery partitionQuery1 = PopulationPartitionQuery.builder()
+		LabelSet partitionQuery1 = LabelSet.builder()
 				.setCompartmentLabel("compartment label").build();
 
-		PopulationPartitionQuery partitionQuery2 = PopulationPartitionQuery.builder()
+		LabelSet partitionQuery2 = LabelSet.builder()
 				.setCompartmentLabel("compartment label").build();
 
-		PopulationPartitionQuery partitionQuery3 = PopulationPartitionQuery.builder()
+		LabelSet partitionQuery3 = LabelSet.builder()
 				.setRegionLabel("compartment label").build();
 
 		assertFalse(partitionQuery1 == partitionQuery2);
@@ -254,15 +254,15 @@ public class AT_PopulationPartitionQuery {
 	}
 
 	/**
-	 * Tests {@linkplain PopulationPartitionQuery#hashCode()
+	 * Tests {@linkplain LabelSet#hashCode()
 	 */
 	@Test
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
-		PopulationPartitionQuery partitionQuery1 = PopulationPartitionQuery.builder()
+		LabelSet partitionQuery1 = LabelSet.builder()
 				.setCompartmentLabel("compartment label").build();
 
-		PopulationPartitionQuery partitionQuery2 = PopulationPartitionQuery.builder()
+		LabelSet partitionQuery2 = LabelSet.builder()
 				.setCompartmentLabel("compartment label").build();
 		
 		assertFalse(partitionQuery1 == partitionQuery2);

@@ -59,31 +59,31 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public List<PersonId> getPartitionPeople(Object key, PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).getPeople(populationPartitionQuery);
+	public List<PersonId> getPartitionPeople(Object key, LabelSet labelSet) {
+		return populationPartitions.get(key).getPeople(labelSet);
 	}
 
 	@Override
-	public int getPartitionSize(Object key, PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).getPeopleCount(populationPartitionQuery);
+	public int getPartitionSize(Object key, LabelSet labelSet) {
+		return populationPartitions.get(key).getPeopleCount(labelSet);
 	}
 
 	@Override
 	public PersonId getRandomPartitionedPerson(PersonId excludedPersonId, Object key,
-			PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, populationPartitionQuery);
+			LabelSet labelSet) {
+		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, labelSet);
 	}
 
 	@Override
 	public PersonId getRandomPartionedPersonFromGenerator(PersonId excludedPersonId, Object key,
-			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
-		return populationPartitions.get(key).getRandomPersonFromGenerator(excludedPersonId, populationPartitionQuery,
+			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
+		return populationPartitions.get(key).getRandomPersonFromGenerator(excludedPersonId, labelSet,
 				randomNumberGeneratorId);
 	}
 
 	@Override
-	public boolean personInPartition(PersonId personId, Object key, PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).contains(personId, populationPartitionQuery);
+	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {
+		return populationPartitions.get(key).contains(personId, labelSet);
 	}
 
 	@Override
@@ -151,8 +151,8 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 	
 	@Override
-	public boolean validatePopulationPartitionQuery(Object key,PopulationPartitionQuery populationPartitionQuery) {
-		return populationPartitions.get(key).validatePopulationPartitionQuery(populationPartitionQuery);
+	public boolean validateLabelSet(Object key,LabelSet labelSet) {
+		return populationPartitions.get(key).validateLabelSet(labelSet);
 	}
 
 }

@@ -465,28 +465,28 @@ public final class PopulationPartition {
 		personToKeyMap.set(personId.getValue(), cleanedNewKey);
 	}
 
-	public boolean validatePopulationPartitionQuery(PopulationPartitionQuery populationPartitionQuery) {
+	public boolean validateLabelSet(LabelSet labelSet) {
 		boolean b1 = populationPartitionDefinition.getRegionPartitionFunction() == null;
-		boolean b2 = populationPartitionQuery.getRegionLabel() == null;
+		boolean b2 = labelSet.getRegionLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
 		b1 = populationPartitionDefinition.getCompartmentPartitionFunction() == null;
-		b2 = populationPartitionQuery.getCompartmentLabel() == null;
+		b2 = labelSet.getCompartmentLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
 		Set<PersonPropertyId> allowedPersonPropertyIds = populationPartitionDefinition.getPersonPropertyIds();
-		for (PersonPropertyId personPropertyId : populationPartitionQuery.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : labelSet.getPersonPropertyIds()) {
 			if (!allowedPersonPropertyIds.contains(personPropertyId)) {
 				return false;
 			}
 		}
 
 		Set<ResourceId> allowedPersonResourceIds = populationPartitionDefinition.getPersonResourceIds();
-		for (ResourceId resourceId : populationPartitionQuery.getPersonResourceIds()) {
+		for (ResourceId resourceId : labelSet.getPersonResourceIds()) {
 			if (!allowedPersonResourceIds.contains(resourceId)) {
 				return false;
 			}
@@ -550,9 +550,9 @@ public final class PopulationPartition {
 	 * only contains the excluded person.
 	 */
 	public PersonId getRandomPersonId(final PersonId excludedPersonId,
-			PopulationPartitionQuery populationPartitionQuery) {
+			LabelSet labelSet) {
 
-		Key key = getKey(populationPartitionQuery);
+		Key key = getKey(labelSet);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -611,9 +611,9 @@ public final class PopulationPartition {
 	 */
 
 	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
-			PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId) {
+			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
 
-		Key key = getKey(populationPartitionQuery);
+		Key key = getKey(labelSet);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -667,8 +667,8 @@ public final class PopulationPartition {
 		return result;
 	}
 
-	public int getPeopleCount(PopulationPartitionQuery populationPartitionQuery) {
-		Key key = getKey(populationPartitionQuery);
+	public int getPeopleCount(LabelSet labelSet) {
+		Key key = getKey(labelSet);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -691,36 +691,36 @@ public final class PopulationPartition {
 		}
 	}
 
-	private Key getKey(PopulationPartitionQuery populationPartitionQuery) {
+	private Key getKey(LabelSet labelSet) {
 		Key key = new Key(keySize);
 		int index = 0;
 		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
-			Object regionLabel = populationPartitionQuery.getRegionLabel();
+			Object regionLabel = labelSet.getRegionLabel();
 			key.keys[index++] = regionLabel;
 		}
 
 		if (populationPartitionDefinition.getCompartmentPartitionFunction() != null) {
-			Object compartmentLabel = populationPartitionQuery.getCompartmentLabel();
+			Object compartmentLabel = labelSet.getCompartmentLabel();
 			key.keys[index++] = compartmentLabel;
 		}
 
 		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
-			key.keys[index++] = populationPartitionQuery.getPersonPropertyLabel(personPropertyId);
+			key.keys[index++] = labelSet.getPersonPropertyLabel(personPropertyId);
 		}
 
 		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
-			key.keys[index++] = populationPartitionQuery.getPersonResourceLabel(resourceId);
+			key.keys[index++] = labelSet.getPersonResourceLabel(resourceId);
 		}
 
 		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
-			Object groupLabel = populationPartitionQuery.getGroupLabel();
+			Object groupLabel = labelSet.getGroupLabel();
 			key.keys[index++] = groupLabel;
 		}
 		return key;
 	}
 
-	public boolean contains(PersonId personId, PopulationPartitionQuery populationPartitionQuery) {
-		Key key = getKey(populationPartitionQuery);
+	public boolean contains(PersonId personId, LabelSet labelSet) {
+		Key key = getKey(labelSet);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -748,9 +748,9 @@ public final class PopulationPartition {
 	 * partition definition
 	 * 
 	 */
-	public List<PersonId> getPeople(PopulationPartitionQuery populationPartitionQuery) {
+	public List<PersonId> getPeople(LabelSet labelSet) {
 
-		Key key = getKey(populationPartitionQuery);
+		Key key = getKey(labelSet);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);

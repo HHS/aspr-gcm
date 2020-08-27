@@ -3777,7 +3777,7 @@ public interface Environment extends Element {
 	 *
 	 * 
 	 */
-	public List<PersonId> getPartitionPeople(final Object key, PopulationPartitionQuery populationPartitionQuery);
+	public List<PersonId> getPartitionPeople(final Object key, LabelSet labelSet);
 
 	/**
 	 * Adds a population partition using the supplied population partition
@@ -3834,7 +3834,7 @@ public interface Environment extends Element {
 	 *                        if the population query is incompatible with the
 	 *                        population partition
 	 */
-	public int getPartitionSize(final Object key, PopulationPartitionQuery populationPartitionQuery);
+	public int getPartitionSize(final Object key, LabelSet labelSet);
 
 	/**
 	 * Removes an indexed population.
@@ -3897,7 +3897,7 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public boolean personIsInPopulationPartition(final PersonId personId, final Object key,
-			final PopulationPartitionQuery populationPartitionQuery);
+			final LabelSet labelSet);
 
 
 	/**
@@ -3917,7 +3917,7 @@ public interface Environment extends Element {
 	 *                        population partition
 	 */
 	public Optional<PersonId> getRandomPartitionedPerson(final Object key,
-			final PopulationPartitionQuery populationPartitionQuery);
+			final LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition.
@@ -3942,7 +3942,7 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(final Object key,
-			final PopulationPartitionQuery populationPartitionQuery, RandomNumberGeneratorId randomNumberGeneratorId);
+			final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition
@@ -3968,7 +3968,7 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusion(final PersonId excludedPersonId, final Object key,
-			final PopulationPartitionQuery populationPartitionQuery);
+			final LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition
@@ -3998,7 +3998,7 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 */
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusionFromGenerator(final PersonId excludedPersonId,
-			final Object key, final PopulationPartitionQuery populationPartitionQuery,
+			final Object key, final LabelSet labelSet,
 			RandomNumberGeneratorId randomNumberGeneratorId);
 
 }

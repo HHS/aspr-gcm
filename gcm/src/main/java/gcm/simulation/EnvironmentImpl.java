@@ -4069,16 +4069,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validatelabelSet(Object key, LabelSet labelSet) {
+	private void validateLabelSet(Object key, LabelSet labelSet) {
 		if (labelSet == null) {
-			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_QUERY, key);
+			throwModelException(SimulationErrorType.NULL_LABEL_SET, key);
 		}
 		if (!populationPartitionManager.populationPartitionExists(key)) {
 			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 		}
 		
 		if (!populationPartitionManager.validateLabelSet(key, labelSet)) {
-			throwModelException(SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY, key);
+			throwModelException(SimulationErrorType.INCOMPATIBLE_LABEL_SET, key);
 		}
 	}
 
@@ -4088,7 +4088,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			return populationPartitionManager.getPartitionPeople(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -4144,7 +4144,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			return populationPartitionManager.getPartitionSize(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -4188,7 +4188,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePersonExists(personId);
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			return populationPartitionManager.personInPartition(personId, key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -4202,7 +4202,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(null, key,
 					labelSet);
 			if (personId == null) {
@@ -4221,7 +4221,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(null, key,
 					labelSet, randomNumberGeneratorId);
@@ -4242,7 +4242,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePersonExists(excludedPersonId);
-			validatelabelSet(key, labelSet);			
+			validateLabelSet(key, labelSet);			
 			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(excludedPersonId, key,
 					labelSet);
 			if (personId == null) {
@@ -4262,7 +4262,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validatelabelSet(key, labelSet);
+			validateLabelSet(key, labelSet);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(excludedPersonId,

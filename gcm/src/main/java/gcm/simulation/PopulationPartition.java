@@ -465,28 +465,28 @@ public final class PopulationPartition {
 		personToKeyMap.set(personId.getValue(), cleanedNewKey);
 	}
 
-	public boolean validateLabelSet(LabelSet labelSet) {
+	public boolean validateLabelSetInfo(LabelSetInfo labelSetInfo) {
 		boolean b1 = populationPartitionDefinition.getRegionPartitionFunction() == null;
-		boolean b2 = labelSet.getRegionLabel() == null;
+		boolean b2 = labelSetInfo.getRegionLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
 		b1 = populationPartitionDefinition.getCompartmentPartitionFunction() == null;
-		b2 = labelSet.getCompartmentLabel() == null;
+		b2 = labelSetInfo.getCompartmentLabel() == null;
 		if (b1 && !b2) {
 			return false;
 		}
 
 		Set<PersonPropertyId> allowedPersonPropertyIds = populationPartitionDefinition.getPersonPropertyIds();
-		for (PersonPropertyId personPropertyId : labelSet.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
 			if (!allowedPersonPropertyIds.contains(personPropertyId)) {
 				return false;
 			}
 		}
 
 		Set<ResourceId> allowedPersonResourceIds = populationPartitionDefinition.getPersonResourceIds();
-		for (ResourceId resourceId : labelSet.getPersonResourceIds()) {
+		for (ResourceId resourceId : labelSetInfo.getPersonResourceIds()) {
 			if (!allowedPersonResourceIds.contains(resourceId)) {
 				return false;
 			}
@@ -550,9 +550,9 @@ public final class PopulationPartition {
 	 * only contains the excluded person.
 	 */
 	public PersonId getRandomPersonId(final PersonId excludedPersonId,
-			LabelSet labelSet) {
+			LabelSetInfo labelSetInfo) {
 
-		Key key = getKey(labelSet);
+		Key key = getKey(labelSetInfo);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -611,9 +611,9 @@ public final class PopulationPartition {
 	 */
 
 	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
-			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
+			LabelSetInfo labelSetInfo, RandomNumberGeneratorId randomNumberGeneratorId) {
 
-		Key key = getKey(labelSet);
+		Key key = getKey(labelSetInfo);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -667,8 +667,8 @@ public final class PopulationPartition {
 		return result;
 	}
 
-	public int getPeopleCount(LabelSet labelSet) {
-		Key key = getKey(labelSet);
+	public int getPeopleCount(LabelSetInfo labelSetInfo) {
+		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -691,36 +691,36 @@ public final class PopulationPartition {
 		}
 	}
 
-	private Key getKey(LabelSet labelSet) {
+	private Key getKey(LabelSetInfo labelSetInfo) {
 		Key key = new Key(keySize);
 		int index = 0;
 		if (populationPartitionDefinition.getRegionPartitionFunction() != null) {
-			Object regionLabel = labelSet.getRegionLabel();
+			Object regionLabel = labelSetInfo.getRegionLabel();
 			key.keys[index++] = regionLabel;
 		}
 
 		if (populationPartitionDefinition.getCompartmentPartitionFunction() != null) {
-			Object compartmentLabel = labelSet.getCompartmentLabel();
+			Object compartmentLabel = labelSetInfo.getCompartmentLabel();
 			key.keys[index++] = compartmentLabel;
 		}
 
 		for (PersonPropertyId personPropertyId : populationPartitionDefinition.getPersonPropertyIds()) {
-			key.keys[index++] = labelSet.getPersonPropertyLabel(personPropertyId);
+			key.keys[index++] = labelSetInfo.getPersonPropertyLabel(personPropertyId);
 		}
 
 		for (ResourceId resourceId : populationPartitionDefinition.getPersonResourceIds()) {
-			key.keys[index++] = labelSet.getPersonResourceLabel(resourceId);
+			key.keys[index++] = labelSetInfo.getPersonResourceLabel(resourceId);
 		}
 
 		if (populationPartitionDefinition.getGroupPartitionFunction() != null) {
-			Object groupLabel = labelSet.getGroupLabel();
+			Object groupLabel = labelSetInfo.getGroupLabel();
 			key.keys[index++] = groupLabel;
 		}
 		return key;
 	}
 
-	public boolean contains(PersonId personId, LabelSet labelSet) {
-		Key key = getKey(labelSet);
+	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {
+		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
@@ -748,9 +748,9 @@ public final class PopulationPartition {
 	 * partition definition
 	 * 
 	 */
-	public List<PersonId> getPeople(LabelSet labelSet) {
+	public List<PersonId> getPeople(LabelSetInfo labelSetInfo) {
 
-		Key key = getKey(labelSet);
+		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);

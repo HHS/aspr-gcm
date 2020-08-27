@@ -60,30 +60,30 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 
 	@Override
 	public List<PersonId> getPartitionPeople(Object key, LabelSet labelSet) {
-		return populationPartitions.get(key).getPeople(labelSet);
+		return populationPartitions.get(key).getPeople(LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public int getPartitionSize(Object key, LabelSet labelSet) {
-		return populationPartitions.get(key).getPeopleCount(labelSet);
+		return populationPartitions.get(key).getPeopleCount(LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public PersonId getRandomPartitionedPerson(PersonId excludedPersonId, Object key,
 			LabelSet labelSet) {
-		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, labelSet);
+		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public PersonId getRandomPartionedPersonFromGenerator(PersonId excludedPersonId, Object key,
 			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
-		return populationPartitions.get(key).getRandomPersonFromGenerator(excludedPersonId, labelSet,
+		return populationPartitions.get(key).getRandomPersonFromGenerator(excludedPersonId, LabelSetInfo.build(labelSet),
 				randomNumberGeneratorId);
 	}
 
 	@Override
-	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {
-		return populationPartitions.get(key).contains(personId, labelSet);
+	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {		
+		return populationPartitions.get(key).contains(personId, LabelSetInfo.build(labelSet));
 	}
 
 	@Override
@@ -152,7 +152,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	
 	@Override
 	public boolean validateLabelSet(Object key,LabelSet labelSet) {
-		return populationPartitions.get(key).validateLabelSet(labelSet);
+		return populationPartitions.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));
 	}
 
 }

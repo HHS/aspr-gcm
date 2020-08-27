@@ -48,6 +48,7 @@ import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
+import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
@@ -60,6 +61,8 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
+import gcm.simulation.LabelSetInfo;
+import static gcm.simulation.LabelSet.*;
 
 @UnitTest(target = EnvironmentImpl.class)
 
@@ -78,435 +81,27 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out
-//				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		System.out
+				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static enum PartitionChoice {
 		COMPARTMENT, REGION, PROPERTY1, PROPERTY2, RESOURCE1, RESOURCE2, GROUP;
 	}
 
-	/**
-	 * Tests {@link EnvironmentImpl#getPartitionSize(PersonPropertyId, Object)}
-	 */
-	@Test
-	@UnitTestMethod(name = "getPartitionSize", args = { Object.class, LabelSet.class })
-	public void testGetPartitionSize() {
-		/*
-		 * Go through the boilerplate steps of generating a scenario that will support
-		 * the testing of a population partition that exercises all of the partition's
-		 * dimensions.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(1);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		buildBaseScenario(scenarioBuilder, randomGenerator);
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-		Scenario scenario = scenarioBuilder.build();
-
-		int testTime = 1;
-		Object key = "key";
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
-
-			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
-					partitionChoices);
-
-			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
-
-			makeRandomPersonAssignments(environment, randomGenerator);
-
-			// Group the people in the simulation by their labels, giving us the expected
-			// partitioning
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
-					environment, partitionChoices);
-
-			// show that each labelSet corresponds to the expected number of
-			// people
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				int expectedSize = expectedPartitioning.get(labelSet).size();
-				int actualSize = environment.getPartitionSize(key, labelSet);
-				assertEquals(expectedSize, actualSize);
-			}
-
-			// We now reduce the partition choices so that each query will correspond to
-			// multiple elements of the partition.
-			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.REGION);
-
-			expectedPartitioning = getExpectedPartitionedPeople(environment, partitionChoices);
-
-			// show that each labelSet corresponds to the expected number of
-			// people
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				// System.out.println(labelSet);
-				int expectedSize = expectedPartitioning.get(labelSet).size();
-				int actualSize = environment.getPartitionSize(key, labelSet);
-				assertEquals(expectedSize, actualSize);
-				// System.out.println(expectedSize);
-				// System.out.println(actualSize);
-			}
-
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
-					.setCompartmentPartition(compartmentPartitionFunction)
-					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
-
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
-
-			// if the key is null
-			assertModelException(() -> environment.getPartitionSize(null, labelSet),
-					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
-			// if the key does not correspond to an existing partition
-			assertModelException(() -> environment.getPartitionSize("bad key", labelSet),
-					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-			// if the populationQuery is null
-			assertModelException(() -> environment.getPartitionSize(key3, null),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
-			assertModelException(() -> environment.getPartitionSize(key3, incompatiblelabelSet),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(getReplication(randomGenerator));
-		simulation.setScenario(scenario);
-		simulation.execute();
-		assertAllPlansExecuted(taskPlanContainer);
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#getRandomPartitionedPersonFromGenerator(Object,
-	 * LabelSet, RandomNumberGeneratorId)
-	 */
-	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonFromGenerator", args = { Object.class,
-			LabelSet.class, RandomNumberGeneratorId.class })
-	public void testGetRandomPartitionedPersonFromGenerator() {
-		/*
-		 * Go through the boilerplate steps of generating a scenario that will support
-		 * the testing of a population partition that exercises all of the partition's
-		 * dimensions.
-		 */
-
-		final long seed = SEED_PROVIDER.getSeedValue(6);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		buildBaseScenario(scenarioBuilder, randomGenerator);
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-		RandomNumberGeneratorId randomNumberGeneratorId = new RandomNumberGeneratorId() {
-		};
-		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
-		Scenario scenario = scenarioBuilder.build();
-
-		int testTime = 1;
-		Object key = "key";
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
-
-			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
-					partitionChoices);
-
-			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
-
-			makeRandomPersonAssignments(environment, randomGenerator);
-
-			// Group the people in the simulation by their labels, giving us the expected
-			// partitioning
-
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
-					environment, partitionChoices);
-
-			// show that each set of people we expect should be associated with a given set
-			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
-				// we know that each labelSet corresponds to at least one person
-				for (int i = 0; i < 10; i++) {
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key,
-							labelSet, randomNumberGeneratorId);
-					assertTrue(optional.isPresent());
-					PersonId selectedPersonId = optional.get();
-					assertTrue(expectedPeople.contains(selectedPersonId));
-				}
-			}
-			// We now reduce the partition choices so that each query will correspond to
-			// multiple elements of the partition.
-			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.REGION, PartitionChoice.RESOURCE1);
-			expectedPartitioning = getExpectedPartitionedPeople(environment, partitionChoices);
-
-			// show that each set of people we expect should be associated with a given set
-			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
-				// we know that each labelSet corresponds to at least one person
-				for (int i = 0; i < 10; i++) {
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key,
-							labelSet, randomNumberGeneratorId);
-					assertTrue(optional.isPresent());
-					PersonId selectedPersonId = optional.get();
-					assertTrue(expectedPeople.contains(selectedPersonId));
-				}
-			}
-			// show that a population query resulting in an empty partition cannot return a
-			// randomly selected person
-			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
-					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder()
-					.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
-			Optional<PersonId> optional = environment.getRandomPartitionedPerson(key2, labelSet);
-			assertFalse(optional.isPresent());
-
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
-					.setCompartmentPartition(compartmentPartitionFunction)
-					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
-
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
-
-			RandomNumberGeneratorId badRandomNumberGeneratorId = new RandomNumberGeneratorId() {
-			};
-
-			// if the key is null
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(null,
-					labelSet, randomNumberGeneratorId),
-					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
-			// if the key does not correspond to an existing partition
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator("bad key",
-					labelSet, randomNumberGeneratorId),
-					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-			// if the populationQuery is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonFromGenerator(key3, null, randomNumberGeneratorId),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonFromGenerator(key3,
-							incompatiblelabelSet, randomNumberGeneratorId),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
-
-			// if the randomNumberGeneratorId is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonFromGenerator(key3, labelSet, null),
-					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
-			// if the randomNumberGeneratorId does not correspond to a known id
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(key3,
-					labelSet, badRandomNumberGeneratorId),
-					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(getReplication(randomGenerator));
-		simulation.setScenario(scenario);
-		simulation.execute();
-		assertAllPlansExecuted(taskPlanContainer);
-
-	}
-
-	/**
-	 * Tests {@link
-	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusion(PersonId, Object,
-	 * LabelSet)
-	 */
-	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusion", args = { PersonId.class, Object.class,
-			LabelSet.class })
-	public void testGetRandomPartitionedPersonWithExclusion() {
-		/*
-		 * Go through the boilerplate steps of generating a scenario that will support
-		 * the testing of a population partition that exercises all of the partition's
-		 * dimensions.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(5);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		buildBaseScenario(scenarioBuilder, randomGenerator);
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-		Scenario scenario = scenarioBuilder.build();
-
-		int testTime = 1;
-		Object key = "key";
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
-
-			// define the partition
-			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
-					partitionChoices);
-
-			// add the partition to the simulation
-			environment.addPopulationPartition(populationPartitionDefinition, key);
-
-			makeRandomPersonAssignments(environment, randomGenerator);
-
-			// Group the people in the simulation by their labels, giving us the expected
-			// partitioning
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
-					environment, partitionChoices);
-
-			// show that each set of people we expect should be associated with a given set
-			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
-				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
-				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
-				// we know that each labelSet corresponds to at least one person
-				PersonId excludedPersonId = expectedPeopleList.get(0);
-
-				for (int i = 0; i < 10; i++) {
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
-							key, labelSet);
-					if (expectedPeople.size() > 1) {
-						assertTrue(optional.isPresent());
-						PersonId selectedPersonId = optional.get();
-						assertTrue(expectedPeople.contains(selectedPersonId));
-					} else {
-						assertFalse(optional.isPresent());
-					}
-				}
-			}
-			
-			// We now reduce the partition choices so that each query will correspond to
-			// multiple elements of the partition.
-			partitionChoices = EnumSet.of(
-					PartitionChoice.COMPARTMENT,
-					PartitionChoice.PROPERTY1,
-					PartitionChoice.RESOURCE1
-					);
-			expectedPartitioning = getExpectedPartitionedPeople(
-					environment, partitionChoices);
-
-			// show that each set of people we expect should be associated with a given set
-			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
-				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
-				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
-				// we know that each labelSet corresponds to at least one person
-				PersonId excludedPersonId = expectedPeopleList.get(0);
-
-				for (int i = 0; i < 10; i++) {
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
-							key, labelSet);
-					if (expectedPeople.size() > 1) {
-						assertTrue(optional.isPresent());
-						PersonId selectedPersonId = optional.get();
-						assertTrue(expectedPeople.contains(selectedPersonId));
-					} else {
-						assertFalse(optional.isPresent());
-					}
-				}
-			}
-			// show that a population query resulting in an empty partition cannot return a
-			// randomly selected person
-			PersonId personId = new PersonId(0);
-			Object key2 = "key2";
-			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
-					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder()
-					.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
-			Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2,
-					labelSet);
-			assertFalse(optional.isPresent());
-
-			// show that a population query resulting in a partition containing only the
-			// excluded person cannot return a randomly selected person
-			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2, labelSet);
-			assertFalse(optional.isPresent());
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key3 = "key3";
-			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
-					.setCompartmentPartition(compartmentPartitionFunction)
-					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
-			environment.addPopulationPartition(populationPartitionDefinition, key3);
-
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
-
-			PersonId goodPersonId = new PersonId(0);
-			PersonId badPersonId = new PersonId(1000000);
-
-			// if the key is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, null,
-					labelSet), SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
-			// if the key does not correspond to an existing partition
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, "bad key",
-					labelSet), SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-
-			// if the personId is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(null, key3, labelSet),
-					SimulationErrorType.NULL_PERSON_ID);
-			// if the personId does not correspond to an existing person
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(badPersonId, key3,
-					labelSet), SimulationErrorType.UNKNOWN_PERSON_ID);
-
-			// if the populationQuery is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3, null),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3,
-							incompatiblelabelSet),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(getReplication(randomGenerator));
-		simulation.setScenario(scenario);
-		simulation.execute();
-		assertAllPlansExecuted(taskPlanContainer);
+	private static void buildBaseScenario(ScenarioBuilder scenarioBuilder, RandomGenerator randomGenerator) {
+
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		Map<Object, PropertyDefinition> forcedPropertyDefinitions = new LinkedHashMap<>();
+		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0)
+				.build();
+		forcedPropertyDefinitions.put(TestPersonPropertyId.PERSON_PROPERTY_1, propertyDefinition);
+		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("nope").build();
+		forcedPropertyDefinitions.put(TestPersonPropertyId.PERSON_PROPERTY_2, propertyDefinition);
+		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.TRUE,
+				randomGenerator);
+		addStandardPeople(scenarioBuilder, 300);
 
 	}
 
@@ -647,6 +242,84 @@ public class AT_EnvironmentImpl_25 {
 
 	}
 
+	private static Map<LabelSetInfo, Set<PersonId>> getExpectedPartitionedPeople(Environment environment,
+			Set<PartitionChoice> partionChoices) {
+
+		List<PersonId> people = environment.getPeople();
+		Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = new LinkedHashMap<>();
+		for (PersonId personId : people) {
+			// retrieve the various characteristics of the person and convert them into
+			// labels
+			RegionId personRegion = environment.getPersonRegion(personId);
+			Object regionLabel = regionPartitionFunction.apply(personRegion);
+
+			CompartmentId personCompartment = environment.getPersonCompartment(personId);
+			Object compartmentLabel = compartmentPartitionFunction.apply(personCompartment);
+
+			Object personProperty1Value = environment.getPersonPropertyValue(personId,
+					TestPersonPropertyId.PERSON_PROPERTY_1);
+			Object personProperty1Label = property1Function.apply(personProperty1Value);
+
+			Object personProperty2Value = environment.getPersonPropertyValue(personId,
+					TestPersonPropertyId.PERSON_PROPERTY_2);
+			Object personProperty2Label = property2Function.apply(personProperty2Value);
+
+			long personResource1Level = environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1);
+			Object personResource1Label = personResource1PartitionFunction.apply(personResource1Level);
+
+			long personResource2Level = environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE2);
+			Object personResource2Label = personResource2PartitionFunction.apply(personResource2Level);
+
+			int groupCount1 = environment.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1, personId);
+			int groupCount2 = environment.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_2, personId);
+			GroupTypeCountMap groupTypeCountMap = GroupTypeCountMap.builder()
+					.setCount(TestGroupTypeId.GROUP_TYPE_1, groupCount1)
+					.setCount(TestGroupTypeId.GROUP_TYPE_2, groupCount2).build();
+
+			Object groupLabel = groupPartitionFunction.apply(groupTypeCountMap);
+
+			// use the labels to create a label set that fits the person
+			LabelSet labelSet = empty();
+			for (PartitionChoice partitionChoice : partionChoices) {
+				switch (partitionChoice) {
+				case COMPARTMENT:
+					labelSet = labelSet.with(compartment(compartmentLabel));
+					break;
+				case GROUP:
+					labelSet = labelSet.with(group(groupLabel));
+					break;
+				case PROPERTY1:
+					labelSet = labelSet.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, personProperty1Label));
+					break;
+				case PROPERTY2:
+					labelSet = labelSet.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, personProperty2Label));
+					break;
+				case REGION:
+					labelSet = labelSet.with(region(regionLabel));
+					break;
+				case RESOURCE1:
+					labelSet = labelSet.with(resource(TestResourceId.RESOURCE1, personResource1Label));
+					break;
+				case RESOURCE2:
+					labelSet = labelSet.with(resource(TestResourceId.RESOURCE2, personResource2Label));
+					break;
+				default:
+					throw new RuntimeException("unhandled case");
+				}
+			}
+			LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+			// add the population query to the expectedPartitioning if it is new and add the
+			// person to the set of people we expect to be associated with this query
+			Set<PersonId> partitionPeople = expectedPartitioning.get(labelSetInfo);
+			if (partitionPeople == null) {
+				partitionPeople = new LinkedHashSet<>();
+				expectedPartitioning.put(labelSetInfo, partitionPeople);
+			}
+			partitionPeople.add(personId);
+		}
+		return expectedPartitioning;
+	}
+
 	private static PopulationPartitionDefinition createPopulationPartitionDefinition(
 			Set<PartitionChoice> partionChoices) {
 		PopulationPartitionDefinition.Builder builder = PopulationPartitionDefinition.builder();//
@@ -682,99 +355,446 @@ public class AT_EnvironmentImpl_25 {
 		return builder.build();
 	}
 
-	public static Map<LabelSet, Set<PersonId>> getExpectedPartitionedPeople(Environment environment,
-			Set<PartitionChoice> partionChoices) {
-
-		List<PersonId> people = environment.getPeople();
-		Map<LabelSet, Set<PersonId>> expectedPartitioning = new LinkedHashMap<>();
-		for (PersonId personId : people) {
-			// retrieve the various characteristics of the person and convert them into
-			// labels
-			RegionId personRegion = environment.getPersonRegion(personId);
-			Object regionLabel = regionPartitionFunction.apply(personRegion);
-
-			CompartmentId personCompartment = environment.getPersonCompartment(personId);
-			Object compartmentLabel = compartmentPartitionFunction.apply(personCompartment);
-
-			Object personProperty1Value = environment.getPersonPropertyValue(personId,
-					TestPersonPropertyId.PERSON_PROPERTY_1);
-			Object personProperty1Label = property1Function.apply(personProperty1Value);
-
-			Object personProperty2Value = environment.getPersonPropertyValue(personId,
-					TestPersonPropertyId.PERSON_PROPERTY_2);
-			Object personProperty2Label = property2Function.apply(personProperty2Value);
-
-			long personResource1Level = environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1);
-			Object personResource1Label = personResource1PartitionFunction.apply(personResource1Level);
-
-			long personResource2Level = environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE2);
-			Object personResource2Label = personResource2PartitionFunction.apply(personResource2Level);
-
-			int groupCount1 = environment.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_1, personId);
-			int groupCount2 = environment.getGroupCountForGroupTypeAndPerson(TestGroupTypeId.GROUP_TYPE_2, personId);
-			GroupTypeCountMap groupTypeCountMap = GroupTypeCountMap.builder()
-					.setCount(TestGroupTypeId.GROUP_TYPE_1, groupCount1)
-					.setCount(TestGroupTypeId.GROUP_TYPE_2, groupCount2).build();
-
-			Object groupLabel = groupPartitionFunction.apply(groupTypeCountMap);
-
-			// use the labels to create a population query that fits the person
-			LabelSet.Builder builder = LabelSet.builder();
-			for (PartitionChoice partitionChoice : partionChoices) {
-				switch (partitionChoice) {
-				case COMPARTMENT:
-					builder.setCompartmentLabel(compartmentLabel);
-					break;
-				case GROUP:
-					builder.setGroupLabel(groupLabel);
-					break;
-				case PROPERTY1:
-					builder.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, personProperty1Label);
-					break;
-				case PROPERTY2:
-					builder.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, personProperty2Label);
-					break;
-				case REGION:
-					builder.setRegionLabel(regionLabel);
-					break;
-				case RESOURCE1:
-					builder.setPersonResourceLabel(TestResourceId.RESOURCE1, personResource1Label);
-					break;
-				case RESOURCE2:
-					builder.setPersonResourceLabel(TestResourceId.RESOURCE2, personResource2Label);
-					break;
-				default:
-					throw new RuntimeException("unhandled case");
-				}
-			}
-
-			LabelSet labelSet = builder.build();
-
-			// add the population query to the expectedPartitioning if it is new and add the
-			// person to the set of people we expect to be associated with this query
-			Set<PersonId> partitionPeople = expectedPartitioning.get(labelSet);
-			if (partitionPeople == null) {
-				partitionPeople = new LinkedHashSet<>();
-				expectedPartitioning.put(labelSet, partitionPeople);
-			}
-			partitionPeople.add(personId);
+	private static LabelSet getLabelSet(LabelSetInfo labelSetInfo) {
+		LabelSet result = empty();
+		if (labelSetInfo.getCompartmentLabel() != null) {
+			result = result.with(compartment(labelSetInfo.getCompartmentLabel()));
 		}
-		return expectedPartitioning;
+		if (labelSetInfo.getRegionLabel() != null) {
+			result = result.with(region(labelSetInfo.getRegionLabel()));
+		}
+		if (labelSetInfo.getGroupLabel() != null) {
+			result = result.with(group(labelSetInfo.getGroupLabel()));
+		}
+		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
+			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId)));
+		}
+		for (ResourceId recourceId : labelSetInfo.getPersonResourceIds()) {
+			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId)));
+		}
+		return result;
 	}
 
-	private static void buildBaseScenario(ScenarioBuilder scenarioBuilder, RandomGenerator randomGenerator) {
+	/**
+	 * Tests {@link EnvironmentImpl#getPartitionSize(PersonPropertyId, Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "getPartitionSize", args = { Object.class, LabelSet.class })
+	public void testGetPartitionSize() {
+		/*
+		 * Go through the boilerplate steps of generating a scenario that will support
+		 * the testing of a population partition that exercises all of the partition's
+		 * dimensions.
+		 */
+		final long seed = SEED_PROVIDER.getSeedValue(1);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		buildBaseScenario(scenarioBuilder, randomGenerator);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+		Scenario scenario = scenarioBuilder.build();
 
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		Map<Object, PropertyDefinition> forcedPropertyDefinitions = new LinkedHashMap<>();
-		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0)
-				.build();
-		forcedPropertyDefinitions.put(TestPersonPropertyId.PERSON_PROPERTY_1, propertyDefinition);
-		propertyDefinition = PropertyDefinition.builder().setType(String.class).setDefaultValue("nope").build();
-		forcedPropertyDefinitions.put(TestPersonPropertyId.PERSON_PROPERTY_2, propertyDefinition);
-		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.TRUE,
-				randomGenerator);
-		addStandardPeople(scenarioBuilder, 300);
+		int testTime = 1;
+		Object key = "key";
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
+
+			// define the partition
+			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+					partitionChoices);
+
+			// add the partition to the simulation
+			environment.addPopulationPartition(populationPartitionDefinition, key);
+
+			makeRandomPersonAssignments(environment, randomGenerator);
+
+			// Group the people in the simulation by their labels, giving us the expected
+			// partitioning
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(environment,
+					partitionChoices);
+
+			// show that each labelSet corresponds to the expected number of
+			// people
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+				LabelSet labelSet = getLabelSet(labelSetInfo);
+				int expectedSize = expectedPartitioning.get(labelSetInfo).size();
+				int actualSize = environment.getPartitionSize(key, labelSet);
+				assertEquals(expectedSize, actualSize);
+				
+			}
+
+			// We now reduce the partition choices so that each query will correspond to
+			// multiple elements of the partition.
+			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.REGION);
+
+			expectedPartitioning = getExpectedPartitionedPeople(environment, partitionChoices);
+
+			// show that each labelSet corresponds to the expected number of
+			// people
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+				// System.out.println(labelSet);
+				LabelSet labelSet = getLabelSet(labelSetInfo);
+				int expectedSize = expectedPartitioning.get(labelSetInfo).size();
+				int actualSize = environment.getPartitionSize(key, labelSet);
+				assertEquals(expectedSize, actualSize);				
+			}
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Object key3 = "key3";
+			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+					.setCompartmentPartition(compartmentPartitionFunction)
+					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPopulationPartition(populationPartitionDefinition, key3);
+
+			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+
+			// if the key is null
+			assertModelException(() -> environment.getPartitionSize(null, labelSet),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getPartitionSize("bad key", labelSet),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+			// if the label set is null
+			assertModelException(() -> environment.getPartitionSize(key3, null), SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
+			assertModelException(() -> environment.getPartitionSize(key3, incompatiblelabelSet),
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(getReplication(randomGenerator));
+		simulation.setScenario(scenario);
+		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+
+	/**
+	 * Tests
+	 * {@link EnvironmentImpl#getRandomPartitionedPersonFromGenerator(Object, LabelSet, RandomNumberGeneratorId)
+	 */
+	@Test
+	@UnitTestMethod(name = "getRandomPartitionedPersonFromGenerator", args = { Object.class,
+			LabelSet.class, RandomNumberGeneratorId.class })
+	public void testGetRandomPartitionedPersonFromGenerator() {
+		/*
+		 * Go through the boilerplate steps of generating a scenario that will support
+		 * the testing of a population partition that exercises all of the partition's
+		 * dimensions.
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(6);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		buildBaseScenario(scenarioBuilder, randomGenerator);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+		RandomNumberGeneratorId randomNumberGeneratorId = new RandomNumberGeneratorId() {
+		};
+		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
+		Scenario scenario = scenarioBuilder.build();
+
+		int testTime = 1;
+		Object key = "key";
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
+
+			// define the partition
+			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+					partitionChoices);
+
+			// add the partition to the simulation
+			environment.addPopulationPartition(populationPartitionDefinition, key);
+
+			makeRandomPersonAssignments(environment, randomGenerator);
+
+			// Group the people in the simulation by their labels, giving us the expected
+			// partitioning
+
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+					environment, partitionChoices);
+
+			// show that each set of people we expect should be associated with a given set
+			// of labels matches the set returned by the simulation
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				// we know that each labelSet corresponds to at least one person
+				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);				
+					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key,
+							labelSet, randomNumberGeneratorId);
+					assertTrue(optional.isPresent());
+					PersonId selectedPersonId = optional.get();
+					assertTrue(expectedPeople.contains(selectedPersonId));
+				}
+			}
+			// We now reduce the partition choices so that each query will correspond to
+			// multiple elements of the partition.
+			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.REGION, PartitionChoice.RESOURCE1);
+			expectedPartitioning = getExpectedPartitionedPeople(environment, partitionChoices);
+
+			// show that each set of people we expect should be associated with a given set
+			// of labels matches the set returned by the simulation
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				// we know that each labelSet corresponds to at least one person
+				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);				
+					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key,
+							labelSet, randomNumberGeneratorId);
+					assertTrue(optional.isPresent());
+					PersonId selectedPersonId = optional.get();
+					assertTrue(expectedPeople.contains(selectedPersonId));
+				}
+			}
+			// show that a population query resulting in an empty partition cannot return a
+			// randomly selected person
+			Object key2 = "key2";
+			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPopulationPartition(partitionDefinition, key2);
+			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			Optional<PersonId> optional = environment.getRandomPartitionedPerson(key2, labelSet);
+			assertFalse(optional.isPresent());
+
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Object key3 = "key3";
+			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+					.setCompartmentPartition(compartmentPartitionFunction)
+					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPopulationPartition(populationPartitionDefinition, key3);
+
+			LabelSet labelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet =	compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+
+			RandomNumberGeneratorId badRandomNumberGeneratorId = new RandomNumberGeneratorId() {
+			};
+
+			// if the key is null
+			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(null,
+					labelSet, randomNumberGeneratorId),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator("bad key",
+					labelSet, randomNumberGeneratorId),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+			// if the label set is null
+			assertModelException(
+					() -> environment.getRandomPartitionedPersonFromGenerator(key3, null, randomNumberGeneratorId),
+					SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
+			assertModelException(
+					() -> environment.getRandomPartitionedPersonFromGenerator(key3,
+							incompatiblelabelSet, randomNumberGeneratorId),
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+
+			// if the randomNumberGeneratorId is null
+			assertModelException(
+					() -> environment.getRandomPartitionedPersonFromGenerator(key3, labelSet, null),
+					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			// if the randomNumberGeneratorId does not correspond to a known id
+			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(key3,
+					labelSet, badRandomNumberGeneratorId),
+					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(getReplication(randomGenerator));
+		simulation.setScenario(scenario);
+		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
+
+	}
+
+	/**
+	 * Tests {@link
+	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusion(PersonId, Object,
+	 * LabelSet)
+	 */
+	@Test
+	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusion", args = { PersonId.class, Object.class,
+			LabelSet.class })
+	public void testGetRandomPartitionedPersonWithExclusion() {
+		/*
+		 * Go through the boilerplate steps of generating a scenario that will support
+		 * the testing of a population partition that exercises all of the partition's
+		 * dimensions.
+		 */
+		final long seed = SEED_PROVIDER.getSeedValue(5);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		buildBaseScenario(scenarioBuilder, randomGenerator);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+		Scenario scenario = scenarioBuilder.build();
+
+		int testTime = 1;
+		Object key = "key";
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
+
+			// define the partition
+			PopulationPartitionDefinition populationPartitionDefinition = createPopulationPartitionDefinition(
+					partitionChoices);
+
+			// add the partition to the simulation
+			environment.addPopulationPartition(populationPartitionDefinition, key);
+
+			makeRandomPersonAssignments(environment, randomGenerator);
+
+			// Group the people in the simulation by their labels, giving us the expected
+			// partitioning
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+					environment, partitionChoices);
+
+			// show that each set of people we expect should be associated with a given set
+			// of labels matches the set returned by the simulation
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
+				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
+				// we know that each labelSet corresponds to at least one person
+				PersonId excludedPersonId = expectedPeopleList.get(0);
+
+				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
+					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
+							key, labelSet);
+					if (expectedPeople.size() > 1) {
+						assertTrue(optional.isPresent());
+						PersonId selectedPersonId = optional.get();
+						assertTrue(expectedPeople.contains(selectedPersonId));
+					} else {
+						assertFalse(optional.isPresent());
+					}
+				}
+			}
+			
+			// We now reduce the partition choices so that each query will correspond to
+			// multiple elements of the partition.
+			partitionChoices = EnumSet.of(
+					PartitionChoice.COMPARTMENT,
+					PartitionChoice.PROPERTY1,
+					PartitionChoice.RESOURCE1
+					);
+			expectedPartitioning = getExpectedPartitionedPeople(
+					environment, partitionChoices);
+
+			// show that each set of people we expect should be associated with a given set
+			// of labels matches the set returned by the simulation
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
+				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
+				// we know that each labelSet corresponds to at least one person
+				PersonId excludedPersonId = expectedPeopleList.get(0);
+
+				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
+					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
+							key, labelSet);
+					if (expectedPeople.size() > 1) {
+						assertTrue(optional.isPresent());
+						PersonId selectedPersonId = optional.get();
+						assertTrue(expectedPeople.contains(selectedPersonId));
+					} else {
+						assertFalse(optional.isPresent());
+					}
+				}
+			}
+			// show that a population query resulting in an empty partition cannot return a
+			// randomly selected person
+			PersonId personId = new PersonId(0);
+			Object key2 = "key2";
+			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
+					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPopulationPartition(partitionDefinition, key2);
+			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2,
+					labelSet);
+			assertFalse(optional.isPresent());
+
+			// show that a population query resulting in a partition containing only the
+			// excluded person cannot return a randomly selected person
+			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2, labelSet);
+			assertFalse(optional.isPresent());
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Object key3 = "key3";
+			PopulationPartitionDefinition populationPartitionDefinition = PopulationPartitionDefinition.builder()
+					.setCompartmentPartition(compartmentPartitionFunction)
+					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPopulationPartition(populationPartitionDefinition, key3);
+
+			LabelSet labelSet = 
+					compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = 
+					compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+
+			PersonId goodPersonId = new PersonId(0);
+			PersonId badPersonId = new PersonId(1000000);
+
+			// if the key is null
+			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, null,
+					labelSet), SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, "bad key",
+					labelSet), SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+
+			// if the personId is null
+			assertModelException(
+					() -> environment.getRandomPartitionedPersonWithExclusion(null, key3, labelSet),
+					SimulationErrorType.NULL_PERSON_ID);
+			// if the personId does not correspond to an existing person
+			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(badPersonId, key3,
+					labelSet), SimulationErrorType.UNKNOWN_PERSON_ID);
+
+			// if the label set is null
+			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3, null),
+					SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
+			assertModelException(
+					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3,
+							incompatiblelabelSet),
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(getReplication(randomGenerator));
+		simulation.setScenario(scenario);
+		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
 
 	}
 
@@ -817,13 +837,14 @@ public class AT_EnvironmentImpl_25 {
 			// partitioning -- each labelSet will correspond to exactly one
 			// element of the partition
 
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
 					environment, partitionChoices);
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
 				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toSet());
@@ -837,8 +858,9 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
+				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
 				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toSet());
@@ -857,10 +879,10 @@ public class AT_EnvironmentImpl_25 {
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(populationPartitionDefinition, key3);
 
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
+			LabelSet labelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
 			// if the key is null
 			assertModelException(() -> environment.getPartitionPeople(null, labelSet),
@@ -868,12 +890,12 @@ public class AT_EnvironmentImpl_25 {
 			// if the key does not correspond to an existing partition
 			assertModelException(() -> environment.getPartitionPeople("bad key", labelSet),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-			// if the populationQuery is null
+			// if the label set is null
 			assertModelException(() -> environment.getPartitionPeople(key3, null),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
+					SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
 			assertModelException(() -> environment.getPartitionPeople(key3, incompatiblelabelSet),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 		});
 
@@ -1164,16 +1186,17 @@ public class AT_EnvironmentImpl_25 {
 
 			// Group the people in the simulation by their labels, giving us the expected
 			// partitioning
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
 					environment, partitionChoices);
 
 			// show that each labelSet corresponds to the expected number of
 			// people
 
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				for (PersonId personId : expectedPeople) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
 					assertTrue(environment.personIsInPopulationPartition(personId, key, labelSet));
 				}
 			}
@@ -1193,10 +1216,11 @@ public class AT_EnvironmentImpl_25 {
 			// show that each labelSet corresponds to the expected number of
 			// people
 
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				for (PersonId personId : expectedPeople) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
 					assertTrue(environment.personIsInPopulationPartition(personId, key, labelSet));
 				}
 			}
@@ -1213,10 +1237,10 @@ public class AT_EnvironmentImpl_25 {
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(populationPartitionDefinition, key3);
 
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
+			LabelSet labelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(10000000);
 
@@ -1237,14 +1261,14 @@ public class AT_EnvironmentImpl_25 {
 					() -> environment.personIsInPopulationPartition(badPersonId, key3, labelSet),
 					SimulationErrorType.UNKNOWN_PERSON_ID);
 
-			// if the populationQuery is null
+			// if the label set is null
 			assertModelException(() -> environment.personIsInPopulationPartition(goodPersonId, key3, null),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
+					SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
 			assertModelException(
 					() -> environment.personIsInPopulationPartition(goodPersonId, key3,
 							incompatiblelabelSet),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 		});
 
@@ -1293,16 +1317,17 @@ public class AT_EnvironmentImpl_25 {
 
 			// Group the people in the simulation by their labels, giving us the expected
 			// partitioning
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
 					environment, partitionChoices);
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
 					Optional<PersonId> optional = environment.getRandomPartitionedPerson(key, labelSet);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
@@ -1323,11 +1348,12 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
 					Optional<PersonId> optional = environment.getRandomPartitionedPerson(key, labelSet);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
@@ -1340,8 +1366,7 @@ public class AT_EnvironmentImpl_25 {
 			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder()
-					.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
+			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.getRandomPartitionedPerson(key2, labelSet);
 			assertFalse(optional.isPresent());
 
@@ -1358,10 +1383,10 @@ public class AT_EnvironmentImpl_25 {
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(populationPartitionDefinition, key3);
 
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
+			LabelSet labelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
 			// if the key is null
 			assertModelException(() -> environment.getRandomPartitionedPerson(null, labelSet),
@@ -1369,13 +1394,13 @@ public class AT_EnvironmentImpl_25 {
 			// if the key does not correspond to an existing partition
 			assertModelException(() -> environment.getRandomPartitionedPerson("bad key", labelSet),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-			// if the populationQuery is null
+			// if the label set is null
 			assertModelException(() -> environment.getRandomPartitionedPerson(key3, null),
-					SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
+					SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
 			assertModelException(
 					() -> environment.getRandomPartitionedPerson(key3, incompatiblelabelSet),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 		});
 
@@ -1430,20 +1455,21 @@ public class AT_EnvironmentImpl_25 {
 
 			// Group the people in the simulation by their labels, giving us the expected
 			// partitioning
-			Map<LabelSet, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
+			Map<LabelSetInfo, Set<PersonId>> expectedPartitioning = getExpectedPartitionedPeople(
 					environment, partitionChoices);
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
 				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
 				// we know that each labelSet corresponds to at least one person
 				PersonId excludedPersonId = expectedPeopleList.get(0);
 
 				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo);
 					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(
 							excludedPersonId, key, labelSet, randomNumberGeneratorId);
 					if (expectedPeople.size() > 1) {
@@ -1465,15 +1491,16 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSet labelSet : expectedPartitioning.keySet()) {
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
-				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSet);
+				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
 				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
 				// we know that each labelSet corresponds to at least one person
 				PersonId excludedPersonId = expectedPeopleList.get(0);
 
 				for (int i = 0; i < 10; i++) {
+					LabelSet labelSet = getLabelSet(labelSetInfo); 
 					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(
 							excludedPersonId, key, labelSet, randomNumberGeneratorId);
 					if (expectedPeople.size() > 1) {
@@ -1493,8 +1520,7 @@ public class AT_EnvironmentImpl_25 {
 			PopulationPartitionDefinition partitionDefinition = PopulationPartitionDefinition.builder()
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder()
-					.setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
+			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(personId,
 					key2, labelSet, randomNumberGeneratorId);
 			assertFalse(optional.isPresent());
@@ -1517,10 +1543,10 @@ public class AT_EnvironmentImpl_25 {
 					.setPersonPropertyPartition(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPopulationPartition(populationPartitionDefinition, key3);
 
-			LabelSet labelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1).build();
-			LabelSet incompatiblelabelSet = LabelSet.builder()
-					.setCompartmentLabel(0).setPersonPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2, 1).build();
+			LabelSet labelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
+			LabelSet incompatiblelabelSet = compartment(0)
+					.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(1000000);
@@ -1544,14 +1570,14 @@ public class AT_EnvironmentImpl_25 {
 			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(badPersonId, key3,
 					labelSet), SimulationErrorType.UNKNOWN_PERSON_ID);
 
-			// if the populationQuery is null
+			// if the label set is null
 			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					key3, null, randomNumberGeneratorId), SimulationErrorType.NULL_POPULATION_PARTITION_QUERY);
-			// if the population query is incompatible with the partition
+					key3, null, randomNumberGeneratorId), SimulationErrorType.NULL_LABEL_SET);
+			// if the label set is incompatible with the partition
 			assertModelException(
 					() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId, key3,
 							incompatiblelabelSet, randomNumberGeneratorId),
-					SimulationErrorType.INCOMPATIBLE_POPULATION_PARTITION_QUERY);
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 			// if the random number generator id is null
 			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,

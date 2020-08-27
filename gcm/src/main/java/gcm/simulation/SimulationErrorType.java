@@ -108,11 +108,11 @@ public enum SimulationErrorType {
 	
 	NULL_POPULATION_PARTITION_KEY("Null population partition key"),
 	UNKNOWN_POPULATION_PARTITION_KEY("No population partition found"),
-	NULL_POPULATION_PARTITION_QUERY("Null population query"),
+	NULL_LABEL_SET("Null label set"),
 	NULL_POPULATION_PARTITION_DEFINITION("Null population definition"),
 	DUPLICATE_POPULATION_PARTITION("Duplicate population partition key"),
 	POPULATION_PARTITION_DELETION_BY_NON_OWNER("A population partition can only be deleted by its owner"),	
-	INCOMPATIBLE_POPULATION_PARTITION_QUERY("The population query is incompatible with the selected population partition definition");
+	INCOMPATIBLE_LABEL_SET("The label set is incompatible with the selected population partition definition");
 	 
 
 	private final String description;

@@ -69,7 +69,7 @@ import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
 import gcm.automated.AT_PopulationPartitionDefinition;
-import gcm.automated.AT_LabelSet;
+import gcm.automated.AT_LabelSetInfo;
 import gcm.automated.AT_PropertyDefinition;
 import gcm.automated.AT_Replication;
 import gcm.automated.AT_ReplicationImpl;
@@ -183,7 +183,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_Replication.class,
 	AT_GroupTypeCountMap.class,
 	AT_PopulationPartitionDefinition.class,
-	AT_LabelSet.class,
+	AT_LabelSetInfo.class,
 	AT_Tuplator.class
 	})
 

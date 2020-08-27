@@ -3769,10 +3769,10 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null *
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 *
 	 * 
@@ -3828,10 +3828,10 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null *
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 */
 	public int getPartitionSize(final Object key, LabelSet labelSet);
@@ -3889,10 +3889,10 @@ public interface Environment extends Element {
 	 *                        person is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null *
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 * 
 	 */
@@ -3910,10 +3910,10 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 */
 	public Optional<PersonId> getRandomPartitionedPerson(final Object key,
@@ -3929,10 +3929,10 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                        if the randomNumberGeneratorId is null
@@ -3960,10 +3960,10 @@ public interface Environment extends Element {
 	 *                        the excluded person is unknown
 	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
 	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 * 
 	 */
@@ -3986,10 +3986,10 @@ public interface Environment extends Element {
 	 *                        the excluded person is unknown
 	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
 	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_POPULATION_PARTITION_QUERY}
-	 *                        if the population query is incompatible with the
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
+	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the label set is incompatible with the
 	 *                        population partition
 	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                        if the randomNumberGeneratorId is null

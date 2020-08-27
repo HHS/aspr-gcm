@@ -9,6 +9,7 @@ import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
+import static gcm.simulation.partition.LabelSet.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -54,15 +55,14 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.GroupTypeCountMap;
-import gcm.simulation.PopulationPartitionDefinition;
-import gcm.simulation.LabelSet;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.GroupTypeCountMap;
+import gcm.simulation.partition.LabelSet;
+import gcm.simulation.partition.LabelSetInfo;
+import gcm.simulation.partition.PopulationPartitionDefinition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
-import gcm.simulation.LabelSetInfo;
-import static gcm.simulation.LabelSet.*;
 
 @UnitTest(target = EnvironmentImpl.class)
 

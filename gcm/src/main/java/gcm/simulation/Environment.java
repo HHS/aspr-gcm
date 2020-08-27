@@ -35,6 +35,8 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
+import gcm.simulation.partition.LabelSet;
+import gcm.simulation.partition.PopulationPartitionDefinition;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
 

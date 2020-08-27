@@ -21,8 +21,8 @@ import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
-import gcm.simulation.GroupTypeCountMap;
-import gcm.simulation.PopulationPartitionDefinition;
+import gcm.simulation.partition.GroupTypeCountMap;
+import gcm.simulation.partition.PopulationPartitionDefinition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 

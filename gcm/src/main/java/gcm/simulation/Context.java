@@ -9,6 +9,8 @@ import gcm.output.simstate.NIOPlanningQueueReportItemHandler;
 import gcm.output.simstate.ProfileItem;
 import gcm.replication.Replication;
 import gcm.scenario.Scenario;
+import gcm.simulation.partition.PopulationPartitionManager;
+import gcm.simulation.partition.PopulationPartitionManagerImpl;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

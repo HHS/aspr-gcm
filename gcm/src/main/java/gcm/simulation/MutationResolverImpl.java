@@ -38,6 +38,8 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.StageId;
+import gcm.simulation.partition.PopulationPartitionDefinition;
+import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

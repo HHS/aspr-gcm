@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.partition;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -9,6 +9,9 @@ import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.BaseElement;
+import gcm.simulation.Context;
+import gcm.simulation.EnvironmentImpl;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

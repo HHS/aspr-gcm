@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.partition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +15,11 @@ import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.Context;
+import gcm.simulation.Environment;
+import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.PersonIdManager;
+import gcm.simulation.StochasticsManager;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -552,6 +557,8 @@ public final class PopulationPartition {
 	public PersonId getRandomPersonId(final PersonId excludedPersonId,
 			LabelSetInfo labelSetInfo) {
 
+		
+		//TODO -- multi-sampling from the random generator is likely inefficient
 		Key key = getKey(labelSetInfo);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {
@@ -613,6 +620,7 @@ public final class PopulationPartition {
 	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
 			LabelSetInfo labelSetInfo, RandomNumberGeneratorId randomNumberGeneratorId) {
 
+		//TODO -- multi-sampling from the random generator is likely inefficient
 		Key key = getKey(labelSetInfo);
 		Key selectedKey = key;
 		if (key.isPartialKey()) {

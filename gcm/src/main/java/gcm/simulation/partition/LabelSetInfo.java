@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.partition;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -7,13 +7,13 @@ import java.util.Set;
 
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
-import gcm.simulation.LabelSet.CompartmentLabelSet;
-import gcm.simulation.LabelSet.EmptyLabelSet;
-import gcm.simulation.LabelSet.GroupLabelSet;
-import gcm.simulation.LabelSet.PersonPropertyLabelSet;
-import gcm.simulation.LabelSet.RegionLabelSet;
-import gcm.simulation.LabelSet.ResourceLabelSet;
-import gcm.simulation.LabelSet.WithLabelSet;
+import gcm.simulation.partition.LabelSet.CompartmentLabelSet;
+import gcm.simulation.partition.LabelSet.EmptyLabelSet;
+import gcm.simulation.partition.LabelSet.GroupLabelSet;
+import gcm.simulation.partition.LabelSet.PersonPropertyLabelSet;
+import gcm.simulation.partition.LabelSet.RegionLabelSet;
+import gcm.simulation.partition.LabelSet.ResourceLabelSet;
+import gcm.simulation.partition.LabelSet.WithLabelSet;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;

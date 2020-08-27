@@ -23,6 +23,7 @@ import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.StageId;
+import gcm.simulation.partition.PopulationPartitionDefinition;
 import gcm.util.annotations.Source;
 
 /**

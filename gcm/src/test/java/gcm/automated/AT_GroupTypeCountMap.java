@@ -17,7 +17,7 @@ import org.junit.Test;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TestGroupTypeId;
 import gcm.scenario.GroupTypeId;
-import gcm.simulation.GroupTypeCountMap;
+import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 

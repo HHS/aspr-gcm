@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.partition;
 
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;

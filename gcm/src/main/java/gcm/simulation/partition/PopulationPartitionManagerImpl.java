@@ -53,7 +53,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 			throw new RuntimeException("duplicate key");
 		}
 
-		PopulationPartition populationPartition = new PopulationPartition(context, partition,
+		PopulationPartition populationPartition = new PopulationPartition(context, PartitionInfo.build(partition),
 				componentId);
 
 		populationPartitions.put(key, populationPartition);

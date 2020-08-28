@@ -211,7 +211,7 @@ public final class LabelSetInfo {
 		static LabelType getLabelType(LabelSet labelSet) {
 			LabelType result = map.get(labelSet.getClass());
 			if (result == null) {
-				throw new RuntimeException("unrecognized filter type for " + labelSet.getClass().getSimpleName());
+				throw new RuntimeException("unrecognized label type for " + labelSet.getClass().getSimpleName());
 			}
 			return result;
 		}

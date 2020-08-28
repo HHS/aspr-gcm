@@ -152,8 +152,7 @@ public abstract class LabelSet {
 	}
 
 	/**
-	 * Returns a composed filter that represents a short-circuiting logical AND of
-	 * this filter and another.
+	 * Returns a composed {@link LabelSet} that joins label sets
 	 * 
 	 * @throws RuntimeException
 	 * <li> if other is null 

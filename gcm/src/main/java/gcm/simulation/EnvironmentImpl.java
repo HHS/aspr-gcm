@@ -49,6 +49,7 @@ import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionInfo;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -4104,11 +4105,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 		}
 
-		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
+		PartitionInfo partitionInfo = PartitionInfo.build(partition);
+		
+		for (PersonPropertyId personPropertyId : partitionInfo.getPersonPropertyIds()) {
 			validatePersonPropertyId(personPropertyId);
 		}
 
-		for (ResourceId resourceId : partition.getPersonResourceIds()) {
+		for (ResourceId resourceId : partitionInfo.getPersonResourceIds()) {
 			validateResourceId(resourceId);
 		}
 

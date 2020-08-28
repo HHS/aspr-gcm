@@ -54,7 +54,7 @@ public class AT_Graphs {
 		expected.add(c.toGraph());
 		
 		
-		Set<Graph<String, String>> actual = Graphs.cutGraph(m.toGraph()).stream().collect(Collectors.toSet());
+		Set<Graph<String, String>> actual = Graphs.cutGraph(m.toGraph()).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		assertEquals(expected, actual);
 		

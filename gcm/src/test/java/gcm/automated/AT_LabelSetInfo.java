@@ -53,7 +53,7 @@ public class AT_LabelSetInfo {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out.println(AT_LabelSetInfo.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out.println(AT_LabelSetInfo.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -85,26 +85,26 @@ public class AT_LabelSetInfo {
 	 * Tests {@linkplain LabelSetInfo#build(LabelSet)
 	 */
 	@Test
-	@UnitTestMethod(name = "build", args = {LabelSet.class})
+	@UnitTestMethod(name = "build", args = { LabelSet.class })
 	public void testBuild() {
 
-		LabelSet labelSet = //				
-				 compartment("compartment")//
+		LabelSet labelSet = //
+				compartment("compartment")//
 						.with(region("region"))//
 						.with(group("group"))//
 						.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, "prop1"))//
 						.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 45))//
 						.with(resource(TestResourceId.RESOURCE2, 2342L));//
-						
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
 		assertNotNull(labelSetInfo);
 
 		// precondition tests
 		assertException(() -> LabelSetInfo.build(property(null, "label")), RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(property(TestPersonPropertyId.PERSON_PROPERTY_1,null)), RuntimeException.class);
+		assertException(() -> LabelSetInfo.build(property(TestPersonPropertyId.PERSON_PROPERTY_1, null)),
+				RuntimeException.class);
 		assertException(() -> LabelSetInfo.build(resource(null, "label")), RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(resource(TestResourceId.RESOURCE1,null)), RuntimeException.class);
+		assertException(() -> LabelSetInfo.build(resource(TestResourceId.RESOURCE1, null)), RuntimeException.class);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getGroupLabel", args = {})
 	public void testGetGroupLabel() {
 		Object expectedGroupLabel = "Group Label";
-		Object actualGroupLabel = LabelSetInfo.build(group(expectedGroupLabel)).getGroupLabel();		
+		Object actualGroupLabel = LabelSetInfo.build(group(expectedGroupLabel)).getGroupLabel();
 		assertEquals(expectedGroupLabel, actualGroupLabel);
 	}
 
@@ -168,8 +168,7 @@ public class AT_LabelSetInfo {
 	}
 
 	/**
-	 * Tests {@linkplain
-	 * LabelSetInfo#getPersonPropertyLabel(PersonPropertyId)
+	 * Tests {@linkplain LabelSetInfo#getPersonPropertyLabel(PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyLabel", args = { PersonPropertyId.class })
@@ -196,7 +195,7 @@ public class AT_LabelSetInfo {
 		LabelSet labelSet = empty();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			labelSet = labelSet.with(resource(testResourceId, testResourceId.toString()));			
+			labelSet = labelSet.with(resource(testResourceId, testResourceId.toString()));
 		}
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
@@ -217,7 +216,7 @@ public class AT_LabelSetInfo {
 		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(compartment("compartment label"));
 		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(compartment("compartment label"));
 		LabelSetInfo labelSetInfo3 = LabelSetInfo.build(region("compartment label"));
-				
+
 		assertFalse(labelSetInfo1 == labelSetInfo2);
 		assertTrue(labelSetInfo1.equals(labelSetInfo1));
 		assertTrue(labelSetInfo1.equals(labelSetInfo2));
@@ -232,11 +231,10 @@ public class AT_LabelSetInfo {
 	@Test
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
-		
+
 		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(compartment("compartment label"));
 		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(compartment("compartment label"));
-		
-		
+
 		assertFalse(labelSetInfo1 == labelSetInfo2);
 		assertEquals(labelSetInfo1, labelSetInfo2);
 		assertEquals(labelSetInfo1.hashCode(), labelSetInfo2.hashCode());

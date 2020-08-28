@@ -1,6 +1,5 @@
 package gcm.output.reports.commonreports;
 
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -370,7 +369,7 @@ public final class PersonResourceReport extends PeriodicReport {
 					final Map<InventoryType, Set<PersonId>> inventoryMap = new LinkedHashMap<>();
 					resourceMap.put(resourceId, inventoryMap);
 					for (final InventoryType inventoryType : InventoryType.values()) {
-						final Set<PersonId> people = new HashSet<>();
+						final Set<PersonId> people = new LinkedHashSet<>();
 						inventoryMap.put(inventoryType, people);
 					}
 				}

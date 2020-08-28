@@ -111,6 +111,8 @@ public final class Paths {
 			return Optional.empty();
 		}
 
+		// The use of a HashMap instead of a linked hash map is intentional and
+		// implementors should guard against repercussions of iteration over this map.
 		final Map<N, CostedNode<N, E>> map = new HashMap<>();
 		PriorityQueue<PrioritizedNode<N, E>> priorityQueue = new PriorityQueue<>();
 

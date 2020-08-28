@@ -115,23 +115,23 @@ public class AT_GraphDepthEvaluator {
 
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("A");
-		Set<String> actual = graphDepthEvaluator.getNodesForDepth(3).stream().collect(Collectors.toSet());
+		Set<String> actual = graphDepthEvaluator.getNodesForDepth(3).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("C");
-		actual = graphDepthEvaluator.getNodesForDepth(2).stream().collect(Collectors.toSet());
+		actual = graphDepthEvaluator.getNodesForDepth(2).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("D");
-		actual = graphDepthEvaluator.getNodesForDepth(1).stream().collect(Collectors.toSet());
+		actual = graphDepthEvaluator.getNodesForDepth(1).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("B");
 		expected.add("E");
-		actual = graphDepthEvaluator.getNodesForDepth(0).stream().collect(Collectors.toSet());
+		actual = graphDepthEvaluator.getNodesForDepth(0).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 	}
@@ -158,7 +158,7 @@ public class AT_GraphDepthEvaluator {
 
 		// show that the values returned contain each node exactly once
 		assertEquals(m.nodeCount(), actual.size());
-		assertEquals(m.nodeCount(), actual.stream().collect(Collectors.toSet()).size());
+		assertEquals(m.nodeCount(), actual.stream().collect(Collectors.toCollection(LinkedHashSet::new)).size());
 
 		int previousDepth = 0;
 		for (String node : actual) {

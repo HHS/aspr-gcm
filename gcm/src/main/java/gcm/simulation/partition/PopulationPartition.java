@@ -13,13 +13,11 @@ import gcm.scenario.ComponentId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
-import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Context;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.PersonIdManager;
-import gcm.simulation.StochasticsManager;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -162,13 +160,12 @@ public final class PopulationPartition {
 		return owningComponentId;
 	}
 
-	private final StochasticsManager stochasticsManager;
+
 
 	public PopulationPartition(final Context context, final PartitionInfo partitionInfo,
 			final ComponentId owningComponentId) {
 		this.context = context;
 		this.personIdManager = context.getPersonIdManager();
-		this.stochasticsManager = context.getStochasticsManager();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.partitionInfo = partitionInfo;
 		this.environment = context.getEnvironment();
@@ -224,8 +221,7 @@ public final class PopulationPartition {
 		int index = 0;
 		Key key = new Key(keySize);
 		if (partitionInfo.getRegionPartitionFunction() != null) {
-			key.keys[index++] = partitionInfo.getRegionPartitionFunction()
-					.apply(environment.getPersonRegion(personId));
+			key.keys[index++] = partitionInfo.getRegionPartitionFunction().apply(environment.getPersonRegion(personId));
 		}
 		if (partitionInfo.getCompartmentPartitionFunction() != null) {
 			key.keys[index++] = partitionInfo.getCompartmentPartitionFunction()
@@ -299,8 +295,7 @@ public final class PopulationPartition {
 		Object currentRegionLabel = currentKey.keys[regionLabelIndex];
 
 		// get the new label
-		Object newRegionLabel = partitionInfo.getRegionPartitionFunction()
-				.apply(environment.getPersonRegion(personId));
+		Object newRegionLabel = partitionInfo.getRegionPartitionFunction().apply(environment.getPersonRegion(personId));
 
 		if (newRegionLabel == null) {
 			throw new RuntimeException("change to model exception");
@@ -502,7 +497,8 @@ public final class PopulationPartition {
 
 	/*
 	 * Returns a list of non-partial keys from the given partial key where each full
-	 * key is currently present in the key map and is associated with a Population Container.
+	 * key is currently present in the key map and is associated with a Population
+	 * Container.
 	 */
 	private List<Key> getFullKeys(Key partialKey) {
 
@@ -554,96 +550,42 @@ public final class PopulationPartition {
 	 * no person is being excluded. Returns null if the index is either empty or
 	 * only contains the excluded person.
 	 */
-	public PersonId getRandomPersonId(final PersonId excludedPersonId,
-			LabelSetInfo labelSetInfo) {
+	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
+			RandomGenerator randomGenerator) {
 
-		
-		//TODO -- multi-sampling from the random generator is likely inefficient
+		// TODO -- multi-sampling from the random generator is likely inefficient
 		Key key = getKey(labelSetInfo);
-		Key selectedKey = key;
+		Key selectedKey = null;
+		// RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
 		if (key.isPartialKey()) {
 			List<Key> fullKeys = getFullKeys(key);
 			int personCount = 0;
-			RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
 
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				int containerSize = peopleContainer.size();
 				personCount += peopleContainer.size();
-				double selectionProbabilty = (double) peopleContainer.size() / personCount;
-				if (randomGenerator.nextDouble() <= selectionProbabilty) {
+				if (peopleContainer.contains(excludedPersonId)) {
+					personCount--;
+					containerSize--;
+				}
+				double selectionProbabilty = containerSize;
+				selectionProbabilty /= personCount;
+				//if the selection probability is NaN, the fullKey will not be selected
+				if (randomGenerator.nextDouble() < selectionProbabilty) {
 					selectedKey = fullKey;
 				}
 			}
+		}else {
+			selectedKey = key;
 		}
-		return getRandomPersonId(excludedPersonId, selectedKey);
-
-	}
-
-	private PersonId getRandomPersonId(final PersonId excludedPersonId, Key key) {
-		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-
-		if (peopleContainer == null) {
+		if(selectedKey == null) {			
 			return null;
 		}
-
-		/*
-		 * Since we are potentially excluding a person, we need to determine how many
-		 * candidates are available. To avoid an infinite loop, we must not have zero
-		 * candidates.
-		 */
-		int candidateCount = peopleContainer.size();
-		if (excludedPersonId != null) {
-			if (peopleContainer.contains(excludedPersonId)) {
-				candidateCount--;
-			}
-		}
-		PersonId result = null;
-		if (candidateCount > 0) {
-			RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-			while (true) {
-				result = peopleContainer.getRandomPersonId(randomGenerator);
-				if (!result.equals(excludedPersonId)) {
-					break;
-				}
-			}
-		}
-		return result;
+		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
 	}
 
-	/**
-	 * Returns a randomly chosen person identifier from the index, excluding the
-	 * person identifier given. When the excludedPersonId is null it indicates that
-	 * no person is being excluded. Returns null if the index is either empty or
-	 * only contains the excluded person.
-	 */
-
-	public PersonId getRandomPersonFromGenerator(final PersonId excludedPersonId,
-			LabelSetInfo labelSetInfo, RandomNumberGeneratorId randomNumberGeneratorId) {
-
-		//TODO -- multi-sampling from the random generator is likely inefficient
-		Key key = getKey(labelSetInfo);
-		Key selectedKey = key;
-		if (key.isPartialKey()) {
-			List<Key> fullKeys = getFullKeys(key);
-			int personCount = 0;
-			RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-
-			for (Key fullKey : fullKeys) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-
-				personCount += peopleContainer.size();
-				double selectionProbabilty = (double) peopleContainer.size() / personCount;
-				if (randomGenerator.nextDouble() <= selectionProbabilty) {
-					selectedKey = fullKey;
-				}
-			}
-		}
-		return getRandomPersonIdFromGenerator(excludedPersonId, selectedKey, randomNumberGeneratorId);
-
-	}
-
-	private PersonId getRandomPersonIdFromGenerator(final PersonId excludedPersonId, Key key,
-			RandomNumberGeneratorId randomNumberGeneratorId) {
+	private PersonId getRandomPersonId(final PersonId excludedPersonId, Key key, RandomGenerator randomGenerator) {
 
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
 
@@ -664,7 +606,7 @@ public final class PopulationPartition {
 		}
 		PersonId result = null;
 		if (candidateCount > 0) {
-			RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+
 			while (true) {
 				result = peopleContainer.getRandomPersonId(randomGenerator);
 				if (!result.equals(excludedPersonId)) {

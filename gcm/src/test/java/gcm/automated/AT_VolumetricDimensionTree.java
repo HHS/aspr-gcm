@@ -134,7 +134,7 @@ public class AT_VolumetricDimensionTree {
 				}
 			}
 
-			Set<Record> actualRecords = tree.getMembersInSphere(searchRadius, searchPosition.toArray()).stream().collect(Collectors.toSet());
+			Set<Record> actualRecords = tree.getMembersInSphere(searchRadius, searchPosition.toArray()).stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 			assertEquals(expectedRecords, actualRecords);
 		}
@@ -169,8 +169,8 @@ public class AT_VolumetricDimensionTree {
 			tree.add(record.position.toArray(), record.radius, record);
 		}
 
-		Set<Record> expected = records.stream().collect(Collectors.toSet());
-		Set<Record> actual = tree.getAll().stream().collect(Collectors.toSet());
+		Set<Record> expected = records.stream().collect(Collectors.toCollection(LinkedHashSet::new));
+		Set<Record> actual = tree.getAll().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 		assertEquals(expected, actual);
 	}

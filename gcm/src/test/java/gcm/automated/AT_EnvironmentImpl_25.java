@@ -81,8 +81,8 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out
-				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out
+//				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	private static enum PartitionChoice {
@@ -432,7 +432,6 @@ public class AT_EnvironmentImpl_25 {
 			// show that each labelSet corresponds to the expected number of
 			// people
 			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
-				// System.out.println(labelSet);
 				LabelSet labelSet = getLabelSet(labelSetInfo);
 				int expectedSize = expectedPartitioning.get(labelSetInfo).size();
 				int actualSize = environment.getPartitionSize(key, labelSet);
@@ -476,8 +475,8 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests
-	 * {@link EnvironmentImpl#getRandomPartitionedPersonFromGenerator(Object, LabelSet, RandomNumberGeneratorId)
+	 * Tests {@link EnvironmentImpl#getRandomPartitionedPersonFromGenerator(Object,
+	 * LabelSet, RandomNumberGeneratorId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getRandomPartitionedPersonFromGenerator", args = { Object.class, LabelSet.class,
@@ -615,8 +614,9 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests
-	 * {@link EnvironmentImpl#getRandomPartitionedPersonWithExclusion(PersonId, Object, LabelSet)
+	 * Tests {@link
+	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusion(PersonId, Object,
+	 * LabelSet)
 	 */
 	@Test
 	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusion", args = { PersonId.class, Object.class,
@@ -821,7 +821,7 @@ public class AT_EnvironmentImpl_25 {
 				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
-				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toSet());
+				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toCollection(LinkedHashSet::new));
 				assertEquals(expectedPeople, actualPeople);
 			}
 
@@ -837,7 +837,7 @@ public class AT_EnvironmentImpl_25 {
 				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
-				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toSet());
+				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toCollection(LinkedHashSet::new));
 				assertEquals(expectedPeople, actualPeople);
 			}
 		});
@@ -1103,8 +1103,8 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object,
-	 * LabelSet)
+	 * Tests
+	 * {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object, LabelSet)
 	 */
 	@Test
 	@UnitTestMethod(name = "personIsInPopulationPartition", args = { PersonId.class, Object.class, LabelSet.class })
@@ -1343,8 +1343,9 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests
-	 * {@link EnvironmentImpl#getRandomPartitionedPersonWithExclusionFromGenerator(PersonId, Object, LabelSet, RandomNumberGeneratorId)
+	 * Tests {@link
+	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusionFromGenerator(PersonId,
+	 * Object, LabelSet, RandomNumberGeneratorId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusionFromGenerator", args = { PersonId.class,
@@ -1388,8 +1389,8 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 
+			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
 				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));
@@ -1419,8 +1420,9 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
+			
+			
 			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
-
 				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
 				Collections.shuffle(expectedPeopleList, new Random(randomGenerator.nextLong()));

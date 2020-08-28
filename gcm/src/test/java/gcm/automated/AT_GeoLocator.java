@@ -229,7 +229,7 @@ public class AT_GeoLocator {
 			});
 
 			// Get the locations from the GeoLocator
-			List<Pair<LatLon, Double>> actualLocations = geoLocator.getPrioritizedLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toList());
+			List<Pair<LatLon, Double>> actualLocations = geoLocator.getPrioritizedLocations(latLon.getLatitude(), latLon.getLongitude(), searchRadiusKilometers).stream().collect(Collectors.toCollection(ArrayList::new));
 
 			// compare the two sets
 			assertEquals(expectedLocations, actualLocations);

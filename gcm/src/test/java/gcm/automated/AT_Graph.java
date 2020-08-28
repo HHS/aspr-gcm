@@ -325,7 +325,7 @@ public class AT_Graph {
 		
 		Graph<String, String> graph = builder.build();
 		
-		Set<String> actual = graph.getEdges().stream().collect(Collectors.toSet());
+		Set<String> actual = graph.getEdges().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 	}
 	/**
@@ -349,73 +349,73 @@ public class AT_Graph {
 		
 		expected.clear();
 		expected.add("E7");
-		actual = graph.getEdges("A","A").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("A","A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 		expected.clear();
 		expected.add("E6");
-		actual = graph.getEdges("A","B").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("A","B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();		
-		actual = graph.getEdges("A","C").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("A","C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();		
-		actual = graph.getEdges("A","D").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("A","D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 		expected.clear();	
 		expected.add("E4");
-		actual = graph.getEdges("B","A").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("B","A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();		
-		actual = graph.getEdges("B","B").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("B","B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();	
 		expected.add("E1");
 		expected.add("E3");
-		actual = graph.getEdges("B","C").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("B","C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 		expected.clear();	
 		expected.add("E5");
-		actual = graph.getEdges("B","D").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("B","D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 		expected.clear();
-		actual = graph.getEdges("C","A").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("C","A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 		expected.clear();
 		expected.add("E2");
-		actual = graph.getEdges("C","B").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("C","B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("C","C").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("C","C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("C","D").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("C","D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("D","A").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("D","A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("D","B").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("D","B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("D","C").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("D","C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = graph.getEdges("D","D").stream().collect(Collectors.toSet());
+		actual = graph.getEdges("D","D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 		
 	}
@@ -467,19 +467,19 @@ public class AT_Graph {
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("B->A");
 		expected.add("A->A");		
-		assertEquals(expected,graph.getInboundEdges("A").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getInboundEdges("A").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
 		expected.add("A->B");
 		expected.add("C->B");		
-		assertEquals(expected,graph.getInboundEdges("B").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getInboundEdges("B").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
 		expected.add("B->C");
-		assertEquals(expected,graph.getInboundEdges("C").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getInboundEdges("C").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
-		assertEquals(expected,graph.getInboundEdges("D").stream().collect(Collectors.toSet()));		
+		assertEquals(expected,graph.getInboundEdges("D").stream().collect(Collectors.toCollection(LinkedHashSet::new)));		
 
 	}
 
@@ -503,7 +503,7 @@ public class AT_Graph {
 		
 		Graph<String, String> graph = builder.build();
 		
-		Set<String> actual = graph.getNodes().stream().collect(Collectors.toSet());
+		Set<String> actual = graph.getNodes().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		
 		assertEquals(expected, actual);
 	}
@@ -586,19 +586,19 @@ public class AT_Graph {
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("A->A");
 		expected.add("A->B");		
-		assertEquals(expected,graph.getOutboundEdges("A").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getOutboundEdges("A").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
 		expected.add("B->C");
 		expected.add("B->A");		
-		assertEquals(expected,graph.getOutboundEdges("B").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getOutboundEdges("B").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
 		expected.add("C->B");
-		assertEquals(expected,graph.getOutboundEdges("C").stream().collect(Collectors.toSet()));
+		assertEquals(expected,graph.getOutboundEdges("C").stream().collect(Collectors.toCollection(LinkedHashSet::new)));
 		
 		expected.clear();
-		assertEquals(expected,graph.getOutboundEdges("D").stream().collect(Collectors.toSet()));		
+		assertEquals(expected,graph.getOutboundEdges("D").stream().collect(Collectors.toCollection(LinkedHashSet::new)));		
 
 	}
 

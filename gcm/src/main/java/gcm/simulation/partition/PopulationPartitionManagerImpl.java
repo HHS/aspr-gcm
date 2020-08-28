@@ -12,6 +12,7 @@ import gcm.scenario.ResourceId;
 import gcm.simulation.BaseElement;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.StochasticsManager;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -23,10 +24,16 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 
 	private Context context;
 
+	private StochasticsManager stochasticsManager;
+
+	
+
 	@Override
 	public void init(Context context) {
 		super.init(context);
 		this.context = context;
+		this.stochasticsManager = context.getStochasticsManager();
+
 	}
 
 	@Override
@@ -35,8 +42,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public void addPopulationPartition(ComponentId componentId, Partition partition,
-			Object key) {
+	public void addPopulationPartition(ComponentId componentId, Partition partition, Object key) {
 		if (componentId == null) {
 			throw new RuntimeException("null component id");
 		}
@@ -57,7 +63,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 				componentId);
 
 		populationPartitions.put(key, populationPartition);
-		
+
 		populationPartition.init();
 	}
 
@@ -72,20 +78,22 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public PersonId getRandomPartitionedPerson(PersonId excludedPersonId, Object key,
-			LabelSet labelSet) {
-		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet));
+	public PersonId getRandomPartitionedPerson(PersonId excludedPersonId, Object key, LabelSet labelSet) {
+
+		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet),
+				stochasticsManager.getRandomGenerator());
 	}
 
 	@Override
-	public PersonId getRandomPartionedPersonFromGenerator(PersonId excludedPersonId, Object key,
-			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
-		return populationPartitions.get(key).getRandomPersonFromGenerator(excludedPersonId, LabelSetInfo.build(labelSet),
-				randomNumberGeneratorId);
+	public PersonId getRandomPartionedPersonFromGenerator(PersonId excludedPersonId, Object key, LabelSet labelSet,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
+
+		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet),
+				stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId));
 	}
 
 	@Override
-	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {		
+	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {
 		return populationPartitions.get(key).contains(personId, LabelSetInfo.build(labelSet));
 	}
 
@@ -102,7 +110,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 			populationPartition.handleCompartmentChange(personId);
 		}
 	}
-	
+
 	@Override
 	public void handleGroupMembershipChange(PersonId personId) {
 		for (PopulationPartition populationPartition : populationPartitions.values()) {
@@ -152,9 +160,9 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	public ComponentId getOwningComponent(Object key) {
 		return populationPartitions.get(key).getOwningComponentId();
 	}
-	
+
 	@Override
-	public boolean validateLabelSet(Object key,LabelSet labelSet) {
+	public boolean validateLabelSet(Object key, LabelSet labelSet) {
 		return populationPartitions.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));
 	}
 

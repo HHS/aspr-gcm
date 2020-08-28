@@ -362,7 +362,7 @@ public class AT_MutableGraph {
 		expected.add("A->C");
 		expected.add("B->C");
 
-		Set<String> actual = mutableGraph.getEdges().stream().collect(Collectors.toSet());
+		Set<String> actual = mutableGraph.getEdges().stream().collect(Collectors.toCollection(LinkedHashSet::new));
 
 		assertEquals(expected, actual);
 	}
@@ -389,73 +389,73 @@ public class AT_MutableGraph {
 
 		expected.clear();
 		expected.add("E7");
-		actual = mutableGraph.getEdges("A", "A").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("A", "A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
 		expected.add("E6");
-		actual = mutableGraph.getEdges("A", "B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("A", "B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("A", "C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("A", "C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("A", "D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("A", "D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
 		expected.add("E4");
-		actual = mutableGraph.getEdges("B", "A").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("B", "A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("B", "B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("B", "B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
 		expected.add("E1");
 		expected.add("E3");
-		actual = mutableGraph.getEdges("B", "C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("B", "C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
 		expected.add("E5");
-		actual = mutableGraph.getEdges("B", "D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("B", "D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("C", "A").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("C", "A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
 		expected.add("E2");
-		actual = mutableGraph.getEdges("C", "B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("C", "B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("C", "C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("C", "C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("C", "D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("C", "D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("D", "A").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("D", "A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("D", "B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("D", "B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("D", "C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("D", "C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected.clear();
-		actual = mutableGraph.getEdges("D", "D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getEdges("D", "D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 	}
@@ -497,24 +497,24 @@ public class AT_MutableGraph {
 
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("D->A");
-		Set<String> actual = mutableGraph.getInboundEdges("A").stream().collect(Collectors.toSet());
+		Set<String> actual = mutableGraph.getInboundEdges("A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("A->B");
 		expected.add("D->B");
-		actual = mutableGraph.getInboundEdges("B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getInboundEdges("B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("A->C");
 		expected.add("B->C");
-		actual = mutableGraph.getInboundEdges("C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getInboundEdges("C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("B->D");
-		actual = mutableGraph.getInboundEdges("D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getInboundEdges("D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 	}
@@ -543,7 +543,7 @@ public class AT_MutableGraph {
 		List<String> nodesAsList = mutableGraph.getNodes();
 		assertEquals(4, nodesAsList.size());
 
-		Set<String> actual = nodesAsList.stream().collect(Collectors.toSet());
+		Set<String> actual = nodesAsList.stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 	}
 
@@ -606,23 +606,23 @@ public class AT_MutableGraph {
 		Set<String> expected = new LinkedHashSet<>();
 		expected.add("A->B");
 		expected.add("A->C");
-		Set<String> actual = mutableGraph.getOutboundEdges("A").stream().collect(Collectors.toSet());
+		Set<String> actual = mutableGraph.getOutboundEdges("A").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("B->C");
 		expected.add("B->D");
-		actual = mutableGraph.getOutboundEdges("B").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getOutboundEdges("B").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
-		actual = mutableGraph.getOutboundEdges("C").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getOutboundEdges("C").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 
 		expected = new LinkedHashSet<>();
 		expected.add("D->A");
 		expected.add("D->B");
-		actual = mutableGraph.getOutboundEdges("D").stream().collect(Collectors.toSet());
+		actual = mutableGraph.getOutboundEdges("D").stream().collect(Collectors.toCollection(LinkedHashSet::new));
 		assertEquals(expected, actual);
 	}
 

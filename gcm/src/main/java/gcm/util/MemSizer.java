@@ -4,8 +4,8 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -141,13 +141,13 @@ public final class MemSizer {
 
 	private final long OBJECT_HEADER_SIZE;
 
-	private final Set<Class<?>> excludedClasses = new HashSet<>();
+	private final Set<Class<?>> excludedClasses = new LinkedHashSet<>();
 
 	private final Map<Class<?>, List<Field>> fieldMap = new LinkedHashMap<>();
 
-	private final Set<Object> explored = new HashSet<>();
+	private final Set<Object> explored = new LinkedHashSet<>();
 
-	private final Set<Object> excluded = new HashSet<>();
+	private final Set<Object> excluded = new LinkedHashSet<>();
 
 	private final LinkedList<Rec> recs = new LinkedList<>();
 

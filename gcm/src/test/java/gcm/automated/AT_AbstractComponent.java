@@ -85,6 +85,7 @@ public class AT_AbstractComponent {
 			groupInfoBuilder.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1);
 			GroupInfo groupInfo = groupInfoBuilder.build();
 			GroupPropertyId groupPropertyId = TestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
+			Object key = new Object();
 
 			assertUnimplemented(() -> executePlan(environment, plan));
 			assertUnimplemented(() -> observeCompartmentPersonArrival(environment, personId));
@@ -111,7 +112,10 @@ public class AT_AbstractComponent {
 			assertUnimplemented(() -> observeGroupPropertyChange(environment, groupId, groupPropertyId));
 			assertUnimplemented(() -> observeGroupPersonArrival(environment, groupId, personId));
 			assertUnimplemented(() -> observeGroupPersonDeparture(environment, groupId, personId));
+			assertUnimplemented(() -> observePopulationIndexPersonAddition(environment, key, personId));
+			assertUnimplemented(() -> observePopulationIndexPersonRemoval(environment, key, personId));
 
+			
 			testAcceptance.passed = true;
 		}
 

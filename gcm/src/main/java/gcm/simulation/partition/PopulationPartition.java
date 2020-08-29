@@ -160,8 +160,6 @@ public final class PopulationPartition {
 		return owningComponentId;
 	}
 
-
-
 	public PopulationPartition(final Context context, final PartitionInfo partitionInfo,
 			final ComponentId owningComponentId) {
 		this.context = context;
@@ -571,15 +569,15 @@ public final class PopulationPartition {
 				}
 				double selectionProbabilty = containerSize;
 				selectionProbabilty /= personCount;
-				//if the selection probability is NaN, the fullKey will not be selected
+				// if the selection probability is NaN, the fullKey will not be selected
 				if (randomGenerator.nextDouble() < selectionProbabilty) {
 					selectedKey = fullKey;
 				}
 			}
-		}else {
+		} else {
 			selectedKey = key;
 		}
-		if(selectedKey == null) {			
+		if (selectedKey == null) {
 			return null;
 		}
 		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
@@ -707,9 +705,7 @@ public final class PopulationPartition {
 			List<PersonId> result = new ArrayList<>();
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				if (peopleContainer != null) {
-					result.addAll(peopleContainer.getPeople());
-				}
+				result.addAll(peopleContainer.getPeople());
 			}
 			return result;
 		} else {

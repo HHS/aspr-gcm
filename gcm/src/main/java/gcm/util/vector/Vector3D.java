@@ -418,9 +418,9 @@ public final class Vector3D {
 	 * Returns true if and only if this vector is finite and has a length within
 	 * {@link Vector3D#NORMAL_LENGTH_TOLERANCE} of unit length.
 	 */
-	public boolean isNormal() {
+	public boolean isNormal() {		
 		final double len = length();
-		return Double.isFinite(len) && (FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE);
+		return isFinite() && Double.isFinite(len) && (FastMath.abs(len - 1) < NORMAL_LENGTH_TOLERANCE);
 	}
 
 	/**

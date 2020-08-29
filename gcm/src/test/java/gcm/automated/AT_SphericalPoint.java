@@ -14,9 +14,12 @@ import gcm.automated.support.SeedProvider;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
+import gcm.util.spherical.MalformedSphericalPointException;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.vector.MutableVector3D;
 import gcm.util.vector.Vector3D;
+
+import static gcm.automated.support.ExceptionAssertion.*;
 
 /**
  * Test class for {@link SphericalPoint}
@@ -89,8 +92,14 @@ public class AT_SphericalPoint {
 			assertTrue(FastMath.abs(x / length - sphericalPoint.getPosition().getX()) < Vector3D.NORMAL_LENGTH_TOLERANCE);
 			assertTrue(FastMath.abs(y / length - sphericalPoint.getPosition().getY()) < Vector3D.NORMAL_LENGTH_TOLERANCE);
 			assertTrue(FastMath.abs(z / length - sphericalPoint.getPosition().getZ()) < Vector3D.NORMAL_LENGTH_TOLERANCE);
+			
+			assertException(()->new SphericalPoint(new Vector3D(0,0,0)), MalformedSphericalPointException.class);
+			assertException(()->new SphericalPoint(new MutableVector3D(0,0,0)), MalformedSphericalPointException.class);
 
 		}
+		
+		//precondition tests
+		
 
 	}
 

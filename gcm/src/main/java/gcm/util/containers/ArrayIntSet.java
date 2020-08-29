@@ -17,8 +17,8 @@ import gcm.util.annotations.Source;
 public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 
 	/**
-	 * The general best practice bucket depth for ArrayIntSets containing
-	 * millions of entries.
+	 * The general best practice bucket depth for ArrayIntSets containing millions
+	 * of entries.
 	 */
 	public final static float DEFAULT_TARGET_DEPTH = 80;
 
@@ -28,10 +28,10 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	private List<T>[] buckets;
 
 	/*
-	 * An array that is the same length as the values array that tracks the
-	 * maximum size each ArrayList instance in values has reached during its
-	 * life-span. This value is used to trigger an occasional rebuild of these
-	 * ArrayLists to reduce instance size.
+	 * An array that is the same length as the values array that tracks the maximum
+	 * size each ArrayList instance in values has reached during its life-span. This
+	 * value is used to trigger an occasional rebuild of these ArrayLists to reduce
+	 * instance size.
 	 */
 	private int[] maxSizes;
 
@@ -41,27 +41,27 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	private int size;
 
 	/*
-	 * The targeted list depth that is used to determine the number of
-	 * buckets(i.e. the length of the values array) in this set.
+	 * The targeted list depth that is used to determine the number of buckets(i.e.
+	 * the length of the values array) in this set.
 	 */
 	private final float targetDepth;
 
 	/*
-	 * Dictates whether duplicate values are allowed. If duplicates are allowed
-	 * then performance on add increases significantly since we do not check for
-	 * a value already existing in this IntSet. If the caller to this
-	 * ArrayIntSet can guarantee that no duplicate values are added then
-	 * tolerateDuplicates should be set to false(the default value).
+	 * Dictates whether duplicate values are allowed. If duplicates are allowed then
+	 * performance on add increases significantly since we do not check for a value
+	 * already existing in this IntSet. If the caller to this ArrayIntSet can
+	 * guarantee that no duplicate values are added then tolerateDuplicates should
+	 * be set to false(the default value).
 	 */
 	private boolean tolerateDuplicates;
 
 	/**
 	 * Constructs an ArrayIntSet having the given target depth and tolerance of
-	 * duplicate values. Setting tolerateDuplicates to true will often
-	 * significantly improve performance.
+	 * duplicate values. Setting tolerateDuplicates to true will often significantly
+	 * improve performance.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>the target depth is not positive
+	 *                                  <li>the target depth is not positive
 	 * @param targetDepth
 	 */
 	public ArrayIntSet(float targetDepth, boolean tolerateDuplicates) {
@@ -73,11 +73,11 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	}
 
 	/**
-	 * Constructs an ArrayIntSet having the given target depth that will
-	 * tolerate duplicate values.
+	 * Constructs an ArrayIntSet having the given target depth that will tolerate
+	 * duplicate values.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>the target depth is not positive
+	 *                                  <li>the target depth is not positive
 	 * @param targetDepth
 	 */
 	public ArrayIntSet(float targetDepth) {
@@ -89,12 +89,12 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	}
 
 	/**
-	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance
-	 * of duplicate values. Setting tolerateDuplicates to true will often
-	 * significantly improve performance.
+	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
+	 * duplicate values. Setting tolerateDuplicates to true will often significantly
+	 * improve performance.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>the target depth is not positive
+	 *                                  <li>the target depth is not positive
 	 * @param tolerateDuplicates
 	 */
 	public ArrayIntSet(boolean tolerateDuplicates) {
@@ -104,11 +104,11 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	}
 
 	/**
-	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance
-	 * of duplicate values.
+	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
+	 * duplicate values.
 	 * 
 	 * @throws IllegalArgumentException
-	 *             <li>the target depth is not positive
+	 *                                  <li>the target depth is not positive
 	 */
 	public ArrayIntSet() {
 		this.targetDepth = DEFAULT_TARGET_DEPTH;
@@ -116,8 +116,8 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	}
 
 	/*
-	 * Grows the values and maxSizes arrays to achieve an average bucket depth
-	 * that closer to the target bucket depth.
+	 * Grows the values and maxSizes arrays to achieve an average bucket depth that
+	 * closer to the target bucket depth.
 	 */
 	@SuppressWarnings("unchecked")
 	private void grow() {
@@ -136,7 +136,7 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	 * that closer to the target bucket depth.
 	 */
 	private void shrink() {
-		if (buckets != null && buckets.length > 1) {
+		if ( buckets.length > 1) {
 			// halve the number of buckets
 			rebuild(buckets.length >> 1);
 		}
@@ -152,8 +152,8 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 		 */
 		List<T>[] newValues = new List[newSize];
 		/*
-		 * Rebuild the maxSizes array to the correct length. The old values in
-		 * the maxSizes array can be forgotten.
+		 * Rebuild the maxSizes array to the correct length. The old values in the
+		 * maxSizes array can be forgotten.
 		 */
 		maxSizes = new int[newValues.length];
 		/*
@@ -164,15 +164,14 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 			if (list != null) {
 				for (T value : list) {
 					/*
-					 * Since the length of the values array is always a power of
-					 * 2, we can use a bit-wise math trick to calculate the
-					 * modulus of value with values.length to derive the index
-					 * of the bucket where the value should be stored.
+					 * Since the length of the values array is always a power of 2, we can use a
+					 * bit-wise math trick to calculate the modulus of value with values.length to
+					 * derive the index of the bucket where the value should be stored.
 					 */
 					int index = value.getValue() & (newValues.length - 1);
 					/*
-					 * Get the list where the value should be stored or create
-					 * it if it does not yet exist.
+					 * Get the list where the value should be stored or create it if it does not yet
+					 * exist.
 					 */
 					List<T> newList = newValues[index];
 					if (newList == null) {
@@ -185,16 +184,15 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 					newList.add(value);
 				}
 				/*
-				 * Null out the ArrayList instance to encourage the GC to
-				 * collect the list now.
+				 * Null out the ArrayList instance to encourage the GC to collect the list now.
 				 * 
 				 */
 				buckets[i] = null;
 			}
 		}
 		/*
-		 * We no longer need the old values array, so we replace it with the new
-		 * values array.
+		 * We no longer need the old values array, so we replace it with the new values
+		 * array.
 		 */
 		buckets = newValues;
 		/*
@@ -217,8 +215,8 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 			grow();
 		}
 		/*
-		 * The bucket index is value % values.length, but this is a bit faster
-		 * since we know the values array length is a power of two.
+		 * The bucket index is value % values.length, but this is a bit faster since we
+		 * know the values array length is a power of two.
 		 */
 		int index = t.getValue() & (buckets.length - 1);
 
@@ -256,48 +254,47 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 			return;
 		}
 		/*
-		 * The bucket index is value % values.length, but this is a bit faster
-		 * since we know the values array length is a power of two.
+		 * The bucket index is value % values.length, but this is a bit faster since we
+		 * know the values array length is a power of two.
 		 */
 		int index = t.getValue() & (buckets.length - 1);
 		/*
 		 * Remove the value from the list
 		 */
 		List<T> list = buckets[index];
-		if (list != null) {
-			if (list.remove(t)) {
-				size--;
-			} else {
-				/*
-				 * This list did not contain the value, so we are done.
-				 */
-				return;
-			}
+		
+		if (list.remove(t)) {
+			size--;
+		} else {
 			/*
-			 * If the list is now less than half its maxSize in the past, then
-			 * we should rebuild the list and record the new maxSize for the
-			 * list.
+			 * This list did not contain the value, so we are done.
 			 */
-			if (list.size() * 2 < maxSizes[index]) {
-				if (list.size() > 0) {
-					buckets[index] = new ArrayList<>(list);
-					maxSizes[index] = list.size();
-				} else {
-					buckets[index] = null;
-					maxSizes[index] = 0;
-				}
-			}
-
-			/*
-			 * If the averageDepth is less than half the target depth then we
-			 * should shrink. (size/values.length)*2<targetDepth
-			 * 
-			 */
-			if (size * 2 < targetDepth * buckets.length) {
-				shrink();
-			}
-
+			return;
 		}
+		/*
+		 * If the list is now less than half its maxSize in the past, then we should
+		 * rebuild the list and record the new maxSize for the list.
+		 */
+		if (list.size() * 2 < maxSizes[index]) {
+			if (list.size() > 0) {
+				buckets[index] = new ArrayList<>(list);
+				maxSizes[index] = list.size();
+			} else {
+				buckets[index] = null;
+				maxSizes[index] = 0;
+			}
+		}
+
+		/*
+		 * If the averageDepth is less than half the target depth then we should shrink.
+		 * (size/values.length)*2<targetDepth
+		 * 
+		 */
+		if (size * 2 < targetDepth * buckets.length) {
+			shrink();
+		}
+
+		
 	}
 
 	@Override
@@ -315,7 +312,7 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("IntSet");
-		builder.append(getValues());		
+		builder.append(getValues());
 		return builder.toString();
 	}
 
@@ -334,9 +331,6 @@ public final class ArrayIntSet<T extends IntId> implements IntSet<T> {
 		 * Add the value to list located at the index
 		 */
 		List<T> list = buckets[index];
-		if (list == null) {
-			return false;
-		}
 		return list.contains(t);
 	}
 

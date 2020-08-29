@@ -311,7 +311,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observeGroupConstruction(Environment environment, GroupId groupId){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observeGroupDestruction(Environment environment, GroupInfo groupInfo){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	/**
@@ -335,7 +335,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observeGroupPropertyChange(Environment environment, GroupId groupId,GroupPropertyId groupPropertyId){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	/**
@@ -347,7 +347,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observeGroupPersonArrival(Environment environment, GroupId groupId,PersonId personId){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	/**
@@ -359,7 +359,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observeGroupPersonDeparture(Environment environment, GroupId groupId,PersonId personId){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	/**
@@ -371,7 +371,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observePopulationIndexPersonAddition(Environment environment, Object key, PersonId personId) {
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 	
 	
@@ -384,7 +384,7 @@ public abstract class AbstractComponent implements Component {
 	 */
 	@Override
 	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId){
-		throw new RuntimeException("No concrete implementation " + getClass().getName());
+		throwNoConcreteImplementation();
 	}
 
 }

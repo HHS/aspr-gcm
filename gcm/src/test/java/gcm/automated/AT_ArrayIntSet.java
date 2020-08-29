@@ -102,6 +102,24 @@ public class AT_ArrayIntSet {
 
 		intSet.remove(new PersonId(-67));
 		assertEquals(getPersonIds(), new LinkedHashSet<>(intSet.getValues()));
+		
+		
+		
+		
+		
+		intSet = new ArrayIntSet<>(5);
+		
+		//force the array int set to attempt a remove when empty
+		intSet.remove(new PersonId(0));
+		
+		//force the array int set to shrink
+		for(int i = 0;i<1000;i++) {
+			intSet.add(new PersonId(i));
+		}
+		for(int i = 0;i<1000;i++) {
+			intSet.remove(new PersonId(i));
+		}
+		assertEquals(getPersonIds(), new LinkedHashSet<>(intSet.getValues()));
 
 	}
 
@@ -249,6 +267,7 @@ public class AT_ArrayIntSet {
 			PersonId personId = new PersonId(i);
 			assertEquals(intSet.contains(personId), personIds.contains(personId));
 		}
+		
 
 	}
 

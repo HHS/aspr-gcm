@@ -11,6 +11,7 @@ import org.junit.Test;
 import gcm.replication.Replication;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
+import static gcm.automated.support.ExceptionAssertion.*;
 
 /**
  * Test class for {@link Replication}
@@ -48,6 +49,9 @@ public class AT_Replication {
 		testGetReplicationsInvocation(10, -3567856456764L);
 		testGetReplicationsInvocation(17, 2745644564568889L);
 		testGetReplicationsInvocation(35, -8856756785456L);
+		
+		//precondition tests
+		assertException(()->Replication.getReplications(-1, 34534534345L),IllegalArgumentException.class);
 	}
 	
 	/**
@@ -62,5 +66,8 @@ public class AT_Replication {
 		Replication replication = Replication.getReplication(45, 234234234234L);
 		assertEquals(repId,replication.getId().getValue());
 		assertEquals(replications.get(repId-1).getSeed(),replication.getSeed());
+		
+		//precondition tests
+		assertException(()->Replication.getReplication(-1, 0), IllegalArgumentException.class);
 	}
 }

@@ -13,6 +13,7 @@ import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
+import static gcm.automated.support.ExceptionAssertion.*;
 /**
  * Tests for {@link BaseElement}
  * @author Shawn Hatch
@@ -41,6 +42,8 @@ public class AT_BaseElement {
 		assertFalse(baseElement.isInitialized());
 		baseElement.init(null);
 		assertTrue(baseElement.isInitialized());
+		
+		assertException(()->baseElement.init(null), RuntimeException.class);
 	}
 	
 	/**

@@ -91,7 +91,7 @@ public final class BinContainer {
 	 * @author Shawn Hatch
 	 *
 	 */
-	@Source(status = TestStatus.REQUIRED, proxy = BinContainer.class)
+	
 	public final static class Bin {
 		private final double lowerBound;
 		private final double upperBound;

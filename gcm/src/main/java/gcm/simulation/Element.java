@@ -16,6 +16,10 @@ public interface Element extends MemoryReportParticipant {
 	 * Invoked at the startup of the simulation by the Context. Elements
 	 * typically establish connection to other elements and prepare to serve the
 	 * needs of the components.
+	 * 
+	 * @throws RuntimeException
+	 * <li> if the element is initialized more than once
+	 * 
 	 */
 	public void init(Context context);
 }

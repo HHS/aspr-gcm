@@ -2,6 +2,7 @@ package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.BinContainer;
 import gcm.util.stats.BinContainer.Bin;
+import gcm.util.stats.BinContainer.Builder;
 
 /**
  * Test class for {@link BinContainer}
@@ -26,7 +28,7 @@ public class AT_BinContainer {
 	 * Tests {@link BinContainer#builder(double)} construction
 	 */
 	@Test
-	@UnitTestMethod(name="builder", args= {double.class})
+	@UnitTestMethod(name = "builder", args = { double.class })
 	public void testBuilder() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -55,13 +57,17 @@ public class AT_BinContainer {
 		assertException(() -> BinContainer.builder(0), RuntimeException.class);
 
 		assertException(() -> BinContainer.builder(-0.5), RuntimeException.class);
+		assertException(() -> {
+			Builder builder2 = BinContainer.builder(5);
+			builder2.addValue(13, -1);
+		}, RuntimeException.class);
 	}
 
 	/**
 	 * Tests {@link BinContainer#binCount()}
 	 */
 	@Test
-	@UnitTestMethod(name="binCount", args= {})
+	@UnitTestMethod(name = "binCount", args = {})
 	public void testBinCount() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -71,14 +77,14 @@ public class AT_BinContainer {
 		builder.addValue(-10, 3);
 		BinContainer binContainer = builder.build();
 
-		assertEquals(8,binContainer.binCount());		
+		assertEquals(8, binContainer.binCount());
 	}
 
 	/**
 	 * Tests {@link BinContainer#getBin(int)}
 	 */
 	@Test
-	@UnitTestMethod(name="getBin", args= {int.class})
+	@UnitTestMethod(name = "getBin", args = { int.class })
 	public void testGetBin() {
 		BinContainer.Builder builder = BinContainer.builder(3);
 		builder.addValue(2.3, 5);
@@ -97,6 +103,167 @@ public class AT_BinContainer {
 		assertEquals(new Bin(6.0, 9.0, 0), binContainer.getBin(6));
 		assertEquals(new Bin(9.0, 12.0, 1), binContainer.getBin(7));
 
+		// precondition tests
+		assertException(() -> binContainer.getBin(-1), RuntimeException.class);
+		assertException(() -> binContainer.getBin(1000000), RuntimeException.class);
+
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#toString()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "toString", args = {})
+	public void testBinToString() {
+		BinContainer binContainer = BinContainer.builder(3)//
+				.addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+
+		List<String> expectedStrings = new ArrayList<>();
+		expectedStrings.add("Bin [lowerBound=0.0, upperBound=3.0, count=5]");
+		expectedStrings.add("Bin [lowerBound=3.0, upperBound=6.0, count=1]");
+		expectedStrings.add("Bin [lowerBound=6.0, upperBound=9.0, count=0]");
+		expectedStrings.add("Bin [lowerBound=9.0, upperBound=12.0, count=0]");
+		expectedStrings.add("Bin [lowerBound=12.0, upperBound=15.0, count=3]");
+
+		List<String> actualStrings = new ArrayList<>();
+		for (int i = 0; i < binContainer.binCount(); i++) {
+			actualStrings.add(binContainer.getBin(i).toString());
+		}
+		assertEquals(expectedStrings, actualStrings);
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#hashCode()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "hashCode", args = {})
+	public void testBinHashCode() {
+		BinContainer binContainer1 = BinContainer.builder(3).addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+
+		BinContainer binContainer2 = BinContainer.builder(3).addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+
+		assertEquals(binContainer1.binCount(), binContainer2.binCount());
+
+		for (int i = 0; i < binContainer1.binCount(); i++) {
+			Bin bin1 = binContainer1.getBin(i);
+			Bin bin2 = binContainer2.getBin(i);
+			assertEquals(bin1, bin2);
+			assertEquals(bin1.hashCode(), bin2.hashCode());
+		}
+
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#equals()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "equals", args = { Object.class })
+	public void testBinEquals() {
+		BinContainer binContainer1 = BinContainer.builder(3).addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(6.3, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+
+		BinContainer binContainer2 = BinContainer.builder(3).addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(6.3, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+
+		assertEquals(binContainer1.binCount(), binContainer2.binCount());
+
+		int binCount = binContainer1.binCount();
+		for (int i = 0; i < binCount; i++) {
+			Bin bin1 = binContainer1.getBin(i);
+			Bin bin2 = binContainer2.getBin(i);
+
+			assertEquals(bin1, bin2);
+			assertEquals(bin1, bin1);
+			assertNotEquals(bin1, null);
+			assertNotEquals(bin1, new Object());
+		}
+		for (int i = 0; i < binCount; i++) {
+			for (int j = i+1; j < binCount; j++) {
+				Bin bin1 = binContainer1.getBin(i);
+				Bin bin2 = binContainer1.getBin(j);
+				assertNotEquals(bin1, bin2);
+			}
+		}
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#getLowerBound()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "getLowerBound", args = {})
+	public void testGetLowerBound() {
+		BinContainer binContainer = BinContainer.builder(3)//
+				.addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(6.3, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+		
+		assertEquals(0.0,binContainer.getBin(0).getLowerBound(),0);
+		assertEquals(3.0,binContainer.getBin(1).getLowerBound(),0);
+		assertEquals(6.0,binContainer.getBin(2).getLowerBound(),0);
+		assertEquals(9.0,binContainer.getBin(3).getLowerBound(),0);
+		assertEquals(12.0,binContainer.getBin(4).getLowerBound(),0);
+		
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#getUpperBound()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "getUpperBound", args = {})
+	public void testGetUpperBound() {
+		BinContainer binContainer = BinContainer.builder(3)//
+				.addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(6.3, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+		
+		
+		
+		assertEquals(3.0,binContainer.getBin(0).getUpperBound(),0);
+		assertEquals(6.0,binContainer.getBin(1).getUpperBound(),0);
+		assertEquals(9.0,binContainer.getBin(2).getUpperBound(),0);
+		assertEquals(12.0,binContainer.getBin(3).getUpperBound(),0);
+		assertEquals(15.0,binContainer.getBin(4).getUpperBound(),0);
+	}
+
+	/**
+	 * Tests {@link BinContainer.Bin#getCount()}
+	 */
+	@Test
+	@UnitTestMethod(target = Bin.class, name = "getCount", args = {})
+	public void testGetCount() {
+		BinContainer binContainer = BinContainer.builder(3)//
+				.addValue(2.1, 5)//
+				.addValue(5.6, 1)//
+				.addValue(6.3, 1)//
+				.addValue(12.67, 3)//
+				.build();//
+		
+		
+		
+		assertEquals(5,binContainer.getBin(0).getCount());
+		assertEquals(1,binContainer.getBin(1).getCount());
+		assertEquals(1,binContainer.getBin(2).getCount());
+		assertEquals(0,binContainer.getBin(3).getCount());
+		assertEquals(3,binContainer.getBin(4).getCount());
 	}
 
 }

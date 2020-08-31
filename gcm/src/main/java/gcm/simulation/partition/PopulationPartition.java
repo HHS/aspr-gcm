@@ -212,7 +212,16 @@ public final class PopulationPartition {
 		return result;
 	}
 
+	
+
+	/**
+	 * Precondition : the person id is not null.
+	 */
 	public void handleAddPerson(PersonId personId) {
+		if (personId == null) {
+			return;
+		}
+
 		while (personId.getValue() >= personToKeyMap.size()) {
 			personToKeyMap.add(null);
 		}
@@ -269,6 +278,9 @@ public final class PopulationPartition {
 	 */
 	public void handleRemovePerson(PersonId personId) {
 		Key key = personToKeyMap.get(personId.getValue());
+		if (key == null) {
+			return;
+		}
 		personToKeyMap.set(personId.getValue(), null);
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
 		peopleContainer.remove(personId);
@@ -280,7 +292,6 @@ public final class PopulationPartition {
 			LabelManager labelManager = labelManagers[i];
 			labelManager.removeLabel(key.keys[i]);
 		}
-
 	}
 
 	public void handleRegionChange(PersonId personId) {
@@ -551,38 +562,81 @@ public final class PopulationPartition {
 	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
 			RandomGenerator randomGenerator) {
 
-		// TODO -- multi-sampling from the random generator is likely inefficient
 		Key key = getKey(labelSetInfo);
 		Key selectedKey = null;
-		// RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
+		
 		if (key.isPartialKey()) {
+			Key keyForExcludedPersonId = null;
 			List<Key> fullKeys = getFullKeys(key);
-			int personCount = 0;
-
+			int candidateCount =  0;
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				int containerSize = peopleContainer.size();
-				personCount += peopleContainer.size();
-				if (peopleContainer.contains(excludedPersonId)) {
-					personCount--;
-					containerSize--;
-				}
-				double selectionProbabilty = containerSize;
-				selectionProbabilty /= personCount;
-				// if the selection probability is NaN, the fullKey will not be selected
-				if (randomGenerator.nextDouble() < selectionProbabilty) {
-					selectedKey = fullKey;
+				candidateCount += peopleContainer.size();
+			}			 
+			if (contains(excludedPersonId)) {
+				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
+				candidateCount--;
+			}
+			if (candidateCount > 0) {
+				int selectedIndex = randomGenerator.nextInt(candidateCount);				
+				for (Key fullKey : fullKeys) {
+					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+					int containerSize = peopleContainer.size();
+					if (fullKey == keyForExcludedPersonId) {
+						containerSize--;
+					}
+					if (containerSize > selectedIndex) {
+						selectedKey = fullKey;
+						break;
+					}
+					selectedIndex -= containerSize;
 				}
 			}
 		} else {
 			selectedKey = key;
-		}
+		}		
+		
 		if (selectedKey == null) {
 			return null;
 		}
+		
 		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
 	}
 
+//	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
+//			RandomGenerator randomGenerator) {
+//
+//		// TODO -- multi-sampling from the random generator is likely inefficient
+//		Key key = getKey(labelSetInfo);
+//		Key selectedKey = null;
+//		
+//		if (key.isPartialKey()) {
+//			List<Key> fullKeys = getFullKeys(key);
+//			int personCount = 0;
+//
+//			for (Key fullKey : fullKeys) {
+//				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+//				int containerSize = peopleContainer.size();
+//				personCount += peopleContainer.size();
+//				if (peopleContainer.contains(excludedPersonId)) {
+//					personCount--;
+//					containerSize--;
+//				}
+//				double selectionProbabilty = containerSize;
+//				selectionProbabilty /= personCount;
+//				// if the selection probability is NaN, the fullKey will not be selected
+//				if (randomGenerator.nextDouble() < selectionProbabilty) {
+//					selectedKey = fullKey;
+//				}
+//			}
+//		} else {
+//			selectedKey = key;
+//		}
+//		if (selectedKey == null) {
+//			return null;
+//		}
+//		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
+//	}
 	private PersonId getRandomPersonId(final PersonId excludedPersonId, Key key, RandomGenerator randomGenerator) {
 
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
@@ -665,6 +719,18 @@ public final class PopulationPartition {
 			key.keys[index++] = groupLabel;
 		}
 		return key;
+	}
+
+	private boolean contains(PersonId personId) {
+		if (personId == null) {
+			return false;
+		}
+		Key key = personToKeyMap.get(personId.getValue());
+		if (key == null) {
+			return false;
+		}
+		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+		return peopleContainer.contains(personId);
 	}
 
 	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {

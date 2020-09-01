@@ -34,6 +34,7 @@ import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
+import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -493,8 +494,7 @@ public class AT_EnvironmentImpl_25 {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-		RandomNumberGeneratorId randomNumberGeneratorId = new RandomNumberGeneratorId() {
-		};
+		RandomNumberGeneratorId randomNumberGeneratorId = RandomGeneratorId.COMET;
 		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		Scenario scenario = scenarioBuilder.build();
 
@@ -578,8 +578,7 @@ public class AT_EnvironmentImpl_25 {
 			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
 			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
-			RandomNumberGeneratorId badRandomNumberGeneratorId = new RandomNumberGeneratorId() {
-			};
+			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.CUPID;
 
 			// if the key is null
 			assertModelException(
@@ -1361,8 +1360,7 @@ public class AT_EnvironmentImpl_25 {
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
-		RandomNumberGeneratorId randomNumberGeneratorId = new RandomNumberGeneratorId() {
-		};
+		RandomNumberGeneratorId randomNumberGeneratorId = RandomGeneratorId.BLITZEN;
 		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
 		Scenario scenario = scenarioBuilder.build();
@@ -1478,8 +1476,7 @@ public class AT_EnvironmentImpl_25 {
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(1000000);
 
-			RandomNumberGeneratorId badRandomNumberGeneratorId = new RandomNumberGeneratorId() {
-			};
+			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.DANCER;
 
 			// if the key is null
 			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,

@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
+import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.BinContainer;
 import gcm.util.stats.BinContainer.Bin;
@@ -23,6 +24,26 @@ import gcm.util.stats.BinContainer.Builder;
  */
 @UnitTest(target = BinContainer.class)
 public class AT_BinContainer {
+	/**
+	 * Tests {@link BinContainer.Bin#Bin(double, double, int)} construction
+	 */
+	@Test
+	@UnitTestConstructor(target = BinContainer.Bin.class, args = { double.class, double.class, int.class })
+	public void testBinConstructor() {
+		double lowerBound = 12.5;
+		double upperBound = 15.123;
+		int count = 55;
+		Bin bin = new Bin(lowerBound, upperBound, count);
+		assertEquals(lowerBound, bin.getLowerBound(), 0);
+		assertEquals(upperBound, bin.getUpperBound(), 0);
+		assertEquals(count, bin.getCount());
+
+		// precondition checks
+		assertException(() -> new Bin(33, 31, 4), IllegalArgumentException.class);
+
+		assertException(() -> new Bin(30, 40, -1), IllegalArgumentException.class);
+
+	}
 
 	/**
 	 * Tests {@link BinContainer#builder(double)} construction
@@ -193,7 +214,7 @@ public class AT_BinContainer {
 			assertNotEquals(bin1, new Object());
 		}
 		for (int i = 0; i < binCount; i++) {
-			for (int j = i+1; j < binCount; j++) {
+			for (int j = i + 1; j < binCount; j++) {
 				Bin bin1 = binContainer1.getBin(i);
 				Bin bin2 = binContainer1.getBin(j);
 				assertNotEquals(bin1, bin2);
@@ -213,13 +234,13 @@ public class AT_BinContainer {
 				.addValue(6.3, 1)//
 				.addValue(12.67, 3)//
 				.build();//
-		
-		assertEquals(0.0,binContainer.getBin(0).getLowerBound(),0);
-		assertEquals(3.0,binContainer.getBin(1).getLowerBound(),0);
-		assertEquals(6.0,binContainer.getBin(2).getLowerBound(),0);
-		assertEquals(9.0,binContainer.getBin(3).getLowerBound(),0);
-		assertEquals(12.0,binContainer.getBin(4).getLowerBound(),0);
-		
+
+		assertEquals(0.0, binContainer.getBin(0).getLowerBound(), 0);
+		assertEquals(3.0, binContainer.getBin(1).getLowerBound(), 0);
+		assertEquals(6.0, binContainer.getBin(2).getLowerBound(), 0);
+		assertEquals(9.0, binContainer.getBin(3).getLowerBound(), 0);
+		assertEquals(12.0, binContainer.getBin(4).getLowerBound(), 0);
+
 	}
 
 	/**
@@ -234,14 +255,12 @@ public class AT_BinContainer {
 				.addValue(6.3, 1)//
 				.addValue(12.67, 3)//
 				.build();//
-		
-		
-		
-		assertEquals(3.0,binContainer.getBin(0).getUpperBound(),0);
-		assertEquals(6.0,binContainer.getBin(1).getUpperBound(),0);
-		assertEquals(9.0,binContainer.getBin(2).getUpperBound(),0);
-		assertEquals(12.0,binContainer.getBin(3).getUpperBound(),0);
-		assertEquals(15.0,binContainer.getBin(4).getUpperBound(),0);
+
+		assertEquals(3.0, binContainer.getBin(0).getUpperBound(), 0);
+		assertEquals(6.0, binContainer.getBin(1).getUpperBound(), 0);
+		assertEquals(9.0, binContainer.getBin(2).getUpperBound(), 0);
+		assertEquals(12.0, binContainer.getBin(3).getUpperBound(), 0);
+		assertEquals(15.0, binContainer.getBin(4).getUpperBound(), 0);
 	}
 
 	/**
@@ -256,14 +275,12 @@ public class AT_BinContainer {
 				.addValue(6.3, 1)//
 				.addValue(12.67, 3)//
 				.build();//
-		
-		
-		
-		assertEquals(5,binContainer.getBin(0).getCount());
-		assertEquals(1,binContainer.getBin(1).getCount());
-		assertEquals(1,binContainer.getBin(2).getCount());
-		assertEquals(0,binContainer.getBin(3).getCount());
-		assertEquals(3,binContainer.getBin(4).getCount());
+
+		assertEquals(5, binContainer.getBin(0).getCount());
+		assertEquals(1, binContainer.getBin(1).getCount());
+		assertEquals(1, binContainer.getBin(2).getCount());
+		assertEquals(0, binContainer.getBin(3).getCount());
+		assertEquals(3, binContainer.getBin(4).getCount());
 	}
 
 }

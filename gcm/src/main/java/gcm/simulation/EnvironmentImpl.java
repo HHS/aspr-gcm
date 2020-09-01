@@ -48,6 +48,7 @@ import gcm.simulation.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.FilterInfo.RegionFilterInfo;
 import gcm.simulation.FilterInfo.ResourceFilterInfo;
 import gcm.simulation.partition.LabelSet;
+import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionInfo;
 import gcm.simulation.partition.PopulationPartitionManager;
@@ -1091,11 +1092,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateMonoWeightingFunctionNotNull(monoWeightingFunction);
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
 					.getMonoWeightedContact(groupId, monoWeightingFunction);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			if (stochasticPersonSelection.getPersonId() == null) {
-				return Optional.empty();
-			}
-			return Optional.of(stochasticPersonSelection.getPersonId());
+			validateStochasticPersonSelection(stochasticPersonSelection);			
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -1111,27 +1109,63 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
 					.getMonoWeightedContactFromGenerator(groupId, monoWeightingFunction, randomNumberGeneratorId);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			if (stochasticPersonSelection.getPersonId() == null) {
-				return Optional.empty();
-			}
-			return Optional.of(stochasticPersonSelection.getPersonId());
+			validateStochasticPersonSelection(stochasticPersonSelection);			
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
+	
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 */
+	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeight(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction){
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.getPersonIdFromWeight(key,labelSetWeightingFunction);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 * Uses the random generator associated with the RandomNumberGeneratorId.
+	 */
+	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeightAndGenerator(
+			Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.getPersonIdFromWeightAndGenerator(key,labelSetWeightingFunction,randomNumberGeneratorId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
 
 	@Override
 	public Optional<PersonId> getNonWeightedGroupContact(final GroupId groupId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
-			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, null);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
-
+			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, null);			
+			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -1144,11 +1178,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validateGroupExists(groupId);
 			validatePersonExists(excludedPersonId);
-			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, excludedPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, excludedPersonId);			
+			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -1162,11 +1193,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateGroupExists(groupId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, null,
-					randomNumberGeneratorId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+					randomNumberGeneratorId);			
+			return Optional.ofNullable(personId);
 
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -1182,11 +1210,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, excludedPersonId,
-					randomNumberGeneratorId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+					randomNumberGeneratorId);			
+			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -3320,6 +3345,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
+	
+	private void validateLabelSetWeightingFunction(final LabelSetWeightingFunction labelSetWeightingFunction) {
+		if (labelSetWeightingFunction == null) {
+			throwModelException(SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+		}
+	}
+	
 	private void validateMonoWeightingFunctionNotNull(final MonoWeightingFunction monoWeightingFunction) {
 		if (monoWeightingFunction == null) {
 			throwModelException(SimulationErrorType.NULL_WEIGHTING_FUNCTION);

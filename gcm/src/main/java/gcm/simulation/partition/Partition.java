@@ -6,7 +6,10 @@ import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
+@Source(status = TestStatus.REQUIRED, proxy = PartitionInfo.class)
 public abstract class Partition {
 
 	private Partition() {

@@ -155,7 +155,21 @@ public final class BinContainer {
 			return upperBound;
 		}
 
+		/**
+		 * Constructs the Bin
+		 * @throws IllegalArgumentException
+		 * <li> if the lower bound exceeds the upper bound
+		 * <li> if the count is negative
+		 */
 		public Bin(double lowerBound, double upperBound, int count) {
+			if(lowerBound>upperBound) {
+				throw new IllegalArgumentException("lower bound exceeds upper bound");
+			}
+			
+			if(count<0) {
+				throw new IllegalArgumentException("negative count");
+			}
+
 			this.lowerBound = lowerBound;
 			this.upperBound = upperBound;
 			this.count = count;

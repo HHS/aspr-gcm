@@ -2,9 +2,11 @@ package gcm.simulation.partition;
 
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
+import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
+@Source(status = TestStatus.REQUIRED, proxy = LabelSetInfo.class)
 public abstract class LabelSet {
 
 	@Override

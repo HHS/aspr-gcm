@@ -12,6 +12,7 @@ import gcm.scenario.ResourceId;
 import gcm.simulation.BaseElement;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
@@ -25,8 +26,6 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	private Context context;
 
 	private StochasticsManager stochasticsManager;
-
-	
 
 	@Override
 	public void init(Context context) {
@@ -166,4 +165,15 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 		return populationPartitions.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));
 	}
 
+	@Override
+	public StochasticPersonSelection getPersonIdFromWeight(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction) {
+		return populationPartitions.get(key).getWeightedPersonId(labelSetWeightingFunction,stochasticsManager.getRandomGenerator());
+	}
+
+	@Override
+	public StochasticPersonSelection getPersonIdFromWeightAndGenerator(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId) {
+		return populationPartitions.get(key).getWeightedPersonId(labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId));
+	}
 }

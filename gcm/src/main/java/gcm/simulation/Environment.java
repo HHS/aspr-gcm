@@ -36,6 +36,7 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.partition.LabelSet;
+import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
@@ -3771,11 +3772,11 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null *
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 *
 	 * 
 	 */
@@ -3830,11 +3831,11 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null *
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 */
 	public int getPartitionSize(final Object key, LabelSet labelSet);
 
@@ -3891,16 +3892,14 @@ public interface Environment extends Element {
 	 *                        person is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null *
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null *
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 * 
 	 */
-	public boolean personIsInPopulationPartition(final PersonId personId, final Object key,
-			final LabelSet labelSet);
-
+	public boolean personIsInPopulationPartition(final PersonId personId, final Object key, final LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition.
@@ -3912,14 +3911,13 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 */
-	public Optional<PersonId> getRandomPartitionedPerson(final Object key,
-			final LabelSet labelSet);
+	public Optional<PersonId> getRandomPartitionedPerson(final Object key, final LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition.
@@ -3931,11 +3929,11 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                        if the randomNumberGeneratorId is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
@@ -3943,13 +3941,14 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(final Object key,
-			final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId);
+	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(final Object key, final LabelSet labelSet,
+			RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition
 	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population partition is empty or contains only the excluded person.
+	 * null if the population partition is empty or contains only the excluded
+	 * person.
 	 *
 	 * @throws ModelException
 	 *
@@ -3962,11 +3961,11 @@ public interface Environment extends Element {
 	 *                        the excluded person is unknown
 	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
 	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 * 
 	 */
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusion(final PersonId excludedPersonId, final Object key,
@@ -3975,7 +3974,8 @@ public interface Environment extends Element {
 	/**
 	 * Returns a randomly selected person identifier from a population partition
 	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population partition is empty or contains only the excluded person.
+	 * null if the population partition is empty or contains only the excluded
+	 * person.
 	 *
 	 * @throws ModelException
 	 *
@@ -3988,11 +3988,11 @@ public interface Environment extends Element {
 	 *                        the excluded person is unknown
 	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
 	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET}
-	 *                        if the label set is null
+	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
+	 *                        label set is null
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the
-	 *                        population partition
+	 *                        if the label set is incompatible with the population
+	 *                        partition
 	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
 	 *                        if the randomNumberGeneratorId is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
@@ -4000,7 +4000,49 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 */
 	public Optional<PersonId> getRandomPartitionedPersonWithExclusionFromGenerator(final PersonId excludedPersonId,
-			final Object key, final LabelSet labelSet,
-			RandomNumberGeneratorId randomNumberGeneratorId);
+			final Object key, final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId);
+
+	/**
+	 * Returns a random person from the partition using the given
+	 * {@link LabelSetWeightingFunction}
+	 * 
+	 * @throws ModelException
+
+	 *                        <li>
+	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
+	 *                        the weighting function is null
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key for the partition is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population partition
+	 * 
+	 */
+	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeight(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction);
+
+	/**
+	 * Returns a random person from the partition using the given
+	 * {@link LabelSetWeightingFunction} and {@link RandomNumberGeneratorId}
+	 * 
+	 * @throws ModelException
+
+	 *                        <li>
+	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
+	 *                        the weighting function is null
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key for the partition is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population partition
+	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
+	 *                        if the randomNumberGeneratorId is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                        if the randomNumberGeneratorId does not correspond to
+	 *                        an existing random Number Generator Id in the scenario
+	 * 
+	 */
+	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeightAndGenerator(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
 
 }

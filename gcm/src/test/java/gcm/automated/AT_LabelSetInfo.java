@@ -163,7 +163,8 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getCompartmentLabel", args = {})
 	public void testGetCompartmentLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
-		Object actualCompartmentLabel = LabelSetInfo.build(compartment(expectedCompartmentLabel)).getCompartmentLabel();
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(compartment(expectedCompartmentLabel));		
+		Object actualCompartmentLabel = labelSetInfo.getCompartmentLabel();
 		assertEquals(expectedCompartmentLabel, actualCompartmentLabel);
 	}
 

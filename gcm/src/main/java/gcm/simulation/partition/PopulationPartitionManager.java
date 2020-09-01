@@ -10,6 +10,7 @@ import gcm.scenario.ResourceId;
 import gcm.simulation.Element;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.StochasticPersonSelection;
 import gcm.util.annotations.Source;
 
 /**
@@ -35,8 +36,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        index
 	 */
 
-	public void addPopulationPartition(final ComponentId componentId,
-			final Partition partition, final Object key);
+	public void addPopulationPartition(final ComponentId componentId, final Partition partition, final Object key);
 
 	/**
 	 * Returns the list of person identifiers in the partition for the given key.
@@ -66,8 +66,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public PersonId getRandomPartitionedPerson(final PersonId excludedPersonId, final Object key,
-			LabelSet labelSet);
+	public PersonId getRandomPartitionedPerson(final PersonId excludedPersonId, final Object key, LabelSet labelSet);
 
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
@@ -88,8 +87,7 @@ public interface PopulationPartitionManager extends Element {
 	 * corresponding to the key. The key must correspond to an existing indexed
 	 * population.
 	 */
-	public boolean personInPartition(final PersonId personId, final Object key,
-			LabelSet labelSet);
+	public boolean personInPartition(final PersonId personId, final Object key, LabelSet labelSet);
 
 	/**
 	 * Adds a person into all population indices that apply to that person. This
@@ -163,9 +161,22 @@ public interface PopulationPartitionManager extends Element {
 	public ComponentId getOwningComponent(final Object key);
 
 	/**
-	 * Returns true if and only if the given population labelSet is
-	 * compatible with the PopulationPartitionDefinition associated with the key
+	 * Returns true if and only if the given population labelSet is compatible with
+	 * the PopulationPartitionDefinition associated with the key
 	 */
 	public boolean validateLabelSet(Object key, LabelSet labelSet);
+
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 */
+	public StochasticPersonSelection getPersonIdFromWeight(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction);
+
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 * Uses the random generator associated with the RandomNumberGeneratorId.
+	 */
+	public StochasticPersonSelection getPersonIdFromWeightAndGenerator(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
 
 }

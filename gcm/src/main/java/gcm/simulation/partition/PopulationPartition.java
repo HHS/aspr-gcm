@@ -17,7 +17,9 @@ import gcm.scenario.ResourceId;
 import gcm.simulation.Context;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.PersonIdManager;
+import gcm.simulation.StochasticPersonSelection;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -144,6 +146,8 @@ public final class PopulationPartition {
 
 	private Map<Key, Key> keyMap = new LinkedHashMap<>();
 
+	private Map<Key, LabelSetInfo> labelSetInfoMap = new LinkedHashMap<>();
+
 	private LabelManager[] labelManagers;
 
 	private ComponentId owningComponentId;
@@ -156,6 +160,8 @@ public final class PopulationPartition {
 
 	private final Context context;
 
+	private final ObservableEnvironment observableEnvironment;
+
 	public ComponentId getOwningComponentId() {
 		return owningComponentId;
 	}
@@ -163,6 +169,7 @@ public final class PopulationPartition {
 	public PopulationPartition(final Context context, final PartitionInfo partitionInfo,
 			final ComponentId owningComponentId) {
 		this.context = context;
+		this.observableEnvironment = context.getObservableEnvironment();
 		this.personIdManager = context.getPersonIdManager();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.partitionInfo = partitionInfo;
@@ -212,8 +219,6 @@ public final class PopulationPartition {
 		return result;
 	}
 
-	
-
 	/**
 	 * Precondition : the person id is not null.
 	 */
@@ -262,7 +267,8 @@ public final class PopulationPartition {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
 			keyToPeopleMap.put(cleanedKey, new BasePeopleContainer(context));
-
+			LabelSetInfo labelSetInfo = getLabelSetInfo(cleanedKey);
+			labelSetInfoMap.put(cleanedKey, labelSetInfo);
 		}
 		for (int i = 0; i < keySize; i++) {
 			LabelManager labelManager = labelManagers[i];
@@ -270,6 +276,37 @@ public final class PopulationPartition {
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
 		keyToPeopleMap.get(cleanedKey).add(personId);
+	}
+
+	private LabelSetInfo getLabelSetInfo(Key key) {
+		LabelSet labelSet = LabelSet.empty();
+		if (compartmentLabelIndex >= 0) {
+			labelSet = labelSet.with(LabelSet.compartment(key.keys[compartmentLabelIndex]));
+		}
+		if (regionLabelIndex >= 0) {
+			labelSet = labelSet.with(LabelSet.region(key.keys[regionLabelIndex]));
+		}
+		if (groupLabelIndex >= 0) {
+			labelSet = labelSet.with(LabelSet.group(key.keys[groupLabelIndex]));
+		}
+
+		for (PersonPropertyId personPropertyId : personPropertyLabelIndexes.keySet()) {
+			Integer personPropertyIndex = personPropertyLabelIndexes.get(personPropertyId);
+			if (personPropertyIndex >= 0) {
+				labelSet = labelSet.with(LabelSet.property(personPropertyId, key.keys[personPropertyIndex]));
+			}
+		}
+
+		for (ResourceId resourceId : resourceLabelIndexes.keySet()) {
+			Integer resourceIndex = resourceLabelIndexes.get(resourceId);
+			if (resourceIndex >= 0) {
+				labelSet = labelSet.with(LabelSet.resource(resourceId, key.keys[resourceIndex]));
+			}
+		}
+
+		LabelSetInfo result = LabelSetInfo.build(labelSet);
+
+		return result;
 	}
 
 	/**
@@ -287,6 +324,7 @@ public final class PopulationPartition {
 		if (peopleContainer.size() == 0) {
 			keyToPeopleMap.remove(key);
 			keyMap.remove(key);
+			labelSetInfoMap.remove(key);
 		}
 		for (int i = 0; i < keySize; i++) {
 			LabelManager labelManager = labelManagers[i];
@@ -564,21 +602,21 @@ public final class PopulationPartition {
 
 		Key key = getKey(labelSetInfo);
 		Key selectedKey = null;
-		
+
 		if (key.isPartialKey()) {
 			Key keyForExcludedPersonId = null;
 			List<Key> fullKeys = getFullKeys(key);
-			int candidateCount =  0;
+			int candidateCount = 0;
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 				candidateCount += peopleContainer.size();
-			}			 
+			}
 			if (contains(excludedPersonId)) {
 				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
 				candidateCount--;
 			}
 			if (candidateCount > 0) {
-				int selectedIndex = randomGenerator.nextInt(candidateCount);				
+				int selectedIndex = randomGenerator.nextInt(candidateCount);
 				for (Key fullKey : fullKeys) {
 					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 					int containerSize = peopleContainer.size();
@@ -594,12 +632,12 @@ public final class PopulationPartition {
 			}
 		} else {
 			selectedKey = key;
-		}		
-		
+		}
+
 		if (selectedKey == null) {
 			return null;
 		}
-		
+
 		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
 	}
 
@@ -701,7 +739,7 @@ public final class PopulationPartition {
 			key.keys[index++] = regionLabel;
 		}
 
-		if (partitionInfo.getCompartmentPartitionFunction() != null) {
+		if (partitionInfo.getCompartmentPartitionFunction() != null) {			
 			Object compartmentLabel = labelSetInfo.getCompartmentLabel();
 			key.keys[index++] = compartmentLabel;
 		}
@@ -787,6 +825,125 @@ public final class PopulationPartition {
 	public void init() {
 		for (PersonId personId : personIdManager.getPeople()) {
 			handleAddPerson(personId);
+		}
+	}
+
+	// Guard for both weights array and weightedKeys array
+	private boolean weightsAreLocked;
+	private double[] weights;
+	private Key[] weightedKeys;
+
+	private void aquireWeightsLock() {
+		if (weightsAreLocked) {
+			throw new RuntimeException("weights arrray is locked");
+		}
+		weightsAreLocked = true;
+	}
+
+	private void releaseWeightsLock() {
+		if (!weightsAreLocked) {
+			throw new RuntimeException("weights array is not locked");
+		}
+		weightsAreLocked = false;
+	}
+
+	/*
+	 * Allocates the weights array to the given size or 50% larger than the current
+	 * size, whichever is largest. Size must be non-negative
+	 */
+	private void allocateWeights(final int size) {
+		if (weights == null) {
+			weights = new double[size];
+			weightedKeys = new Key[size];
+		}
+		if (weights.length < size) {
+			int newSize = Math.max(size, weights.length + weights.length / 2);
+			weights = new double[newSize];
+			weightedKeys = new Key[newSize];
+		}
+	}
+
+	/*
+	 * Returns the index in the weights array that is the first to meet or exceed
+	 * the target value. Assumes a strictly increasing set of values for indices 0
+	 * through keyCount. Decreasing values are strictly prohibited. Consecutive
+	 * equal values may return an ambiguous result. The target value must not exceed
+	 * weights[peopleCount].
+	 *
+	 */
+	private int findTargetIndex(final double targetValue, final int keyCount) {
+		int low = 0;
+		int high = keyCount - 1;
+
+		while (low <= high) {
+			final int mid = (low + high) >>> 1;
+			final double midVal = weights[mid];
+			if (midVal < targetValue) {
+				low = mid + 1;
+			} else if (midVal > targetValue) {
+				high = mid - 1;
+			} else {
+				return mid;
+			}
+		}
+		return low;
+	}
+
+	public StochasticPersonSelection getWeightedPersonId(LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomGenerator randomGenerator) {
+
+		aquireWeightsLock();
+		try {
+			allocateWeights(keyToPeopleMap.size());
+			/*
+			 * Initialize the sum of the weights to zero and set the index in the weights
+			 * and weightedKeys to zero.
+			 */
+			double sum = 0;
+			int weightsLength = 0;
+			for (Key key : keyToPeopleMap.keySet()) {
+				LabelSetInfo labelSetInfo = labelSetInfoMap.get(key);
+				PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+				double weight = labelSetWeightingFunction.getWeight(observableEnvironment, labelSetInfo);
+				weight *= peopleContainer.size();
+				if (!Double.isFinite(weight) || (weight < 0)) {
+					return new StochasticPersonSelection(null, true);
+				}
+				/*
+				 * Keys having a zero weight are rejected for selection
+				 */
+				if (weight > 0) {
+					sum += weight;
+					weights[weightsLength] = sum;
+					weightedKeys[weightsLength] = key;
+					weightsLength++;
+				}
+
+			}
+
+			/*
+			 * If at least one key was accepted for selection, then we attempt a random
+			 * selection.
+			 */
+			if (weightsLength > 0) {
+				/*
+				 * Although the individual weights may have been finite, if the sum of those
+				 * weights is not finite no legitimate selection can be made
+				 */
+				if (!Double.isFinite(sum)) {
+					return new StochasticPersonSelection(null, true);
+				}
+
+				final double targetValue = randomGenerator.nextDouble() * sum;
+				final int targetIndex = findTargetIndex(targetValue, weightsLength);
+				Key selectedKey = weightedKeys[targetIndex];
+				PersonId selectedPerson = getRandomPersonId(null, selectedKey, randomGenerator);
+				return new StochasticPersonSelection(selectedPerson, false);
+			} else {
+				return new StochasticPersonSelection(null, false);
+			}
+		} finally {
+			releaseWeightsLock();
 		}
 	}
 

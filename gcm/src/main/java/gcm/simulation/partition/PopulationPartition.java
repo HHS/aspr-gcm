@@ -751,7 +751,7 @@ public final class PopulationPartition {
 		}
 
 		for (PersonPropertyId personPropertyId : partitionInfo.getPersonPropertyIds()) {
-			key.keys[index++] = labelSetInfo.getPersonPropertyLabel(personPropertyId);
+			key.keys[index++] = labelSetInfo.getPersonPropertyLabel(personPropertyId).orElse(null);
 		}
 
 		for (ResourceId resourceId : partitionInfo.getPersonResourceIds()) {

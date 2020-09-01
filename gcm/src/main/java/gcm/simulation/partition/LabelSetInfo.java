@@ -107,11 +107,11 @@ public final class LabelSetInfo {
 	}
 
 	public Optional<Object> getGroupLabel() {
-		return  Optional.ofNullable(groupLabel);
+		return Optional.ofNullable(groupLabel);
 	}
 
-	public Object getPersonPropertyLabel(PersonPropertyId personPropertyId) {
-		return personPropertyLabels.get(personPropertyId);
+	public Optional<Object> getPersonPropertyLabel(PersonPropertyId personPropertyId) {
+		return Optional.ofNullable(personPropertyLabels.get(personPropertyId));
 	}
 
 	public Object getPersonResourceLabel(ResourceId resourceId) {

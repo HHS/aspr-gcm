@@ -187,7 +187,8 @@ public class AT_LabelSetInfo {
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			Object expectedPersonPropertyLabel = testPersonPropertyId.toString();
-			Object actualPersonPropertyLabel = labelSetInfo.getPersonPropertyLabel(testPersonPropertyId);
+			assertTrue(labelSetInfo.getPersonPropertyLabel(testPersonPropertyId).isPresent());
+			Object actualPersonPropertyLabel = labelSetInfo.getPersonPropertyLabel(testPersonPropertyId).get();
 			assertEquals(expectedPersonPropertyLabel, actualPersonPropertyLabel);
 		}
 	}

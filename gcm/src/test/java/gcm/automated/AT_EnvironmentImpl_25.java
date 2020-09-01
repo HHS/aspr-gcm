@@ -367,7 +367,7 @@ public class AT_EnvironmentImpl_25 {
 			result = result.with(group(labelSetInfo.getGroupLabel().get()));
 		}
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
-			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId)));
+			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
 		}
 		for (ResourceId recourceId : labelSetInfo.getPersonResourceIds()) {
 			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId)));

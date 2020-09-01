@@ -141,7 +141,9 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getGroupLabel", args = {})
 	public void testGetGroupLabel() {
 		Object expectedGroupLabel = "Group Label";
-		Object actualGroupLabel = LabelSetInfo.build(group(expectedGroupLabel)).getGroupLabel();
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(group(expectedGroupLabel));
+		assertTrue(labelSetInfo.getGroupLabel().isPresent());
+		Object actualGroupLabel = labelSetInfo.getGroupLabel().get();
 		assertEquals(expectedGroupLabel, actualGroupLabel);
 	}
 

@@ -363,8 +363,8 @@ public class AT_EnvironmentImpl_25 {
 		if (labelSetInfo.getRegionLabel().isPresent()) {
 			result = result.with(region(labelSetInfo.getRegionLabel().get()));
 		}
-		if (labelSetInfo.getGroupLabel() != null) {
-			result = result.with(group(labelSetInfo.getGroupLabel()));
+		if (labelSetInfo.getGroupLabel().isPresent()) {
+			result = result.with(group(labelSetInfo.getGroupLabel().get()));
 		}
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
 			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId)));

@@ -524,6 +524,12 @@ public final class PopulationPartition {
 		if (b1 && b2) {
 			return false;
 		}
+		
+		b1 = partitionInfo.getGroupPartitionFunction() == null;
+		b2 = labelSetInfo.getGroupLabel().isPresent();
+		if (b1 && b2) {
+			return false;
+		}
 
 		Set<PersonPropertyId> allowedPersonPropertyIds = partitionInfo.getPersonPropertyIds();
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
@@ -753,7 +759,7 @@ public final class PopulationPartition {
 		}
 
 		if (partitionInfo.getGroupPartitionFunction() != null) {
-			Object groupLabel = labelSetInfo.getGroupLabel();
+			Object groupLabel = labelSetInfo.getGroupLabel().orElse(null);
 			key.keys[index++] = groupLabel;
 		}
 		return key;

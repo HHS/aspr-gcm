@@ -106,8 +106,8 @@ public final class LabelSetInfo {
 		return Optional.ofNullable(compartmentLabel);
 	}
 
-	public Object getGroupLabel() {
-		return groupLabel;
+	public Optional<Object> getGroupLabel() {
+		return  Optional.ofNullable(groupLabel);
 	}
 
 	public Object getPersonPropertyLabel(PersonPropertyId personPropertyId) {

@@ -357,11 +357,11 @@ public class AT_EnvironmentImpl_25 {
 
 	private static LabelSet getLabelSet(LabelSetInfo labelSetInfo) {
 		LabelSet result = empty();
-		if (labelSetInfo.getCompartmentLabel()!= null) {
-			result = result.with(compartment(labelSetInfo.getCompartmentLabel()));
+		if (labelSetInfo.getCompartmentLabel().isPresent()) {
+			result = result.with(compartment(labelSetInfo.getCompartmentLabel().get()));
 		}
-		if (labelSetInfo.getRegionLabel() != null) {
-			result = result.with(region(labelSetInfo.getRegionLabel()));
+		if (labelSetInfo.getRegionLabel().isPresent()) {
+			result = result.with(region(labelSetInfo.getRegionLabel().get()));
 		}
 		if (labelSetInfo.getGroupLabel() != null) {
 			result = result.with(group(labelSetInfo.getGroupLabel()));

@@ -514,14 +514,14 @@ public final class PopulationPartition {
 
 	public boolean validateLabelSetInfo(LabelSetInfo labelSetInfo) {
 		boolean b1 = partitionInfo.getRegionPartitionFunction() == null;
-		boolean b2 = labelSetInfo.getRegionLabel() == null;
-		if (b1 && !b2) {
+		boolean b2 = labelSetInfo.getRegionLabel().isPresent();
+		if (b1 && b2) {
 			return false;
 		}
 
 		b1 = partitionInfo.getCompartmentPartitionFunction() == null;
-		b2 = labelSetInfo.getCompartmentLabel() == null;
-		if (b1 && !b2) {
+		b2 = labelSetInfo.getCompartmentLabel().isPresent();
+		if (b1 && b2) {
 			return false;
 		}
 
@@ -735,12 +735,12 @@ public final class PopulationPartition {
 		Key key = new Key(keySize);
 		int index = 0;
 		if (partitionInfo.getRegionPartitionFunction() != null) {
-			Object regionLabel = labelSetInfo.getRegionLabel();
+			Object regionLabel = labelSetInfo.getRegionLabel().orElse(null);
 			key.keys[index++] = regionLabel;
 		}
 
 		if (partitionInfo.getCompartmentPartitionFunction() != null) {			
-			Object compartmentLabel = labelSetInfo.getCompartmentLabel();
+			Object compartmentLabel = labelSetInfo.getCompartmentLabel().orElse(null);
 			key.keys[index++] = compartmentLabel;
 		}
 

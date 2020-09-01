@@ -152,7 +152,9 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getRegionLabel", args = {})
 	public void testGetRegionLabel() {
 		Object expectedRegionLabel = "Region Label";
-		Object actualRegionLabel = LabelSetInfo.build(region(expectedRegionLabel)).getRegionLabel();
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(region(expectedRegionLabel));
+		assertTrue(labelSetInfo.getRegionLabel().isPresent());
+		Object actualRegionLabel = labelSetInfo.getRegionLabel().get();
 		assertEquals(expectedRegionLabel, actualRegionLabel);
 	}
 
@@ -163,8 +165,9 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getCompartmentLabel", args = {})
 	public void testGetCompartmentLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(compartment(expectedCompartmentLabel));		
-		Object actualCompartmentLabel = labelSetInfo.getCompartmentLabel();
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(compartment(expectedCompartmentLabel));
+		assertTrue(labelSetInfo.getCompartmentLabel().isPresent());
+		Object actualCompartmentLabel = labelSetInfo.getCompartmentLabel().get();
 		assertEquals(expectedCompartmentLabel, actualCompartmentLabel);
 	}
 

@@ -3,6 +3,7 @@ package gcm.simulation.partition;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import gcm.scenario.PersonPropertyId;
@@ -101,8 +102,8 @@ public final class LabelSetInfo {
 
 	private Map<ResourceId, Object> personResourceLabels = new LinkedHashMap<>();
 
-	public Object getCompartmentLabel() {
-		return compartmentLabel;
+	public Optional<Object> getCompartmentLabel() {
+		return Optional.ofNullable(compartmentLabel);
 	}
 
 	public Object getGroupLabel() {
@@ -135,8 +136,8 @@ public final class LabelSetInfo {
 		return Collections.unmodifiableSet(personResourceLabels.keySet());
 	}
 
-	public Object getRegionLabel() {
-		return regionLabel;
+	public Optional<Object> getRegionLabel() {
+		return Optional.ofNullable(regionLabel);
 	}
 
 	private void processLabelSet(LabelSet labelSet) {

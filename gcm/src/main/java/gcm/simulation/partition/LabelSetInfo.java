@@ -114,8 +114,8 @@ public final class LabelSetInfo {
 		return Optional.ofNullable(personPropertyLabels.get(personPropertyId));
 	}
 
-	public Object getPersonResourceLabel(ResourceId resourceId) {
-		return personResourceLabels.get(resourceId);
+	public Optional<Object> getPersonResourceLabel(ResourceId resourceId) {
+		return Optional.ofNullable(personResourceLabels.get(resourceId));
 	}
 
 	/**

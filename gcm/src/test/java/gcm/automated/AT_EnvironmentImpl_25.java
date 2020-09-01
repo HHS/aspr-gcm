@@ -370,7 +370,7 @@ public class AT_EnvironmentImpl_25 {
 			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
 		}
 		for (ResourceId recourceId : labelSetInfo.getPersonResourceIds()) {
-			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId)));
+			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId).get()));
 		}
 		return result;
 	}

@@ -209,7 +209,8 @@ public class AT_LabelSetInfo {
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Object expectedResourceLabel = testResourceId.toString();
-			Object actualResourceLabel = labelSetInfo.getPersonResourceLabel(testResourceId);
+			assertTrue(labelSetInfo.getPersonResourceLabel(testResourceId).isPresent());
+			Object actualResourceLabel = labelSetInfo.getPersonResourceLabel(testResourceId).get();
 			assertEquals(expectedResourceLabel, actualResourceLabel);
 		}
 	}

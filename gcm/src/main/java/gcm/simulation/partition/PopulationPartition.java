@@ -755,7 +755,7 @@ public final class PopulationPartition {
 		}
 
 		for (ResourceId resourceId : partitionInfo.getPersonResourceIds()) {
-			key.keys[index++] = labelSetInfo.getPersonResourceLabel(resourceId);
+			key.keys[index++] = labelSetInfo.getPersonResourceLabel(resourceId).orElse(null);
 		}
 
 		if (partitionInfo.getGroupPartitionFunction() != null) {

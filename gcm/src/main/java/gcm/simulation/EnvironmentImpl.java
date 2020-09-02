@@ -1628,7 +1628,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonWithExclusion(final Object key,final PersonId excludedPersonId) {
+	public Optional<PersonId> sampleIndex(final Object key,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);

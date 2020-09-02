@@ -1000,11 +1000,11 @@ public class AT_EnvironmentImpl_08 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomIndexedPersonWithExclusion(Object,PersonId)}
+	 * Tests {@link EnvironmentImpl#sampleIndex(Object,PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusion", args = {Object.class,PersonId.class})
-	public void testGetRandomIndexedPersonWithExclusion() {
+	@UnitTestMethod(name = "sampleIndex", args = {Object.class,PersonId.class})
+	public void testSampleIndex_Object_PersonId() {
 		/*
 		 * Show that we can retrieve people from a population index while
 		 * excluding a person who is in the index. We will do this repeatedly to
@@ -1043,7 +1043,7 @@ public class AT_EnvironmentImpl_08 {
 				environment.addPopulationIndex(compartment(testCompartmentId), key);
 				for (int i = 0; i < 100; i++) {
 					for (final PersonId personId : peopleInCompartment) {
-						final PersonId selectedPersonId = environment.getRandomIndexedPersonWithExclusion(key,personId).get();
+						final PersonId selectedPersonId = environment.sampleIndex(key,personId).get();
 						assertTrue(peopleInCompartment.contains(selectedPersonId));
 						assertFalse(selectedPersonId.equals(personId));
 					}

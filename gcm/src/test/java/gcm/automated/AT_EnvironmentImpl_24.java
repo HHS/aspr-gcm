@@ -244,7 +244,8 @@ public class AT_EnvironmentImpl_24 {
 			assertModelException(() -> environment.sampleIndex(new Object(), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
 			// if the randomNumberGeneratorId is null
-			assertModelException(() -> environment.sampleIndex(key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			RandomNumberGeneratorId nullRandomNumberGeneratorId = null;
+			assertModelException(() -> environment.sampleIndex(key30, nullRandomNumberGeneratorId), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 			// if the randomNumberGeneratorId is unknown
 			assertModelException(() -> environment.sampleIndex(key30, RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);

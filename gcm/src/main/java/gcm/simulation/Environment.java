@@ -1756,7 +1756,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
-	public Optional<PersonId> getRandomIndexedPerson(final Object key);
+	public Optional<PersonId> sampleIndex(final Object key);
 
 	/**
 	 * Returns a randomly selected person identifier from an indexed population.

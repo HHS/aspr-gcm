@@ -1056,7 +1056,7 @@ public class AT_EnvironmentImpl_22 {
 					compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			environment.addResourceToRegion(TestResourceId.RESOURCE1, TestRegionId.REGION_1, amount);
 			environment.transferResourceToPerson(TestResourceId.RESOURCE1, personId, amount);
@@ -1119,7 +1119,7 @@ public class AT_EnvironmentImpl_22 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			assertTrue(environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1) >= amount);
 
@@ -1138,7 +1138,7 @@ public class AT_EnvironmentImpl_22 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			assertTrue(environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1) >= amount);
 

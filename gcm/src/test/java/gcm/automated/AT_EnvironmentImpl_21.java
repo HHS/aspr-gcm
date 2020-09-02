@@ -602,7 +602,7 @@ public class AT_EnvironmentImpl_21 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
@@ -631,7 +631,7 @@ public class AT_EnvironmentImpl_21 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 
@@ -650,7 +650,7 @@ public class AT_EnvironmentImpl_21 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 
@@ -869,7 +869,7 @@ public class AT_EnvironmentImpl_21 {
 
 			environment.addPopulationIndex(filter, key);
 
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			// if the person id is null
 			assertModelException(() -> environment.setPersonRegion(null, TestRegionId.REGION_2), SimulationErrorType.NULL_PERSON_ID);
@@ -890,7 +890,7 @@ public class AT_EnvironmentImpl_21 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			// if the invoker is not a global component or the person's
 			// current region
@@ -905,7 +905,7 @@ public class AT_EnvironmentImpl_21 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			// if the invoker is not a global component or the person's
 			// current region

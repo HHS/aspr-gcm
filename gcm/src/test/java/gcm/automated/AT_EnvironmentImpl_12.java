@@ -448,7 +448,7 @@ public class AT_EnvironmentImpl_12 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			final Object key = new Object();
 			environment.addPopulationIndex(allPeople(), key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 			assertNotNull(personId);
 
 			// if the resource id is null

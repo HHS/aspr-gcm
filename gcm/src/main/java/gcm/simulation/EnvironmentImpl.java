@@ -1611,13 +1611,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPerson(final Object key) {
+	public Optional<PersonId> sampleIndex(final Object key) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			PersonId nullPersonId = null;
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(key,nullPersonId);
+			final PersonId personId = indexedPopulationManager.sampleIndex(key,nullPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1634,7 +1634,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(key,excludedPersonId);
+			final PersonId personId = indexedPopulationManager.sampleIndex(key,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}

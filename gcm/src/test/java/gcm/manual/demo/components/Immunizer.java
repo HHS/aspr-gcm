@@ -57,7 +57,7 @@ public class Immunizer extends AbstractComponent {
 		environment.addPersonToGroup(personId, groupId);
 
 		for (int i = 0; i < childCount; i++) {
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(IndexKey.IMMUNIZABLE_CHILDREN);
+			Optional<PersonId> optional = environment.sampleIndex(IndexKey.IMMUNIZABLE_CHILDREN);
 			if (optional.isPresent()) {
 				PersonId familyMemberId = optional.get();
 				environment.setPersonPropertyValue(familyMemberId, PersonProperty.IMMUNE, true);
@@ -70,7 +70,7 @@ public class Immunizer extends AbstractComponent {
 		int adultCount = environment.getRandomGenerator().nextInt(2) + 1;
 		adultCount = Math.min(adultCount, environment.getIndexSize(IndexKey.IMMUNIZABLE_ADULTS));
 		for (int i = 0; i < adultCount; i++) {
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(IndexKey.IMMUNIZABLE_ADULTS);
+			Optional<PersonId> optional = environment.sampleIndex(IndexKey.IMMUNIZABLE_ADULTS);
 			if (optional.isPresent()) {
 				PersonId familyMemberId = optional.get();
 				environment.setPersonPropertyValue(familyMemberId, PersonProperty.IMMUNE, true);
@@ -84,7 +84,7 @@ public class Immunizer extends AbstractComponent {
 
 	private void planNextImmunization(Environment environment) {
 
-		Optional<PersonId> option = environment.getRandomIndexedPerson(IndexKey.IMMUNIZABLE_CHILDREN);
+		Optional<PersonId> option = environment.sampleIndex(IndexKey.IMMUNIZABLE_CHILDREN);
 		if (option.isPresent()) {
 			environment.addPlan(new ImmunizationPlan(option.get()), environment.getTime() + 0.01);
 		}

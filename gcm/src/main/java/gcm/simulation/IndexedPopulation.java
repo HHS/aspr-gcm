@@ -51,7 +51,7 @@ public interface IndexedPopulation {
 	 * that no person is being excluded. Returns null if the index is either
 	 * empty or only contains the excluded person.
 	 */
-	public PersonId getRandomPersonId(final PersonId excludedPersonId);
+	public PersonId sampleIndex(final PersonId excludedPersonId);
 	/**
 	 * Returns a randomly chosen person identifier from the index, excluding the
 	 * person identifier given. When the excludedPersonId is null it indicates

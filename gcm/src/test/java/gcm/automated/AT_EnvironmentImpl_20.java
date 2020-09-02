@@ -256,7 +256,7 @@ public class AT_EnvironmentImpl_20 {
 
 			environment.addPopulationIndex(filter, "people of compartment 1");
 
-			Optional<PersonId> optional = environment.getRandomIndexedPerson("people of compartment 1");
+			Optional<PersonId> optional = environment.sampleIndex("people of compartment 1");
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 			assertTrue(environment.personExists(personId));
@@ -649,7 +649,7 @@ public class AT_EnvironmentImpl_20 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1);
 					
 			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 			// if invoker is not a global component or the person's region
@@ -665,7 +665,7 @@ public class AT_EnvironmentImpl_20 {
 			final Object key = new Object();
 			final Filter filter = region(TestRegionId.REGION_1);
 			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 			assertTrue(optional.isPresent());
 			PersonId personId = optional.get();
 

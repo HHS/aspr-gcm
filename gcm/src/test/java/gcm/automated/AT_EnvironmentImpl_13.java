@@ -763,7 +763,7 @@ public class AT_EnvironmentImpl_13 {
 
 			final Object key = new Object();
 			environment.addPopulationIndex(allPeople(), key);
-			Optional<PersonId> optional = environment.getRandomIndexedPerson(key);
+			Optional<PersonId> optional = environment.sampleIndex(key);
 			assertTrue(optional.isPresent());
 
 			// if the resource id is null

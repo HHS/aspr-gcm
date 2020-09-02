@@ -175,7 +175,7 @@ public class AT_EnvironmentImpl_11 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 			environment.addResourceToRegion(TestResourceId.RESOURCE1, TestRegionId.REGION_1, amount);
 			final long regionResourceLevel = environment.getRegionResourceLevel(TestRegionId.REGION_1, TestResourceId.RESOURCE1);
 
@@ -228,7 +228,7 @@ public class AT_EnvironmentImpl_11 {
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			// if invoker is not a global component , the person's region
 			// or the person's compartment
@@ -244,7 +244,7 @@ public class AT_EnvironmentImpl_11 {
 							region(TestRegionId.REGION_1));//
 
 			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.getRandomIndexedPerson(key).get();
+			final PersonId personId = environment.sampleIndex(key).get();
 
 			// if invoker is not a global component , the person's region
 			// or the person's compartment

@@ -908,11 +908,11 @@ public class AT_EnvironmentImpl_08 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomIndexedPerson(Object)}
+	 * Tests {@link EnvironmentImpl#sampleIndex(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomIndexedPerson", args = {Object.class})
-	public void testGetRandomIndexedPerson() {
+	@UnitTestMethod(name = "sampleIndex", args = {Object.class})
+	public void test_SampleIndex_Object() {
 		/*
 		 * Show that we can retrieve people from a population index.
 		 */
@@ -953,7 +953,7 @@ public class AT_EnvironmentImpl_08 {
 				 */
 				final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
 				for (int i = 0; i < (peopleInCompartment.size() * 100); i++) {
-					final PersonId personId = environment.getRandomIndexedPerson(key).get();
+					final PersonId personId = environment.sampleIndex(key).get();
 					assertTrue(peopleInCompartment.contains(personId));
 					Counter counter = counterMap.get(personId);
 					if (counter == null) {
@@ -983,10 +983,10 @@ public class AT_EnvironmentImpl_08 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomIndexedPerson((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
 			// if the key does not correspond to an existing population
 			// index
-			assertModelException(() -> environment.getRandomIndexedPerson(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
 		});
 
@@ -1060,10 +1060,10 @@ public class AT_EnvironmentImpl_08 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomIndexedPerson((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
 			// if the key does not correspond to an existing population
 			// index
-			assertModelException(() -> environment.getRandomIndexedPerson(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
 		});
 

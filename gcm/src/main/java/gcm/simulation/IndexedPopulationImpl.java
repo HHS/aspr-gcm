@@ -148,7 +148,7 @@ public final class IndexedPopulationImpl implements IndexedPopulation{
 	 * empty or only contains the excluded person.
 	 */
 	@Override
-	public PersonId getRandomPersonId(final PersonId excludedPersonId) {
+	public PersonId sampleIndex(final PersonId excludedPersonId) {
 		/*
 		 * Since we are potentially excluding a person, we need to determine how
 		 * many candidates are available. To avoid an infinite loop, we must not

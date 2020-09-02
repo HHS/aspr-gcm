@@ -1616,7 +1616,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(null, key);
+			PersonId nullPersonId = null;
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(key,nullPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1627,13 +1628,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonWithExclusion(final PersonId excludedPersonId, final Object key) {
+	public Optional<PersonId> getRandomIndexedPersonWithExclusion(final Object key,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(excludedPersonId, key);
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPerson(key,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1651,8 +1652,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(null, key,
-					randomNumberGeneratorId);
+			PersonId nullPersonId = null;
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(key,
+					randomNumberGeneratorId,nullPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -1663,16 +1665,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(final PersonId excludedPersonId,
-			final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(
+			final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(excludedPersonId,
-					key, randomNumberGeneratorId);
+			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(
+					key, randomNumberGeneratorId,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}

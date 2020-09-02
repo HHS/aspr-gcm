@@ -1000,10 +1000,10 @@ public class AT_EnvironmentImpl_08 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomIndexedPersonWithExclusion(PersonId, Object)}
+	 * Tests {@link EnvironmentImpl#getRandomIndexedPersonWithExclusion(Object,PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusion", args = {PersonId.class,Object.class})
+	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusion", args = {Object.class,PersonId.class})
 	public void testGetRandomIndexedPersonWithExclusion() {
 		/*
 		 * Show that we can retrieve people from a population index while
@@ -1043,7 +1043,7 @@ public class AT_EnvironmentImpl_08 {
 				environment.addPopulationIndex(compartment(testCompartmentId), key);
 				for (int i = 0; i < 100; i++) {
 					for (final PersonId personId : peopleInCompartment) {
-						final PersonId selectedPersonId = environment.getRandomIndexedPersonWithExclusion(personId, key).get();
+						final PersonId selectedPersonId = environment.getRandomIndexedPersonWithExclusion(key,personId).get();
 						assertTrue(peopleInCompartment.contains(selectedPersonId));
 						assertFalse(selectedPersonId.equals(personId));
 					}

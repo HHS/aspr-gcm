@@ -1797,7 +1797,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
-	public Optional<PersonId> getRandomIndexedPersonWithExclusion(final PersonId excludedPersonId, final Object key);
+	public Optional<PersonId> getRandomIndexedPersonWithExclusion(final Object key,final PersonId excludedPersonId);
 
 	/**
 	 * Returns a randomly selected person identifier from an indexed population
@@ -1821,8 +1821,8 @@ public interface Environment extends Element {
 	 *                        if the randomNumberGeneratorId does not correspond to
 	 *                        an existing random Number Generator Id in the scenario
 	 */
-	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(final PersonId excludedPersonId,
-			final Object key, RandomNumberGeneratorId randomNumberGeneratorId);
+	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(
+			final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**
 	 * Returns the set of region component identifiers as provided during simulation

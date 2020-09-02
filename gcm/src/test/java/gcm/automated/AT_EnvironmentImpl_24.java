@@ -261,10 +261,10 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRandomIndexedPersonWithExclusionFromGenerator(PersonId, Object, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#getRandomIndexedPersonWithExclusionFromGenerator(Object, RandomNumberGeneratorId,PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusionFromGenerator", args = { PersonId.class, Object.class, RandomNumberGeneratorId.class})
+	@UnitTestMethod(name = "getRandomIndexedPersonWithExclusionFromGenerator", args = {Object.class, RandomNumberGeneratorId.class,PersonId.class})
 	public void testGetRandomIndexedPersonWithExclusionFromGenerator() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(2);
@@ -317,7 +317,7 @@ public class AT_EnvironmentImpl_24 {
 
 			for (int i = 0; i < 100; i++) {
 				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key30, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(key30, RandomGeneratorId.BLITZEN,excludedPersonId);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 0);
@@ -326,7 +326,7 @@ public class AT_EnvironmentImpl_24 {
 			}
 			for (int i = 0; i < 100; i++) {
 				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key40, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(key40, RandomGeneratorId.BLITZEN,excludedPersonId);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 10);
@@ -335,7 +335,7 @@ public class AT_EnvironmentImpl_24 {
 			}
 			for (int i = 0; i < 100; i++) {
 				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator(excludedPersonId, key50, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonWithExclusionFromGenerator( key50, RandomGeneratorId.BLITZEN,excludedPersonId);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 20);
@@ -348,23 +348,26 @@ public class AT_EnvironmentImpl_24 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the excluded person is null
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(null, key30, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_PERSON_ID);
+			PersonId nullPersonId = null;
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(key30, RandomGeneratorId.BLITZEN,nullPersonId), SimulationErrorType.NULL_PERSON_ID);
 
 			// if the excluded person is unknown
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(100000), key30, RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_PERSON_ID);
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator( key30, RandomGeneratorId.BLITZEN,new PersonId(100000)), SimulationErrorType.UNKNOWN_PERSON_ID);
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+			Object nullKey = null;
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator( nullKey, RandomGeneratorId.BLITZEN,new PersonId(0)), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
 
 			// if the key does not correspond to an existing population index
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), new Object(), RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new Object(), RandomGeneratorId.BLITZEN,new PersonId(0)),
 					SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
 			// if the randomNumberGeneratorId is null
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			RandomNumberGeneratorId nullRandomNumberGeneratorId = null;
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(key30, nullRandomNumberGeneratorId,new PersonId(0)), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 			// if the randomNumberGeneratorId is unknown
-			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(new PersonId(0), key30, RandomGeneratorId.COMET),
+			assertModelException(() -> environment.getRandomIndexedPersonWithExclusionFromGenerator(key30, RandomGeneratorId.COMET,new PersonId(0)),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});

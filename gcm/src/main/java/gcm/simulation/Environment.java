@@ -1777,7 +1777,7 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> getRandomIndexedPersonFromGenerator(final Object key,
+	public Optional<PersonId> sampleIndex(final Object key,
 			RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**

@@ -77,7 +77,7 @@ public interface IndexedPopulationManager extends Element {
 	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *             if the keys are not associated with a population index
 	 */
-	public PersonId getRandomIndexedPersonFromGenerator(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+	public PersonId sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**
 	 * Returns true if and only if the person is contained in the population

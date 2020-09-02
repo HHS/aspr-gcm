@@ -298,8 +298,8 @@ public final class IndexedPopulationManagerImpl extends BaseElement implements I
 	}
 
 	@Override
-	public PersonId getRandomIndexedPersonFromGenerator(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
-		return indexedPopulationMap.get(key).getRandomPersonFromGenerator(excludedPersonId, randomNumberGeneratorId);
+	public PersonId sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
+		return indexedPopulationMap.get(key).sampleIndex(excludedPersonId, randomNumberGeneratorId);
 	}
 
 	@Override

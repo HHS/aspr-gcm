@@ -1645,7 +1645,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonFromGenerator(final Object key,
+	public Optional<PersonId> sampleIndex(final Object key,
 			RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -1653,7 +1653,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexExists(key);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			PersonId nullPersonId = null;
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(key,
+			final PersonId personId = indexedPopulationManager.sampleIndex(key,
 					randomNumberGeneratorId,nullPersonId);
 			if (personId == null) {
 				return Optional.empty();
@@ -1673,7 +1673,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.getRandomIndexedPersonFromGenerator(
+			final PersonId personId = indexedPopulationManager.sampleIndex(
 					key, randomNumberGeneratorId,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();

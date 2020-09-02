@@ -157,11 +157,11 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRandomIndexedPersonFromGenerator(Object,RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#sampleIndex(Object,RandomNumberGeneratorId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomIndexedPersonFromGenerator", args = { Object.class, RandomNumberGeneratorId.class})
-	public void testGetRandomIndexedPersonFromGenerator() {
+	@UnitTestMethod(name = "sampleIndex", args = { Object.class, RandomNumberGeneratorId.class})
+	public void testSampleIndex_Object_RNG() {
 
 		final long seed = SEED_PROVIDER.getSeedValue(1);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
@@ -212,21 +212,21 @@ public class AT_EnvironmentImpl_24 {
 			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 50), key50);
 
 			for (int i = 0; i < 100; i++) {
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key30, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.sampleIndex(key30, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 0);
 				assertTrue(personId.getValue() < 10);
 			}
 			for (int i = 0; i < 100; i++) {
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key40, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.sampleIndex(key40, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 10);
 				assertTrue(personId.getValue() < 20);
 			}
 			for (int i = 0; i < 100; i++) {
-				Optional<PersonId> personIdOptional = environment.getRandomIndexedPersonFromGenerator(key50, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> personIdOptional = environment.sampleIndex(key50, RandomGeneratorId.BLITZEN);
 				assertTrue(personIdOptional.isPresent());
 				PersonId personId = personIdOptional.get();
 				assertTrue(personId.getValue() >= 20);
@@ -238,16 +238,16 @@ public class AT_EnvironmentImpl_24 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex(null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
 
 			// if the key does not correspond to an existing population index
-			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(new Object(), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.sampleIndex(new Object(), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
 			// if the randomNumberGeneratorId is null
-			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			assertModelException(() -> environment.sampleIndex(key30, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 			// if the randomNumberGeneratorId is unknown
-			assertModelException(() -> environment.getRandomIndexedPersonFromGenerator(key30, RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+			assertModelException(() -> environment.sampleIndex(key30, RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});
 

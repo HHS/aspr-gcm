@@ -507,10 +507,10 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getBiWeightedGroupContactFromGenerator(GroupId, PersonId, boolean, BiWeightingFunction, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#getBiWeightedGroupContactFromGenerator(GroupId, BiWeightingFunction, RandomNumberGeneratorId, PersonId, boolean)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getBiWeightedGroupContactFromGenerator", args = { GroupId.class, PersonId.class, boolean.class, BiWeightingFunction.class, RandomNumberGeneratorId.class })
+	@UnitTestMethod(name = "getBiWeightedGroupContactFromGenerator", args = { GroupId.class, BiWeightingFunction.class, RandomNumberGeneratorId.class, PersonId.class, boolean.class})
 	public void testGetBiWeightedGroupContactFromGenerator() {
 
 		/*
@@ -661,11 +661,11 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getNonWeightedGroupContactFromGenerator(GroupId, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#sampleGroup(GroupId, RandomNumberGeneratorId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNonWeightedGroupContactFromGenerator", args = { GroupId.class, RandomNumberGeneratorId.class })
-	public void testGetNonWeightedGroupContactFromGenerator() {
+	@UnitTestMethod(name = "sampleGroup", args = { GroupId.class, RandomNumberGeneratorId.class })
+	public void testSampleGroup_GroupId_RNG() {
 
 		/*
 		 * Show that we can retrieve people randomly from a group.
@@ -719,7 +719,7 @@ public class AT_EnvironmentImpl_24 {
 			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
 			int sampleCount = groupSize * 100;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactFromGenerator(groupId, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId, RandomGeneratorId.BLITZEN);
 				assertTrue(nonWeightedGroupContact.isPresent());
 				PersonId selectedPersonId = nonWeightedGroupContact.get();
 				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
@@ -755,7 +755,7 @@ public class AT_EnvironmentImpl_24 {
 			// Show that an empty group returns no people
 			int sampleCount = 10;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactFromGenerator(groupId, RandomGeneratorId.BLITZEN);
+				Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId, RandomGeneratorId.BLITZEN);
 				assertFalse(nonWeightedGroupContact.isPresent());
 
 			}
@@ -768,13 +768,14 @@ public class AT_EnvironmentImpl_24 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the group id is null
-			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown
-			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(-5), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(new GroupId(-5), RandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the random generator id is null
-			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(0), null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			RandomGeneratorId nullRandomGeneratorId = null;
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), nullRandomGeneratorId), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the random generator id is unknown
-			assertModelException(() -> environment.getNonWeightedGroupContactFromGenerator(new GroupId(0), RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), RandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});
 
@@ -789,10 +790,10 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusionFromGenerator(GroupId, PersonId, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusionFromGenerator(GroupId,  RandomNumberGeneratorId,PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNonWeightedGroupContactWithExclusionFromGenerator", args = { GroupId.class, PersonId.class, RandomNumberGeneratorId.class })
+	@UnitTestMethod(name = "getNonWeightedGroupContactWithExclusionFromGenerator", args = { GroupId.class, RandomNumberGeneratorId.class, PersonId.class})
 	public void testGetNonWeightedGroupContactWithExclusionFromGenerator() {
 
 		/*
@@ -848,7 +849,7 @@ public class AT_EnvironmentImpl_24 {
 			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
 			int sampleCount = groupSize * 100;
 			// pick a random person from the group to exclude
-			Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+			Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId);
 			assertTrue(nonWeightedGroupContact.isPresent());
 			PersonId excludedPersonId = nonWeightedGroupContact.get();
 

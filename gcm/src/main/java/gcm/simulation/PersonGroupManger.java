@@ -125,13 +125,13 @@ public interface PersonGroupManger extends Element {
 	 * Returns a contacted person. The group should exist. The excludedPersonId
 	 * may be null.
 	 */
-	public PersonId getNonWeightedContact(final GroupId groupId, final PersonId excludedPersonId);
+	public PersonId sampleGroup(final GroupId groupId, final PersonId excludedPersonId);
 
 	/**
 	 * Returns a contacted person. The group should exist. The excludedPersonId
 	 * may be null. Uses the random generator associated with the given RandomNumberGeneratorId.
 	 */
-	public PersonId getNonWeightedContactFromGenerator(final GroupId groupId, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+	public PersonId sampleGroup(final GroupId groupId, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**
 	 * Returns a list of unique people who are in the given group. Group id must

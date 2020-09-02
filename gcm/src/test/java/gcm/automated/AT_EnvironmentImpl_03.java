@@ -410,10 +410,10 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getBiWeightedGroupContact(GroupId, PersonId, boolean, BiWeightingFunction)}
+	 * {@link EnvironmentImpl#getBiWeightedGroupContact(GroupId,  BiWeightingFunction,PersonId, boolean)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getBiWeightedGroupContact", args = {GroupId.class, PersonId.class, boolean.class, BiWeightingFunction.class})
+	@UnitTestMethod(name = "getBiWeightedGroupContact", args = {GroupId.class,  BiWeightingFunction.class,PersonId.class, boolean.class})
 	public void testGetBiWeightedGroupContact() {
 
 		/*
@@ -550,11 +550,11 @@ public class AT_EnvironmentImpl_03 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getNonWeightedGroupContact(GroupId)}
+	 * Tests {@link EnvironmentImpl#sampleGroup(GroupId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNonWeightedGroupContact", args = {GroupId.class})
-	public void testGetNonWeightedGroupContact() {
+	@UnitTestMethod(name = "sampleGroup", args = {GroupId.class})
+	public void testSampleGroup_GroupId() {
 
 		/*
 		 * Show that we can retrieve people randomly from a group.
@@ -607,7 +607,7 @@ public class AT_EnvironmentImpl_03 {
 			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
 			int sampleCount = groupSize * 100;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+				Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId);
 				assertTrue(nonWeightedGroupContact.isPresent());
 				PersonId selectedPersonId = nonWeightedGroupContact.get();
 				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
@@ -643,7 +643,7 @@ public class AT_EnvironmentImpl_03 {
 			// Show that an empty group returns no people
 			int sampleCount = 10;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+				Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId);
 				assertFalse(nonWeightedGroupContact.isPresent());
 
 			}
@@ -656,9 +656,9 @@ public class AT_EnvironmentImpl_03 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the group id is null
-			assertModelException(() -> environment.getNonWeightedGroupContact(null), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(null), SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown
-			assertModelException(() -> environment.getNonWeightedGroupContact(new GroupId(-5)), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(new GroupId(-5)), SimulationErrorType.UNKNOWN_GROUP_ID);
 
 		});
 
@@ -673,11 +673,11 @@ public class AT_EnvironmentImpl_03 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getNonWeightedGroupContactWithExclusion(GroupId, PersonId)}
+	 * {@link EnvironmentImpl#sampleGroup(GroupId, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getNonWeightedGroupContactWithExclusion", args = {GroupId.class,PersonId.class})
-	public void testGetNonWeightedGroupContactWithExclusion() {
+	@UnitTestMethod(name = "sampleGroup", args = {GroupId.class,PersonId.class})
+	public void testSampleGroup_GroupId_PersonId() {
 
 		/*
 		 * Show that we can retrieve people randomly from a group.
@@ -731,12 +731,12 @@ public class AT_EnvironmentImpl_03 {
 			final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
 			int sampleCount = groupSize * 100;
 			// pick a random person from the group to exclude
-			Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContact(groupId);
+			Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId);
 			assertTrue(nonWeightedGroupContact.isPresent());
 			PersonId excludedPersonId = nonWeightedGroupContact.get();
 
 			for (int i = 0; i < sampleCount; i++) {
-				nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusion(groupId, excludedPersonId);
+				nonWeightedGroupContact = environment.sampleGroup(groupId, excludedPersonId);
 				assertTrue(nonWeightedGroupContact.isPresent());
 				PersonId selectedPersonId = nonWeightedGroupContact.get();
 				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
@@ -773,7 +773,7 @@ public class AT_EnvironmentImpl_03 {
 			assertNotNull(excludedPersonId);
 
 			for (int i = 0; i < sampleCount; i++) {
-				nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusion(groupId, excludedPersonId);
+				nonWeightedGroupContact = environment.sampleGroup(groupId, excludedPersonId);
 				assertTrue(nonWeightedGroupContact.isPresent());
 				PersonId selectedPersonId = nonWeightedGroupContact.get();
 				assertTrue(environment.isGroupMember(selectedPersonId, groupId));
@@ -808,7 +808,7 @@ public class AT_EnvironmentImpl_03 {
 			// Show that an empty group returns no people
 			int sampleCount = 10;
 			for (int i = 0; i < sampleCount; i++) {
-				Optional<PersonId> nonWeightedGroupContact = environment.getNonWeightedGroupContactWithExclusion(groupId,excludedPersonId);
+				Optional<PersonId> nonWeightedGroupContact = environment.sampleGroup(groupId,excludedPersonId);
 				assertFalse(nonWeightedGroupContact.isPresent());
 
 			}
@@ -824,13 +824,14 @@ public class AT_EnvironmentImpl_03 {
 			GroupId groupId = environment.getGroupIds().get(0);
 
 			// if the group id is null
-			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusion(null, excludedPersonId), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(null, excludedPersonId), SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown
-			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusion(new GroupId(-5), excludedPersonId), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(new GroupId(-5), excludedPersonId), SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the person id is null
-			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusion(groupId, null), SimulationErrorType.NULL_PERSON_ID);
+			PersonId nullPersonId = null;
+			assertModelException(() -> environment.sampleGroup(groupId, nullPersonId), SimulationErrorType.NULL_PERSON_ID);
 			// if the person id is unknown
-			assertModelException(() -> environment.getNonWeightedGroupContactWithExclusion(groupId, new PersonId(-1)), SimulationErrorType.UNKNOWN_PERSON_ID);
+			assertModelException(() -> environment.sampleGroup(groupId, new PersonId(-1)), SimulationErrorType.UNKNOWN_PERSON_ID);
 
 		});
 

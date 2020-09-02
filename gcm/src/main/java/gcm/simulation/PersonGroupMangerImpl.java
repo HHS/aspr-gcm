@@ -437,19 +437,19 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public PersonId getNonWeightedContact(final GroupId groupId, final PersonId excludedPersonId) {
+	public PersonId sampleGroup(final GroupId groupId, final PersonId excludedPersonId) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return getNonWeightedContactImpl(groupId, randomGenerator, excludedPersonId);
+		return sampleGroupImpl(groupId, randomGenerator, excludedPersonId);
 	}
 
 	@Override
-	public PersonId getNonWeightedContactFromGenerator(final GroupId groupId,
+	public PersonId sampleGroup(final GroupId groupId,
 			RandomNumberGeneratorId randomNumberGeneratorId, final PersonId excludedPersonId) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return getNonWeightedContactImpl(groupId, randomGenerator, excludedPersonId);
+		return sampleGroupImpl(groupId, randomGenerator, excludedPersonId);
 	}
 
-	private PersonId getNonWeightedContactImpl(final GroupId groupId,
+	private PersonId sampleGroupImpl(final GroupId groupId,
 			RandomGenerator randomGenerator, final PersonId excludedPersonId) {
 		PersonId result = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());

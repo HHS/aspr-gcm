@@ -1205,11 +1205,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContact(final GroupId groupId) {
+	public Optional<PersonId> sampleGroup(final GroupId groupId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
-			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, null);			
+			final PersonId personId = personGroupManger.sampleGroup(groupId, null);			
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -1217,13 +1217,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusion(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validatePersonExists(excludedPersonId);
-			final PersonId personId = personGroupManger.getNonWeightedContact(groupId, excludedPersonId);			
+			final PersonId personId = personGroupManger.sampleGroup(groupId, excludedPersonId);			
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -1231,13 +1231,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId,
+			final PersonId personId = personGroupManger.sampleGroup(groupId,
 					randomNumberGeneratorId, null);			
 			return Optional.ofNullable(personId);
 
@@ -1254,7 +1254,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateGroupExists(groupId);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId,
+			final PersonId personId = personGroupManger.sampleGroup(groupId,
 					randomNumberGeneratorId, excludedPersonId);			
 			return Optional.ofNullable(personId);
 		} finally {

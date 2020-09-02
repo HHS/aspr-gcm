@@ -1268,7 +1268,7 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
 	 *                        the group id is unknown(group does not exist)
 	 */
-	public Optional<PersonId> getNonWeightedGroupContact(final GroupId groupId);
+	public Optional<PersonId> sampleGroup(final GroupId groupId);
 
 	/**
 	 * Returns a randomly contacted person from the group specified by the groupId
@@ -1286,7 +1286,7 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the excludedPersonId is unknown
 	 */
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusion(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final PersonId excludedPersonId);
 
 	/**
@@ -1306,7 +1306,7 @@ public interface Environment extends Element {
 	 *                        an existing RandomNumberGeneratorId found in the
 	 *                        scenario.
 	 */
-	public Optional<PersonId> getNonWeightedGroupContactFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**

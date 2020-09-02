@@ -553,7 +553,7 @@ public class AT_EnvironmentImpl_24 {
 			/*
 			 * Force the random selection of a person from the group to person 3
 			 */
-			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getPerson3BiWeight, RandomGeneratorId.BLITZEN);
+			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getPerson3BiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 			assertTrue(opt.isPresent());
 			assertEquals(3, opt.get().getValue());
 
@@ -569,7 +569,7 @@ public class AT_EnvironmentImpl_24 {
 			 * a reasonable number of times
 			 */
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN);
+				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -591,7 +591,7 @@ public class AT_EnvironmentImpl_24 {
 				counter.count = 0;
 			}
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN);
+				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -617,7 +617,7 @@ public class AT_EnvironmentImpl_24 {
 			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
 				environment.addPersonToGroup(new PersonId(personIndex), groupId);
 			}
-			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, new PersonId(0), false, EnvironmentSupport::getZeroBiWeight, RandomGeneratorId.BLITZEN);
+			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getZeroBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 			assertTrue(!opt.isPresent());
 		});
 
@@ -625,29 +625,29 @@ public class AT_EnvironmentImpl_24 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the group id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(null, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(null, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(-1), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(-1), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the source person id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), null, true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, null, true),
 					SimulationErrorType.NULL_PERSON_ID);
 			// if the source person id is unknown
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(-1), true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(-1), true),
 					SimulationErrorType.UNKNOWN_PERSON_ID);
 			// if the biWeightingFunction is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, null, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), null, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 			// if the biWeightingFunction is malformed. (some evaluate to
 			// negative numbers, etc.)
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getNegativeBiWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getNegativeBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
 			// if the group id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight, null),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, null, new PersonId(0), true),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.CUPID),
+			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.CUPID, new PersonId(0), true),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});

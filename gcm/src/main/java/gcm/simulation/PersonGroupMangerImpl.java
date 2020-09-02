@@ -42,15 +42,15 @@ import gcm.util.containers.ObjectValueContainer;
  * 3) The number of group types is fairly small and rarely exceeds 20
  *
  * The mapping from groups to types is accomplished with an IntValueContainer
- * since the number of group types is small and we can treat the group type ids as
- * Bytes or Shorts. The typesToIndexesMap and indexesToTypesMap serve to help
+ * since the number of group types is small and we can treat the group type ids
+ * as Bytes or Shorts. The typesToIndexesMap and indexesToTypesMap serve to help
  * convert group-type Object references to and from integers.
  *
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PersonGroupMangerImpl extends BaseElement implements PersonGroupManger {
-		
+
 	/*
 	 * Used to generate new group id values
 	 */
@@ -76,9 +76,9 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	private GroupTypeId[] indexesToTypesMap;
 
 	private ObservableEnvironment observableEnvironment;
-	
+
 	private StochasticsManager stochasticsManager;
-	
+
 	@Override
 	public GroupId addGroup(final GroupTypeId groupTypeId) {
 		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
@@ -113,8 +113,8 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	/*
-	 * Allocates the weights array to the given size or 50% larger than the
-	 * current size, whichever is largest. Size must be non-negative
+	 * Allocates the weights array to the given size or 50% larger than the current
+	 * size, whichever is largest. Size must be non-negative
 	 */
 	private void allocateWeights(final int size) {
 		if (weights == null) {
@@ -136,11 +136,11 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	/*
-	 * Returns the index in the weights array that is the first to meet or
-	 * exceed the target value. Assumes a strictly increasing set of values for
-	 * indices 0 through peopleCount. Decreasing values are strictly prohibited.
-	 * Consecutive equal values may return an ambiguous result. The target value
-	 * must not exceed weights[peopleCount].
+	 * Returns the index in the weights array that is the first to meet or exceed
+	 * the target value. Assumes a strictly increasing set of values for indices 0
+	 * through peopleCount. Decreasing values are strictly prohibited. Consecutive
+	 * equal values may return an ambiguous result. The target value must not exceed
+	 * weights[peopleCount].
 	 *
 	 */
 	private int findTargetIndex(final double targetValue, final int peopleCount) {
@@ -162,21 +162,28 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection getBiWeightedContact(final GroupId groupId, final PersonId sourcePersonId, final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction) {
-	
+	public StochasticPersonSelection getBiWeightedContact(final GroupId groupId,
+			final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
+			final boolean excludeSourcePerson) {
+
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return getBiWeightedContactImpl(groupId,sourcePersonId,excludeSourcePerson,biWeightingFunction,randomGenerator);
+		return getBiWeightedContactImpl(groupId, biWeightingFunction,
+				randomGenerator, sourcePersonId, excludeSourcePerson);
 	}
 
 	@Override
-	public StochasticPersonSelection getBiWeightedContactFromGenerator(final GroupId groupId, final PersonId sourcePersonId, final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId) {
+	public StochasticPersonSelection getBiWeightedContactFromGenerator(final GroupId groupId,
+			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
+			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return getBiWeightedContactImpl(groupId,sourcePersonId,excludeSourcePerson,biWeightingFunction,randomGenerator);
+		return getBiWeightedContactImpl(groupId, biWeightingFunction,
+				randomGenerator, sourcePersonId, excludeSourcePerson);
 	}
-	
-	
-	private StochasticPersonSelection getBiWeightedContactImpl(final GroupId groupId, final PersonId sourcePersonId, final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction,RandomGenerator randomGenerator) {
-		
+
+	private StochasticPersonSelection getBiWeightedContactImpl(final GroupId groupId,
+			final BiWeightingFunction biWeightingFunction, RandomGenerator randomGenerator,
+			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
+
 		PersonId selectedPersonId = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 
@@ -185,30 +192,29 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 			try {
 				allocateWeights(people.size());
 				/*
-				 * Initialize the sum of the weights to zero and set the index
-				 * in the weights and weightedPersonId to zero.
+				 * Initialize the sum of the weights to zero and set the index in the weights
+				 * and weightedPersonId to zero.
 				 */
 				double sum = 0;
 				int weightsLength = 0;
 				/*
-				 * Collect a weight for each person in the group, excluding the
-				 * source person if needed
+				 * Collect a weight for each person in the group, excluding the source person if
+				 * needed
 				 */
 				for (PersonId personId : people) {
 					if (!excludeSourcePerson || !personId.equals(sourcePersonId)) {
 						/*
-						 * Determine the weight of the person. Any weight that
-						 * is negative , infinite or NAN is cause to return
-						 * immediately since no person may be legitimately
+						 * Determine the weight of the person. Any weight that is negative , infinite or
+						 * NAN is cause to return immediately since no person may be legitimately
 						 * selected.
 						 */
-						final double weight = biWeightingFunction.getWeight(observableEnvironment, sourcePersonId, personId, groupId);
+						final double weight = biWeightingFunction.getWeight(observableEnvironment, sourcePersonId,
+								personId, groupId);
 						if (!Double.isFinite(weight) || (weight < 0)) {
 							return new StochasticPersonSelection(null, true);
 						}
 						/*
-						 * People having a zero weight are rejected for
-						 * selection
+						 * People having a zero weight are rejected for selection
 						 */
 						if (weight > 0) {
 							sum += weight;
@@ -220,19 +226,18 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 				}
 
 				/*
-				 * If at least one person was accepted for selection, then we
-				 * attempt a random selection.
+				 * If at least one person was accepted for selection, then we attempt a random
+				 * selection.
 				 */
 				if (weightsLength > 0) {
 					/*
-					 * Although the individual weights may have been finite, if
-					 * the sum of those weights is not finite no legitimate
-					 * selection can be made
+					 * Although the individual weights may have been finite, if the sum of those
+					 * weights is not finite no legitimate selection can be made
 					 */
 					if (!Double.isFinite(sum)) {
 						return new StochasticPersonSelection(null, true);
 					}
-					
+
 					final double targetValue = randomGenerator.nextDouble() * sum;
 					final int targetIndex = findTargetIndex(targetValue, weightsLength);
 					selectedPersonId = weightedPersonIds[targetIndex];
@@ -354,22 +359,23 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		return new ArrayList<>(types);
 	}
 
-	
 	@Override
-	public StochasticPersonSelection getMonoWeightedContact(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();				
-		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);		
+	public StochasticPersonSelection getMonoWeightedContact(final GroupId groupId,
+			final MonoWeightingFunction monoWeightingFunction) {
+		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
+		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);
 	}
 
 	@Override
-	public StochasticPersonSelection getMonoWeightedContactFromGenerator(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);				
+	public StochasticPersonSelection getMonoWeightedContactFromGenerator(final GroupId groupId,
+			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
+		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);
 	}
-	
-	
-	private StochasticPersonSelection getMonoWeightedContactImpl(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction,RandomGenerator randomGenerator) {
-		
+
+	private StochasticPersonSelection getMonoWeightedContactImpl(final GroupId groupId,
+			final MonoWeightingFunction monoWeightingFunction, RandomGenerator randomGenerator) {
+
 		PersonId selectedPersonId = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 		if ((people != null) && (people.size() > 0)) {
@@ -377,8 +383,8 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 			try {
 				allocateWeights(people.size());
 				/*
-				 * Initialize the sum of the weights to zero and set the index
-				 * in the weights and weightedPersonId to zero.
+				 * Initialize the sum of the weights to zero and set the index in the weights
+				 * and weightedPersonId to zero.
 				 */
 				double sum = 0;
 				int weightsLength = 0;
@@ -387,9 +393,9 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 				 */
 				for (PersonId personId : people) {
 					/*
-					 * Determine the weight of the person. Any weight that is
-					 * negative , infinite or NAN is cause to return immediately
-					 * since no person may be legitimately selected.
+					 * Determine the weight of the person. Any weight that is negative , infinite or
+					 * NAN is cause to return immediately since no person may be legitimately
+					 * selected.
 					 */
 					final double weight = monoWeightingFunction.getWeight(observableEnvironment, personId, groupId);
 					if (!Double.isFinite(weight) || (weight < 0)) {
@@ -407,20 +413,18 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 				}
 
 				/*
-				 * If at least one person was accepted for selection, then we
-				 * attempt a random selection.
+				 * If at least one person was accepted for selection, then we attempt a random
+				 * selection.
 				 */
 				if (weightsLength > 0) {
 					/*
-					 * Although the individual weights may have been finite, if
-					 * the sum of those weights is not finite no legitimate
-					 * selection can be made
+					 * Although the individual weights may have been finite, if the sum of those
+					 * weights is not finite no legitimate selection can be made
 					 */
 					if (!Double.isFinite(sum)) {
 						return new StochasticPersonSelection(null, true);
 					}
 
-					
 					final double targetValue = randomGenerator.nextDouble() * sum;
 					final int targetIndex = findTargetIndex(targetValue, weightsLength);
 					selectedPersonId = weightedPersonIds[targetIndex];
@@ -432,29 +436,30 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		return new StochasticPersonSelection(selectedPersonId, false);
 	}
 
-
 	@Override
 	public PersonId getNonWeightedContact(final GroupId groupId, final PersonId excludedPersonId) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return getNonWeightedContactImpl(groupId, excludedPersonId,randomGenerator);
+		return getNonWeightedContactImpl(groupId, excludedPersonId, randomGenerator);
 	}
-	
+
 	@Override
-	public PersonId getNonWeightedContactFromGenerator(final GroupId groupId, final PersonId excludedPersonId,RandomNumberGeneratorId randomNumberGeneratorId) {
+	public PersonId getNonWeightedContactFromGenerator(final GroupId groupId, final PersonId excludedPersonId,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return getNonWeightedContactImpl(groupId, excludedPersonId,randomGenerator);		
-	}	
-	
-	private PersonId getNonWeightedContactImpl(final GroupId groupId, final PersonId excludedPersonId,RandomGenerator randomGenerator) {
+		return getNonWeightedContactImpl(groupId, excludedPersonId, randomGenerator);
+	}
+
+	private PersonId getNonWeightedContactImpl(final GroupId groupId, final PersonId excludedPersonId,
+			RandomGenerator randomGenerator) {
 		PersonId result = null;
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 
 		final boolean exclude = (excludedPersonId != null) && isGroupMember(groupId, excludedPersonId);
-		
+
 		if (exclude) {
 			if ((people != null) && (people.size() > 1)) {
 				while (true) {
-					
+
 					final int selectedIndex = randomGenerator.nextInt(people.size());
 					result = people.get(selectedIndex);
 					if (!result.equals(excludedPersonId)) {
@@ -538,14 +543,14 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		super.init(context);
 
 		final Scenario scenario = context.getScenario();
-		
+
 		observableEnvironment = context.getObservableEnvironment();
 
 		this.stochasticsManager = context.getStochasticsManager();
 		/*
-		 * We expect that the group types are already defined and immutable in
-		 * the environment. Thus we may build the typesToIndexesMap and
-		 * indexesToTypesMap immediately.
+		 * We expect that the group types are already defined and immutable in the
+		 * environment. Thus we may build the typesToIndexesMap and indexesToTypesMap
+		 * immediately.
 		 */
 		final Set<GroupTypeId> groupTypeIds = scenario.getGroupTypeIds();
 		indexesToTypesMap = new GroupTypeId[groupTypeIds.size()];

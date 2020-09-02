@@ -66,7 +66,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public PersonId getRandomPartitionedPerson(final PersonId excludedPersonId, final Object key, LabelSet labelSet);
+	public PersonId samplePartition(final Object key, LabelSet labelSet,final PersonId excludedPersonId);
 
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
@@ -79,8 +79,8 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public PersonId getRandomPartionedPersonFromGenerator(final PersonId excludedPersonId, final Object key,
-			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId);
+	public PersonId samplePartition(final Object key,
+			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**
 	 * Returns true if and only if the person is contained in the population
@@ -169,14 +169,14 @@ public interface PopulationPartitionManager extends Element {
 	/**
 	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
 	 */
-	public StochasticPersonSelection getPersonIdFromWeight(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction);
+	public StochasticPersonSelection samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId);
 
 	/**
 	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
 	 * Uses the random generator associated with the RandomNumberGeneratorId.
 	 */
-	public StochasticPersonSelection getPersonIdFromWeightAndGenerator(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
+	public StochasticPersonSelection samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId);
 
 }

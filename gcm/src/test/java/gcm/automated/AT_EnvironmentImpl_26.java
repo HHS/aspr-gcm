@@ -156,12 +156,12 @@ public class AT_EnvironmentImpl_26 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getRandomPartitionedPersonIdFromLabelWeightAndGenerator(Object, LabelSetWeightingFunction, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#samplePartition(Object, LabelSetWeightingFunction, RandomNumberGeneratorId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonIdFromLabelWeightAndGenerator", args = { Object.class,
+	@UnitTestMethod(name = "samplePartition", args = { Object.class,
 			LabelSetWeightingFunction.class, RandomNumberGeneratorId.class })
-	public void testGetRandomPartitionedPersonIdFromLabelWeightAndGenerator() {
+	public void testSamplePartition() {
 
 		/*
 		 * Assert that group contacts via MonoWeightingFunctions work properly
@@ -218,7 +218,7 @@ public class AT_EnvironmentImpl_26 {
 
 			for (int i = 0; i < 10000; i++) {
 
-				Optional<PersonId> opt = environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(key,
+				Optional<PersonId> opt = environment.samplePartition(key,
 						AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId);
 
 				assertTrue(opt.isPresent());
@@ -250,7 +250,7 @@ public class AT_EnvironmentImpl_26 {
 					.with(Partition.region(AT_EnvironmentImpl_26.regionPartitionFunction));
 			environment.addPopulationPartition(partition, key);
 
-			Optional<PersonId> opt = environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(key,
+			Optional<PersonId> opt = environment.samplePartition(key,
 					AT_EnvironmentImpl_26::getZeroWeight, randomNumberGeneratorId);
 			assertTrue(!opt.isPresent());
 		});
@@ -268,31 +268,32 @@ public class AT_EnvironmentImpl_26 {
 
 			// if the key is null
 			assertModelException(
-					() -> environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(null,
+					() -> environment.samplePartition(null,
 							AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 
 			// if the key does not correspond to an existing population partition
 			assertModelException(
-					() -> environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(badKey,
+					() -> environment.samplePartition(badKey,
 							AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 
 			// if the weighting function is null
-			assertModelException(() -> environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(key, null,
+			LabelSetWeightingFunction nullLabelSetWeightingFunction = null;
+			assertModelException(() -> environment.samplePartition(key, nullLabelSetWeightingFunction,
 					randomNumberGeneratorId), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 
 			// if the randomNumberGeneratorId is null
 
+			RandomGeneratorId nullRandomGeneratorId = null;
 			assertModelException(
-					() -> environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(key,
-							AT_EnvironmentImpl_26::getWeight, null),
+					() -> environment.samplePartition(key,AT_EnvironmentImpl_26::getWeight, nullRandomGeneratorId),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 			// if the randomNumberGeneratorId does not correspond to an existing random
 			// Number Generator Id in the scenario
 			assertModelException(
-					() -> environment.getRandomPartitionedPersonIdFromLabelWeightAndGenerator(key,
+					() -> environment.samplePartition(key,
 							AT_EnvironmentImpl_26::getWeight, unknownRandomNumberGeneratorId),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 

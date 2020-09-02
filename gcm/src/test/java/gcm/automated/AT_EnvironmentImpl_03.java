@@ -455,7 +455,7 @@ public class AT_EnvironmentImpl_03 {
 			/*
 			 * Force the random selection of a person from the group to person 3
 			 */
-			Optional<PersonId> opt = environment.getBiWeightedGroupContact(groupId, new PersonId(0), false, EnvironmentSupport::getPerson3BiWeight);
+			Optional<PersonId> opt = environment.getBiWeightedGroupContact(groupId, EnvironmentSupport::getPerson3BiWeight, new PersonId(0), false);
 			assertTrue(opt.isPresent());
 			assertEquals(3, opt.get().getValue());
 
@@ -471,7 +471,7 @@ public class AT_EnvironmentImpl_03 {
 			 * a reasonable number of times
 			 */
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContact(groupId, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight);
+				opt = environment.getBiWeightedGroupContact(groupId, EnvironmentSupport::getConstantBiWeight, new PersonId(0), true);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -493,7 +493,7 @@ public class AT_EnvironmentImpl_03 {
 				counter.count = 0;
 			}
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContact(groupId, new PersonId(0), false, EnvironmentSupport::getConstantBiWeight);
+				opt = environment.getBiWeightedGroupContact(groupId, EnvironmentSupport::getConstantBiWeight, new PersonId(0), false);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -519,7 +519,7 @@ public class AT_EnvironmentImpl_03 {
 			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
 				environment.addPersonToGroup(new PersonId(personIndex), groupId);
 			}
-			Optional<PersonId> opt = environment.getBiWeightedGroupContact(groupId, new PersonId(0), false, EnvironmentSupport::getZeroBiWeight);
+			Optional<PersonId> opt = environment.getBiWeightedGroupContact(groupId, EnvironmentSupport::getZeroBiWeight, new PersonId(0), false);
 			assertTrue(!opt.isPresent());
 		});
 
@@ -527,18 +527,18 @@ public class AT_EnvironmentImpl_03 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the group id is null
-			assertModelException(() -> environment.getBiWeightedGroupContact(null, new PersonId(0), true, EnvironmentSupport::getConstantBiWeight), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.getBiWeightedGroupContact(null, EnvironmentSupport::getConstantBiWeight, new PersonId(0), true), SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(-1), new PersonId(0), true, EnvironmentSupport::getConstantBiWeight), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(-1), EnvironmentSupport::getConstantBiWeight, new PersonId(0), true), SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the source person id is null
-			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), null, true, EnvironmentSupport::getConstantBiWeight), SimulationErrorType.NULL_PERSON_ID);
+			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), EnvironmentSupport::getConstantBiWeight, null, true), SimulationErrorType.NULL_PERSON_ID);
 			// if the source person id is unknown
-			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), new PersonId(-1), true, EnvironmentSupport::getConstantBiWeight), SimulationErrorType.UNKNOWN_PERSON_ID);
+			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), EnvironmentSupport::getConstantBiWeight, new PersonId(-1), true), SimulationErrorType.UNKNOWN_PERSON_ID);
 			// if the biWeightingFunction is null
-			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), new PersonId(0), true, null), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), null, new PersonId(0), true), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 			// if the biWeightingFunction is malformed. (some evaluate to
 			// negative numbers, etc.)
-			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), new PersonId(0), true, EnvironmentSupport::getNegativeBiWeight),
+			assertModelException(() -> environment.getBiWeightedGroupContact(new GroupId(0), EnvironmentSupport::getNegativeBiWeight, new PersonId(0), true),
 					SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
 		});
 		Simulation simulation = new Simulation();

@@ -368,7 +368,8 @@ public class AT_EnvironmentImpl_25 {
 			result = result.with(group(labelSetInfo.getGroupLabel().get()));
 		}
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
-			result = result.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
+			result = result
+					.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
 		}
 		for (ResourceId recourceId : labelSetInfo.getPersonResourceIds()) {
 			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId).get()));
@@ -476,13 +477,12 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomPartitionedPersonFromGenerator(Object,
-	 * LabelSet, RandomNumberGeneratorId)
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, LabelSet,
+	 * RandomNumberGeneratorId)
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonFromGenerator", args = { Object.class, LabelSet.class,
-			RandomNumberGeneratorId.class })
-	public void testGetRandomPartitionedPersonFromGenerator() {
+	@UnitTestMethod(name = "samplePartition", args = { Object.class, LabelSet.class, RandomNumberGeneratorId.class })
+	public void testSamplePartition_Object_LabelSet_RNG() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -527,8 +527,7 @@ public class AT_EnvironmentImpl_25 {
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key, labelSet,
-							randomNumberGeneratorId);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, randomNumberGeneratorId);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
 					assertTrue(expectedPeople.contains(selectedPersonId));
@@ -547,8 +546,7 @@ public class AT_EnvironmentImpl_25 {
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonFromGenerator(key, labelSet,
-							randomNumberGeneratorId);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, randomNumberGeneratorId);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
 					assertTrue(expectedPeople.contains(selectedPersonId));
@@ -560,7 +558,7 @@ public class AT_EnvironmentImpl_25 {
 			partition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			Optional<PersonId> optional = environment.getRandomPartitionedPerson(key2, labelSet);
+			Optional<PersonId> optional = environment.samplePartition(key2, labelSet);
 			assertFalse(optional.isPresent());
 
 		});
@@ -581,26 +579,27 @@ public class AT_EnvironmentImpl_25 {
 			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.CUPID;
 
 			// if the key is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonFromGenerator(null, labelSet, randomNumberGeneratorId),
+			Object nullKey = null;
+			assertModelException(() -> environment.samplePartition(nullKey, labelSet, randomNumberGeneratorId),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 			// if the key does not correspond to an existing partition
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator("bad key", labelSet,
-					randomNumberGeneratorId), SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+			assertModelException(() -> environment.samplePartition("bad key", labelSet, randomNumberGeneratorId),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 			// if the label set is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonFromGenerator(key3, null, randomNumberGeneratorId),
+			LabelSet nullLabelSet = null;
+			assertModelException(() -> environment.samplePartition(key3, nullLabelSet, randomNumberGeneratorId),
 					SimulationErrorType.NULL_LABEL_SET);
 			// if the label set is incompatible with the partition
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(key3, incompatiblelabelSet,
-					randomNumberGeneratorId), SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+			assertModelException(() -> environment.samplePartition(key3, incompatiblelabelSet, randomNumberGeneratorId),
+					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 			// if the randomNumberGeneratorId is null
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(key3, labelSet, null),
+			RandomNumberGeneratorId nullRandomNumberGeneratorId = null;
+			assertModelException(() -> environment.samplePartition(key3, labelSet, nullRandomNumberGeneratorId),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the randomNumberGeneratorId does not correspond to a known id
-			assertModelException(() -> environment.getRandomPartitionedPersonFromGenerator(key3, labelSet,
-					badRandomNumberGeneratorId), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+			assertModelException(() -> environment.samplePartition(key3, labelSet, badRandomNumberGeneratorId),
+					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});
 
@@ -613,14 +612,11 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link
-	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusion(PersonId, Object,
-	 * LabelSet)
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, LabelSet, PersonId)
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusion", args = { PersonId.class, Object.class,
-			LabelSet.class })
-	public void testGetRandomPartitionedPersonWithExclusion() {
+	@UnitTestMethod(name = "samplePartition", args = { Object.class, LabelSet.class, PersonId.class })
+	public void testSamplePartition_Object_LabelSet_PersonId() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -665,8 +661,7 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
-							key, labelSet);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, excludedPersonId);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
 						PersonId selectedPersonId = optional.get();
@@ -695,8 +690,7 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(excludedPersonId,
-							key, labelSet);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, excludedPersonId);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
 						PersonId selectedPersonId = optional.get();
@@ -713,13 +707,13 @@ public class AT_EnvironmentImpl_25 {
 			partition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2, labelSet);
+			Optional<PersonId> optional = environment.samplePartition(key2, labelSet, personId);
 			assertFalse(optional.isPresent());
 
 			// show that a population query resulting in a partition containing only the
 			// excluded person cannot return a randomly selected person
 			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2, labelSet);
+			optional = environment.samplePartition(key2, labelSet, personId);
 			assertFalse(optional.isPresent());
 		});
 
@@ -740,27 +734,26 @@ public class AT_EnvironmentImpl_25 {
 			PersonId badPersonId = new PersonId(1000000);
 
 			// if the key is null
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, null, labelSet),
+			assertModelException(() -> environment.samplePartition(null, labelSet, goodPersonId),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 			// if the key does not correspond to an existing partition
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, "bad key", labelSet),
+			assertModelException(() -> environment.samplePartition("bad key", labelSet, goodPersonId),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 
 			// if the personId is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(null, key3, labelSet),
+			PersonId nullPersonId = null;
+			assertModelException(() -> environment.samplePartition(key3, labelSet, nullPersonId),
 					SimulationErrorType.NULL_PERSON_ID);
 			// if the personId does not correspond to an existing person
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(badPersonId, key3, labelSet),
+			assertModelException(() -> environment.samplePartition(key3, labelSet, badPersonId),
 					SimulationErrorType.UNKNOWN_PERSON_ID);
 
 			// if the label set is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3, null),
+			LabelSet nullLabelSet = null;
+			assertModelException(() -> environment.samplePartition(key3, nullLabelSet, goodPersonId),
 					SimulationErrorType.NULL_LABEL_SET);
 			// if the label set is incompatible with the partition
-			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, key3, incompatiblelabelSet),
+			assertModelException(() -> environment.samplePartition(key3, incompatiblelabelSet, goodPersonId),
 					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 		});
@@ -820,7 +813,8 @@ public class AT_EnvironmentImpl_25 {
 				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
-				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toCollection(LinkedHashSet::new));
+				Set<PersonId> actualPeople = partitionPeople.stream()
+						.collect(Collectors.toCollection(LinkedHashSet::new));
 				assertEquals(expectedPeople, actualPeople);
 			}
 
@@ -836,7 +830,8 @@ public class AT_EnvironmentImpl_25 {
 				LabelSet labelSet = getLabelSet(labelSetInfo);
 				List<PersonId> partitionPeople = environment.getPartitionPeople(key, labelSet);
 				assertEquals(expectedPeople.size(), partitionPeople.size());
-				Set<PersonId> actualPeople = partitionPeople.stream().collect(Collectors.toCollection(LinkedHashSet::new));
+				Set<PersonId> actualPeople = partitionPeople.stream()
+						.collect(Collectors.toCollection(LinkedHashSet::new));
 				assertEquals(expectedPeople, actualPeople);
 			}
 		});
@@ -1220,11 +1215,11 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#getRandomPartitionedPerson(Object, LabelSet)
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, LabelSet)
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPerson", args = { Object.class, LabelSet.class })
-	public void testGetRandomPartitionedPerson() {
+	@UnitTestMethod(name = "samplePartition", args = { Object.class, LabelSet.class })
+	public void testSamplePartition_Object_LabelSet() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -1266,7 +1261,7 @@ public class AT_EnvironmentImpl_25 {
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPerson(key, labelSet);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
 					assertTrue(expectedPeople.contains(selectedPersonId));
@@ -1287,7 +1282,7 @@ public class AT_EnvironmentImpl_25 {
 				// we know that each labelSet corresponds to at least one person
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPerson(key, labelSet);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet);
 					assertTrue(optional.isPresent());
 					PersonId selectedPersonId = optional.get();
 					assertTrue(expectedPeople.contains(selectedPersonId));
@@ -1300,7 +1295,7 @@ public class AT_EnvironmentImpl_25 {
 					property1Function);
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			Optional<PersonId> optional = environment.getRandomPartitionedPerson(key2, labelSet);
+			Optional<PersonId> optional = environment.samplePartition(key2, labelSet);
 			assertFalse(optional.isPresent());
 
 		});
@@ -1319,16 +1314,17 @@ public class AT_EnvironmentImpl_25 {
 			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomPartitionedPerson(null, labelSet),
+			assertModelException(() -> environment.samplePartition(null, labelSet),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 			// if the key does not correspond to an existing partition
-			assertModelException(() -> environment.getRandomPartitionedPerson("bad key", labelSet),
+			assertModelException(() -> environment.samplePartition("bad key", labelSet),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 			// if the label set is null
-			assertModelException(() -> environment.getRandomPartitionedPerson(key3, null),
+			LabelSet nullLabelSet = null;
+			assertModelException(() -> environment.samplePartition(key3, nullLabelSet),
 					SimulationErrorType.NULL_LABEL_SET);
 			// if the label set is incompatible with the partition
-			assertModelException(() -> environment.getRandomPartitionedPerson(key3, incompatiblelabelSet),
+			assertModelException(() -> environment.samplePartition(key3, incompatiblelabelSet),
 					SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 		});
@@ -1342,14 +1338,13 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link
-	 * EnvironmentImpl#getRandomPartitionedPersonWithExclusionFromGenerator(PersonId,
-	 * Object, LabelSet, RandomNumberGeneratorId)
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, LabelSet,
+	 * RandomNumberGeneratorId, PersonId)
 	 */
 	@Test
-	@UnitTestMethod(name = "getRandomPartitionedPersonWithExclusionFromGenerator", args = { PersonId.class,
-			Object.class, LabelSet.class, RandomNumberGeneratorId.class })
-	public void testGetRandomPartitionedPersonWithExclusionFromGenerator() {
+	@UnitTestMethod(name = "samplePartition", args = { Object.class, LabelSet.class, RandomNumberGeneratorId.class,
+			PersonId.class })
+	public void testSamplePartition_Object__LabelSet_RNG_PersonId() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -1397,8 +1392,8 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(
-							excludedPersonId, key, labelSet, randomNumberGeneratorId);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, randomNumberGeneratorId,
+							excludedPersonId);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
 						PersonId selectedPersonId = optional.get();
@@ -1418,8 +1413,7 @@ public class AT_EnvironmentImpl_25 {
 
 			// show that each set of people we expect should be associated with a given set
 			// of labels matches the set returned by the simulation
-			
-			
+
 			for (LabelSetInfo labelSetInfo : expectedPartitioning.keySet()) {
 				Set<PersonId> expectedPeople = expectedPartitioning.get(labelSetInfo);
 				List<PersonId> expectedPeopleList = new ArrayList<>(expectedPeople);
@@ -1429,8 +1423,8 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					LabelSet labelSet = getLabelSet(labelSetInfo);
-					Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(
-							excludedPersonId, key, labelSet, randomNumberGeneratorId);
+					Optional<PersonId> optional = environment.samplePartition(key, labelSet, randomNumberGeneratorId,
+							excludedPersonId);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
 						PersonId selectedPersonId = optional.get();
@@ -1449,14 +1443,14 @@ public class AT_EnvironmentImpl_25 {
 					property1Function);
 			environment.addPopulationPartition(partitionDefinition, key2);
 			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			Optional<PersonId> optional = environment.getRandomPartitionedPersonWithExclusionFromGenerator(personId,
-					key2, labelSet, randomNumberGeneratorId);
+			Optional<PersonId> optional = environment.samplePartition(key2, labelSet, randomNumberGeneratorId,
+					personId);
 			assertFalse(optional.isPresent());
 
 			// show that a population query resulting in a partition containing only the
 			// excluded person cannot return a randomly selected person
 			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			optional = environment.getRandomPartitionedPersonWithExclusion(personId, key2, labelSet);
+			optional = environment.samplePartition(key2, labelSet, RandomGeneratorId.BLITZEN, personId);
 			assertFalse(optional.isPresent());
 		});
 
@@ -1479,33 +1473,37 @@ public class AT_EnvironmentImpl_25 {
 			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.DANCER;
 
 			// if the key is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					null, labelSet, randomNumberGeneratorId), SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			assertModelException(
+					() -> environment.samplePartition(null, labelSet, randomNumberGeneratorId, goodPersonId),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 			// if the key does not correspond to an existing partition
 			assertModelException(
-					() -> environment.getRandomPartitionedPersonWithExclusion(goodPersonId, "bad key", labelSet),
+					() -> environment.samplePartition("bad key", labelSet, RandomGeneratorId.BLITZEN, goodPersonId),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 
 			// if the personId is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(null, key3,
-					labelSet, randomNumberGeneratorId), SimulationErrorType.NULL_PERSON_ID);
+			assertModelException(() -> environment.samplePartition(key3, labelSet, randomNumberGeneratorId, null),
+					SimulationErrorType.NULL_PERSON_ID);
 			// if the personId does not correspond to an existing person
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusion(badPersonId, key3, labelSet),
+			assertModelException(
+					() -> environment.samplePartition(key3, labelSet, randomNumberGeneratorId, badPersonId),
 					SimulationErrorType.UNKNOWN_PERSON_ID);
 
 			// if the label set is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					key3, null, randomNumberGeneratorId), SimulationErrorType.NULL_LABEL_SET);
+			LabelSet nullLabelSet = null;
+			assertModelException(
+					() -> environment.samplePartition(key3, nullLabelSet, randomNumberGeneratorId, goodPersonId),
+					SimulationErrorType.NULL_LABEL_SET);
 			// if the label set is incompatible with the partition
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					key3, incompatiblelabelSet, randomNumberGeneratorId), SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+			assertModelException(() -> environment.samplePartition(key3, incompatiblelabelSet, randomNumberGeneratorId,
+					goodPersonId), SimulationErrorType.INCOMPATIBLE_LABEL_SET);
 
 			// if the random number generator id is null
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					key3, labelSet, null), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
+			assertModelException(() -> environment.samplePartition(key3, labelSet, null, goodPersonId),
+					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the random number generator id is unknown
-			assertModelException(() -> environment.getRandomPartitionedPersonWithExclusionFromGenerator(goodPersonId,
-					key3, labelSet, badRandomNumberGeneratorId),
+			assertModelException(
+					() -> environment.samplePartition(key3, labelSet, badRandomNumberGeneratorId, goodPersonId),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});

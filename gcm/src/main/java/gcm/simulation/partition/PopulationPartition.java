@@ -603,8 +603,8 @@ public final class PopulationPartition {
 	 * no person is being excluded. Returns null if the index is either empty or
 	 * only contains the excluded person.
 	 */
-	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
-			RandomGenerator randomGenerator) {
+	public PersonId samplePartition(LabelSetInfo labelSetInfo,
+			RandomGenerator randomGenerator,final PersonId excludedPersonId) {
 
 		Key key = getKey(labelSetInfo);
 		Key selectedKey = null;
@@ -644,7 +644,7 @@ public final class PopulationPartition {
 			return null;
 		}
 
-		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
+		return getRandomPersonId(selectedKey, randomGenerator,excludedPersonId);
 	}
 
 //	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
@@ -681,7 +681,7 @@ public final class PopulationPartition {
 //		}
 //		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
 //	}
-	private PersonId getRandomPersonId(final PersonId excludedPersonId, Key key, RandomGenerator randomGenerator) {
+	private PersonId getRandomPersonId( Key key, RandomGenerator randomGenerator,final PersonId excludedPersonId) {
 
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
 
@@ -895,8 +895,8 @@ public final class PopulationPartition {
 		return low;
 	}
 
-	public StochasticPersonSelection getWeightedPersonId(LabelSetWeightingFunction labelSetWeightingFunction,
-			RandomGenerator randomGenerator) {
+	public StochasticPersonSelection samplePartition(LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomGenerator randomGenerator,final PersonId excludedPersonId) {
 
 		aquireWeightsLock();
 		try {
@@ -905,13 +905,23 @@ public final class PopulationPartition {
 			 * Initialize the sum of the weights to zero and set the index in the weights
 			 * and weightedKeys to zero.
 			 */
+			Key keyForExcludedPersonId = null;
+			if (contains(excludedPersonId)) {
+				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());				
+			}
+			
 			double sum = 0;
 			int weightsLength = 0;
 			for (Key key : keyToPeopleMap.keySet()) {
 				LabelSetInfo labelSetInfo = labelSetInfoMap.get(key);
 				PeopleContainer peopleContainer = keyToPeopleMap.get(key);
 				double weight = labelSetWeightingFunction.getWeight(observableEnvironment, labelSetInfo);
-				weight *= peopleContainer.size();
+				if(key != keyForExcludedPersonId) {
+					weight *= peopleContainer.size();	
+				}else {
+					weight *= (peopleContainer.size()-1);
+				}
+				
 				if (!Double.isFinite(weight) || (weight < 0)) {
 					return new StochasticPersonSelection(null, true);
 				}
@@ -943,7 +953,7 @@ public final class PopulationPartition {
 				final double targetValue = randomGenerator.nextDouble() * sum;
 				final int targetIndex = findTargetIndex(targetValue, weightsLength);
 				Key selectedKey = weightedKeys[targetIndex];
-				PersonId selectedPerson = getRandomPersonId(null, selectedKey, randomGenerator);
+				PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator,excludedPersonId);
 				return new StochasticPersonSelection(selectedPerson, false);
 			} else {
 				return new StochasticPersonSelection(null, false);

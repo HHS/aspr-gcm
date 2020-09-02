@@ -536,16 +536,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final PersonId sourcePersonId,
-			final boolean excludeSourcePerson, final BiWeightingFunction biWeightingFunction) {
+	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final BiWeightingFunction biWeightingFunction,final PersonId sourcePersonId,
+			final boolean excludeSourcePerson) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonExists(sourcePersonId);
 			validateGroupExists(groupId);
 			validateBiWeightingFunctionNotNull(biWeightingFunction);
 
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContact(groupId,
-					sourcePersonId, excludeSourcePerson, biWeightingFunction);
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContact(groupId, biWeightingFunction,
+					sourcePersonId, excludeSourcePerson);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -558,9 +558,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId,
-			final PersonId sourcePersonId, final boolean excludeSourcePerson,
-			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
+	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId,			
+			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
+			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePersonExists(sourcePersonId);
@@ -569,8 +569,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
-					.getBiWeightedContactFromGenerator(groupId, sourcePersonId, excludeSourcePerson,
-							biWeightingFunction, randomNumberGeneratorId);
+					.getBiWeightedContactFromGenerator(groupId,
+							biWeightingFunction, randomNumberGeneratorId, sourcePersonId, excludeSourcePerson);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
 				return Optional.empty();
@@ -1119,7 +1119,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	/**
 	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
 	 */
-	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeight(Object key,
+	@Override
+	public Optional<PersonId> samplePartition(Object key,
 			LabelSetWeightingFunction labelSetWeightingFunction){
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -1127,7 +1128,27 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionExists(key);
 			validateLabelSetWeightingFunction(labelSetWeightingFunction);
 			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.getPersonIdFromWeight(key,labelSetWeightingFunction);
+					.samplePartition(key,labelSetWeightingFunction,null);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId){
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validatePersonExists(excludedPersonId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,excludedPersonId);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
 		} finally {
@@ -1139,7 +1160,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
 	 * Uses the random generator associated with the RandomNumberGeneratorId.
 	 */
-	public Optional<PersonId> getRandomPartitionedPersonIdFromLabelWeightAndGenerator(
+	@Override
+	public Optional<PersonId> samplePartition(
 			Object key,
 			LabelSetWeightingFunction labelSetWeightingFunction,
 			RandomNumberGeneratorId randomNumberGeneratorId) {
@@ -1150,14 +1172,37 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateLabelSetWeightingFunction(labelSetWeightingFunction);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.getPersonIdFromWeightAndGenerator(key,labelSetWeightingFunction,randomNumberGeneratorId);
+					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,null);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
-
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 * Uses the random generator associated with the RandomNumberGeneratorId.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(
+			Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validatePersonExists(excludedPersonId);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,excludedPersonId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
 
 	@Override
 	public Optional<PersonId> getNonWeightedGroupContact(final GroupId groupId) {
@@ -4234,15 +4279,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomPartitionedPerson(Object key,
+	public Optional<PersonId> samplePartition(Object key,
 			LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
-			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(null, key,
-					labelSet);
+			final PersonId personId = populationPartitionManager.samplePartition(key,
+					labelSet,null);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4253,7 +4298,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomPartitionedPersonFromGenerator(Object key,
+	public Optional<PersonId> samplePartition(Object key,
 			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -4261,8 +4306,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(null, key,
-					labelSet, randomNumberGeneratorId);
+			final PersonId personId = populationPartitionManager.samplePartition(key,
+					labelSet, randomNumberGeneratorId,null);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4273,16 +4318,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomPartitionedPersonWithExclusion(PersonId excludedPersonId, Object key,
-			LabelSet labelSet) {
+	public Optional<PersonId> samplePartition( Object key,
+			LabelSet labelSet,PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePersonExists(excludedPersonId);
 			validateLabelSet(key, labelSet);			
-			final PersonId personId = populationPartitionManager.getRandomPartitionedPerson(excludedPersonId, key,
-					labelSet);
+			final PersonId personId = populationPartitionManager.samplePartition(key,
+					labelSet,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}
@@ -4293,9 +4338,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomPartitionedPersonWithExclusionFromGenerator(PersonId excludedPersonId,
+	public Optional<PersonId> samplePartition(
 			Object key, LabelSet labelSet,
-			RandomNumberGeneratorId randomNumberGeneratorId) {
+			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
@@ -4303,8 +4348,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateLabelSet(key, labelSet);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = populationPartitionManager.getRandomPartionedPersonFromGenerator(excludedPersonId,
-					key, labelSet, randomNumberGeneratorId);
+			final PersonId personId = populationPartitionManager.samplePartition(
+					key, labelSet, randomNumberGeneratorId,excludedPersonId);
 			if (personId == null) {
 				return Optional.empty();
 			}

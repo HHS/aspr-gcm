@@ -77,18 +77,17 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public PersonId getRandomPartitionedPerson(PersonId excludedPersonId, Object key, LabelSet labelSet) {
-
-		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet),
-				stochasticsManager.getRandomGenerator());
+	public PersonId samplePartition(Object key, LabelSet labelSet,PersonId excludedPersonId) {
+		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),
+				stochasticsManager.getRandomGenerator(),excludedPersonId);
 	}
 
 	@Override
-	public PersonId getRandomPartionedPersonFromGenerator(PersonId excludedPersonId, Object key, LabelSet labelSet,
-			RandomNumberGeneratorId randomNumberGeneratorId) {
+	public PersonId samplePartition(Object key, LabelSet labelSet,
+			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
 
-		return populationPartitions.get(key).getRandomPersonId(excludedPersonId, LabelSetInfo.build(labelSet),
-				stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId));
+		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),
+				stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
 	}
 
 	@Override
@@ -166,14 +165,14 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public StochasticPersonSelection getPersonIdFromWeight(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction) {
-		return populationPartitions.get(key).getWeightedPersonId(labelSetWeightingFunction,stochasticsManager.getRandomGenerator());
+	public StochasticPersonSelection samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId) {
+		return populationPartitions.get(key).samplePartition(labelSetWeightingFunction,stochasticsManager.getRandomGenerator(),excludedPersonId);
 	}
 
 	@Override
-	public StochasticPersonSelection getPersonIdFromWeightAndGenerator(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId) {
-		return populationPartitions.get(key).getWeightedPersonId(labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId));
+	public StochasticPersonSelection samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
+		return populationPartitions.get(key).samplePartition(labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
 	}
 }

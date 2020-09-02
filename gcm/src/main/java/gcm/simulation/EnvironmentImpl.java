@@ -1237,8 +1237,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validateGroupExists(groupId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, null,
-					randomNumberGeneratorId);			
+			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId,
+					randomNumberGeneratorId, null);			
 			return Optional.ofNullable(personId);
 
 		} finally {
@@ -1248,14 +1248,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId,
-			final PersonId excludedPersonId, RandomNumberGeneratorId randomNumberGeneratorId) {
+			 RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId, excludedPersonId,
-					randomNumberGeneratorId);			
+			final PersonId personId = personGroupManger.getNonWeightedContactFromGenerator(groupId,
+					randomNumberGeneratorId, excludedPersonId);			
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();

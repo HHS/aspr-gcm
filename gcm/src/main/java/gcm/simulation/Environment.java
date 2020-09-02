@@ -1333,7 +1333,7 @@ public interface Environment extends Element {
 	 *                        scenario.
 	 */
 	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId,
-			final PersonId excludedPersonId, RandomNumberGeneratorId randomNumberGeneratorId);
+			RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**
 	 * Returns an ObservableEnvironment implementor that wraps this Environment

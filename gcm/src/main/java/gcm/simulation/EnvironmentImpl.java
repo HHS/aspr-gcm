@@ -1665,7 +1665,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(
+	public Optional<PersonId> sampleIndex(
 			final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {

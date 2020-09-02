@@ -1821,7 +1821,7 @@ public interface Environment extends Element {
 	 *                        if the randomNumberGeneratorId does not correspond to
 	 *                        an existing random Number Generator Id in the scenario
 	 */
-	public Optional<PersonId> getRandomIndexedPersonWithExclusionFromGenerator(
+	public Optional<PersonId> sampleIndex(
 			final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**

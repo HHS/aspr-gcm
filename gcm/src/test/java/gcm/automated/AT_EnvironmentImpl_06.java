@@ -1072,11 +1072,11 @@ public class AT_EnvironmentImpl_06 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMonoWeightedGroupContact(GroupId, MonoWeightingFunction)}
+	 * {@link EnvironmentImpl#sampleGroup(GroupId, MonoWeightingFunction)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMonoWeightedGroupContact", args= {GroupId.class, MonoWeightingFunction.class})
-	public void testGetMonoWeightedGroupContact() {
+	@UnitTestMethod(name = "sampleGroup", args= {GroupId.class, MonoWeightingFunction.class})
+	public void testSampleGroup_GroupId_MonoWeightingFunction() {
 
 		/*
 		 * Assert that group contacts via MonoWeightingFunctions work properly
@@ -1118,7 +1118,7 @@ public class AT_EnvironmentImpl_06 {
 			/*
 			 * Force the random selection of a person from the group to person 3
 			 */
-			Optional<PersonId> opt = environment.getMonoWeightedGroupContact(groupId, EnvironmentSupport::getPerson3MonoWeight);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getPerson3MonoWeight);
 			assertTrue(opt.isPresent());
 			assertEquals(3, opt.get().getValue());
 
@@ -1129,7 +1129,7 @@ public class AT_EnvironmentImpl_06 {
 				hits.put(personId, new Counter());
 			}
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getMonoWeightedGroupContact(groupId, EnvironmentSupport::getConstantMonoWeight);
+				opt = environment.sampleGroup(groupId, EnvironmentSupport::getConstantMonoWeight);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -1156,21 +1156,22 @@ public class AT_EnvironmentImpl_06 {
 				PersonId personId = new PersonId(personIndex);
 				environment.addPersonToGroup(personId, groupId);
 			}
-			Optional<PersonId> opt = environment.getMonoWeightedGroupContact(groupId, EnvironmentSupport::getZeroMonoWeight);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getZeroMonoWeight);
 			assertTrue(!opt.isPresent());
 		});
 
 		// test preconditions
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			// if the group id is null
-			assertModelException(() -> environment.getMonoWeightedGroupContact(null, EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.NULL_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(null, EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getMonoWeightedGroupContact(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.sampleGroup(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the monoWeightingFunction is null
-			assertModelException(() -> environment.getMonoWeightedGroupContact(new GroupId(0), null), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+			 MonoWeightingFunction nullMonoWeightingFunction = null;
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), nullMonoWeightingFunction), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 			// if the monoWeightingFunction is malformed. (all invocations
 			// evaluate to zero, some evaluate to negative numbers, etc.)
-			assertModelException(() -> environment.getMonoWeightedGroupContact(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight), SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight), SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
 
 		});
 		Simulation simulation = new Simulation();

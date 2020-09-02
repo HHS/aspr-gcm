@@ -360,7 +360,7 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection getMonoWeightedContact(final GroupId groupId,
+	public StochasticPersonSelection sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
 		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);

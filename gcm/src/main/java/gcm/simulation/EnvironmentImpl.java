@@ -1084,14 +1084,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getMonoWeightedGroupContact(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
 			validateMonoWeightingFunctionNotNull(monoWeightingFunction);
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
-					.getMonoWeightedContact(groupId, monoWeightingFunction);
+					.sampleGroup(groupId, monoWeightingFunction);
 			validateStochasticPersonSelection(stochasticPersonSelection);			
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
@@ -1209,7 +1209,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validateGroupExists(groupId);
-			final PersonId personId = personGroupManger.sampleGroup(groupId, null);			
+			PersonId nullPersonId = null;
+			final PersonId personId = personGroupManger.sampleGroup(groupId, nullPersonId);			
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -1237,8 +1238,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validateGroupExists(groupId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			PersonId nullPersonId = null;
 			final PersonId personId = personGroupManger.sampleGroup(groupId,
-					randomNumberGeneratorId, null);			
+					randomNumberGeneratorId, nullPersonId);			
 			return Optional.ofNullable(personId);
 
 		} finally {
@@ -1247,7 +1249,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			 RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
 		externalAccessManager.acquireReadAccess();
 		try {

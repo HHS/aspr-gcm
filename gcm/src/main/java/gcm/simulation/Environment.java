@@ -1223,7 +1223,7 @@ public interface Environment extends Element {
 	 *                        weights are zero then the optional will return
 	 *                        isPresent() of false)
 	 */
-	public Optional<PersonId> getMonoWeightedGroupContact(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction);
 
 	/**
@@ -1332,7 +1332,7 @@ public interface Environment extends Element {
 	 *                        an existing RandomNumberGeneratorId found in the
 	 *                        scenario.
 	 */
-	public Optional<PersonId> getNonWeightedGroupContactWithExclusionFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**

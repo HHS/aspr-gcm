@@ -112,7 +112,7 @@ public interface PersonGroupManger extends Element {
 	 * Returns a contacted person. The group should exist. The
 	 * MonoWeightingFunction must not be null.
 	 */
-	public StochasticPersonSelection getMonoWeightedContact(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction);
+	public StochasticPersonSelection sampleGroup(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction);
 
 	/**
 	 * Returns a contacted person. The group should exist. The

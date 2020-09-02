@@ -536,7 +536,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final BiWeightingFunction biWeightingFunction,final PersonId sourcePersonId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId, final BiWeightingFunction biWeightingFunction,final PersonId sourcePersonId,
 			final boolean excludeSourcePerson) {
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -544,7 +544,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateGroupExists(groupId);
 			validateBiWeightingFunctionNotNull(biWeightingFunction);
 
-			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.getBiWeightedContact(groupId, biWeightingFunction,
+			final StochasticPersonSelection stochasticPersonSelection = personGroupManger.sampleGroup(groupId, biWeightingFunction,
 					sourcePersonId, excludeSourcePerson);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
@@ -558,7 +558,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId,			
+	public Optional<PersonId> sampleGroup(final GroupId groupId,			
 			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
 			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
 		externalAccessManager.acquireReadAccess();
@@ -569,7 +569,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
-					.getBiWeightedContactFromGenerator(groupId,
+					.sampleGroup(groupId,
 							biWeightingFunction, randomNumberGeneratorId, sourcePersonId, excludeSourcePerson);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			if (stochasticPersonSelection.getPersonId() == null) {
@@ -1100,7 +1100,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public Optional<PersonId> getMonoWeightedGroupContactFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
 		externalAccessManager.acquireReadAccess();
 		try {
@@ -1108,7 +1108,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateMonoWeightingFunctionNotNull(monoWeightingFunction);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 			final StochasticPersonSelection stochasticPersonSelection = personGroupManger
-					.getMonoWeightedContactFromGenerator(groupId, monoWeightingFunction, randomNumberGeneratorId);
+					.sampleGroup(groupId, monoWeightingFunction, randomNumberGeneratorId);
 			validateStochasticPersonSelection(stochasticPersonSelection);			
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {

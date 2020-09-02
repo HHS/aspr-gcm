@@ -626,7 +626,7 @@ public interface Environment extends Element {
 	 *                        will return isPresent() of false)
 	 * 
 	 */
-	public Optional<PersonId> getBiWeightedGroupContact(final GroupId groupId, final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId, final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
 			final boolean excludeSourcePerson);
 
 	/**
@@ -664,7 +664,7 @@ public interface Environment extends Element {
 	 *                        scenario.
 	 * 
 	 */
-	public Optional<PersonId> getBiWeightedGroupContactFromGenerator(final GroupId groupId,			
+	public Optional<PersonId> sampleGroup(final GroupId groupId,			
 			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
 			final PersonId sourcePersonId, final boolean excludeSourcePerson
 			);
@@ -1255,7 +1255,7 @@ public interface Environment extends Element {
 	 *                        an existing RandomNumberGeneratorId found in the
 	 *                        scenario.
 	 */
-	public Optional<PersonId> getMonoWeightedGroupContactFromGenerator(final GroupId groupId,
+	public Optional<PersonId> sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**

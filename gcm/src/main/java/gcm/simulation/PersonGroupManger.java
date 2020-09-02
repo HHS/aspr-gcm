@@ -35,7 +35,7 @@ public interface PersonGroupManger extends Element {
 	 * The excluded person must either exist or be null. The BiWeightingFunction
 	 * cannot be null.
 	 */
-	public StochasticPersonSelection getBiWeightedContact(final GroupId groupId, final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId, final boolean excludeSourcePerson);
+	public StochasticPersonSelection sampleGroup(final GroupId groupId, final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId, final boolean excludeSourcePerson);
 
 	/**
 	 * Returns a contacted person. The group, and source person should exist.
@@ -43,7 +43,7 @@ public interface PersonGroupManger extends Element {
 	 * cannot be null. Uses the random generator associated with the
 	 * RandomNumberGeneratorId.
 	 */
-	public StochasticPersonSelection getBiWeightedContactFromGenerator(final GroupId groupId,
+	public StochasticPersonSelection sampleGroup(final GroupId groupId,
 			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId, final PersonId sourcePersonId, final boolean excludeSourcePerson);
 
 	/**
@@ -119,7 +119,7 @@ public interface PersonGroupManger extends Element {
 	 * MonoWeightingFunction must not be null. Uses the random generator
 	 * associated with the RandomNumberGeneratorId.
 	 */
-	public StochasticPersonSelection getMonoWeightedContactFromGenerator(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
+	public StochasticPersonSelection sampleGroup(final GroupId groupId, final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns a contacted person. The group should exist. The excludedPersonId

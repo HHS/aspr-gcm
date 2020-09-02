@@ -162,7 +162,7 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection getBiWeightedContact(final GroupId groupId,
+	public StochasticPersonSelection sampleGroup(final GroupId groupId,
 			final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
 			final boolean excludeSourcePerson) {
 
@@ -172,7 +172,7 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection getBiWeightedContactFromGenerator(final GroupId groupId,
+	public StochasticPersonSelection sampleGroup(final GroupId groupId,
 			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
 			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
@@ -367,7 +367,7 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection getMonoWeightedContactFromGenerator(final GroupId groupId,
+	public StochasticPersonSelection sampleGroup(final GroupId groupId,
 			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
 		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);

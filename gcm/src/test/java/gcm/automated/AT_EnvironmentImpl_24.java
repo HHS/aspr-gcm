@@ -386,11 +386,11 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getMonoWeightedGroupContactFromGenerator(GroupId, MonoWeightingFunction, RandomNumberGeneratorId)}
+	 * {@link EnvironmentImpl#sampleGroup(GroupId, MonoWeightingFunction, RandomNumberGeneratorId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getMonoWeightedGroupContactFromGenerator", args = { GroupId.class, MonoWeightingFunction.class, RandomNumberGeneratorId.class })
-	public void testGetMonoWeightedGroupContactFromGenerator() {
+	@UnitTestMethod(name = "sampleGroup", args = { GroupId.class, MonoWeightingFunction.class, RandomNumberGeneratorId.class })
+	public void testSampleGroup_GroupId_MonoWeightingFunction_RNG() {
 
 		/*
 		 * Assert that group contacts via MonoWeightingFunctions work properly
@@ -433,7 +433,7 @@ public class AT_EnvironmentImpl_24 {
 			/*
 			 * Force the random selection of a person from the group to person 3
 			 */
-			Optional<PersonId> opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getPerson3MonoWeight, RandomGeneratorId.BLITZEN);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getPerson3MonoWeight, RandomGeneratorId.BLITZEN);
 			assertTrue(opt.isPresent());
 			assertEquals(3, opt.get().getValue());
 
@@ -444,7 +444,7 @@ public class AT_EnvironmentImpl_24 {
 				hits.put(personId, new Counter());
 			}
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN);
+				opt = environment.sampleGroup(groupId, EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -471,29 +471,29 @@ public class AT_EnvironmentImpl_24 {
 				PersonId personId = new PersonId(personIndex);
 				environment.addPersonToGroup(personId, groupId);
 			}
-			Optional<PersonId> opt = environment.getMonoWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getZeroMonoWeight, RandomGeneratorId.BLITZEN);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getZeroMonoWeight, RandomGeneratorId.BLITZEN);
 			assertTrue(!opt.isPresent());
 		});
 
 		// test preconditions
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			// if the group id is null
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(null, EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.sampleGroup(null, EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN),
 					SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.sampleGroup(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.BLITZEN),
 					SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the monoWeightingFunction is null
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), null, RandomGeneratorId.BLITZEN), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 			// if the monoWeightingFunction is malformed. (all invocations
 			// evaluate to zero, some evaluate to negative numbers, etc.)
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight, RandomGeneratorId.BLITZEN),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight, RandomGeneratorId.BLITZEN),
 					SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
 			// if the random generator id is null
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantMonoWeight, null),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantMonoWeight, null),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getMonoWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.DONNER),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantMonoWeight, RandomGeneratorId.DONNER),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});
@@ -507,11 +507,11 @@ public class AT_EnvironmentImpl_24 {
 
 	/**
 	 * Tests
-	 * {@link EnvironmentImpl#getBiWeightedGroupContactFromGenerator(GroupId, BiWeightingFunction, RandomNumberGeneratorId, PersonId, boolean)}
+	 * {@link EnvironmentImpl#sampleGroup(GroupId, BiWeightingFunction, RandomNumberGeneratorId, PersonId, boolean)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getBiWeightedGroupContactFromGenerator", args = { GroupId.class, BiWeightingFunction.class, RandomNumberGeneratorId.class, PersonId.class, boolean.class})
-	public void testGetBiWeightedGroupContactFromGenerator() {
+	@UnitTestMethod(name = "sampleGroup", args = { GroupId.class, BiWeightingFunction.class, RandomNumberGeneratorId.class, PersonId.class, boolean.class})
+	public void testSampleGroup_GroupId_BiWeightingFunction_RNG_PersonId_Boolean() {
 
 		/*
 		 * Assert that group contacts via BiWeightingFunctions work properly
@@ -553,7 +553,7 @@ public class AT_EnvironmentImpl_24 {
 			/*
 			 * Force the random selection of a person from the group to person 3
 			 */
-			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getPerson3BiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getPerson3BiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 			assertTrue(opt.isPresent());
 			assertEquals(3, opt.get().getValue());
 
@@ -569,7 +569,7 @@ public class AT_EnvironmentImpl_24 {
 			 * a reasonable number of times
 			 */
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true);
+				opt = environment.sampleGroup(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -591,7 +591,7 @@ public class AT_EnvironmentImpl_24 {
 				counter.count = 0;
 			}
 			for (int i = 0; i < 10000; i++) {
-				opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
+				opt = environment.sampleGroup(groupId, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 				assertTrue(opt.isPresent());
 				hits.get(opt.get().getValue()).count++;
 			}
@@ -617,7 +617,7 @@ public class AT_EnvironmentImpl_24 {
 			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
 				environment.addPersonToGroup(new PersonId(personIndex), groupId);
 			}
-			Optional<PersonId> opt = environment.getBiWeightedGroupContactFromGenerator(groupId, EnvironmentSupport::getZeroBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
+			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getZeroBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), false);
 			assertTrue(!opt.isPresent());
 		});
 
@@ -625,29 +625,29 @@ public class AT_EnvironmentImpl_24 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// if the group id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(null, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(null, EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.NULL_GROUP_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(-1), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(-1), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.UNKNOWN_GROUP_ID);
 			// if the source person id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, null, true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, null, true),
 					SimulationErrorType.NULL_PERSON_ID);
 			// if the source person id is unknown
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(-1), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.BLITZEN, new PersonId(-1), true),
 					SimulationErrorType.UNKNOWN_PERSON_ID);
 			// if the biWeightingFunction is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), null, RandomGeneratorId.BLITZEN, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), null, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.NULL_WEIGHTING_FUNCTION);
 			// if the biWeightingFunction is malformed. (some evaluate to
 			// negative numbers, etc.)
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getNegativeBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getNegativeBiWeight, RandomGeneratorId.BLITZEN, new PersonId(0), true),
 					SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
 			// if the group id is null
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, null, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantBiWeight, null, new PersonId(0), true),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.getBiWeightedGroupContactFromGenerator(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.CUPID, new PersonId(0), true),
+			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getConstantBiWeight, RandomGeneratorId.CUPID, new PersonId(0), true),
 					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
 
 		});

@@ -191,8 +191,9 @@ public class AT_EnvironmentImpl_26 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key = "key1";
-			Partition partition = Partition.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-					.with(Partition.region(AT_EnvironmentImpl_26.regionPartitionFunction));
+			Partition partition = Partition.create()
+					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
 			environment.addPopulationPartition(partition, key);
 
 			// use a uniform distribution with 10000 repetitions
@@ -246,8 +247,9 @@ public class AT_EnvironmentImpl_26 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key = "key2";
-			Partition partition = Partition.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-					.with(Partition.region(AT_EnvironmentImpl_26.regionPartitionFunction));
+			Partition partition = Partition.create()
+					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
 			environment.addPopulationPartition(partition, key);
 
 			Optional<PersonId> opt = environment.samplePartition(key,
@@ -261,8 +263,9 @@ public class AT_EnvironmentImpl_26 {
 
 			Object key = "key3";
 			Object badKey = "badKey";
-			Partition partition = Partition.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-					.with(Partition.region(AT_EnvironmentImpl_26.regionPartitionFunction));
+			Partition partition = Partition.create()
+					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
 
 			environment.addPopulationPartition(partition, key);
 

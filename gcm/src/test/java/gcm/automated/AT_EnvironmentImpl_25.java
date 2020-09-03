@@ -9,7 +9,6 @@ import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.LabelSet.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -33,7 +32,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
-import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
@@ -41,6 +39,7 @@ import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
 import gcm.scenario.CompartmentId;
@@ -280,29 +279,29 @@ public class AT_EnvironmentImpl_25 {
 			Object groupLabel = groupPartitionFunction.apply(groupTypeCountMap);
 
 			// use the labels to create a label set that fits the person
-			LabelSet labelSet = empty();
+			LabelSet labelSet = LabelSet.create();
 			for (PartitionChoice partitionChoice : partionChoices) {
 				switch (partitionChoice) {
 				case COMPARTMENT:
-					labelSet = labelSet.with(compartment(compartmentLabel));
+					labelSet = labelSet.with(LabelSet.create().compartment(compartmentLabel));
 					break;
 				case GROUP:
-					labelSet = labelSet.with(group(groupLabel));
+					labelSet = labelSet.with(LabelSet.create().group(groupLabel));
 					break;
 				case PROPERTY1:
-					labelSet = labelSet.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, personProperty1Label));
+					labelSet = labelSet.with(LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, personProperty1Label));
 					break;
 				case PROPERTY2:
-					labelSet = labelSet.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, personProperty2Label));
+					labelSet = labelSet.with(LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_2, personProperty2Label));
 					break;
 				case REGION:
-					labelSet = labelSet.with(region(regionLabel));
+					labelSet = labelSet.with(LabelSet.create().region(regionLabel));
 					break;
 				case RESOURCE1:
-					labelSet = labelSet.with(resource(TestResourceId.RESOURCE1, personResource1Label));
+					labelSet = labelSet.with(LabelSet.create().resource(TestResourceId.RESOURCE1, personResource1Label));
 					break;
 				case RESOURCE2:
-					labelSet = labelSet.with(resource(TestResourceId.RESOURCE2, personResource2Label));
+					labelSet = labelSet.with(LabelSet.create().resource(TestResourceId.RESOURCE2, personResource2Label));
 					break;
 				default:
 					throw new RuntimeException("unhandled case");
@@ -323,30 +322,30 @@ public class AT_EnvironmentImpl_25 {
 
 	private static Partition createPopulationPartitionDefinition(Set<PartitionChoice> partionChoices) {
 
-		Partition result = Partition.empty();
+		Partition result = Partition.create();
 
 		for (PartitionChoice partitionChoice : partionChoices) {
 			switch (partitionChoice) {
 			case COMPARTMENT:
-				result = result.with(Partition.compartment(compartmentPartitionFunction));
+				result = result.with(Partition.create().compartment(compartmentPartitionFunction));
 				break;
 			case GROUP:
-				result = result.with(Partition.group(groupPartitionFunction));
+				result = result.with(Partition.create().group(groupPartitionFunction));
 				break;
 			case PROPERTY1:
-				result = result.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+				result = result.with(Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
 				break;
 			case PROPERTY2:
-				result = result.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function));
+				result = result.with(Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function));
 				break;
 			case REGION:
-				result = result.with(Partition.region(regionPartitionFunction));
+				result = result.with(Partition.create().region(regionPartitionFunction));
 				break;
 			case RESOURCE1:
-				result = result.with(Partition.resource(TestResourceId.RESOURCE1, personResource1PartitionFunction));
+				result = result.with(Partition.create().resource(TestResourceId.RESOURCE1, personResource1PartitionFunction));
 				break;
 			case RESOURCE2:
-				result = result.with(Partition.resource(TestResourceId.RESOURCE2, personResource2PartitionFunction));
+				result = result.with(Partition.create().resource(TestResourceId.RESOURCE2, personResource2PartitionFunction));
 				break;
 			default:
 				throw new RuntimeException("unhandled case");
@@ -357,22 +356,22 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	private static LabelSet getLabelSet(LabelSetInfo labelSetInfo) {
-		LabelSet result = empty();
+		LabelSet result = LabelSet.create();
 		if (labelSetInfo.getCompartmentLabel().isPresent()) {
-			result = result.with(compartment(labelSetInfo.getCompartmentLabel().get()));
+			result = result.with(LabelSet.create().compartment(labelSetInfo.getCompartmentLabel().get()));
 		}
 		if (labelSetInfo.getRegionLabel().isPresent()) {
-			result = result.with(region(labelSetInfo.getRegionLabel().get()));
+			result = result.with(LabelSet.create().region(labelSetInfo.getRegionLabel().get()));
 		}
 		if (labelSetInfo.getGroupLabel().isPresent()) {
-			result = result.with(group(labelSetInfo.getGroupLabel().get()));
+			result = result.with(LabelSet.create().group(labelSetInfo.getGroupLabel().get()));
 		}
 		for (PersonPropertyId personPropertyId : labelSetInfo.getPersonPropertyIds()) {
 			result = result
-					.with(property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
+					.with(LabelSet.create().property(personPropertyId, labelSetInfo.getPersonPropertyLabel(personPropertyId).get()));
 		}
 		for (ResourceId recourceId : labelSetInfo.getPersonResourceIds()) {
-			result = result.with(resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId).get()));
+			result = result.with(LabelSet.create().resource(recourceId, labelSetInfo.getPersonResourceLabel(recourceId).get()));
 		}
 		return result;
 	}
@@ -448,12 +447,15 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key3 = "key3";
 
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create()
+					.compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			// if the key is null
 			assertModelException(() -> environment.getPartitionSize(null, labelSet),
@@ -555,9 +557,9 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			partition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key2);
-			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.samplePartition(key2, labelSet);
 			assertFalse(optional.isPresent());
 
@@ -569,12 +571,12 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			RandomNumberGeneratorId badRandomNumberGeneratorId = TestRandomGeneratorId.CUPID;
 
@@ -704,9 +706,9 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			partition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key2);
-			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.samplePartition(key2, labelSet, personId);
 			assertFalse(optional.isPresent());
 
@@ -723,12 +725,12 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(1000000);
@@ -842,12 +844,12 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			// if the key is null
 			assertModelException(() -> environment.getPartitionPeople(null, labelSet),
@@ -924,14 +926,16 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key1 = "key1";
 			Object key2 = "key2";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 
-			Partition badPropertyPartition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.getUnknownPersonPropertyId(), property1Function));
+			Partition badPropertyPartition = Partition.create()
+					.compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.getUnknownPersonPropertyId(), property1Function);
 
-			Partition badResourcePartition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.resource(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction));
+			Partition badResourcePartition = Partition.create()
+					.compartment(compartmentPartitionFunction)
+					.resource(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction);
 
 			environment.addPopulationPartition(partition, key1);
 
@@ -1174,12 +1178,13 @@ public class AT_EnvironmentImpl_25 {
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create()
+					.compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(10000000);
 
@@ -1291,10 +1296,11 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			Partition partitionDefinition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1,
+			Partition partitionDefinition = Partition.create()
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
 			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.samplePartition(key2, labelSet);
 			assertFalse(optional.isPresent());
 
@@ -1306,12 +1312,13 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create()
+					.compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			// if the key is null
 			assertModelException(() -> environment.samplePartition(null, labelSet),
@@ -1439,10 +1446,10 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			Partition partitionDefinition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1,
+			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
 			environment.addPopulationPartition(partitionDefinition, key2);
-			LabelSet labelSet = property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
+			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			Optional<PersonId> optional = environment.samplePartition(key2, labelSet, randomNumberGeneratorId,
 					personId);
 			assertFalse(optional.isPresent());
@@ -1460,12 +1467,12 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.compartment(compartmentPartitionFunction)
-					.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
+					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPopulationPartition(partition, key3);
 
-			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
-			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
+			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
+			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_2, 1);
 
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(1000000);

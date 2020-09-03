@@ -33,11 +33,13 @@ public class LabelSet {
 	 * @throws RuntimeException
 	 *                          <li>if the compartmentLabel is null
 	 */
-	public static LabelSet compartment(final Object compartmentLabel) {
+	public final LabelSet compartment(final Object compartmentLabel) {
 		if (compartmentLabel == null) {
 			throw new RuntimeException("null compartment label");
 		}
-		return new CompartmentLabelSet(compartmentLabel);
+		
+		return new WithLabelSet(this,new  
+				CompartmentLabelSet(compartmentLabel));
 	}
 
 	static class RegionLabelSet extends LabelSet {
@@ -54,11 +56,12 @@ public class LabelSet {
 	 * @throws RuntimeException
 	 *                          <li>if the regionLabel is null
 	 */
-	public static LabelSet region(final Object regionLabel) {
+	public final LabelSet region(final Object regionLabel) {
 		if (regionLabel == null) {
 			throw new RuntimeException("null region label");
 		}
-		return new RegionLabelSet(regionLabel);
+		return new WithLabelSet(this, new  
+				RegionLabelSet(regionLabel));
 	}
 
 	static class PersonPropertyLabelSet extends LabelSet {
@@ -78,7 +81,7 @@ public class LabelSet {
 	 *                          <li>if the personPropertyId is null
 	 *                          <li>if the personPropertyLabel is null
 	 */
-	public static LabelSet property(PersonPropertyId personPropertyId, Object personPropertyLabel) {
+	public final LabelSet property(PersonPropertyId personPropertyId, Object personPropertyLabel) {
 		if(personPropertyId == null) {
 			throw new RuntimeException("null person property id");
 		}
@@ -87,7 +90,8 @@ public class LabelSet {
 			throw new RuntimeException("null person property label");
 		}
 
-		return new PersonPropertyLabelSet(personPropertyId, personPropertyLabel);
+		return new WithLabelSet(this, 
+				new PersonPropertyLabelSet(personPropertyId, personPropertyLabel));
 	}
 
 	static class ResourceLabelSet extends LabelSet {
@@ -107,7 +111,7 @@ public class LabelSet {
 	 * <li> if the resourceId is null
 	 * <li> if the resourceLabel is null
 	 */
-	public static LabelSet resource(ResourceId resourceId, Object resourceLabel) {
+	public final LabelSet resource(ResourceId resourceId, Object resourceLabel) {
 		
 		if(resourceId == null) {
 			throw new RuntimeException("null resource id");
@@ -117,7 +121,7 @@ public class LabelSet {
 			throw new RuntimeException("null resource label");
 		}
 
-		return new ResourceLabelSet(resourceId, resourceLabel);
+		return new WithLabelSet(this, new ResourceLabelSet(resourceId, resourceLabel));
 	}
 
 	static class GroupLabelSet extends LabelSet {
@@ -134,13 +138,13 @@ public class LabelSet {
 	 * @throws RuntimeException
 	 * <li> if the groupLabel is null
 	 */
-	public static LabelSet group(final Object groupLabel) {
+	public final LabelSet group(final Object groupLabel) {
 		
 		if(groupLabel == null) {
 			throw new RuntimeException("null group label");
 		}
 		
-		return new GroupLabelSet(groupLabel);
+		return new WithLabelSet(this, new GroupLabelSet(groupLabel));
 	}
 
 	static class WithLabelSet extends LabelSet {
@@ -174,7 +178,7 @@ public class LabelSet {
 	/**
 	 * Creates an empty label for a label set.
 	 */
-	public static LabelSet empty() {
+	public final static LabelSet create() {
 		return new EmptyLabelSet();
 	}
 

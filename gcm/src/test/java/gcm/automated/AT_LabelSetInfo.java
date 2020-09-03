@@ -2,12 +2,7 @@ package gcm.automated;
 
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static gcm.simulation.partition.LabelSet.compartment;
-import static gcm.simulation.partition.LabelSet.empty;
-import static gcm.simulation.partition.LabelSet.group;
-import static gcm.simulation.partition.LabelSet.property;
-import static gcm.simulation.partition.LabelSet.region;
-import static gcm.simulation.partition.LabelSet.resource;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -68,10 +63,10 @@ public class AT_LabelSetInfo {
 		for (int i = 0; i < 20; i++) {
 			Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
 
-			LabelSet labelSet = LabelSet.empty();
+			LabelSet labelSet = LabelSet.create();
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					labelSet = labelSet.with(property(testPersonPropertyId, "label"));
+					labelSet = labelSet.with(LabelSet.create().property(testPersonPropertyId, "label"));
 					expectedPersonPropertyIds.add(testPersonPropertyId);
 				}
 			}
@@ -88,23 +83,25 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "build", args = { LabelSet.class })
 	public void testBuild() {
 
-		LabelSet labelSet = //
-				compartment("compartment")//
-						.with(region("region"))//
-						.with(group("group"))//
-						.with(property(TestPersonPropertyId.PERSON_PROPERTY_1, "prop1"))//
-						.with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 45))//
-						.with(resource(TestResourceId.RESOURCE2, 2342L));//
+		LabelSet labelSet = LabelSet.create()//
+				.compartment("compartment")//
+				.region("region")//
+				.group("group")//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_1, "prop1")//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_2, 45)//
+				.resource(TestResourceId.RESOURCE2, 2342L);//
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
 		assertNotNull(labelSetInfo);
 
 		// precondition tests
-		assertException(() -> LabelSetInfo.build(property(null, "label")), RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(property(TestPersonPropertyId.PERSON_PROPERTY_1, null)),
+		assertException(() -> LabelSetInfo.build(LabelSet.create().property(null, "label")), RuntimeException.class);
+		assertException(
+				() -> LabelSetInfo.build(LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, null)),
 				RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(resource(null, "label")), RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(resource(TestResourceId.RESOURCE1, null)), RuntimeException.class);
+		assertException(() -> LabelSetInfo.build(LabelSet.create().resource(null, "label")), RuntimeException.class);
+		assertException(() -> LabelSetInfo.build(LabelSet.create().resource(TestResourceId.RESOURCE1, null)),
+				RuntimeException.class);
 	}
 
 	/**
@@ -119,10 +116,10 @@ public class AT_LabelSetInfo {
 		for (int i = 0; i < 20; i++) {
 			Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 
-			LabelSet labelSet = empty();
+			LabelSet labelSet = LabelSet.create();
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					labelSet = labelSet.with(resource(testResourceId, "label"));
+					labelSet = labelSet.with(LabelSet.create().resource(testResourceId, "label"));
 					expectedResourceIds.add(testResourceId);
 				}
 			}
@@ -141,7 +138,7 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getGroupLabel", args = {})
 	public void testGetGroupLabel() {
 		Object expectedGroupLabel = "Group Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(group(expectedGroupLabel));
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().group(expectedGroupLabel));
 		assertTrue(labelSetInfo.getGroupLabel().isPresent());
 		Object actualGroupLabel = labelSetInfo.getGroupLabel().get();
 		assertEquals(expectedGroupLabel, actualGroupLabel);
@@ -154,7 +151,7 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getRegionLabel", args = {})
 	public void testGetRegionLabel() {
 		Object expectedRegionLabel = "Region Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(region(expectedRegionLabel));
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().region(expectedRegionLabel));
 		assertTrue(labelSetInfo.getRegionLabel().isPresent());
 		Object actualRegionLabel = labelSetInfo.getRegionLabel().get();
 		assertEquals(expectedRegionLabel, actualRegionLabel);
@@ -167,7 +164,7 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getCompartmentLabel", args = {})
 	public void testGetCompartmentLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(compartment(expectedCompartmentLabel));
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().compartment(expectedCompartmentLabel));
 		assertTrue(labelSetInfo.getCompartmentLabel().isPresent());
 		Object actualCompartmentLabel = labelSetInfo.getCompartmentLabel().get();
 		assertEquals(expectedCompartmentLabel, actualCompartmentLabel);
@@ -179,9 +176,9 @@ public class AT_LabelSetInfo {
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyLabel", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyLabel() {
-		LabelSet labelSet = empty();
+		LabelSet labelSet = LabelSet.create();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			labelSet = labelSet.with(property(testPersonPropertyId, testPersonPropertyId.toString()));
+			labelSet = labelSet.with(LabelSet.create().property(testPersonPropertyId, testPersonPropertyId.toString()));
 		}
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
@@ -199,10 +196,10 @@ public class AT_LabelSetInfo {
 	@Test
 	@UnitTestMethod(name = "getPersonResourceLabel", args = { ResourceId.class })
 	public void testGetPersonResourceLabel() {
-		LabelSet labelSet = empty();
+		LabelSet labelSet = LabelSet.create();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			labelSet = labelSet.with(resource(testResourceId, testResourceId.toString()));
+			labelSet = labelSet.with(LabelSet.create().resource(testResourceId, testResourceId.toString()));
 		}
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
@@ -221,9 +218,9 @@ public class AT_LabelSetInfo {
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(compartment("compartment label"));
-		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(compartment("compartment label"));
-		LabelSetInfo labelSetInfo3 = LabelSetInfo.build(region("compartment label"));
+		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
+		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
+		LabelSetInfo labelSetInfo3 = LabelSetInfo.build(LabelSet.create().region("compartment label"));
 
 		assertFalse(labelSetInfo1 == labelSetInfo2);
 		assertTrue(labelSetInfo1.equals(labelSetInfo1));
@@ -240,8 +237,8 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
-		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(compartment("compartment label"));
-		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(compartment("compartment label"));
+		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
+		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
 
 		assertFalse(labelSetInfo1 == labelSetInfo2);
 		assertEquals(labelSetInfo1, labelSetInfo2);

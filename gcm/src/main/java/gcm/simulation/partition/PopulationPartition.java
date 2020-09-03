@@ -280,28 +280,28 @@ public final class PopulationPartition {
 	}
 
 	private LabelSetInfo getLabelSetInfo(Key key) {
-		LabelSet labelSet = LabelSet.empty();
+		LabelSet labelSet = LabelSet.create();
 		if (compartmentLabelIndex >= 0) {
-			labelSet = labelSet.with(LabelSet.compartment(key.keys[compartmentLabelIndex]));
+			labelSet = labelSet.with(LabelSet.create().compartment(key.keys[compartmentLabelIndex]));
 		}
 		if (regionLabelIndex >= 0) {
-			labelSet = labelSet.with(LabelSet.region(key.keys[regionLabelIndex]));
+			labelSet = labelSet.with(LabelSet.create().region(key.keys[regionLabelIndex]));
 		}
 		if (groupLabelIndex >= 0) {
-			labelSet = labelSet.with(LabelSet.group(key.keys[groupLabelIndex]));
+			labelSet = labelSet.with(LabelSet.create().group(key.keys[groupLabelIndex]));
 		}
 
 		for (PersonPropertyId personPropertyId : personPropertyLabelIndexes.keySet()) {
 			Integer personPropertyIndex = personPropertyLabelIndexes.get(personPropertyId);
 			if (personPropertyIndex >= 0) {
-				labelSet = labelSet.with(LabelSet.property(personPropertyId, key.keys[personPropertyIndex]));
+				labelSet = labelSet.with(LabelSet.create().property(personPropertyId, key.keys[personPropertyIndex]));
 			}
 		}
 
 		for (ResourceId resourceId : resourceLabelIndexes.keySet()) {
 			Integer resourceIndex = resourceLabelIndexes.get(resourceId);
 			if (resourceIndex >= 0) {
-				labelSet = labelSet.with(LabelSet.resource(resourceId, key.keys[resourceIndex]));
+				labelSet = labelSet.with(LabelSet.create().resource(resourceId, key.keys[resourceIndex]));
 			}
 		}
 

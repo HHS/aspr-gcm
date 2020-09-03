@@ -1263,6 +1263,7 @@ public class AT_Filter {
 		});
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			
 			// create some groups
 			final int maxGroupCount = 20;
 			final GroupId[] groupIds = new GroupId[maxGroupCount];

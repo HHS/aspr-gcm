@@ -30,11 +30,11 @@ public class Partition {
 	 * @throws RuntimeException
 	 *                          <li>if the compartment partition function is null
 	 */
-	public static Partition compartment(Function<CompartmentId, Object> compartmentPartitionFunction) {
+	public final  Partition compartment(Function<CompartmentId, Object> compartmentPartitionFunction) {
 		if (compartmentPartitionFunction == null) {
 			throw new RuntimeException("null compartment partition function");
 		}
-		return new CompartmentPartition(compartmentPartitionFunction);
+		return new WithPartition(this,new CompartmentPartition(compartmentPartitionFunction));
 	}
 
 	static class RegionPartition extends Partition {
@@ -51,11 +51,13 @@ public class Partition {
 	 * @throws RuntimeException
 	 *                          <li>if the region partition function is null
 	 */
-	public static Partition region(Function<RegionId, Object> regionPartitionFunction) {
+	public final Partition region(Function<RegionId, Object> regionPartitionFunction) {
 		if (regionPartitionFunction == null) {
 			throw new RuntimeException("null region partition function");
 		}
-		return new RegionPartition(regionPartitionFunction);
+		
+		return new WithPartition(this,
+				new RegionPartition(regionPartitionFunction));
 	}
 
 	static class GroupPartition extends Partition {
@@ -72,11 +74,12 @@ public class Partition {
 	 * @throws RuntimeException
 	 *                          <li>if the group partition function is null
 	 */
-	public static Partition group(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
+	public final Partition group(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
 		if (groupPartitionFunction == null) {
 			throw new RuntimeException("null group partition function");
 		}
-		return new GroupPartition(groupPartitionFunction);
+		return new WithPartition(this,
+		new GroupPartition(groupPartitionFunction));
 	}
 
 	static class PropertyPartition extends Partition {
@@ -98,7 +101,7 @@ public class Partition {
 	 *                          <li>if the person property partition function is
 	 *                          null
 	 */
-	public static Partition property(PersonPropertyId personPropertyId,
+	public final Partition property(PersonPropertyId personPropertyId,
 			Function<Object, Object> personPropertyPartitionFunction) {
 		if (personPropertyId == null) {
 			throw new RuntimeException("null person property id function");
@@ -106,7 +109,8 @@ public class Partition {
 		if (personPropertyPartitionFunction == null) {
 			throw new RuntimeException("null person property partition function");
 		}
-		return new PropertyPartition(personPropertyId, personPropertyPartitionFunction);
+		return new WithPartition(this,
+				new PropertyPartition(personPropertyId, personPropertyPartitionFunction));
 	}
 
 	static class ResourcePartition extends Partition {
@@ -127,20 +131,21 @@ public class Partition {
 	 *                          <li>if the person resource partition function is
 	 *                          null
 	 */
-	public static Partition resource(ResourceId resourceId, Function<Long, Object> resourcePartitionFunction) {
+	public final Partition resource(ResourceId resourceId, Function<Long, Object> resourcePartitionFunction) {
 		if (resourceId == null) {
 			throw new RuntimeException("null resource property id function");
 		}
 		if (resourcePartitionFunction == null) {
 			throw new RuntimeException("null resource partition function");
 		}
-		return new ResourcePartition(resourceId, resourcePartitionFunction);
+		return new WithPartition(this,  
+				new ResourcePartition(resourceId, resourcePartitionFunction));
 	}
 
 	static class EmptyPartition extends Partition {
 	}
 
-	public static Partition empty() {
+	public final static Partition create() {
 		return new EmptyPartition();
 	}
 
@@ -155,7 +160,7 @@ public class Partition {
 	}
 
 	/**
-	 * Returns a composed {@link Partition} that joins partition functions
+	 * Returns a composed {@link Partition2} that joins partition functions
 	 * 
 	 * @throws RuntimeException
 	 *                          <li>if other is null
@@ -166,5 +171,4 @@ public class Partition {
 			throw new RuntimeException("null partition");
 		}
 		return new WithPartition(this, other);
-	}
-}
+	}}

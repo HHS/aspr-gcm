@@ -93,7 +93,7 @@ public class AT_PartitionInfo {
 	@Test
 	@UnitTestMethod(name = "build", args = { Partition.class })
 	public void testBuilder() {
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.empty());
+		PartitionInfo partitionInfo = PartitionInfo.build(Partition.create());
 
 		assertNotNull(partitionInfo);
 		assertNull(partitionInfo.getCompartmentPartitionFunction());
@@ -109,7 +109,8 @@ public class AT_PartitionInfo {
 	@Test
 	@UnitTestMethod(name = "getCompartmentPartitionFunction", args = {})
 	public void testGetCompartmentPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.compartment(AT_PartitionInfo::getCompartmentLabel));
+		PartitionInfo partitionInfo = PartitionInfo
+				.build(Partition.create().compartment(AT_PartitionInfo::getCompartmentLabel));
 		assertNotNull(partitionInfo.getCompartmentPartitionFunction());
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			Integer expectedLabel = getCompartmentLabel(testCompartmentId);
@@ -126,7 +127,8 @@ public class AT_PartitionInfo {
 	@Test
 	@UnitTestMethod(name = "getGroupPartitionFunction", args = {})
 	public void testGetGroupPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.group(AT_PartitionInfo::getGroupTypeCountLabel));
+		PartitionInfo partitionInfo = PartitionInfo
+				.build(Partition.create().group(AT_PartitionInfo::getGroupTypeCountLabel));
 
 		assertNotNull(partitionInfo.getGroupPartitionFunction());
 
@@ -152,10 +154,10 @@ public class AT_PartitionInfo {
 	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 
-		PartitionInfo partitionInfo = PartitionInfo.build(
-				Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1, AT_PartitionInfo::getPersonProperty1Label)
-						.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_2,
-								AT_PartitionInfo::getPersonProperty1Label)));
+		PartitionInfo partitionInfo = PartitionInfo.build(Partition.create()//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_1, AT_PartitionInfo::getPersonProperty1Label)//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_2, AT_PartitionInfo::getPersonProperty1Label)//
+		);
 
 		Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_1);
@@ -166,17 +168,15 @@ public class AT_PartitionInfo {
 	}
 
 	/**
-	 * Tests
-	 * {@linkplain PartitionInfo#getPersonPropertyPartitionFunction(PersonPropertyId)
+	 * Tests {@linkplain
+	 * PartitionInfo#getPersonPropertyPartitionFunction(PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyPartitionFunction", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyPartitionFunction() {
-		Partition partition = Partition.property(TestPersonPropertyId.PERSON_PROPERTY_1,
-				AT_PartitionInfo::getPersonProperty1Label);
-
-		partition = partition.with(
-				Partition.property(TestPersonPropertyId.PERSON_PROPERTY_2, AT_PartitionInfo::getPersonProperty2Label));
+		Partition partition = Partition.create()//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_1, AT_PartitionInfo::getPersonProperty1Label)//
+				.property(TestPersonPropertyId.PERSON_PROPERTY_2, AT_PartitionInfo::getPersonProperty2Label);//
 
 		PartitionInfo partitionInfo = PartitionInfo.build(partition);
 
@@ -212,9 +212,11 @@ public class AT_PartitionInfo {
 	@Test
 	@UnitTestMethod(name = "getPersonResourceIds", args = {})
 	public void testGetPersonResourceIds() {
-		PartitionInfo partitionInfo = PartitionInfo
-				.build(Partition.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)
-						.with(Partition.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)));
+		PartitionInfo partitionInfo = PartitionInfo.build(//
+				Partition.create()//
+						.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)//
+						.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)//
+		);//
 
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		expectedResourceIds.add(TestResourceId.RESOURCE1);
@@ -224,15 +226,17 @@ public class AT_PartitionInfo {
 	}
 
 	/**
-	 * Tests {@linkplain
-	 * PartitionInfo#getPersonResourcePartitionFunction(ResourceId)
+	 * Tests
+	 * {@linkplain PartitionInfo#getPersonResourcePartitionFunction(ResourceId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourcePartitionFunction", args = { ResourceId.class })
 	public void testGetPersonResourcePartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo
-				.build(Partition.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)
-						.with(Partition.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)));
+		PartitionInfo partitionInfo = PartitionInfo.build(//
+				Partition.create()//
+						.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)//
+						.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)//
+		);//
 
 		assertNotNull(partitionInfo.getPersonResourcePartitionFunction(TestResourceId.RESOURCE1));
 
@@ -266,7 +270,9 @@ public class AT_PartitionInfo {
 	@Test
 	@UnitTestMethod(name = "getRegionPartitionFunction", args = {})
 	public void testGetRegionPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.region(AT_PartitionInfo::getRegionLabel));
+		PartitionInfo partitionInfo = PartitionInfo.build(//
+				Partition.create().region(AT_PartitionInfo::getRegionLabel)//
+		);//
 
 		assertNotNull(partitionInfo.getRegionPartitionFunction());
 		for (TestRegionId testRegionId : TestRegionId.values()) {

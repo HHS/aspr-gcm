@@ -9,6 +9,14 @@ public class PartitionSampler {
 		
 	}
 	
+	
+	static class EmptyPartitionSampler extends PartitionSampler{
+	}
+	
+	public final PartitionSampler create() {
+		return new EmptyPartitionSampler();
+	}
+	
 	static class ExcludedPersonPartitionSampler extends PartitionSampler{
 		final PersonId personId;
 		ExcludedPersonPartitionSampler(PersonId personId){
@@ -16,11 +24,11 @@ public class PartitionSampler {
 		}
 	}
 	
-	public static PartitionSampler excludedPerson(PersonId personId) {
+	public final PartitionSampler excludePerson(PersonId personId) {
 		if(personId == null) {
 			throw new RuntimeException("null person id");
 		}
-		return new ExcludedPersonPartitionSampler(personId);
+		return new WithPartitionSampler(this, new ExcludedPersonPartitionSampler(personId));
 	}
 	
 	static class LabelSetPartitionSampler extends PartitionSampler{
@@ -30,11 +38,11 @@ public class PartitionSampler {
 		}
 	}
 	
-	public static PartitionSampler labelSet(LabelSet labelSet) {
+	public final PartitionSampler labelSet(LabelSet labelSet) {
 		if(labelSet == null) {
 			throw new RuntimeException("null labelSet");
 		}
-		return new LabelSetPartitionSampler(labelSet);
+		return new WithPartitionSampler(this, new LabelSetPartitionSampler(labelSet));
 	}
 	
 	static class LabelSetWeightingFunctionPartitionSampler extends PartitionSampler{
@@ -44,11 +52,12 @@ public class PartitionSampler {
 		}
 	}
 	
-	public static PartitionSampler labelWeights(LabelSetWeightingFunction labelSetWeightingFunction) {
+	public final PartitionSampler labelWeight(LabelSetWeightingFunction labelSetWeightingFunction) {
 		if(labelSetWeightingFunction == null) {
 			throw new RuntimeException("null labelSetWeightingFunction");
 		}
-		return new LabelSetWeightingFunctionPartitionSampler(labelSetWeightingFunction);
+		return new WithPartitionSampler(this,
+		new LabelSetWeightingFunctionPartitionSampler(labelSetWeightingFunction));
 	}
 	
 	static class RandomNumberGeneratorIdPartitionSampler extends PartitionSampler{
@@ -58,11 +67,12 @@ public class PartitionSampler {
 		}
 	}
 	
-	public static PartitionSampler randomGenerator(RandomNumberGeneratorId randomNumberGeneratorId) {
+	public final PartitionSampler generator(RandomNumberGeneratorId randomNumberGeneratorId) {
 		if(randomNumberGeneratorId == null) {
 			throw new RuntimeException("null randomNumberGeneratorId");
 		}
-		return new RandomNumberGeneratorIdPartitionSampler(randomNumberGeneratorId);
+		return new WithPartitionSampler(this,
+		new RandomNumberGeneratorIdPartitionSampler(randomNumberGeneratorId));
 	}
 	
 	static class WithPartitionSampler extends PartitionSampler{

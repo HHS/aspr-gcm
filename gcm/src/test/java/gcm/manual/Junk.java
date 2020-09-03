@@ -35,11 +35,11 @@ public class Junk {
 		PartitionSampler2 partitionSampler2 = PartitionSampler2.create().excludedPerson(new PersonId(34534))
 				.labelSet(LabelSet.compartment("asdf")).randomGenerator(TestRandomGeneratorId.CUPID);
 
-		Partition.compartment(Junk::getCompartmentLabel)//
+		Partition partition = Partition.compartment(Junk::getCompartmentLabel)//
 				.with(Partition.region(Junk::getRegionLabel))//
 				.with(Partition.property(TestPersonPropertyId.PERSON_PROPERTY_5, Junk::getPropertyLabel));
 
-		Partition2.create()//
+		Partition2 partition2 = Partition2.create()//
 				.compartment(Junk::getCompartmentLabel)//
 				.region(Junk::getRegionLabel)//
 				.property(TestPersonPropertyId.PERSON_PROPERTY_5, Junk::getPropertyLabel);

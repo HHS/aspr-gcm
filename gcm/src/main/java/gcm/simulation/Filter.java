@@ -272,14 +272,14 @@ public abstract class Filter {
 	 * Returns a composed filter that represents a short-circuiting logical AND
 	 * of this filter and another.
 	 */
-	public Filter and(final Filter other) {
+	public final Filter and(final Filter other) {
 		return new AndFilter(this, other);
 	}
 
 	/**
 	 * Returns a filter that represents the logical negation of this filter.
 	 */
-	public Filter negate() {
+	public final Filter negate() {
 		return new NegateFilter(this);
 	}
 
@@ -287,7 +287,7 @@ public abstract class Filter {
 	 * Returns a composed filter that represents a short-circuiting logical OR
 	 * of this filter and another.
 	 */
-	public Filter or(final Filter other) {
+	public final Filter or(final Filter other) {
 		return new OrFilter(this, other);
 	}
 }

@@ -66,7 +66,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public PersonId samplePartition(final Object key, LabelSet labelSet,final PersonId excludedPersonId);
+	public StochasticPersonSelection samplePartition(final Object key, LabelSet labelSet,final PersonId excludedPersonId);
 
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
@@ -79,7 +79,7 @@ public interface PopulationPartitionManager extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *                        if the keys are not associated with a population index
 	 */
-	public PersonId samplePartition(final Object key,
+	public StochasticPersonSelection samplePartition(final Object key,
 			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 	/**

@@ -77,16 +77,16 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	}
 
 	@Override
-	public PersonId samplePartition(Object key, LabelSet labelSet,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),
+	public StochasticPersonSelection samplePartition(Object key, LabelSet labelSet,PersonId excludedPersonId) {
+		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),null,
 				stochasticsManager.getRandomGenerator(),excludedPersonId);
 	}
 
 	@Override
-	public PersonId samplePartition(Object key, LabelSet labelSet,
+	public StochasticPersonSelection samplePartition(Object key, LabelSet labelSet,
 			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
 
-		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),
+		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),null,
 				stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
 	}
 
@@ -167,12 +167,12 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 	@Override
 	public StochasticPersonSelection samplePartition(Object key,
 			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(labelSetWeightingFunction,stochasticsManager.getRandomGenerator(),excludedPersonId);
+		return populationPartitions.get(key).samplePartition(null,labelSetWeightingFunction,stochasticsManager.getRandomGenerator(),excludedPersonId);
 	}
 
 	@Override
 	public StochasticPersonSelection samplePartition(Object key,
 			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
+		return populationPartitions.get(key).samplePartition(null,labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
 	}
 }

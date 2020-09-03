@@ -3,6 +3,7 @@ package gcm.simulation.partition;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -524,7 +525,7 @@ public final class PopulationPartition {
 		if (b1 && b2) {
 			return false;
 		}
-		
+
 		b1 = partitionInfo.getGroupPartitionFunction() == null;
 		b2 = labelSetInfo.getGroupLabel().isPresent();
 		if (b1 && b2) {
@@ -553,9 +554,9 @@ public final class PopulationPartition {
 	 * key is currently present in the key map and is associated with a Population
 	 * Container.
 	 */
-	private List<Key> getFullKeys(Key partialKey) {
+	private Set<Key> getFullKeys(Key partialKey) {
 
-		List<Key> result = new ArrayList<>();
+		Set<Key> result = new LinkedHashSet<>();
 
 		int dimensionCount = 0;
 		for (int i = 0; i < keySize; i++) {
@@ -597,91 +598,8 @@ public final class PopulationPartition {
 
 	}
 
-	/**
-	 * Returns a randomly chosen person identifier from the index, excluding the
-	 * person identifier given. When the excludedPersonId is null it indicates that
-	 * no person is being excluded. Returns null if the index is either empty or
-	 * only contains the excluded person.
-	 */
-	public PersonId samplePartition(LabelSetInfo labelSetInfo,
-			RandomGenerator randomGenerator,final PersonId excludedPersonId) {
 
-		Key key = getKey(labelSetInfo);
-		Key selectedKey = null;
-
-		if (key.isPartialKey()) {
-			Key keyForExcludedPersonId = null;
-			List<Key> fullKeys = getFullKeys(key);
-			int candidateCount = 0;
-			for (Key fullKey : fullKeys) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				candidateCount += peopleContainer.size();
-			}
-			if (contains(excludedPersonId)) {
-				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
-				candidateCount--;
-			}
-			if (candidateCount > 0) {
-				int selectedIndex = randomGenerator.nextInt(candidateCount);
-				for (Key fullKey : fullKeys) {
-					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-					int containerSize = peopleContainer.size();
-					if (fullKey == keyForExcludedPersonId) {
-						containerSize--;
-					}
-					if (containerSize > selectedIndex) {
-						selectedKey = fullKey;
-						break;
-					}
-					selectedIndex -= containerSize;
-				}
-			}
-		} else {
-			selectedKey = key;
-		}
-
-		if (selectedKey == null) {
-			return null;
-		}
-
-		return getRandomPersonId(selectedKey, randomGenerator,excludedPersonId);
-	}
-
-//	public PersonId getRandomPersonId(final PersonId excludedPersonId, LabelSetInfo labelSetInfo,
-//			RandomGenerator randomGenerator) {
-//
-//		// TODO -- multi-sampling from the random generator is likely inefficient
-//		Key key = getKey(labelSetInfo);
-//		Key selectedKey = null;
-//		
-//		if (key.isPartialKey()) {
-//			List<Key> fullKeys = getFullKeys(key);
-//			int personCount = 0;
-//
-//			for (Key fullKey : fullKeys) {
-//				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-//				int containerSize = peopleContainer.size();
-//				personCount += peopleContainer.size();
-//				if (peopleContainer.contains(excludedPersonId)) {
-//					personCount--;
-//					containerSize--;
-//				}
-//				double selectionProbabilty = containerSize;
-//				selectionProbabilty /= personCount;
-//				// if the selection probability is NaN, the fullKey will not be selected
-//				if (randomGenerator.nextDouble() < selectionProbabilty) {
-//					selectedKey = fullKey;
-//				}
-//			}
-//		} else {
-//			selectedKey = key;
-//		}
-//		if (selectedKey == null) {
-//			return null;
-//		}
-//		return getRandomPersonId(excludedPersonId, selectedKey, randomGenerator);
-//	}
-	private PersonId getRandomPersonId( Key key, RandomGenerator randomGenerator,final PersonId excludedPersonId) {
+	private PersonId getRandomPersonId(Key key, RandomGenerator randomGenerator, final PersonId excludedPersonId) {
 
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
 
@@ -717,7 +635,7 @@ public final class PopulationPartition {
 		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
-			List<Key> fullKeys = getFullKeys(key);
+			Set<Key> fullKeys = getFullKeys(key);
 
 			int result = 0;
 			for (Key fullKey : fullKeys) {
@@ -745,7 +663,7 @@ public final class PopulationPartition {
 			key.keys[index++] = regionLabel;
 		}
 
-		if (partitionInfo.getCompartmentPartitionFunction() != null) {			
+		if (partitionInfo.getCompartmentPartitionFunction() != null) {
 			Object compartmentLabel = labelSetInfo.getCompartmentLabel().orElse(null);
 			key.keys[index++] = compartmentLabel;
 		}
@@ -781,7 +699,7 @@ public final class PopulationPartition {
 		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
-			List<Key> fullKeys = getFullKeys(key);
+			Set<Key> fullKeys = getFullKeys(key);
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 				if (peopleContainer != null && peopleContainer.contains(personId)) {
@@ -811,7 +729,7 @@ public final class PopulationPartition {
 		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
-			List<Key> fullKeys = getFullKeys(key);
+			Set<Key> fullKeys = getFullKeys(key);
 			List<PersonId> result = new ArrayList<>();
 			for (Key fullKey : fullKeys) {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
@@ -895,72 +813,124 @@ public final class PopulationPartition {
 		return low;
 	}
 
-	public StochasticPersonSelection samplePartition(LabelSetWeightingFunction labelSetWeightingFunction,
-			RandomGenerator randomGenerator,final PersonId excludedPersonId) {
 
-		aquireWeightsLock();
-		try {
-			allocateWeights(keyToPeopleMap.size());
-			/*
-			 * Initialize the sum of the weights to zero and set the index in the weights
-			 * and weightedKeys to zero.
-			 */
-			Key keyForExcludedPersonId = null;
-			if (contains(excludedPersonId)) {
-				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());				
-			}
-			
-			double sum = 0;
-			int weightsLength = 0;
-			for (Key key : keyToPeopleMap.keySet()) {
-				LabelSetInfo labelSetInfo = labelSetInfoMap.get(key);
-				PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-				double weight = labelSetWeightingFunction.getWeight(observableEnvironment, labelSetInfo);
-				if(key != keyForExcludedPersonId) {
-					weight *= peopleContainer.size();	
-				}else {
-					weight *= (peopleContainer.size()-1);
-				}
-				
-				if (!Double.isFinite(weight) || (weight < 0)) {
-					return new StochasticPersonSelection(null, true);
-				}
-				/*
-				 * Keys having a zero weight are rejected for selection
-				 */
-				if (weight > 0) {
-					sum += weight;
-					weights[weightsLength] = sum;
-					weightedKeys[weightsLength] = key;
-					weightsLength++;
-				}
 
-			}
+	/**
+	 * Returns a randomly chosen person identifier from the partition, excluding the
+	 * person identifier given. When the excludedPersonId is null it indicates that
+	 * no person is being excluded. 
+	 */
+	public StochasticPersonSelection samplePartition(
+			final LabelSetInfo labelSetInfo,
+			final LabelSetWeightingFunction labelSetWeightingFunction,
+			final RandomGenerator randomGenerator,
+			final PersonId excludedPersonId
+			) {
 
-			/*
-			 * If at least one key was accepted for selection, then we attempt a random
-			 * selection.
-			 */
-			if (weightsLength > 0) {
-				/*
-				 * Although the individual weights may have been finite, if the sum of those
-				 * weights is not finite no legitimate selection can be made
-				 */
-				if (!Double.isFinite(sum)) {
-					return new StochasticPersonSelection(null, true);
-				}
+		
+		Key selectedKey = null;
+		Key keyForExcludedPersonId = null;
+		Set<Key> fullKeys;
 
-				final double targetValue = randomGenerator.nextDouble() * sum;
-				final int targetIndex = findTargetIndex(targetValue, weightsLength);
-				Key selectedKey = weightedKeys[targetIndex];
-				PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator,excludedPersonId);
-				return new StochasticPersonSelection(selectedPerson, false);
-			} else {
-				return new StochasticPersonSelection(null, false);
-			}
-		} finally {
-			releaseWeightsLock();
+		if (labelSetInfo != null) {
+			Key key = getKey(labelSetInfo);
+			fullKeys = getFullKeys(key);
+		} else {
+			fullKeys = keyToPeopleMap.keySet();
 		}
+		if (labelSetWeightingFunction == null) {
+			int candidateCount = 0;
+			for (Key fullKey : fullKeys) {
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				candidateCount += peopleContainer.size();
+			}
+			if (contains(excludedPersonId)) {
+				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
+				candidateCount--;
+			}
+			if (candidateCount > 0) {
+				int selectedIndex = randomGenerator.nextInt(candidateCount);
+				for (Key fullKey : fullKeys) {
+					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+					int containerSize = peopleContainer.size();
+					if (fullKey == keyForExcludedPersonId) {
+						containerSize--;
+					}
+					if (containerSize > selectedIndex) {
+						selectedKey = fullKey;
+						break;
+					}
+					selectedIndex -= containerSize;
+				}
+			}
+		}else {			
+			aquireWeightsLock();
+			try {
+				allocateWeights(fullKeys.size());
+				/*
+				 * Initialize the sum of the weights to zero and set the index in the weights
+				 * and weightedKeys to zero.
+				 */
+				
+				if (contains(excludedPersonId)) {
+					keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
+				}
+
+				double sum = 0;
+				int weightsLength = 0;
+				for (Key key : fullKeys) {
+					LabelSetInfo lsInfo = labelSetInfoMap.get(key);
+					PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+					double weight = labelSetWeightingFunction.getWeight(observableEnvironment, lsInfo);
+					if (key != keyForExcludedPersonId) {
+						weight *= peopleContainer.size();
+					} else {
+						weight *= (peopleContainer.size() - 1);
+					}
+
+					if (!Double.isFinite(weight) || (weight < 0)) {
+						return new StochasticPersonSelection(null, true);
+					}
+					/*
+					 * Keys having a zero weight are rejected for selection
+					 */
+					if (weight > 0) {
+						sum += weight;
+						weights[weightsLength] = sum;
+						weightedKeys[weightsLength] = key;
+						weightsLength++;
+					}
+
+				}
+
+				/*
+				 * If at least one key was accepted for selection, then we attempt a random
+				 * selection.
+				 */
+				if (weightsLength > 0) {
+					/*
+					 * Although the individual weights may have been finite, if the sum of those
+					 * weights is not finite no legitimate selection can be made
+					 */
+					if (!Double.isFinite(sum)) {
+						return new StochasticPersonSelection(null, true);
+					}
+
+					final double targetValue = randomGenerator.nextDouble() * sum;
+					final int targetIndex = findTargetIndex(targetValue, weightsLength);
+					selectedKey = weightedKeys[targetIndex];
+				} 
+			} finally {
+				releaseWeightsLock();
+			}			
+		}
+
+		if (selectedKey == null) {
+			return new StochasticPersonSelection(null, false);
+		}
+
+		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
+		return new StochasticPersonSelection(selectedPerson, false);
 	}
 
 }

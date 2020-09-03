@@ -10,7 +10,7 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
 @Source(status = TestStatus.REQUIRED, proxy = PartitionInfo.class)
-public abstract class Partition {
+public class Partition {
 
 	private Partition() {
 	}
@@ -161,7 +161,7 @@ public abstract class Partition {
 	 *                          <li>if other is null
 	 * 
 	 */
-	public Partition with(final Partition other) {
+	public final Partition with(final Partition other) {
 		if (other == null) {
 			throw new RuntimeException("null partition");
 		}

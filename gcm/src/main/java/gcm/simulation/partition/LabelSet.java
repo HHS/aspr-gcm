@@ -7,7 +7,7 @@ import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
 @Source(status = TestStatus.REQUIRED, proxy = LabelSetInfo.class)
-public abstract class LabelSet {
+public class LabelSet {
 
 	@Override
 	@SourceMethod(status = TestStatus.UNREQUIRED)
@@ -160,7 +160,7 @@ public abstract class LabelSet {
 	 * <li> if other is null 
 	 * 
 	 */
-	public LabelSet with(final LabelSet other) {
+	public final LabelSet with(final LabelSet other) {
 		if(other == null) {
 			throw new RuntimeException("null label set");
 		}

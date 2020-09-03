@@ -4289,13 +4289,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
-			validateLabelSet(key, labelSet);
-			final PersonId personId = populationPartitionManager.samplePartition(key,
+			validateLabelSet(key, labelSet);			
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager.samplePartition(key,
 					labelSet,null);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4310,12 +4308,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = populationPartitionManager.samplePartition(key,
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager.samplePartition(key,
 					labelSet, randomNumberGeneratorId,null);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4329,13 +4325,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePersonExists(excludedPersonId);
-			validateLabelSet(key, labelSet);			
-			final PersonId personId = populationPartitionManager.samplePartition(key,
+			validateLabelSet(key, labelSet);		
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager.samplePartition(key,
 					labelSet,excludedPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4352,12 +4346,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateLabelSet(key, labelSet);
 			validatePersonExists(excludedPersonId);
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = populationPartitionManager.samplePartition(
+			
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager.samplePartition(
 					key, labelSet, randomNumberGeneratorId,excludedPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}

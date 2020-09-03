@@ -33,8 +33,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -494,7 +494,7 @@ public class AT_EnvironmentImpl_25 {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-		RandomNumberGeneratorId randomNumberGeneratorId = RandomGeneratorId.COMET;
+		RandomNumberGeneratorId randomNumberGeneratorId = TestRandomGeneratorId.COMET;
 		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		Scenario scenario = scenarioBuilder.build();
 
@@ -576,7 +576,7 @@ public class AT_EnvironmentImpl_25 {
 			LabelSet labelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_1, 1));
 			LabelSet incompatiblelabelSet = compartment(0).with(property(TestPersonPropertyId.PERSON_PROPERTY_2, 1));
 
-			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.CUPID;
+			RandomNumberGeneratorId badRandomNumberGeneratorId = TestRandomGeneratorId.CUPID;
 
 			// if the key is null
 			Object nullKey = null;
@@ -1355,7 +1355,7 @@ public class AT_EnvironmentImpl_25 {
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
-		RandomNumberGeneratorId randomNumberGeneratorId = RandomGeneratorId.BLITZEN;
+		RandomNumberGeneratorId randomNumberGeneratorId = TestRandomGeneratorId.BLITZEN;
 		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
 		Scenario scenario = scenarioBuilder.build();
@@ -1450,7 +1450,7 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in a partition containing only the
 			// excluded person cannot return a randomly selected person
 			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			optional = environment.samplePartition(key2, labelSet, RandomGeneratorId.BLITZEN, personId);
+			optional = environment.samplePartition(key2, labelSet, TestRandomGeneratorId.BLITZEN, personId);
 			assertFalse(optional.isPresent());
 		});
 
@@ -1470,7 +1470,7 @@ public class AT_EnvironmentImpl_25 {
 			PersonId goodPersonId = new PersonId(0);
 			PersonId badPersonId = new PersonId(1000000);
 
-			RandomNumberGeneratorId badRandomNumberGeneratorId = RandomGeneratorId.DANCER;
+			RandomNumberGeneratorId badRandomNumberGeneratorId = TestRandomGeneratorId.DANCER;
 
 			// if the key is null
 			assertModelException(
@@ -1478,7 +1478,7 @@ public class AT_EnvironmentImpl_25 {
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 			// if the key does not correspond to an existing partition
 			assertModelException(
-					() -> environment.samplePartition("bad key", labelSet, RandomGeneratorId.BLITZEN, goodPersonId),
+					() -> environment.samplePartition("bad key", labelSet, TestRandomGeneratorId.BLITZEN, goodPersonId),
 					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 
 			// if the personId is null

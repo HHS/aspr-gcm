@@ -23,13 +23,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestRegionId;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -176,7 +176,7 @@ public class AT_EnvironmentImpl_26 {
 		addStandardPeople(scenarioBuilder, 10);
 		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
 
-		RandomNumberGeneratorId randomNumberGeneratorId = RandomGeneratorId.BLITZEN;
+		RandomNumberGeneratorId randomNumberGeneratorId = TestRandomGeneratorId.BLITZEN;
 
 		scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
 
@@ -257,7 +257,7 @@ public class AT_EnvironmentImpl_26 {
 
 		// test preconditions
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			RandomNumberGeneratorId unknownRandomNumberGeneratorId = RandomGeneratorId.COMET;
+			RandomNumberGeneratorId unknownRandomNumberGeneratorId = TestRandomGeneratorId.COMET;
 
 			Object key = "key3";
 			Object badKey = "badKey";
@@ -285,7 +285,7 @@ public class AT_EnvironmentImpl_26 {
 
 			// if the randomNumberGeneratorId is null
 
-			RandomGeneratorId nullRandomGeneratorId = null;
+			TestRandomGeneratorId nullRandomGeneratorId = null;
 			assertModelException(
 					() -> environment.samplePartition(key,AT_EnvironmentImpl_26::getWeight, nullRandomGeneratorId),
 					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);

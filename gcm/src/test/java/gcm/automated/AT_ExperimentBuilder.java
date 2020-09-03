@@ -17,6 +17,7 @@ import org.junit.AfterClass;
 import org.junit.Test;
 
 import gcm.automated.AT_Simulation_SetScenario.EmptyComponent;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
@@ -35,7 +36,6 @@ import gcm.automated.support.experimentspace.ExperimentTestSpace.ExperimentTestS
 import gcm.automated.support.experimentspace.ExperimentTestVariable.ExperimentTestVariableBuilder;
 import gcm.components.AbstractComponent;
 import gcm.experiment.Experiment;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -4694,21 +4694,21 @@ public class AT_ExperimentBuilder {
 
 		// precondition: if the randomNumberGeneratorId was previously added
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
-		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
+		experimentBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
+		experimentBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
 		assertScenarioException(() -> experimentBuilder.build(), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
 
 		// postcondition: all the scenarios contain the expected
 		// randomNumberGenerator Ids
 		fillWithVariantGlobalProperties(experimentBuilder);
-		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
-		experimentBuilder.addRandomNumberGeneratorId(RandomGeneratorId.CUPID);
+		experimentBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
+		experimentBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.CUPID);
 		List<Scenario> scenarios = getScenarios(experimentBuilder.build());
 		assertTrue(scenarios.size() > 0);
 		for (Scenario scenario : scenarios) {
 			assertEquals(2, scenario.getRandomNumberGeneratorIds().size());
-			assertTrue(scenario.getRandomNumberGeneratorIds().contains(RandomGeneratorId.BLITZEN));
-			assertTrue(scenario.getRandomNumberGeneratorIds().contains(RandomGeneratorId.CUPID));
+			assertTrue(scenario.getRandomNumberGeneratorIds().contains(TestRandomGeneratorId.BLITZEN));
+			assertTrue(scenario.getRandomNumberGeneratorIds().contains(TestRandomGeneratorId.CUPID));
 		}
 	}
 

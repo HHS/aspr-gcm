@@ -36,6 +36,7 @@ import org.junit.Test;
 import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.ObservationContainer;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlan;
@@ -48,7 +49,6 @@ import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.GlobalComponentId;
@@ -1017,9 +1017,9 @@ public class AT_EnvironmentImpl_23 {
 		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
 
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
-		randomNumberGeneratorIds.add(RandomGeneratorId.DANCER);
-		randomNumberGeneratorIds.add(RandomGeneratorId.COMET);
-		randomNumberGeneratorIds.add(RandomGeneratorId.VIXEN);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.DANCER);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.COMET);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.VIXEN);
 
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);
@@ -1066,9 +1066,9 @@ public class AT_EnvironmentImpl_23 {
 		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
 
 		Set<RandomNumberGeneratorId> randomNumberGeneratorIds = new LinkedHashSet<>();
-		randomNumberGeneratorIds.add(RandomGeneratorId.DANCER);
-		randomNumberGeneratorIds.add(RandomGeneratorId.COMET);
-		randomNumberGeneratorIds.add(RandomGeneratorId.VIXEN);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.DANCER);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.COMET);
+		randomNumberGeneratorIds.add(TestRandomGeneratorId.VIXEN);
 
 		for (RandomNumberGeneratorId randomNumberGeneratorId : randomNumberGeneratorIds) {
 			scenarioBuilder.addRandomNumberGeneratorId(randomNumberGeneratorId);

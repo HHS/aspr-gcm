@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.experiment.Experiment;
 import gcm.experiment.ExperimentExecutor;
 import gcm.manual.demo.components.DeadCompartment;
@@ -35,7 +36,6 @@ import gcm.manual.demo.identifiers.GroupType;
 import gcm.manual.demo.identifiers.Material;
 import gcm.manual.demo.identifiers.MaterialsProducers;
 import gcm.manual.demo.identifiers.PersonProperty;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.manual.demo.identifiers.RegionProperty;
 import gcm.manual.demo.identifiers.Resource;
 import gcm.manual.demo.identifiers.TractId;
@@ -93,8 +93,8 @@ public class DemoRunner {
 		experimentBuilder.addMaterialsProducerId(MaterialsProducers.PRODUCER_BETA, ProducerBeta.class);
 		experimentBuilder.addMaterialsProducerId(MaterialsProducers.PRODUCER_GAMMA, ProducerGamma.class);
 
-		for (RandomGeneratorId randomGeneratorId : RandomGeneratorId.values()) {
-			experimentBuilder.addRandomNumberGeneratorId(randomGeneratorId);
+		for (TestRandomGeneratorId testRandomGeneratorId : TestRandomGeneratorId.values()) {
+			experimentBuilder.addRandomNumberGeneratorId(testRandomGeneratorId);
 		}
 
 		for (Resource resource : Resource.values()) {

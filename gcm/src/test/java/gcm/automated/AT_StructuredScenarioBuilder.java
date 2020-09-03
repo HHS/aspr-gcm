@@ -11,6 +11,7 @@ import java.util.Set;
 import org.junit.Test;
 
 import gcm.automated.AT_Simulation_SetScenario.EmptyComponent;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGlobalPropertyId;
@@ -23,7 +24,6 @@ import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
 import gcm.components.AbstractComponent;
-import gcm.manual.demo.identifiers.RandomGeneratorId;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -1505,15 +1505,15 @@ public class AT_StructuredScenarioBuilder {
 		assertScenarioException(() -> scenarioBuilder.addRandomNumberGeneratorId(null), ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
 
 		// precondition : if the generator id was previously added
-		scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN);
-		assertScenarioException(() -> scenarioBuilder.addRandomNumberGeneratorId(RandomGeneratorId.BLITZEN), ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER);
+		scenarioBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
+		assertScenarioException(() -> scenarioBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN), ScenarioErrorType.PREVIOUSLY_ADDED_IDENTIFIER);
 
 		ScenarioBuilder scenarioBuilder2 = new StructuredScenarioBuilder();
 		Set<RandomNumberGeneratorId> expected = new LinkedHashSet<>();
-		expected.add(RandomGeneratorId.COMET);
-		expected.add(RandomGeneratorId.CUPID);
-		expected.add(RandomGeneratorId.DONNER);
-		expected.add(RandomGeneratorId.BLITZEN);
+		expected.add(TestRandomGeneratorId.COMET);
+		expected.add(TestRandomGeneratorId.CUPID);
+		expected.add(TestRandomGeneratorId.DONNER);
+		expected.add(TestRandomGeneratorId.BLITZEN);
 
 		for (RandomNumberGeneratorId randomNumberGeneratorId : expected) {
 			scenarioBuilder2.addRandomNumberGeneratorId(randomNumberGeneratorId);

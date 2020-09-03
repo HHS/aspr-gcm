@@ -32,8 +32,10 @@ public class Junk {
 						.with(PartitionSampler.labelSet(LabelSet.compartment("asdf")))//
 						.with(PartitionSampler.randomGenerator(TestRandomGeneratorId.CUPID));//
 
-		PartitionSampler2 partitionSampler2 = PartitionSampler2.create().excludedPerson(new PersonId(34534))
-				.labelSet(LabelSet.compartment("asdf")).randomGenerator(TestRandomGeneratorId.CUPID);
+		PartitionSampler2 partitionSampler2 = PartitionSampler2.create()//
+				.excludedPerson(new PersonId(34534))//
+				.labelSet(LabelSet.compartment("asdf"))//
+				.randomGenerator(TestRandomGeneratorId.CUPID);//
 
 		Partition partition = Partition.compartment(Junk::getCompartmentLabel)//
 				.with(Partition.region(Junk::getRegionLabel))//

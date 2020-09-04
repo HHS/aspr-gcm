@@ -51,6 +51,8 @@ import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionInfo;
+import gcm.simulation.partition.PartitionSampler;
+import gcm.simulation.partition.PartitionSamplerInfo;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -1116,106 +1118,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 	
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 */
-	@Override
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction){
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validateLabelSetWeightingFunction(labelSetWeightingFunction);
-			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.samplePartition(key,labelSetWeightingFunction,null);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 */
-	@Override
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId){
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validateLabelSetWeightingFunction(labelSetWeightingFunction);
-			validatePersonExists(excludedPersonId);
-			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.samplePartition(key,labelSetWeightingFunction,excludedPersonId);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
 
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 * Uses the random generator associated with the RandomNumberGeneratorId.
-	 */
-	@Override
-	public Optional<PersonId> samplePartition(
-			Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,
-			RandomNumberGeneratorId randomNumberGeneratorId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validateLabelSetWeightingFunction(labelSetWeightingFunction);
-			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,null);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 * Uses the random generator associated with the RandomNumberGeneratorId.
-	 */
-	@Override
-	public Optional<PersonId> samplePartition(
-			Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,
-			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validateLabelSetWeightingFunction(labelSetWeightingFunction);
-			validatePersonExists(excludedPersonId);
-			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
-					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,excludedPersonId);
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
-	public Optional<PersonId> sampleGroup(final GroupId groupId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validateGroupExists(groupId);
-			PersonId nullPersonId = null;
-			final PersonId personId = personGroupManger.sampleGroup(groupId, nullPersonId);			
-			return Optional.ofNullable(personId);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
 
 	@Override
 	public Optional<PersonId> sampleGroup(final GroupId groupId,
@@ -4283,6 +4186,61 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
+	public Optional<PersonId> sampleGroup(final GroupId groupId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validateGroupExists(groupId);
+			PersonId nullPersonId = null;
+			final PersonId personId = personGroupManger.sampleGroup(groupId, nullPersonId);			
+			return Optional.ofNullable(personId);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+///////////////////////
+	private void validatePartitionSampler(Object key, PartitionSampler partitionSampler) {
+		if (partitionSampler == null) {
+			throwModelException(SimulationErrorType.NULL_PARTITION_SAMPLER, key);
+		}
+		if (!populationPartitionManager.populationPartitionExists(key)) {
+			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+		}
+		
+		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
+		if(partitionSamplerInfo.getLabelSet().isPresent()) {
+			LabelSet labelSet = partitionSamplerInfo.getLabelSet().get();
+			validateLabelSet(key, labelSet);			
+		}
+		
+		if(partitionSamplerInfo.getExcludedPerson().isPresent()) {
+			PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().get();
+			validatePersonExists(excludedPersonId);
+		}
+		
+		if(partitionSamplerInfo.getRandomNumberGeneratorId().isPresent()) {
+			RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId().get();
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+		}
+		
+	}
+	
+	@Override
+	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePartitionSampler(key,partitionSampler);						
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager.samplePartition(key,
+					partitionSampler);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+	
+	@Override
 	public Optional<PersonId> samplePartition(Object key,
 			LabelSet labelSet) {
 		externalAccessManager.acquireReadAccess();
@@ -4355,4 +4313,92 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction){
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,null);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId){
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validatePersonExists(excludedPersonId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,excludedPersonId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());			
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 * Uses the random generator associated with the RandomNumberGeneratorId.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(
+			Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomNumberGeneratorId randomNumberGeneratorId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,null);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+	/**
+	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
+	 * Uses the random generator associated with the RandomNumberGeneratorId.
+	 */
+	@Override
+	public Optional<PersonId> samplePartition(
+			Object key,
+			LabelSetWeightingFunction labelSetWeightingFunction,
+			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validateLabelSetWeightingFunction(labelSetWeightingFunction);
+			validatePersonExists(excludedPersonId);
+			validateRandomNumberGeneratorId(randomNumberGeneratorId);
+			final StochasticPersonSelection stochasticPersonSelection = populationPartitionManager
+					.samplePartition(key,labelSetWeightingFunction,randomNumberGeneratorId,excludedPersonId);
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
+	
 }

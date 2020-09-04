@@ -4,6 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.random.RandomGenerator;
+
 import gcm.scenario.ComponentId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
@@ -175,4 +177,28 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
 		return populationPartitions.get(key).samplePartition(null,labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
 	}
+
+	@Override
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
+		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
+		
+		RandomGenerator randomGenerator;
+		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId().orElse(null);
+		if(randomNumberGeneratorId == null) {
+			randomGenerator = stochasticsManager.getRandomGenerator();
+		}else {
+			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+		}
+		
+		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
+		
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+		
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction().orElse(null);
+		
+		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
+		
+		return populationPartitions.get(key).samplePartition(labelSetInfo, labelSetWeightingFunction, randomGenerator, excludedPersonId);
+		
+		}
 }

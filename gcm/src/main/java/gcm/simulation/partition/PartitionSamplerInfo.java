@@ -2,6 +2,7 @@ package gcm.simulation.partition;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import gcm.scenario.PersonId;
 import gcm.scenario.RandomNumberGeneratorId;
@@ -28,24 +29,23 @@ public final class PartitionSamplerInfo {
 		private LabelSetWeightingFunction labelSetWeightingFunction;
 	}
 	
-	public PersonId getExcludedPerson() {
-		return scaffold.excludedPerson;
+	public Optional<PersonId> getExcludedPerson() {
+		return Optional.ofNullable(scaffold.excludedPerson);
 	}
 
-	public RandomNumberGeneratorId getRandomNumberGeneratorId() {
-		return scaffold.randomNumberGeneratorId;
+	public Optional<RandomNumberGeneratorId> getRandomNumberGeneratorId() {
+		return Optional.ofNullable(scaffold.randomNumberGeneratorId);
 	}
 
-	public LabelSet getLabelSet() {
-		return scaffold.labelSet;
+	public Optional<LabelSet> getLabelSet() {
+		return Optional.ofNullable(scaffold.labelSet);
 	}
 
-	public LabelSetWeightingFunction getLabelSetWeightingFunction() {
-		return scaffold.labelSetWeightingFunction;
+	public Optional<LabelSetWeightingFunction> getLabelSetWeightingFunction() {
+		return Optional.ofNullable(scaffold.labelSetWeightingFunction);
 	}
 
-	private PartitionSamplerInfo(PartitionSampler partitionSampler) {
-		
+	private PartitionSamplerInfo(PartitionSampler partitionSampler) {		
 		processPartitionSampler(partitionSampler);
 	}
 	

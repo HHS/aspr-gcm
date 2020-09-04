@@ -56,6 +56,13 @@ public interface PopulationPartitionManager extends Element {
 	 */
 	public int getPartitionSize(final Object key, LabelSet labelSet);
 
+	
+	/**
+	 * Returns a randomly selected person from the given index using the given PartitionSampler.
+	 *
+	 */
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler);
+	
 	/**
 	 * Returns a randomly selected person from the given index excluding the given
 	 * person identifier. A null value for the excluded person is allowed. Returns

@@ -9,27 +9,23 @@ import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static org.junit.Assert.assertTrue;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.apache.commons.math3.util.FastMath;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
-import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestRegionId;
+import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -42,10 +38,10 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;
-import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
-import gcm.util.MultiKey;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -155,12 +151,10 @@ public class AT_EnvironmentImpl_26 {
 	};
 
 	/**
-	 * Tests
-	 * {@link EnvironmentImpl#samplePartition(Object, LabelSetWeightingFunction, RandomNumberGeneratorId)}
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, PartitionSampler)}
 	 */
 	@Test
-	@UnitTestMethod(name = "samplePartition", args = { Object.class,
-			LabelSetWeightingFunction.class, RandomNumberGeneratorId.class })
+	@UnitTestMethod(name = "requires further implementation", args = { Object.class, PartitionSampler.class })
 	public void testSamplePartition() {
 
 		/*
@@ -188,119 +182,109 @@ public class AT_EnvironmentImpl_26 {
 
 		int testTime = 0;
 
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key = "key1";
-			Partition partition = Partition.create()
-					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
-			environment.addPopulationPartition(partition, key);
-
-			// use a uniform distribution with 10000 repetitions
-
-			final Map<MultiKey, Counter> actualSelections = new LinkedHashMap<>();
-			actualSelections.put(new MultiKey(0, 0), new Counter(0));
-			actualSelections.put(new MultiKey(0, 1), new Counter(0));
-			actualSelections.put(new MultiKey(0, 2), new Counter(0));
-			actualSelections.put(new MultiKey(1, 0), new Counter(0));
-			actualSelections.put(new MultiKey(1, 1), new Counter(0));
-			actualSelections.put(new MultiKey(1, 2), new Counter(0));
-
-			final Map<MultiKey, Counter> expectedSelections = new LinkedHashMap<>();
-
-			int sampleCount = 10000;
-
-			expectedSelections.put(new MultiKey(0, 0), new Counter(sampleCount / 10));
-			expectedSelections.put(new MultiKey(0, 1), new Counter(3 * sampleCount / 10));
-			expectedSelections.put(new MultiKey(0, 2), new Counter(6 * sampleCount / 10));
-			expectedSelections.put(new MultiKey(1, 0), new Counter(0));
-			expectedSelections.put(new MultiKey(1, 1), new Counter(0));
-			expectedSelections.put(new MultiKey(1, 2), new Counter(0));
-
-			for (int i = 0; i < 10000; i++) {
-
-				Optional<PersonId> opt = environment.samplePartition(key,
-						AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId);
-
-				assertTrue(opt.isPresent());
-				PersonId personId = opt.get();
-				CompartmentId compartmentId = environment.getPersonCompartment(personId);
-				Object compartmentLabel = compartmentPartitionFunction.apply(compartmentId);
-				RegionId regionId = environment.getPersonRegion(personId);
-				Object regionLabel = regionPartitionFunction.apply(regionId);
-				MultiKey multiKey = new MultiKey(compartmentLabel, regionLabel);
-				Counter counter = actualSelections.get(multiKey);
-				counter.count++;
-			}
-
-			for (MultiKey multiKey : expectedSelections.keySet()) {
-				Counter expectedCounter = expectedSelections.get(multiKey);
-				Counter actualCounter = actualSelections.get(multiKey);
-				int tolerance = expectedCounter.count / 10;
-				assertTrue(FastMath.abs(expectedCounter.count - actualCounter.count) <= tolerance);
-			}
-
-		});
+//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+//
+//			Object key = "key1";
+//			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+//					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
+//			environment.addPopulationPartition(partition, key);
+//
+//			// use a uniform distribution with 10000 repetitions
+//
+//			final Map<MultiKey, Counter> actualSelections = new LinkedHashMap<>();
+//			actualSelections.put(new MultiKey(0, 0), new Counter(0));
+//			actualSelections.put(new MultiKey(0, 1), new Counter(0));
+//			actualSelections.put(new MultiKey(0, 2), new Counter(0));
+//			actualSelections.put(new MultiKey(1, 0), new Counter(0));
+//			actualSelections.put(new MultiKey(1, 1), new Counter(0));
+//			actualSelections.put(new MultiKey(1, 2), new Counter(0));
+//
+//			final Map<MultiKey, Counter> expectedSelections = new LinkedHashMap<>();
+//
+//			int sampleCount = 10000;
+//
+//			expectedSelections.put(new MultiKey(0, 0), new Counter(sampleCount / 10));
+//			expectedSelections.put(new MultiKey(0, 1), new Counter(3 * sampleCount / 10));
+//			expectedSelections.put(new MultiKey(0, 2), new Counter(6 * sampleCount / 10));
+//			expectedSelections.put(new MultiKey(1, 0), new Counter(0));
+//			expectedSelections.put(new MultiKey(1, 1), new Counter(0));
+//			expectedSelections.put(new MultiKey(1, 2), new Counter(0));
+//
+//			for (int i = 0; i < 10000; i++) {
+//
+//				Optional<PersonId> opt = environment.samplePartition(key, AT_EnvironmentImpl_26::getWeight,
+//						randomNumberGeneratorId);
+//
+//				assertTrue(opt.isPresent());
+//				PersonId personId = opt.get();
+//				CompartmentId compartmentId = environment.getPersonCompartment(personId);
+//				Object compartmentLabel = compartmentPartitionFunction.apply(compartmentId);
+//				RegionId regionId = environment.getPersonRegion(personId);
+//				Object regionLabel = regionPartitionFunction.apply(regionId);
+//				MultiKey multiKey = new MultiKey(compartmentLabel, regionLabel);
+//				Counter counter = actualSelections.get(multiKey);
+//				counter.count++;
+//			}
+//
+//			for (MultiKey multiKey : expectedSelections.keySet()) {
+//				Counter expectedCounter = expectedSelections.get(multiKey);
+//				Counter actualCounter = actualSelections.get(multiKey);
+//				int tolerance = expectedCounter.count / 10;
+//				assertTrue(FastMath.abs(expectedCounter.count - actualCounter.count) <= tolerance);
+//			}
+//
+//		});
 
 		// show that a weighting function that returns all zeros will result in
 		// an optional where no value is present
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key = "key2";
-			Partition partition = Partition.create()
-					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
-			environment.addPopulationPartition(partition, key);
-
-			Optional<PersonId> opt = environment.samplePartition(key,
-					AT_EnvironmentImpl_26::getZeroWeight, randomNumberGeneratorId);
-			assertTrue(!opt.isPresent());
-		});
+//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+//
+//			Object key = "key2";
+//			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+//					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
+//			environment.addPopulationPartition(partition, key);
+//
+//			Optional<PersonId> opt = environment.samplePartition(key, AT_EnvironmentImpl_26::getZeroWeight,
+//					randomNumberGeneratorId);
+//			assertTrue(!opt.isPresent());
+//		});
 
 		// test preconditions
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			RandomNumberGeneratorId unknownRandomNumberGeneratorId = TestRandomGeneratorId.COMET;
+			
 
 			Object key = "key3";
 			Object badKey = "badKey";
-			Partition partition = Partition.create()
-					.compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
+			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
 					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
-
 			environment.addPopulationPartition(partition, key);
 
 			// if the key is null
-			assertModelException(
-					() -> environment.samplePartition(null,
-							AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId),
-					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			assertModelException(() -> environment.samplePartition(null, PartitionSampler.create()),SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 
 			// if the key does not correspond to an existing population partition
-			assertModelException(
-					() -> environment.samplePartition(badKey,
-							AT_EnvironmentImpl_26::getWeight, randomNumberGeneratorId),
-					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+			assertModelException(() -> environment.samplePartition(badKey, PartitionSampler.create()),SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 
-			// if the weighting function is null
-			LabelSetWeightingFunction nullLabelSetWeightingFunction = null;
-			assertModelException(() -> environment.samplePartition(key, nullLabelSetWeightingFunction,
-					randomNumberGeneratorId), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
-
-			// if the randomNumberGeneratorId is null
-
-			TestRandomGeneratorId nullRandomGeneratorId = null;
-			assertModelException(
-					() -> environment.samplePartition(key,AT_EnvironmentImpl_26::getWeight, nullRandomGeneratorId),
-					SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
-
-			// if the randomNumberGeneratorId does not correspond to an existing random
-			// Number Generator Id in the scenario
-			assertModelException(
-					() -> environment.samplePartition(key,
-							AT_EnvironmentImpl_26::getWeight, unknownRandomNumberGeneratorId),
-					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+			// if the partition sampler is null
+			assertModelException(() -> environment.samplePartition(key, (PartitionSampler)null),SimulationErrorType.NULL_PARTITION_SAMPLER);
+			                        
+			// if the partition sampler's label set is incompatible with the population partition                                                
+			assertModelException(					
+					() -> {						
+						LabelSet labelSet = LabelSet.create().compartment("asdf").resource(TestResourceId.RESOURCE1, "asdf");						
+						PartitionSampler partitionSampler = PartitionSampler.create().labelSet(labelSet);
+						environment.samplePartition(key, partitionSampler);
+						}					
+					,SimulationErrorType.INCOMPATIBLE_LABEL_SET);
+			
+			//if the randomNumberGeneratorId does not correspond to an existing random Number Generator Id in the scenario
+			assertModelException(() -> environment.samplePartition(key, PartitionSampler.create().generator(TestRandomGeneratorId.PRANCER)),SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
+			
+			// if the excluded person is unknown			
+			assertModelException(() -> environment.samplePartition(key, PartitionSampler.create().excludePerson(new PersonId(1000000))),SimulationErrorType.UNKNOWN_PERSON_ID);
 
 		});
+
 		Simulation simulation = new Simulation();
 		simulation.setReplication(replication);
 		simulation.setScenario(scenario);

@@ -109,6 +109,7 @@ public enum SimulationErrorType {
 	NULL_POPULATION_PARTITION_KEY("Null population partition key"),
 	UNKNOWN_POPULATION_PARTITION_KEY("No population partition found"),
 	NULL_LABEL_SET("Null label set"),
+	NULL_PARTITION_SAMPLER("Null partition sampler"),
 	NULL_POPULATION_PARTITION_DEFINITION("Null population definition"),
 	DUPLICATE_POPULATION_PARTITION("Duplicate population partition key"),
 	POPULATION_PARTITION_DELETION_BY_NON_OWNER("A population partition can only be deleted by its owner"),	

@@ -38,6 +38,7 @@ import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -3902,6 +3903,30 @@ public interface Environment extends Element {
 	 */
 	public boolean personIsInPopulationPartition(final PersonId personId, final Object key, final LabelSet labelSet);
 
+	/**
+	 * Returns a randomly selected person identifier from a population partition.
+	 * Returns null if the population partition is empty.
+	 *
+	 * @throws ModelException
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population index
+	 *                        <li>{@link SimulationErrorType#NULL_PARTITION_SAMPLER} if the
+	 *                        partition sampler is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
+	 *                        if the partition sampler's label set is incompatible with the population
+	 *                        partition                                                
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
+	 *                        if the randomNumberGeneratorId does not correspond to
+	 *                        an existing random Number Generator Id in the scenario 
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
+	 *                        the excluded person is unknown
+	 *                        
+	 */
+	public Optional<PersonId> samplePartition(final Object key, PartitionSampler partitionSampler);
+	
 	/**
 	 * Returns a randomly selected person identifier from a population partition.
 	 * Returns null if the population partition is empty.

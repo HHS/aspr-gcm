@@ -1,8 +1,8 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -37,10 +37,18 @@ public class AT_PartitionSamplerInfo {
 		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create());
 
 		assertNotNull(partitionSamplerInfo);
-		assertNull(partitionSamplerInfo.getExcludedPerson());
-		assertNull(partitionSamplerInfo.getLabelSet());
-		assertNull(partitionSamplerInfo.getLabelSetWeightingFunction());
-		assertNull(partitionSamplerInfo.getRandomNumberGeneratorId());
+		
+		assertNotNull(partitionSamplerInfo.getExcludedPerson());
+		assertFalse(partitionSamplerInfo.getExcludedPerson().isPresent());
+		
+		assertNotNull(partitionSamplerInfo.getLabelSet());
+		assertFalse(partitionSamplerInfo.getLabelSet().isPresent());
+		
+		assertNotNull(partitionSamplerInfo.getLabelSetWeightingFunction());
+		assertFalse(partitionSamplerInfo.getLabelSetWeightingFunction().isPresent());
+		
+		assertNotNull(partitionSamplerInfo.getRandomNumberGeneratorId());
+		assertFalse(partitionSamplerInfo.getRandomNumberGeneratorId().isPresent());
 
 	}
 
@@ -53,8 +61,10 @@ public class AT_PartitionSamplerInfo {
 		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo
 				.build(PartitionSampler.create().excludePerson(new PersonId(67)));
 
+		assertNotNull(partitionSamplerInfo);
 		assertNotNull(partitionSamplerInfo.getExcludedPerson());
-		assertEquals(67, partitionSamplerInfo.getExcludedPerson().getValue());
+		assertTrue(partitionSamplerInfo.getExcludedPerson().isPresent());
+		assertEquals(67, partitionSamplerInfo.getExcludedPerson().get().getValue());
 
 	}
 
@@ -67,8 +77,10 @@ public class AT_PartitionSamplerInfo {
 		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
 				.generator(TestRandomGeneratorId.DASHER).generator(TestRandomGeneratorId.VIXEN));
 
+		assertNotNull(partitionSamplerInfo);
 		assertNotNull(partitionSamplerInfo.getRandomNumberGeneratorId());
-		assertEquals(TestRandomGeneratorId.VIXEN, partitionSamplerInfo.getRandomNumberGeneratorId());
+		assertTrue(partitionSamplerInfo.getRandomNumberGeneratorId().isPresent());
+		assertEquals(TestRandomGeneratorId.VIXEN, partitionSamplerInfo.getRandomNumberGeneratorId().get());
 	}
 
 	/**
@@ -80,8 +92,11 @@ public class AT_PartitionSamplerInfo {
 		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
 				.labelSet(LabelSet.create().compartment("compartmentLabel").region("regionLabel")));
 
-		LabelSet labelSet = partitionSamplerInfo.getLabelSet();
-		assertNotNull(labelSet);
+		assertNotNull(partitionSamplerInfo);
+		assertNotNull(partitionSamplerInfo.getLabelSet());
+		assertTrue(partitionSamplerInfo.getLabelSet().isPresent());
+		LabelSet labelSet = partitionSamplerInfo.getLabelSet().get();
+		
 
 		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
 		assertTrue(labelSetInfo.getCompartmentLabel().isPresent());
@@ -102,8 +117,12 @@ public class AT_PartitionSamplerInfo {
 		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
 				.labelWeight((ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo)-> expectedValue));
 
-		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction();
+		assertNotNull(partitionSamplerInfo);
+		assertNotNull(partitionSamplerInfo.getLabelSetWeightingFunction());
+		assertTrue(partitionSamplerInfo.getLabelSetWeightingFunction().isPresent());
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction().get();
 		assertNotNull(labelSetWeightingFunction);
+		
 		
 		assertEquals(expectedValue,labelSetWeightingFunction.getWeight(null, null),0);		
 	}

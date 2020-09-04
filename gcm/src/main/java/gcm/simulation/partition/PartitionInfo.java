@@ -119,6 +119,7 @@ public final class PartitionInfo {
 			return result;
 		}
 	}
+	
 	private void processPartition(Partition partition) {
 		PartitionType partitionType = PartitionType.getPartitionType(partition);
 		switch (partitionType) {

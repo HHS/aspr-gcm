@@ -4,6 +4,13 @@ import java.util.Optional;
 
 import net.jcip.annotations.Immutable;
 
+/**
+ * Example immutable data class with a fluent build pattern. It provides an easy
+ * to use fluent build pattern at the expense of n-square performance.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 
 @Immutable
 public class Concept {
@@ -12,7 +19,7 @@ public class Concept {
 
 	@Override
 	public String toString() {
-		return "Concept "+scaffold.toString();
+		return "Concept " + scaffold.toString();
 	}
 
 	@Override
@@ -47,8 +54,6 @@ public class Concept {
 
 	private static class Scaffold {
 
-		
-		
 		@Override
 		public String toString() {
 			return "[count=" + count + ", name=" + name + ", value=" + value + "]";
@@ -172,10 +177,9 @@ public class Concept {
 	public Concept withValue(Double value) {
 		return new Builder().setAll(this).setValue(value).build();
 	}
-	
+
 	public Concept withName(String name) {
 		return new Builder().setAll(this).setName(name).build();
 	}
-
 
 }

@@ -70,6 +70,7 @@ import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
 import gcm.automated.AT_PartitionInfo;
+import gcm.automated.AT_PartitionSamplerInfo;
 import gcm.automated.AT_LabelSetInfo;
 import gcm.automated.AT_PropertyDefinition;
 import gcm.automated.AT_Replication;
@@ -186,7 +187,8 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_GroupTypeCountMap.class,
 	AT_PartitionInfo.class,
 	AT_LabelSetInfo.class,
-	AT_Tuplator.class
+	AT_Tuplator.class,
+	AT_PartitionSamplerInfo.class
 	})
 
 public class SuiteTest {

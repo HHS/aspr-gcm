@@ -28,7 +28,7 @@ import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
- * Test class for {@link PartitionInfoO}
+ * Test class for {@link PartitionInfo}
  * 
  * @author Shawn Hatch
  *

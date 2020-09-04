@@ -2,7 +2,10 @@ package gcm.simulation.partition;
 
 import gcm.scenario.PersonId;
 import gcm.scenario.RandomNumberGeneratorId;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
+@Source(status = TestStatus.REQUIRED, proxy = PartitionSamplerInfo.class)
 public class PartitionSampler {
 
 	private PartitionSampler() {
@@ -13,7 +16,7 @@ public class PartitionSampler {
 	static class EmptyPartitionSampler extends PartitionSampler{
 	}
 	
-	public final PartitionSampler create() {
+	public final static PartitionSampler create() {
 		return new EmptyPartitionSampler();
 	}
 	

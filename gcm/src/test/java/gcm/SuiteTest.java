@@ -39,7 +39,6 @@ import gcm.automated.AT_EnvironmentImpl_22;
 import gcm.automated.AT_EnvironmentImpl_23;
 import gcm.automated.AT_EnvironmentImpl_24;
 import gcm.automated.AT_EnvironmentImpl_25;
-import gcm.automated.AT_EnvironmentImpl_26;
 import gcm.automated.AT_Equality;
 import gcm.automated.AT_ExperimentBuilder;
 import gcm.automated.AT_Filter;
@@ -53,6 +52,7 @@ import gcm.automated.AT_HashIntSet;
 import gcm.automated.AT_ImmutableStat;
 import gcm.automated.AT_IntId;
 import gcm.automated.AT_IntValueContainer;
+import gcm.automated.AT_LabelSetInfo;
 import gcm.automated.AT_LatLon;
 import gcm.automated.AT_LatLonAlt;
 import gcm.automated.AT_LatLonBox;
@@ -66,12 +66,11 @@ import gcm.automated.AT_MutableStat;
 import gcm.automated.AT_MutableVector2D;
 import gcm.automated.AT_MutableVector3D;
 import gcm.automated.AT_ObjectValueContainer;
+import gcm.automated.AT_PartitionInfo;
+import gcm.automated.AT_PartitionSamplerInfo;
 import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
-import gcm.automated.AT_PartitionInfo;
-import gcm.automated.AT_PartitionSamplerInfo;
-import gcm.automated.AT_LabelSetInfo;
 import gcm.automated.AT_PropertyDefinition;
 import gcm.automated.AT_Replication;
 import gcm.automated.AT_ReplicationImpl;
@@ -128,8 +127,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_EnvironmentImpl_22.class,
 	AT_EnvironmentImpl_23.class,
 	AT_EnvironmentImpl_24.class,
-	AT_EnvironmentImpl_25.class,
-	AT_EnvironmentImpl_26.class,
+	AT_EnvironmentImpl_25.class,	
 	AT_MultiKey.class,
 	AT_Filter.class,
 	AT_IntValueContainer.class,

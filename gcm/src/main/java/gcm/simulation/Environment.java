@@ -36,7 +36,6 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.Source;
@@ -1744,20 +1743,7 @@ public interface Environment extends Element {
 	 */
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId);
 
-	/**
-	 * Returns a randomly selected person identifier from an indexed population.
-	 * Returns null if the population index is empty. See the
-	 * createPopulationIndex() method for activating the index from the various
-	 * prepare*() methods.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 */
-	public Optional<PersonId> sampleIndex(final Object key);
+
 
 	/**
 	 * Returns a randomly selected person identifier from an indexed population.
@@ -3904,6 +3890,21 @@ public interface Environment extends Element {
 	public boolean personIsInPopulationPartition(final PersonId personId, final Object key, final LabelSet labelSet);
 
 	/**
+	 * Returns a randomly selected person identifier from an indexed population.
+	 * Returns null if the population index is empty. See the
+	 * createPopulationIndex() method for activating the index from the various
+	 * prepare*() methods.
+	 *
+	 * @throws ModelException
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
+	 *                        if the key is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population index
+	 */
+	public Optional<PersonId> sampleIndex(final Object key);
+
+	/**
 	 * Returns a randomly selected person identifier from a population partition.
 	 * Returns null if the population partition is empty.
 	 *
@@ -3943,8 +3944,7 @@ public interface Environment extends Element {
 	 *                        if the label set is incompatible with the population
 	 *                        partition
 	 */
-	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet);
-
+	//public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet);
 	/**
 	 * Returns a randomly selected person identifier from a population partition.
 	 * Returns empty optional if the population partition is empty.
@@ -3967,8 +3967,8 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,
-			RandomNumberGeneratorId randomNumberGeneratorId);
+//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,
+//			RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition
@@ -3994,8 +3994,7 @@ public interface Environment extends Element {
 	 *                        partition
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,final PersonId excludedPersonId);
-
+//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,final PersonId excludedPersonId);
 	/**
 	 * Returns a randomly selected person identifier from a population partition
 	 * excluding the given person identifier if that parameter is not null. Returns
@@ -4024,8 +4023,7 @@ public interface Environment extends Element {
 	 *                        if the randomNumberGeneratorId does not correspond to
 	 *                        an existing random Number Generator Id in the scenario
 	 */
-	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
-
+//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 	/**
 	 * Returns a random person from the partition using the given
 	 * {@link LabelSetWeightingFunction}
@@ -4042,9 +4040,8 @@ public interface Environment extends Element {
 	 *                        population partition
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction);
-	
+//	public Optional<PersonId> samplePartition(Object key,
+//			LabelSetWeightingFunction labelSetWeightingFunction);
 	/**
 	 * Returns a random person from the partition using the given
 	 * {@link LabelSetWeightingFunction}
@@ -4061,9 +4058,8 @@ public interface Environment extends Element {
 	 *                        population partition
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,final PersonId excludedPersonId);
-
+//	public Optional<PersonId> samplePartition(Object key,
+//			LabelSetWeightingFunction labelSetWeightingFunction,final PersonId excludedPersonId);
 	/**
 	 * Returns a random person from the partition using the given
 	 * {@link LabelSetWeightingFunction} and {@link RandomNumberGeneratorId}
@@ -4088,9 +4084,8 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
-
+//	public Optional<PersonId> samplePartition(Object key,
+//			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
 	/**
 	 * Returns a random person from the partition using the given
 	 * {@link LabelSetWeightingFunction} and {@link RandomNumberGeneratorId}
@@ -4119,7 +4114,7 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+//	public Optional<PersonId> samplePartition(Object key,
+//			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 }

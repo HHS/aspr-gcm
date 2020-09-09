@@ -24,6 +24,7 @@ import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
+import gcm.simulation.group.PersonGroupManger;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

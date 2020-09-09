@@ -15,10 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -32,7 +29,6 @@ import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
-import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestMaterialsProducerPropertyId;
@@ -41,7 +37,6 @@ import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
-import gcm.scenario.GroupId;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -54,7 +49,6 @@ import gcm.scenario.StageId;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Filter;
-import gcm.simulation.MonoWeightingFunction;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
@@ -77,15 +71,11 @@ public class AT_EnvironmentImpl_06 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_06.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
-	/*
-	 * Utility class for getting random people from population indices
-	 */
-	private static class Counter {
-		int count;
-	}
+	
 
 	/**
 	 * Tests {@link EnvironmentImpl#getIndexedPeople(Object)}
@@ -1070,117 +1060,6 @@ public class AT_EnvironmentImpl_06 {
 		assertAllPlansExecuted(taskPlanContainer);
 	}
 
-	/**
-	 * Tests
-	 * {@link EnvironmentImpl#sampleGroup(GroupId, MonoWeightingFunction)}
-	 */
-	@Test
-	@UnitTestMethod(name = "sampleGroup", args= {GroupId.class, MonoWeightingFunction.class})
-	public void testSampleGroup_GroupId_MonoWeightingFunction() {
-
-		/*
-		 * Assert that group contacts via MonoWeightingFunctions work properly
-		 */
-
-		final long seed = SEED_PROVIDER.getSeedValue(12);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 0;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			/*
-			 * Add a group
-			 */
-			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-
-			final int groupSize = 20;
-
-			/*
-			 * Add the first 20 people to the group
-			 */
-			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
-				PersonId personId = new PersonId(personIndex);
-				environment.addPersonToGroup(personId, groupId);
-			}
-
-			/*
-			 * Force the random selection of a person from the group to person 3
-			 */
-			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getPerson3MonoWeight);
-			assertTrue(opt.isPresent());
-			assertEquals(3, opt.get().getValue());
-
-			// use a uniform distribution with 10000 repetitions
-
-			final Map<Integer, Counter> hits = new LinkedHashMap<>();
-			for (int personId = 0; personId < groupSize; personId++) {
-				hits.put(personId, new Counter());
-			}
-			for (int i = 0; i < 10000; i++) {
-				opt = environment.sampleGroup(groupId, EnvironmentSupport::getConstantMonoWeight);
-				assertTrue(opt.isPresent());
-				hits.get(opt.get().getValue()).count++;
-			}
-			// show that each person was selected about 500 times
-			for (final Integer personId : hits.keySet()) {
-				final Counter counter = hits.get(personId);
-				assertTrue(counter.count > 400);
-				assertTrue(counter.count < 600);
-			}
-
-		});
-
-		// show that a weighting function that returns all zeros will result in
-		// an optional where no value is present
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			final GroupId groupId = environment.addGroup(TestGroupTypeId.GROUP_TYPE_1);
-
-			final int groupSize = 20;
-
-			/*
-			 * Add the first 20 people to the group
-			 */
-			for (int personIndex = 0; personIndex < groupSize; personIndex++) {
-				PersonId personId = new PersonId(personIndex);
-				environment.addPersonToGroup(personId, groupId);
-			}
-			Optional<PersonId> opt = environment.sampleGroup(groupId, EnvironmentSupport::getZeroMonoWeight);
-			assertTrue(!opt.isPresent());
-		});
-
-		// test preconditions
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			// if the group id is null
-			assertModelException(() -> environment.sampleGroup(null, EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.NULL_GROUP_ID);
-			// if the group id is unknown(group does not exist) *
-			assertModelException(() -> environment.sampleGroup(new GroupId(-1), EnvironmentSupport::getConstantMonoWeight), SimulationErrorType.UNKNOWN_GROUP_ID);
-			// if the monoWeightingFunction is null
-			 MonoWeightingFunction nullMonoWeightingFunction = null;
-			assertModelException(() -> environment.sampleGroup(new GroupId(0), nullMonoWeightingFunction), SimulationErrorType.NULL_WEIGHTING_FUNCTION);
-			// if the monoWeightingFunction is malformed. (all invocations
-			// evaluate to zero, some evaluate to negative numbers, etc.)
-			assertModelException(() -> environment.sampleGroup(new GroupId(0), EnvironmentSupport::getNegativeMonoWeight), SimulationErrorType.MALFORMED_WEIGHTING_FUNCTION);
-
-		});
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-	}
 
 	
 }

@@ -24,10 +24,9 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.TimeTrackingPolicy;
-import gcm.simulation.BiWeightingFunction;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.MonoWeightingFunction;
 import gcm.simulation.ObservableEnvironment;
+import gcm.simulation.group.GroupWeightingFunction;
 
 /**
  * A collection of static methods that support the automated Environment tests.
@@ -434,16 +433,10 @@ public class EnvironmentSupport {
 		}
 	}
 
-	/**
-	 * A {@link BiWeightingFunction} implementor that returns a constant weight
-	 * of 1.
-	 */
-	public static double getConstantBiWeight(final ObservableEnvironment observableEnvironment, final PersonId sourecePersonId, final PersonId targetPersonId, final GroupId groupId) {
-		return 1;
-	}
+	
 
 	/**
-	 * A {@link MonoWeightingFunction} implementor that returns a constant
+	 * A {@link GroupWeightingFunction} implementor that returns a constant
 	 * weight of 1.
 	 */
 	public static double getConstantMonoWeight(final ObservableEnvironment observableEnvironment, final PersonId personId, final GroupId groupId) {
@@ -451,50 +444,26 @@ public class EnvironmentSupport {
 	}
 
 	/**
-	 * A {@link MonoWeightingFunction} implementor that returns a constant
+	 * A {@link GroupWeightingFunction} implementor that returns a constant
 	 * weight of 0.
 	 */
 	public static double getZeroMonoWeight(final ObservableEnvironment observableEnvironment, final PersonId personId, final GroupId groupId) {
 		return 0;
 	}
 
-	/**
-	 * A {@link BiWeightingFunction} implementor that returns a constant weight
-	 * of -1.
-	 */
-	public static double getNegativeBiWeight(final ObservableEnvironment observableEnvironment, final PersonId sourecePersonId, final PersonId targetPersonId, final GroupId groupId) {
-		return -1;
-	}
 
 	/**
-	 * A {@link MonoWeightingFunction} implementor that returns a constant
+	 * A {@link GroupWeightingFunction} implementor that returns a constant
 	 * weight of -1.
 	 */
 	public static double getNegativeMonoWeight(final ObservableEnvironment observableEnvironment, final PersonId personId, final GroupId groupId) {
 		return -1;
 	}
 
-	/**
-	 * A {@link BiWeightingFunction} implementor that returns a weight of 1 for
-	 * person id 3 and zero otherwise. of .
-	 */
-	public static double getPerson3BiWeight(final ObservableEnvironment observableEnvironment, final PersonId sourecePersonId, final PersonId targetPersonId, final GroupId groupId) {
-		if (targetPersonId.getValue() == 3) {
-			return 1;
-		}
-		return 0;
-	}
+
 
 	/**
-	 * A {@link BiWeightingFunction} implementor that returns a constant weight
-	 * of 0.
-	 */
-	public static double getZeroBiWeight(final ObservableEnvironment observableEnvironment, final PersonId sourecePersonId, final PersonId targetPersonId, final GroupId groupId) {
-		return 0;
-	}
-
-	/**
-	 * A {@link MonoWeightingFunction} implementor that returns a weight of 1
+	 * A {@link GroupWeightingFunction} implementor that returns a weight of 1
 	 * for person id 3 and zero otherwise. of .
 	 */
 	public static double getPerson3MonoWeight(final ObservableEnvironment observableEnvironment, final PersonId personId, final GroupId groupId) {

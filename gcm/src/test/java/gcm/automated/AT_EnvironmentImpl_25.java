@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
-import gcm.replication.Replication;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
@@ -43,6 +42,7 @@ import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
+import gcm.replication.Replication;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.PersonId;
@@ -56,7 +56,6 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.GroupTypeCountMap;
@@ -84,63 +83,63 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		System.out
-				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out
+//				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/*
 	 * Utility class for getting random people from population indices
 	 */
-	private static class Counter {
+//	private static class Counter {
+//
+//		public Counter(int count) {
+//			this.count = count;
+//		}
+//
+//		int count;
+//	}
 
-		public Counter(int count) {
-			this.count = count;
-		}
+//	private static double getWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
+//		if (!labelSetInfo.getCompartmentLabel().isPresent()) {
+//			throw new RuntimeException("no compartment label");
+//		}
+//		if (!labelSetInfo.getRegionLabel().isPresent()) {
+//			throw new RuntimeException("no region label");
+//		}
+//
+//		Integer compartmentLabel = (Integer) labelSetInfo.getCompartmentLabel().get();
+//		Integer regionLabel = (Integer) labelSetInfo.getRegionLabel().get();
+//
+//		double p1;
+//		switch (compartmentLabel) {
+//		case 0:
+//			p1 = 1;
+//			break;
+//		default:
+//			p1 = 0;
+//			break;
+//		}
+//
+//		double p2;
+//		switch (regionLabel) {
+//		case 0:
+//			p2 = 0.1;
+//			break;
+//		case 1:
+//			p2 = 0.3;
+//			break;
+//		default:
+//			p2 = 0.6;
+//			break;
+//		}
+//
+//		return p1 * p2;
+//
+//	}
 
-		int count;
-	}
-
-	private static double getWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
-		if (!labelSetInfo.getCompartmentLabel().isPresent()) {
-			throw new RuntimeException("no compartment label");
-		}
-		if (!labelSetInfo.getRegionLabel().isPresent()) {
-			throw new RuntimeException("no region label");
-		}
-
-		Integer compartmentLabel = (Integer) labelSetInfo.getCompartmentLabel().get();
-		Integer regionLabel = (Integer) labelSetInfo.getRegionLabel().get();
-
-		double p1;
-		switch (compartmentLabel) {
-		case 0:
-			p1 = 1;
-			break;
-		default:
-			p1 = 0;
-			break;
-		}
-
-		double p2;
-		switch (regionLabel) {
-		case 0:
-			p2 = 0.1;
-			break;
-		case 1:
-			p2 = 0.3;
-			break;
-		default:
-			p2 = 0.6;
-			break;
-		}
-
-		return p1 * p2;
-
-	}
-
-	private static double getZeroWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
-		return 0;
-	}
+//	private static double getZeroWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
+//		return 0;
+//	}
 
 	private static enum PartitionChoice {
 		COMPARTMENT, REGION, PROPERTY1, PROPERTY2, RESOURCE1, RESOURCE2, GROUP;

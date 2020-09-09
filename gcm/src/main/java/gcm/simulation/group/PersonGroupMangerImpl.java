@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.group;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -14,6 +14,12 @@ import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.Scenario;
+import gcm.simulation.BaseElement;
+import gcm.simulation.Context;
+import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.ObservableEnvironment;
+import gcm.simulation.StochasticPersonSelection;
+import gcm.simulation.StochasticsManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.containers.IntValueContainer;
@@ -162,96 +168,6 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 	}
 
 	@Override
-	public StochasticPersonSelection sampleGroup(final GroupId groupId,
-			final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
-			final boolean excludeSourcePerson) {
-
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return getBiWeightedContactImpl(groupId, biWeightingFunction,
-				randomGenerator, sourcePersonId, excludeSourcePerson);
-	}
-
-	@Override
-	public StochasticPersonSelection sampleGroup(final GroupId groupId,
-			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
-			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return getBiWeightedContactImpl(groupId, biWeightingFunction,
-				randomGenerator, sourcePersonId, excludeSourcePerson);
-	}
-
-	private StochasticPersonSelection getBiWeightedContactImpl(final GroupId groupId,
-			final BiWeightingFunction biWeightingFunction, RandomGenerator randomGenerator,
-			final PersonId sourcePersonId, final boolean excludeSourcePerson) {
-
-		PersonId selectedPersonId = null;
-		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-
-		if ((people != null) && (people.size() > 0)) {
-			aquireWeightsLock();
-			try {
-				allocateWeights(people.size());
-				/*
-				 * Initialize the sum of the weights to zero and set the index in the weights
-				 * and weightedPersonId to zero.
-				 */
-				double sum = 0;
-				int weightsLength = 0;
-				/*
-				 * Collect a weight for each person in the group, excluding the source person if
-				 * needed
-				 */
-				for (PersonId personId : people) {
-					if (!excludeSourcePerson || !personId.equals(sourcePersonId)) {
-						/*
-						 * Determine the weight of the person. Any weight that is negative , infinite or
-						 * NAN is cause to return immediately since no person may be legitimately
-						 * selected.
-						 */
-						final double weight = biWeightingFunction.getWeight(observableEnvironment, sourcePersonId,
-								personId, groupId);
-						if (!Double.isFinite(weight) || (weight < 0)) {
-							return new StochasticPersonSelection(null, true);
-						}
-						/*
-						 * People having a zero weight are rejected for selection
-						 */
-						if (weight > 0) {
-							sum += weight;
-							weights[weightsLength] = sum;
-							weightedPersonIds[weightsLength] = personId;
-							weightsLength++;
-						}
-					}
-				}
-
-				/*
-				 * If at least one person was accepted for selection, then we attempt a random
-				 * selection.
-				 */
-				if (weightsLength > 0) {
-					/*
-					 * Although the individual weights may have been finite, if the sum of those
-					 * weights is not finite no legitimate selection can be made
-					 */
-					if (!Double.isFinite(sum)) {
-						return new StochasticPersonSelection(null, true);
-					}
-
-					final double targetValue = randomGenerator.nextDouble() * sum;
-					final int targetIndex = findTargetIndex(targetValue, weightsLength);
-					selectedPersonId = weightedPersonIds[targetIndex];
-				}
-
-			} finally {
-				releaseWeightsLock();
-			}
-		}
-		return new StochasticPersonSelection(selectedPersonId, false);
-
-	}
-
-	@Override
 	public int getGroupCountForGroupType(final GroupTypeId groupTypeId) {
 		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
 		final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
@@ -359,122 +275,9 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		return new ArrayList<>(types);
 	}
 
-	@Override
-	public StochasticPersonSelection sampleGroup(final GroupId groupId,
-			final MonoWeightingFunction monoWeightingFunction) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);
-	}
 
-	@Override
-	public StochasticPersonSelection sampleGroup(final GroupId groupId,
-			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return getMonoWeightedContactImpl(groupId, monoWeightingFunction, randomGenerator);
-	}
 
-	private StochasticPersonSelection getMonoWeightedContactImpl(final GroupId groupId,
-			final MonoWeightingFunction monoWeightingFunction, RandomGenerator randomGenerator) {
 
-		PersonId selectedPersonId = null;
-		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-		if ((people != null) && (people.size() > 0)) {
-			aquireWeightsLock();
-			try {
-				allocateWeights(people.size());
-				/*
-				 * Initialize the sum of the weights to zero and set the index in the weights
-				 * and weightedPersonId to zero.
-				 */
-				double sum = 0;
-				int weightsLength = 0;
-				/*
-				 * Collect a weight for each person in the group
-				 */
-				for (PersonId personId : people) {
-					/*
-					 * Determine the weight of the person. Any weight that is negative , infinite or
-					 * NAN is cause to return immediately since no person may be legitimately
-					 * selected.
-					 */
-					final double weight = monoWeightingFunction.getWeight(observableEnvironment, personId, groupId);
-					if (!Double.isFinite(weight) || (weight < 0)) {
-						return new StochasticPersonSelection(null, true);
-					}
-					/*
-					 * People having a zero weight are rejected for selection
-					 */
-					if (weight > 0) {
-						sum += weight;
-						weights[weightsLength] = sum;
-						weightedPersonIds[weightsLength] = personId;
-						weightsLength++;
-					}
-				}
-
-				/*
-				 * If at least one person was accepted for selection, then we attempt a random
-				 * selection.
-				 */
-				if (weightsLength > 0) {
-					/*
-					 * Although the individual weights may have been finite, if the sum of those
-					 * weights is not finite no legitimate selection can be made
-					 */
-					if (!Double.isFinite(sum)) {
-						return new StochasticPersonSelection(null, true);
-					}
-
-					final double targetValue = randomGenerator.nextDouble() * sum;
-					final int targetIndex = findTargetIndex(targetValue, weightsLength);
-					selectedPersonId = weightedPersonIds[targetIndex];
-				}
-			} finally {
-				releaseWeightsLock();
-			}
-		}
-		return new StochasticPersonSelection(selectedPersonId, false);
-	}
-
-	@Override
-	public PersonId sampleGroup(final GroupId groupId, final PersonId excludedPersonId) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGenerator();
-		return sampleGroupImpl(groupId, randomGenerator, excludedPersonId);
-	}
-
-	@Override
-	public PersonId sampleGroup(final GroupId groupId,
-			RandomNumberGeneratorId randomNumberGeneratorId, final PersonId excludedPersonId) {
-		RandomGenerator randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		return sampleGroupImpl(groupId, randomGenerator, excludedPersonId);
-	}
-
-	private PersonId sampleGroupImpl(final GroupId groupId,
-			RandomGenerator randomGenerator, final PersonId excludedPersonId) {
-		PersonId result = null;
-		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
-
-		final boolean exclude = (excludedPersonId != null) && isGroupMember(groupId, excludedPersonId);
-
-		if (exclude) {
-			if ((people != null) && (people.size() > 1)) {
-				while (true) {
-
-					final int selectedIndex = randomGenerator.nextInt(people.size());
-					result = people.get(selectedIndex);
-					if (!result.equals(excludedPersonId)) {
-						break;
-					}
-				}
-			}
-		} else {
-			if ((people != null) && (people.size() > 0)) {
-				final int selectedIndex = randomGenerator.nextInt(people.size());
-				result = people.get(selectedIndex);
-			}
-		}
-		return result;
-	}
 
 	@Override
 	public List<PersonId> getPeopleForGroup(final GroupId groupId) {
@@ -635,6 +438,110 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		} else {
 			throw new RuntimeException("Cannot remove person from nonexistent group");
 		}
+	}
+
+	@Override
+	public StochasticPersonSelection sampleGroup(GroupId groupId, GroupSampler groupSampler) {
+		GroupSamplerInfo groupSamplerInfo = GroupSamplerInfo.build(groupSampler);
+		RandomGenerator randomGenerator;
+		if(groupSamplerInfo.getRandomNumberGeneratorId().isPresent()) {
+			RandomNumberGeneratorId randomNumberGeneratorId = groupSamplerInfo.getRandomNumberGeneratorId().get();
+			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+		}else {
+			randomGenerator = stochasticsManager.getRandomGenerator();
+		}
+		GroupWeightingFunction groupWeightingFunction = groupSamplerInfo.getWeightingFunction().orElse(null);
+		PersonId excludedPersonId = groupSamplerInfo.getExcludedPerson().orElse(null);
+
+		final boolean exclude = (excludedPersonId != null) && isGroupMember(groupId, excludedPersonId);
+		PersonId selectedPersonId = null;
+		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
+
+		if (groupWeightingFunction != null) {
+
+			int candidateCount = people.size();
+			if (exclude) {
+				candidateCount--;
+			}
+			if ((people != null) && (candidateCount > 0)) {
+				aquireWeightsLock();
+				try {
+					allocateWeights(people.size());
+					/*
+					 * Initialize the sum of the weights to zero and set the index in the weights
+					 * and weightedPersonId to zero.
+					 */
+					double sum = 0;
+					int weightsLength = 0;
+					/*
+					 * Collect a weight for each person in the group
+					 */
+					for (PersonId personId : people) {
+						if (personId.equals(excludedPersonId)) {
+							continue;
+						}
+						/*
+						 * Determine the weight of the person. Any weight that is negative , infinite or
+						 * NAN is cause to return immediately since no person may be legitimately
+						 * selected.
+						 */
+						final double weight = groupWeightingFunction.getWeight(observableEnvironment, personId,
+								groupId);
+						if (!Double.isFinite(weight) || (weight < 0)) {
+							return new StochasticPersonSelection(null, true);
+						}
+						/*
+						 * People having a zero weight are rejected for selection
+						 */
+						if (weight > 0) {
+							sum += weight;
+							weights[weightsLength] = sum;
+							weightedPersonIds[weightsLength] = personId;
+							weightsLength++;
+						}
+					}
+
+					/*
+					 * If at least one person was accepted for selection, then we attempt a random
+					 * selection.
+					 */
+					if (weightsLength > 0) {
+						/*
+						 * Although the individual weights may have been finite, if the sum of those
+						 * weights is not finite no legitimate selection can be made
+						 */
+						if (!Double.isFinite(sum)) {
+							return new StochasticPersonSelection(null, true);
+						}
+
+						final double targetValue = randomGenerator.nextDouble() * sum;
+						final int targetIndex = findTargetIndex(targetValue, weightsLength);
+						selectedPersonId = weightedPersonIds[targetIndex];
+					}
+				} finally {
+					releaseWeightsLock();
+				}
+			}
+		} else {
+			if (exclude) {
+				if ((people != null) && (people.size() > 1)) {
+					while (true) {
+						final int selectedIndex = randomGenerator.nextInt(people.size());
+						PersonId personId = people.get(selectedIndex);
+						if (!personId.equals(excludedPersonId)) {
+							selectedPersonId = personId;
+							break;
+						}
+					}
+				}
+			} else {
+				if ((people != null) && (people.size() > 0)) {
+					final int selectedIndex = randomGenerator.nextInt(people.size());
+					selectedPersonId = people.get(selectedIndex);
+				}
+			}
+		}
+		return new StochasticPersonSelection(selectedPersonId, false);
 	}
 
 }

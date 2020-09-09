@@ -35,6 +35,7 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
+import gcm.simulation.group.GroupSampler;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
@@ -599,77 +600,6 @@ public interface Environment extends Element {
 	public double getBatchTime(final BatchId batchId);
 
 	/**
-	 * Returns a contacted person from the group specified by the groupId by using
-	 * the supplied BiWeightingFunction from the sourcePersonId against all members
-	 * of the group. The sourcePersonId can be excluded as a return value. Optional
-	 * result will reflect when no contact was possible.
-	 * 
-	 * Note that the BiWeightingFunction must be stable: Repeated invocations of the
-	 * function with any fixed set of arguments must result in a single return value
-	 * during the scope of this method.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        person id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the person id is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_WEIGHTING_FUNCTION}
-	 *                        if the biWeightingFunction is null
-	 *                        <li>{@link SimulationErrorType#MALFORMED_WEIGHTING_FUNCTION}
-	 *                        if the biWeightingFunction is malformed. (some
-	 *                        evaluate to negative numbers,NaN, infinity, etc. --
-	 *                        note that if all weights are zero then the optional
-	 *                        will return isPresent() of false)
-	 * 
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId, final BiWeightingFunction biWeightingFunction, final PersonId sourcePersonId,
-			final boolean excludeSourcePerson);
-
-	/**
-	 * Returns a contacted person from the group specified by the groupId by using
-	 * the supplied BiWeightingFunction from the sourcePersonId against all members
-	 * of the group. The sourcePersonId can be excluded as a return value. Optional
-	 * result will reflect when no contact was possible. Uses the random generator
-	 * associated with the RandomNumberGeneratorId.
-	 * 
-	 * Note that the BiWeightingFunction must be stable: Repeated invocations of the
-	 * function with any fixed set of arguments must result in a single return value
-	 * during the scope of this method.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        person id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the person id is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_WEIGHTING_FUNCTION}
-	 *                        if the biWeightingFunction is null
-	 *                        <li>{@link SimulationErrorType#MALFORMED_WEIGHTING_FUNCTION}
-	 *                        if the biWeightingFunction is malformed. (some
-	 *                        evaluate to negative numbers,NaN, infinity, etc. --
-	 *                        note that if all weights are zero then the optional
-	 *                        will return isPresent() of false)
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing RandomNumberGeneratorId found in the
-	 *                        scenario.
-	 * 
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,			
-			final BiWeightingFunction biWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,
-			final PersonId sourcePersonId, final boolean excludeSourcePerson
-			);
-
-	/**
 	 * Returns the set of compartment identifiers as provided during simulation
 	 * construction.
 	 */
@@ -1201,139 +1131,34 @@ public interface Environment extends Element {
 	public double getMaterialsProducerResourceTime(final MaterialsProducerId materialsProducerId,
 			final ResourceId resourceId);
 
+
+
+
+
 	/**
-	 * Returns a contacted person from the group specified by the groupId by using
-	 * the supplied MonoWeightingFunction against all members of the group. Optional
-	 * result will reflect when no contact was possible.
-	 *
-	 * Note that the MonoWeightingFunction must be stable: Repeated invocations of
-	 * the function with any fixed set of arguments must result in a single return
-	 * value during the scope of this method.
+	 * Returns a randomly contacted person from the group specified by the groupId and {@link GroupSampler}.
+	 * Optional result will reflect when no selection was possible.
 	 *
 	 * @throws ModelException
 	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
 	 *                        group id is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist) *
-	 *                        <li>{@link SimulationErrorType#NULL_WEIGHTING_FUNCTION}
-	 *                        if the monoWeightingFunction is null
+	 *                        the group id is unknown(group does not exist)
 	 *                        <li>{@link SimulationErrorType#MALFORMED_WEIGHTING_FUNCTION}
-	 *                        if the monoWeightingFunction is malformed. (some
+	 *                        if the groupWeightingFunction is malformed. (some
 	 *                        evaluate to negative numbers, etc. -- note that if all
 	 *                        weights are zero then the optional will return
-	 *                        isPresent() of false)
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,
-			final MonoWeightingFunction monoWeightingFunction);
-
-	/**
-	 * Returns a contacted person from the group specified by the groupId by using
-	 * the supplied MonoWeightingFunction against all members of the group. Optional
-	 * result will reflect when no contact was possible.
-	 *
-	 * Note that the MonoWeightingFunction must be stable: Repeated invocations of
-	 * the function with any fixed set of arguments must result in a single return
-	 * value during the scope of this method. Uses the random generator associated
-	 * with the RandomNumberGeneratorId.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist) *
-	 *                        <li>{@link SimulationErrorType#NULL_WEIGHTING_FUNCTION}
-	 *                        if the monoWeightingFunction is null
-	 *                        <li>{@link SimulationErrorType#MALFORMED_WEIGHTING_FUNCTION}
-	 *                        if the monoWeightingFunction is malformed. (some
-	 *                        evaluate to negative numbers, etc. -- note that if all
-	 *                        weights are zero then the optional will return
-	 *                        isPresent() of false)
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
+	 *                        an isPresent() of false)
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
+	 *                        if the group sampler's randomNumberGeneratorId does not correspond to
 	 *                        an existing RandomNumberGeneratorId found in the
 	 *                        scenario.
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,
-			final MonoWeightingFunction monoWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
-
-	/**
-	 * Returns a randomly contacted person from the group specified by the groupId.
-	 * Optional result will reflect when no contact was possible.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist)
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId);
-
-	/**
-	 * Returns a randomly contacted person from the group specified by the groupId
-	 * that will exclude the specified person. The excludedPersonId is not required
-	 * to be a member of the group. Optional result will reflect when no contact was
-	 * possible.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist)
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excludedPersonId is null
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the excludedPersonId is unknown
+	 *                        <li>{@link SimulationErrorType#NULL_GROUP_SAMPLER} if
+	 *                        the group sampler is null
 	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,
-			final PersonId excludedPersonId);
-
-	/**
-	 * Returns a randomly contacted person from the group specified by the groupId.
-	 * Optional result will reflect when no contact was possible. Uses the random
-	 * generator associated with the given RandomNumberGeneratorId.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist)
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing RandomNumberGeneratorId found in the
-	 *                        scenario.
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,
-			RandomNumberGeneratorId randomNumberGeneratorId);
-
-	/**
-	 * Returns a randomly contacted person from the group specified by the groupId
-	 * that will exclude the specified person. The excludedPersonId is not required
-	 * to be a member of the group. Optional result will reflect when no contact was
-	 * possible. Uses the random generator associated with the given
-	 * RandomNumberGeneratorId.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
-	 *                        group id is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_ID} if
-	 *                        the group id is unknown(group does not exist)
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excludedPersonId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excludedPersonId is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing RandomNumberGeneratorId found in the
-	 *                        scenario.
-	 */
-	public Optional<PersonId> sampleGroup(final GroupId groupId,
-			RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+	public Optional<PersonId> sampleGroup(final GroupId groupId, GroupSampler groupSampler);
 
 	/**
 	 * Returns an ObservableEnvironment implementor that wraps this Environment
@@ -1743,8 +1568,6 @@ public interface Environment extends Element {
 	 */
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId);
 
-
-
 	/**
 	 * Returns a randomly selected person identifier from an indexed population.
 	 * Returns null if the population index is empty. See the
@@ -1764,8 +1587,7 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
-	public Optional<PersonId> sampleIndex(final Object key,
-			RandomNumberGeneratorId randomNumberGeneratorId);
+	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Returns a randomly selected person identifier from an indexed population
@@ -1784,7 +1606,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
-	public Optional<PersonId> sampleIndex(final Object key,final PersonId excludedPersonId);
+	public Optional<PersonId> sampleIndex(final Object key, final PersonId excludedPersonId);
 
 	/**
 	 * Returns a randomly selected person identifier from an indexed population
@@ -1808,8 +1630,8 @@ public interface Environment extends Element {
 	 *                        if the randomNumberGeneratorId does not correspond to
 	 *                        an existing random Number Generator Id in the scenario
 	 */
-	public Optional<PersonId> sampleIndex(
-			final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,
+			final PersonId excludedPersonId);
 
 	/**
 	 * Returns the set of region component identifiers as provided during simulation
@@ -3914,207 +3736,19 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_PARTITION_SAMPLER} if the
-	 *                        partition sampler is null
+	 *                        <li>{@link SimulationErrorType#NULL_PARTITION_SAMPLER}
+	 *                        if the partition sampler is null
 	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the partition sampler's label set is incompatible with the population
-	 *                        partition                                                
+	 *                        if the partition sampler's label set is incompatible
+	 *                        with the population partition
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario 
+	 *                        if the partition sampler's randomNumberGeneratorId does not correspond to
+	 *                        an existing random Number Generator Id in the scenario
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        
+	 *                        the partition sampler's excluded person is unknown
+	 * 
 	 */
 	public Optional<PersonId> samplePartition(final Object key, PartitionSampler partitionSampler);
 	
-	/**
-	 * Returns a randomly selected person identifier from a population partition.
-	 * Returns null if the population partition is empty.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
-	 *                        label set is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the population
-	 *                        partition
-	 */
-	//public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet);
-	/**
-	 * Returns a randomly selected person identifier from a population partition.
-	 * Returns empty optional if the population partition is empty.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
-	 *                        label set is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the population
-	 *                        partition
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,
-//			RandomNumberGeneratorId randomNumberGeneratorId);
-
-	/**
-	 * Returns a randomly selected person identifier from a population partition
-	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population partition is empty or contains only the excluded
-	 * person.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
-	 *                        label set is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the population
-	 *                        partition
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet,final PersonId excludedPersonId);
-	/**
-	 * Returns a randomly selected person identifier from a population partition
-	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population partition is empty or contains only the excluded
-	 * person.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_LABEL_SET} if the
-	 *                        label set is null
-	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_LABEL_SET}
-	 *                        if the label set is incompatible with the population
-	 *                        partition
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 */
-//	public Optional<PersonId> samplePartition(final Object key, final LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
-	/**
-	 * Returns a random person from the partition using the given
-	 * {@link LabelSetWeightingFunction}
-	 * 
-	 * @throws ModelException
-
-	 *                        <li>
-	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
-	 *                        the weighting function is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key for the partition is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(Object key,
-//			LabelSetWeightingFunction labelSetWeightingFunction);
-	/**
-	 * Returns a random person from the partition using the given
-	 * {@link LabelSetWeightingFunction}
-	 * 
-	 * @throws ModelException
-
-	 *                        <li>
-	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
-	 *                        the weighting function is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key for the partition is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(Object key,
-//			LabelSetWeightingFunction labelSetWeightingFunction,final PersonId excludedPersonId);
-	/**
-	 * Returns a random person from the partition using the given
-	 * {@link LabelSetWeightingFunction} and {@link RandomNumberGeneratorId}
-	 * 
-	 * @throws ModelException
-	 *                        <li>
-	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
-	 *                        the weighting function is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key for the partition is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(Object key,
-//			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId);
-	/**
-	 * Returns a random person from the partition using the given
-	 * {@link LabelSetWeightingFunction} and {@link RandomNumberGeneratorId}
-	 * 
-	 * @throws ModelException
-	 *                        <li>
-	 *                        {@link SimulationErrorType#NULL_WEIGHTING_FUNCTION} if
-	 *                        the weighting function is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
-	 *                        if the key for the partition is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population partition
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null                        
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 * 
-	 */
-//	public Optional<PersonId> samplePartition(Object key,
-//			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
 }

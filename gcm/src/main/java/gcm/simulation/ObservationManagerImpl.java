@@ -26,6 +26,7 @@ import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.StageId;
+import gcm.simulation.group.PersonGroupManger;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

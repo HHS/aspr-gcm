@@ -1,7 +1,8 @@
-package gcm.simulation;
+package gcm.simulation.group;
 
 import gcm.scenario.GroupId;
 import gcm.scenario.PersonId;
+import gcm.simulation.ObservableEnvironment;
 import gcm.util.annotations.Source;
 
 /**
@@ -12,7 +13,7 @@ import gcm.util.annotations.Source;
  *
  */
 @Source
-public interface MonoWeightingFunction {
+public interface GroupWeightingFunction {
 	/**
 	 * Returns a non-negative, finite and stable value for the given inputs.
 	 * Repeated invocations with the same arguments should return the same value

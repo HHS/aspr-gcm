@@ -17,6 +17,7 @@ import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.PopulationIndexEfficiencyWarning.Builder;
+import gcm.simulation.group.PersonGroupManger;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

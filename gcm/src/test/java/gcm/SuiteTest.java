@@ -47,6 +47,7 @@ import gcm.automated.AT_GeoLocator;
 import gcm.automated.AT_Graph;
 import gcm.automated.AT_GraphDepthEvaluator;
 import gcm.automated.AT_Graphs;
+import gcm.automated.AT_GroupSamplerInfo;
 import gcm.automated.AT_GroupTypeCountMap;
 import gcm.automated.AT_HashIntSet;
 import gcm.automated.AT_ImmutableStat;
@@ -186,7 +187,8 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_PartitionInfo.class,
 	AT_LabelSetInfo.class,
 	AT_Tuplator.class,
-	AT_PartitionSamplerInfo.class
+	AT_PartitionSamplerInfo.class,
+	AT_GroupSamplerInfo.class
 	})
 
 public class SuiteTest {

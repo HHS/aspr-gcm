@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.index;
 
 import java.util.List;
 
@@ -10,6 +10,9 @@ import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.Element;
+import gcm.simulation.ModelException;
+import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.Source;
 
 /**

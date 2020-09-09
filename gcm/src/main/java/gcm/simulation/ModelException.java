@@ -32,7 +32,8 @@ public final class ModelException extends RuntimeException {
 	 *
 	 * @param simulationErrorType
 	 */
-	ModelException(final SimulationErrorType simulationErrorType, final String description) {
+	public ModelException(final SimulationErrorType simulationErrorType, final String description) {
+		//TODO return this to package access?
 		super(description);
 		this.simulationErrorType = simulationErrorType;
 	}

@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.index;
 
 import java.util.List;
 

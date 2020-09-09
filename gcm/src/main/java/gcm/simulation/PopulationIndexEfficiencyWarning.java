@@ -3,6 +3,8 @@ package gcm.simulation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import gcm.simulation.index.FilterInfo;
+import gcm.simulation.index.IndexedPopulationManagerImpl;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

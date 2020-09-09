@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.index;
 
 import java.util.List;
 
@@ -7,6 +7,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import gcm.scenario.ComponentId;
 import gcm.scenario.PersonId;
 import gcm.scenario.RandomNumberGeneratorId;
+import gcm.simulation.Context;
+import gcm.simulation.Environment;
+import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.ObservationManager;
+import gcm.simulation.StochasticsManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.containers.BasePeopleContainer;

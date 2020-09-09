@@ -39,6 +39,8 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.StageId;
 import gcm.simulation.group.PersonGroupManger;
+import gcm.simulation.index.Filter;
+import gcm.simulation.index.IndexedPopulationManager;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;

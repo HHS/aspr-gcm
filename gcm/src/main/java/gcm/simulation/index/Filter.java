@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.index;
 
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -10,6 +10,7 @@ import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.Equality;
 import gcm.util.annotations.Source;
 
 /**

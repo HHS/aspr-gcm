@@ -1,4 +1,4 @@
-package gcm.simulation;
+package gcm.simulation.index;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,6 +16,15 @@ import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.BaseElement;
+import gcm.simulation.Context;
+import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.PersonLocationManger;
+import gcm.simulation.PopulationIndexEfficiencyWarning;
+import gcm.simulation.ProfileManager;
+import gcm.simulation.PropertyManager;
+import gcm.simulation.SimulationWarningManager;
+import gcm.simulation.Trigger;
 import gcm.simulation.PopulationIndexEfficiencyWarning.Builder;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.util.MemoryPartition;

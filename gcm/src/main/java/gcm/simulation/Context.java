@@ -11,6 +11,8 @@ import gcm.replication.Replication;
 import gcm.scenario.Scenario;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.group.PersonGroupMangerImpl;
+import gcm.simulation.index.IndexedPopulationManager;
+import gcm.simulation.index.IndexedPopulationManagerImpl;
 import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.simulation.partition.PopulationPartitionManagerImpl;
 import gcm.util.MemoryPartition;

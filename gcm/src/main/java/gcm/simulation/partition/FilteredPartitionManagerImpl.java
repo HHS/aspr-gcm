@@ -37,7 +37,7 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
 /**
- * Implementor of IndexedPopulationManager
+ * Implementor of PartitionManager
  *
  * @author Shawn Hatch
  *
@@ -60,7 +60,7 @@ import gcm.util.annotations.TestStatus;
  *
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class PartitionManagerImpl extends BaseElement implements PartitionManager {
+public final class FilteredPartitionManagerImpl extends BaseElement implements FilteredPartitionManager {
 
 	/*
 	 * The principle container for all contained IndexedPopulations.
@@ -68,54 +68,54 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	private final Map<Object, IndexedPopulation> indexedPopulationMap = new LinkedHashMap<>();
 
 	/*
-	 * When an index's filter cannot be matched to any of the maps that we use
-	 * to selectively update indexes, we choose to add that index to the
+	 * When an index's filter cannot be matched to any of the maps that we use to
+	 * selectively update indexes, we choose to add that index to the
 	 * unfilteredIndexedPopulations. The indexes in this set will be updated for
 	 * every change as a precaution even though the filter is essentially empty.
 	 */
-	private final Set<IndexedPopulation> unfilteredIndexedPopulations = new LinkedHashSet<>();
+	private final Set<FilteredPopulationPartition> unfilteredIndexedPopulations = new LinkedHashSet<>();
 
 	/*
 	 * Matches filters that are triggered by person resource changes for a
 	 * particular resource.
 	 */
-	private final Map<ResourceId, Set<IndexedPopulation>> resourceIndexedPopulations = new LinkedHashMap<>();
+	private final Map<ResourceId, Set<FilteredPopulationPartition>> resourceIndexedPopulations = new LinkedHashMap<>();
 
 	/*
-	 * Matches filters that are triggered by person region changes for a
-	 * particular region.
+	 * Matches filters that are triggered by person region changes for a particular
+	 * region.
 	 */
-	private final Map<RegionId, Set<IndexedPopulation>> regionIndexedPopulations = new LinkedHashMap<>();
+	private final Map<RegionId, Set<FilteredPopulationPartition>> regionIndexedPopulations = new LinkedHashMap<>();
 
 	/*
 	 * Matches filters that are triggered by person compartment changes for a
 	 * particular compartment.
 	 */
-	private final Map<CompartmentId, Set<IndexedPopulation>> compartmentIndexedPopulations = new LinkedHashMap<>();
+	private final Map<CompartmentId, Set<FilteredPopulationPartition>> compartmentIndexedPopulations = new LinkedHashMap<>();
 
 	/*
 	 * Matches filters that are triggered by person property value change for a
 	 * particular person property.
 	 */
-	private final Map<PersonPropertyId, Set<IndexedPopulation>> propertyIdIndexedPopulations = new LinkedHashMap<>();
+	private final Map<PersonPropertyId, Set<FilteredPopulationPartition>> propertyIdIndexedPopulations = new LinkedHashMap<>();
 
 	/*
 	 * Matches filters that are triggered by person property value change for a
 	 * particular person property and property value.
 	 */
-	private final Map<PersonPropertyId, Map<Object, Set<IndexedPopulation>>> propertyValueIndexedPopulations = new LinkedHashMap<>();
+	private final Map<PersonPropertyId, Map<Object, Set<FilteredPopulationPartition>>> propertyValueIndexedPopulations = new LinkedHashMap<>();
 
 	/*
 	 * Matches filters that are triggered by group membership change for a
 	 * particular group.
 	 */
-	private final Map<GroupId, Set<IndexedPopulation>> groupIndexedPopulations = new LinkedHashMap<>();
+	private final Map<GroupId, Set<FilteredPopulationPartition>> groupIndexedPopulations = new LinkedHashMap<>();
 
 	/*
 	 * Matches filters that are triggered by group membership change for a
 	 * particular group type.
 	 */
-	private final Map<GroupTypeId, Set<IndexedPopulation>> groupTypeIndexedPopulations = new LinkedHashMap<>();
+	private final Map<GroupTypeId, Set<FilteredPopulationPartition>> groupTypeIndexedPopulations = new LinkedHashMap<>();
 
 	private PersonLocationManger personLocationManger;
 
@@ -131,6 +131,15 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	private SimulationWarningManager simulationWarningManager;
 
+	private long masterTransactionId;
+
+	private long getNextTransactionId() {
+		// TODO this is enough for 52 trillion events per person before potentially
+		// encountering a collision with the initial value of the partition's internal
+		// transaction id. So.
+		return masterTransactionId++;
+	}
+
 	@Override
 	public void init(final Context context) {
 		super.init(context);
@@ -144,36 +153,40 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void addFilteredPartition(final ComponentId componentId, final Filter filter, final Partition partition, final Object key) {
+	public void addFilteredPartition(final ComponentId componentId, final Filter filter, final Partition partition,
+			final Object key) {
 		/*
 		 * 
-		 * We must integrate the indexedPopulation into the various mapping
-		 * structures based on the filtering associated with the
-		 * indexedPopulation. This allows the manager to observe a data change
-		 * to a person and quickly identify the set of Indexed populations that
-		 * may need to be updated.
+		 * We must integrate the indexedPopulation into the various mapping structures
+		 * based on the filtering associated with the indexedPopulation. This allows the
+		 * manager to observe a data change to a person and quickly identify the set of
+		 * Indexed populations that may need to be updated.
 		 * 
-		 * If no filtering was found, then we place the indexed population in
-		 * the unfilteredIndexedPopulations set. These indexed populations are
-		 * forced to evaluate each person for every data change.
+		 * If no filtering was found, then we place the indexed population in the
+		 * unfilteredIndexedPopulations set. These indexed populations are forced to
+		 * evaluate each person for every data change.
 		 * 
-		 * After the indexed population is fully integrated we initialize the
-		 * indexed population. This will cause the indexed population to perform
-		 * a one-time, potentially expensive and complex query of the
-		 * Environment to establish its sub-set of the current population.
-		 * Maintenance of the indexed population is performed by the various
-		 * handle() methods of this IndexedPopulationManager.
+		 * After the indexed population is fully integrated we initialize the indexed
+		 * population. This will cause the indexed population to perform a one-time,
+		 * potentially expensive and complex query of the Environment to establish its
+		 * sub-set of the current population. Maintenance of the indexed population is
+		 * performed by the various handle() methods of this IndexedPopulationManager.
 		 * 
 		 * 
 		 */
+		if (indexedPopulationMap.get(key) != null) {
+			throw new RuntimeException("duplicated key" + key);
+		}
+		
 		FilterInfo filterInfo = FilterInfo.build(filter);
 
 		/*
-		 * Review the filter, looking for map option setting that might improve
-		 * the performance of the index initialization and warning the user if
-		 * any of those map options are set to NONE
+		 * Review the filter, looking for map option setting that might improve the
+		 * performance of the index initialization and warning the user if any of those
+		 * map options are set to NONE
 		 */
-		List<Object> filterAttributesNeedingReverseMapSupport = FilterMapOptionAnalyzer.getAttributesNeedingReverseMapping(filterInfo, context);
+		List<Object> filterAttributesNeedingReverseMapSupport = FilterMapOptionAnalyzer
+				.getAttributesNeedingReverseMapping(filterInfo, context);
 		if (!filterAttributesNeedingReverseMapSupport.isEmpty()) {
 			Builder builder = PopulationIndexEfficiencyWarning.builder();
 			for (Object attribute : filterAttributesNeedingReverseMapSupport) {
@@ -181,47 +194,74 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			}
 
 			PopulationIndexEfficiencyWarning populationIndexEfficiencyWarning = //
-					builder	.setFilterInfo(filterInfo)//
+					builder.setFilterInfo(filterInfo)//
 							.setPopulationIndexId(key)//
 							.build(); //
 			simulationWarningManager.processPopulationIndexEfficiencyWarning(populationIndexEfficiencyWarning);
 		}
 
-		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
-		if (useProfiledFilters) {
-			indexedPopulation = profileManager.getProfiledProxy(indexedPopulation);
-		}
+		PartitionInfo partitionInfo = PartitionInfo.build(partition);
+		FilteredPopulationPartition filteredPopulationPartition = new FilteredPopulationPartition(key, context, partitionInfo, filterInfo, componentId);
 
-		if (indexedPopulationMap.get(key) != null) {
-			throw new RuntimeException("duplicated key" + key);
-		}
+		//TODO -- implement profiler
+//		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
+//		if (useProfiledFilters) {
+//			indexedPopulation = profileManager.getProfiledProxy(indexedPopulation);
+//		}
 
 		int filterCount = 0;
 
 		Trigger trigger = new Trigger(filterInfo, context);
 
-		final Set<CompartmentId> compartmentIds = trigger.getCompartmentIdentifiers();
-
+		final Set<CompartmentId> compartmentIds;
+		if(partitionInfo.getCompartmentPartitionFunction() != null) {
+			compartmentIds = context.getScenario().getCompartmentIds();
+		}else {
+			compartmentIds = trigger.getCompartmentIdentifiers();
+		}	
+		
 		for (final CompartmentId compartmentId : compartmentIds) {
-			Set<IndexedPopulation> set = compartmentIndexedPopulations.get(compartmentId);
+			Set<FilteredPopulationPartition> set = compartmentIndexedPopulations.get(compartmentId);
 			if (set == null) {
 				set = new LinkedHashSet<>();
 				compartmentIndexedPopulations.put(compartmentId, set);
 			}
-			set.add(indexedPopulation);
+			set.add(filteredPopulationPartition);
 			filterCount++;
 		}
-		final Set<RegionId> regionIds = trigger.getRegionIdentifiers();
+		
+		final Set<RegionId> regionIds;
+		if(partitionInfo.getRegionPartitionFunction()!=null) {
+			//TODO -- do something faster than this
+			regionIds = context.getScenario().getRegionIds();
+		}else {
+			regionIds = trigger.getRegionIdentifiers();	
+		}
 
 		for (final RegionId regionId : regionIds) {
-			Set<IndexedPopulation> set = regionIndexedPopulations.get(regionId);
+			Set<FilteredPopulationPartition> set = regionIndexedPopulations.get(regionId);
 			if (set == null) {
 				set = new LinkedHashSet<>();
 				regionIndexedPopulations.put(regionId, set);
 			}
-			set.add(indexedPopulation);
+			set.add(filteredPopulationPartition);
 			filterCount++;
 		}
+		
+		
+		Set<ResourceId> resourceIds = partitionInfo.getPersonResourceIds();
+		resourceIds.addAll(trigger.getResourceIdentifiers());
+		for (final ResourceId resourceId : resourceIds) {
+
+			Set<FilteredPopulationPartition> set = resourceIndexedPopulations.get(resourceId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				resourceIndexedPopulations.put(resourceId, set);
+			}
+			set.add(filteredPopulationPartition);
+			filterCount++;
+		}
+
 
 		for (final PersonPropertyId personPropertyId : trigger.getValueInsensitivePropertyIdentifiers()) {
 			Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
@@ -256,17 +296,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 		}
 
-		for (final ResourceId resourceId : trigger.getResourceIdentifiers()) {
-
-			Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
-			if (indexedPopulations == null) {
-				indexedPopulations = new LinkedHashSet<>();
-				resourceIndexedPopulations.put(resourceId, indexedPopulations);
-			}
-			indexedPopulations.add(indexedPopulation);
-			filterCount++;
-		}
-
+		
 		for (GroupId groupId : trigger.getGroupIdentifiers()) {
 			Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
 			if (indexedPopulations == null) {
@@ -309,44 +339,39 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	@Override
 	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
-		//TODO implement
-		
-		//return indexedPopulationMap.get(key).sampleIndex(excludedPersonId);
+		// TODO implement
+
+		// return indexedPopulationMap.get(key).sampleIndex(excludedPersonId);
 		return null;
 	}
-
-
-	
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
 
 		/*
-		 * We want to avoid having an indexed population evaluate a person when
-		 * the filter associated with that indexed population is guaranteed to
-		 * reject the person.
+		 * We want to avoid having an indexed population evaluate a person when the
+		 * filter associated with that indexed population is guaranteed to reject the
+		 * person.
 		 * 
-		 * We also want to avoid having an indexed population evaluate a person
-		 * more than once. In practice, it seems that few of the indexed
-		 * populations will be called to evaluate a person multiple times and
-		 * that creating a set of unique indexed populations to limit duplicate
-		 * evaluations is more runtime expensive than just allowing this to
-		 * happen.
+		 * We also want to avoid having an indexed population evaluate a person more
+		 * than once. In practice, it seems that few of the indexed populations will be
+		 * called to evaluate a person multiple times and that creating a set of unique
+		 * indexed populations to limit duplicate evaluations is more runtime expensive
+		 * than just allowing this to happen.
 		 * 
-		 * Integrate the person into the relevant indices. For each property id
-		 * we get the indices that are known to filter on that property value
-		 * and ask it to evaluate the person for inclusion in the index. We then
-		 * follow a similar process for regions, compartments and resources.
+		 * Integrate the person into the relevant indices. For each property id we get
+		 * the indices that are known to filter on that property value and ask it to
+		 * evaluate the person for inclusion in the index. We then follow a similar
+		 * process for regions, compartments and resources.
 		 * 
 		 * 
 		 */
-
+		long transactionId = getNextTransactionId();
 		for (final ResourceId resourceId : resourceIndexedPopulations.keySet()) {
-
-			final Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.evaluate(personId);
+			Set<FilteredPopulationPartition> filteredPopulationPartitions = resourceIndexedPopulations.get(resourceId);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handleAddPerson(transactionId,personId);
 				}
 			}
 		}
@@ -396,14 +421,15 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void handlePersonCompartmentChange(final PersonId personId, final CompartmentId oldCompartmentId, final CompartmentId newCompartmentId) {
+	public void handlePersonCompartmentChange(final PersonId personId, final CompartmentId oldCompartmentId,
+			final CompartmentId newCompartmentId) {
 
 		/*
-		 * We identify the indexed populations associated with the two
-		 * compartments and have each evaluate the person. Unfiltered indexed
-		 * populations also evaluate the person.
+		 * We identify the indexed populations associated with the two compartments and
+		 * have each evaluate the person. Unfiltered indexed populations also evaluate
+		 * the person.
 		 */
-
+		long transactionId = getNextTransactionId();
 		Set<IndexedPopulation> indexedPopulations = compartmentIndexedPopulations.get(oldCompartmentId);
 		if (indexedPopulations != null) {
 			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
@@ -425,7 +451,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void handlePersonRegionChange(final PersonId personId, final RegionId oldRegionId, final RegionId newRegionId) {
+	public void handlePersonRegionChange(final PersonId personId, final RegionId oldRegionId,
+			final RegionId newRegionId) {
 
 		/*
 		 * We identify the indexed populations associated with the two regions.
@@ -434,6 +461,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
+
+		long transactionId = getNextTransactionId();
 
 		Set<IndexedPopulation> indexedPopulations = regionIndexedPopulations.get(oldRegionId);
 		if (indexedPopulations != null) {
@@ -457,14 +486,14 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	@Override
 	public void handlePersonGroupAddition(GroupId groupId, PersonId personId) {
 		/*
-		 * We identify the indexed populations associated with either the group
-		 * or its group type.
+		 * We identify the indexed populations associated with either the group or its
+		 * group type.
 		 * 
 		 * Each identified indexed population, including the unfiltered indexed
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
-
+		long transactionId = getNextTransactionId();
 		Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
 		if (indexedPopulations != null) {
 			for (IndexedPopulation indexedPopulation : indexedPopulations) {
@@ -488,14 +517,14 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	@Override
 	public void handlePersonGroupRemoval(GroupId groupId, PersonId personId) {
 		/*
-		 * We identify the indexed populations associated with either the group
-		 * or its group type.
+		 * We identify the indexed populations associated with either the group or its
+		 * group type.
 		 * 
 		 * Each identified indexed population, including the unfiltered indexed
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
-
+		long transactionId = getNextTransactionId();
 		Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
 		if (indexedPopulations != null) {
 			for (IndexedPopulation indexedPopulation : indexedPopulations) {
@@ -519,9 +548,10 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	public void handlePersonRemoval(final PersonId personId) {
 
 		/*
-		 * Reverses the handleAddPerson() and drops all references to the
-		 * person.
+		 * Reverses the handleAddPerson() and drops all references to the person.
 		 */
+
+		long transactionId = getNextTransactionId();
 
 		for (final ResourceId resourceId : resourceIndexedPopulations.keySet()) {
 			final Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
@@ -588,9 +618,11 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 * 
 		 */
 
+		long transactionId = getNextTransactionId();
+
 		/*
-		 * Evaluation of the unfiltered is done now since we may escape out on
-		 * the resource associated indexed populations
+		 * Evaluation of the unfiltered is done now since we may escape out on the
+		 * resource associated indexed populations
 		 */
 		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
 			indexedPopulation.evaluate(personId);
@@ -612,19 +644,18 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void removePartition(final Object key) {
+	public void removeFilteredPartition(final Object key) {
 
 		/*
-		 * Attempt to remove the indexed population from the main storage
-		 * container for all indexed populations.
+		 * Attempt to remove the indexed population from the main storage container for
+		 * all indexed populations.
 		 */
 		final IndexedPopulation indexedPopulation = indexedPopulationMap.get(key);
 
 		indexedPopulationMap.remove(key);
 
 		/*
-		 * Remove the indexed population from the various filter-related maps
-		 * and set.
+		 * Remove the indexed population from the various filter-related maps and set.
 		 */
 		FilterInfo filterInfo = indexedPopulation.getFilterInfo();
 		Trigger trigger = new Trigger(filterInfo, context);
@@ -697,19 +728,21 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void handlePersonPropertyValueChange(final PersonId personId, final PersonPropertyId personPropertyId, final Object oldValue, final Object newValue) {
+	public void handlePersonPropertyValueChange(final PersonId personId, final PersonPropertyId personPropertyId,
+			final Object oldValue, final Object newValue) {
 
 		/*
-		 * We identify the indexed populations associated with either the
-		 * property id or the property value. Some indexed populations are
-		 * interested in all values for a property whereas others are
-		 * interested(usually due to equality constraints) in specific property
-		 * values.
+		 * We identify the indexed populations associated with either the property id or
+		 * the property value. Some indexed populations are interested in all values for
+		 * a property whereas others are interested(usually due to equality constraints)
+		 * in specific property values.
 		 * 
 		 * Each identified indexed population, including the unfiltered indexed
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
+
+		long transactionId = getNextTransactionId();
 
 		Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
 		if (indexedPopulations != null) {
@@ -788,7 +821,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	@Override
 	public boolean contains(PersonId personId, Object key) {
-		//return indexedPopulationMap.get(key).personInPopulationIndex(personId);
+		// return indexedPopulationMap.get(key).personInPopulationIndex(personId);
 		// TODO Auto-generated method stub
 		return false;
 	}

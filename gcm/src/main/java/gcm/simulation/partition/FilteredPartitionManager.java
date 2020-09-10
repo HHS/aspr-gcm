@@ -27,7 +27,7 @@ import gcm.util.annotations.Source;
  */
 
 @Source
-public interface PartitionManager extends Element {
+public interface FilteredPartitionManager extends Element {
 
 	/**
 	 * Adds a population index for the given key. The key must not duplicate an
@@ -150,7 +150,7 @@ public interface PartitionManager extends Element {
 	 *
 	 * 
 	 */
-	public void removePartition(final Object key);
+	public void removeFilteredPartition(final Object key);
 
 	/**
 	 * Updates a person's property value association in all relevant indices and

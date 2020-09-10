@@ -78,19 +78,6 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 		return populationPartitions.get(key).getPeopleCount(LabelSetInfo.build(labelSet));
 	}
 
-	@Override
-	public StochasticPersonSelection samplePartition(Object key, LabelSet labelSet,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),null,
-				stochasticsManager.getRandomGenerator(),excludedPersonId);
-	}
-
-	@Override
-	public StochasticPersonSelection samplePartition(Object key, LabelSet labelSet,
-			RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
-
-		return populationPartitions.get(key).samplePartition(LabelSetInfo.build(labelSet),null,
-				stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
-	}
 
 	@Override
 	public boolean personInPartition(PersonId personId, Object key, LabelSet labelSet) {
@@ -166,17 +153,6 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 		return populationPartitions.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));
 	}
 
-	@Override
-	public StochasticPersonSelection samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(null,labelSetWeightingFunction,stochasticsManager.getRandomGenerator(),excludedPersonId);
-	}
-
-	@Override
-	public StochasticPersonSelection samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId) {
-		return populationPartitions.get(key).samplePartition(null,labelSetWeightingFunction,stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId),excludedPersonId);
-	}
 
 	@Override
 	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
@@ -201,4 +177,7 @@ public class PopulationPartitionManagerImpl extends BaseElement implements Popul
 		return populationPartitions.get(key).samplePartition(labelSetInfo, labelSetWeightingFunction, randomGenerator, excludedPersonId);
 		
 		}
+	
+
+	
 }

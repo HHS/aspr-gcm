@@ -5,7 +5,6 @@ import java.util.List;
 import gcm.scenario.ComponentId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
-import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Element;
 import gcm.simulation.ModelException;
@@ -63,31 +62,7 @@ public interface PopulationPartitionManager extends Element {
 	 */
 	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler);
 	
-	/**
-	 * Returns a randomly selected person from the given index excluding the given
-	 * person identifier. A null value for the excluded person is allowed. Returns
-	 * null if there are no people in the index or the only person in the index is
-	 * the excluded person.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the keys are not associated with a population index
-	 */
-	public StochasticPersonSelection samplePartition(final Object key, LabelSet labelSet,final PersonId excludedPersonId);
-
-	/**
-	 * Returns a randomly selected person from the given index excluding the given
-	 * person identifier. A null value for the excluded person is allowed. Returns
-	 * null if there are no people in the index or the only person in the index is
-	 * the excluded person. Random selection is from the RandomGenerator instance
-	 * associated with the RandomNumberGeneratorId.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the keys are not associated with a population index
-	 */
-	public StochasticPersonSelection samplePartition(final Object key,
-			LabelSet labelSet, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
+	
 
 	/**
 	 * Returns true if and only if the person is contained in the population
@@ -172,18 +147,5 @@ public interface PopulationPartitionManager extends Element {
 	 * the PopulationPartitionDefinition associated with the key
 	 */
 	public boolean validateLabelSet(Object key, LabelSet labelSet);
-
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 */
-	public StochasticPersonSelection samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction,PersonId excludedPersonId);
-
-	/**
-	 * Returns a contacted person. The LabelSetWeightingFunction must not be null.
-	 * Uses the random generator associated with the RandomNumberGeneratorId.
-	 */
-	public StochasticPersonSelection samplePartition(Object key,
-			LabelSetWeightingFunction labelSetWeightingFunction, RandomNumberGeneratorId randomNumberGeneratorId,PersonId excludedPersonId);
 
 }

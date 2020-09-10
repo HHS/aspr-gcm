@@ -1,4 +1,4 @@
-package gcm.simulation.index;
+package gcm.simulation.partition;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -13,7 +13,6 @@ import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
-import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.BaseElement;
@@ -21,12 +20,18 @@ import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.PersonLocationManger;
 import gcm.simulation.PopulationIndexEfficiencyWarning;
+import gcm.simulation.PopulationIndexEfficiencyWarning.Builder;
 import gcm.simulation.ProfileManager;
 import gcm.simulation.PropertyManager;
 import gcm.simulation.SimulationWarningManager;
+import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.Trigger;
-import gcm.simulation.PopulationIndexEfficiencyWarning.Builder;
 import gcm.simulation.group.PersonGroupManger;
+import gcm.simulation.index.Filter;
+import gcm.simulation.index.FilterInfo;
+import gcm.simulation.index.FilterMapOptionAnalyzer;
+import gcm.simulation.index.IndexedPopulation;
+import gcm.simulation.index.IndexedPopulationImpl;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -55,7 +60,7 @@ import gcm.util.annotations.TestStatus;
  *
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class IndexedPopulationManagerImpl extends BaseElement implements IndexedPopulationManager {
+public final class PartitionManagerImpl extends BaseElement implements PartitionManager {
 
 	/*
 	 * The principle container for all contained IndexedPopulations.
@@ -139,7 +144,7 @@ public final class IndexedPopulationManagerImpl extends BaseElement implements I
 	}
 
 	@Override
-	public void addIndex(final ComponentId componentId, final Filter filter, final Object key) {
+	public void addFilteredPartition(final ComponentId componentId, final Filter filter, final Partition partition, final Object key) {
 		/*
 		 * 
 		 * We must integrate the indexedPopulation into the various mapping
@@ -293,29 +298,25 @@ public final class IndexedPopulationManagerImpl extends BaseElement implements I
 	}
 
 	@Override
-	public List<PersonId> getIndexedPeople(final Object key) {
+	public List<PersonId> getPeople(final Object key) {
 		return indexedPopulationMap.get(key).getPeople();
 	}
 
 	@Override
-	public int getIndexSize(final Object key) {
+	public int getPersonCount(final Object key) {
 		return indexedPopulationMap.get(key).size();
 	}
 
 	@Override
-	public PersonId sampleIndex(final Object key,final PersonId excludedPersonId) {
-		return indexedPopulationMap.get(key).sampleIndex(excludedPersonId);
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
+		//TODO implement
+		
+		//return indexedPopulationMap.get(key).sampleIndex(excludedPersonId);
+		return null;
 	}
 
-	@Override
-	public PersonId sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId) {
-		return indexedPopulationMap.get(key).sampleIndex(excludedPersonId, randomNumberGeneratorId);
-	}
 
-	@Override
-	public boolean personInPopulationIndex(final PersonId personId, final Object key) {
-		return indexedPopulationMap.get(key).personInPopulationIndex(personId);
-	}
+	
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
@@ -605,13 +606,13 @@ public final class IndexedPopulationManagerImpl extends BaseElement implements I
 	}
 
 	@Override
-	public boolean populationIndexExists(final Object key) {
+	public boolean partitionExists(final Object key) {
 		final IndexedPopulation indexedPopulation = indexedPopulationMap.get(key);
 		return indexedPopulation != null;
 	}
 
 	@Override
-	public void removeIndex(final Object key) {
+	public void removePartition(final Object key) {
 
 		/*
 		 * Attempt to remove the indexed population from the main storage
@@ -771,6 +772,37 @@ public final class IndexedPopulationManagerImpl extends BaseElement implements I
 			}
 		}
 
+	}
+
+	@Override
+	public List<PersonId> getPeople(Object key, LabelSet labelSet) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int getCellPersonCount(Object key, LabelSet labelSet) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public boolean contains(PersonId personId, Object key) {
+		//return indexedPopulationMap.get(key).personInPopulationIndex(personId);
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(PersonId personId, LabelSet labelSet, Object key) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean validateLabelSet(Object key, LabelSet labelSet) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

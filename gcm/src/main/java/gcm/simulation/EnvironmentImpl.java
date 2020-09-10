@@ -2310,7 +2310,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePopulationIndexIsOwnedByFocalComponent(key);
-			mutationResolver.removePopulationIndex(componentManager.getFocalComponentId(), key);
+			mutationResolver.removePopulationIndex(key);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}

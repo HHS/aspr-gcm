@@ -1,4 +1,4 @@
-package gcm.simulation.index;
+package gcm.simulation.partition;
 
 import java.util.List;
 
@@ -7,12 +7,13 @@ import gcm.scenario.ComponentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
-import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Element;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.StochasticPersonSelection;
+import gcm.simulation.index.Filter;
 import gcm.util.annotations.Source;
 
 /**
@@ -26,7 +27,7 @@ import gcm.util.annotations.Source;
  */
 
 @Source
-public interface IndexedPopulationManager extends Element {
+public interface PartitionManager extends Element {
 
 	/**
 	 * Adds a population index for the given key. The key must not duplicate an
@@ -37,7 +38,7 @@ public interface IndexedPopulationManager extends Element {
 	 *             if the key is already associated with a population index
 	 */
 
-	public void addIndex(final ComponentId componentId, final Filter filter, final Object key);
+	public void addFilteredPartition(final ComponentId componentId, final Filter filter, final Partition partition, final Object key);
 
 	/**
 	 * Returns the list of person identifiers in the index for the given key.
@@ -46,7 +47,16 @@ public interface IndexedPopulationManager extends Element {
 	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *             if the keys are not associated with a population index
 	 */
-	public List<PersonId> getIndexedPeople(final Object key);
+	public List<PersonId> getPeople(final Object key);
+	
+	/**
+	 * Returns the list of person identifiers in the index for the given key.
+	 *
+	 * @throws ModelException
+	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
+	 *             if the keys are not associated with a population index
+	 */
+	public List<PersonId> getPeople(final Object key, LabelSet labelSet);
 
 	/**
 	 * Returns the number of people in the index for the given key.
@@ -55,39 +65,28 @@ public interface IndexedPopulationManager extends Element {
 	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
 	 *             if the keys are not associated with a population index
 	 */
-	public int getIndexSize(final Object key);
+	public int getPersonCount(final Object key);
+	
+	public int getCellPersonCount(Object key , LabelSet labelSet);
 
 	/**
-	 * Returns a randomly selected person from the given index excluding the
-	 * given person identifier. A null value for the excluded person is allowed.
-	 * Returns null if there are no people in the index or the only person in
-	 * the index is the excluded person.
+	 * Returns a randomly selected person from the given index using the given PartitionSampler.
 	 *
-	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *             if the keys are not associated with a population index
 	 */
-	public PersonId sampleIndex(final Object key,final PersonId excludedPersonId);
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler);
 
-	/**
-	 * Returns a randomly selected person from the given index excluding the
-	 * given person identifier. A null value for the excluded person is allowed.
-	 * Returns null if there are no people in the index or the only person in
-	 * the index is the excluded person. Random selection is from the
-	 * RandomGenerator instance associated with the RandomNumberGeneratorId.
-	 *
-	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *             if the keys are not associated with a population index
-	 */
-	public PersonId sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,final PersonId excludedPersonId);
 
+	
 	/**
 	 * Returns true if and only if the person is contained in the population
 	 * corresponding to the key. The key must correspond to an existing indexed
 	 * population.
 	 */
-	public boolean personInPopulationIndex(final PersonId personId, final Object key);
+	
+	public boolean contains(final PersonId personId, Object key);
+	
+	public boolean contains(PersonId personId ,LabelSet labelSet, Object key);
+
 
 	/**
 	 * Adds a person into all population indices that apply to that person. This
@@ -143,7 +142,7 @@ public interface IndexedPopulationManager extends Element {
 	 * to an existing indexed population.
 	 * 
 	 */
-	public boolean populationIndexExists(final Object key);
+	public boolean partitionExists(final Object key);
 
 	/**
 	 * Removes the population index for the given keys. The key must correspond
@@ -151,7 +150,7 @@ public interface IndexedPopulationManager extends Element {
 	 *
 	 * 
 	 */
-	public void removeIndex(final Object key);
+	public void removePartition(final Object key);
 
 	/**
 	 * Updates a person's property value association in all relevant indices and
@@ -165,5 +164,11 @@ public interface IndexedPopulationManager extends Element {
 	 * population. The key must correspond to an existing indexed population.
 	 */
 	public ComponentId getOwningComponent(final Object key);
+	
+	/**
+	 * Returns true if and only if the given population labelSet is compatible with
+	 * the PopulationPartitionDefinition associated with the key
+	 */
+	public boolean validateLabelSet(Object key, LabelSet labelSet);
 
 }

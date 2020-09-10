@@ -1250,14 +1250,14 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void removePopulationIndex(ComponentId componentId, final Object key) {
+	public void removePopulationIndex(final Object key) {
 		// externalAccessManager.acquireExternalReadAccessLock();
 		// try {
 		//
 		// } finally {
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
-		indexedPopulationManager.removeIndex(componentId, key);
+		indexedPopulationManager.removeIndex(key);
 		observationManager.handlePopulationIndexRemoval(key);
 	}
 

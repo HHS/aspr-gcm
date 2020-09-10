@@ -165,7 +165,7 @@ public interface MutationResolver extends Element {
 
 	public <T> Optional<T> removePlan(final Object key);
 
-	public void removePopulationIndex(ComponentId componentId, final Object key);
+	public void removePopulationIndex(final Object key);
 
 	public void removeResourceFromPerson(final ResourceId resourceId, final PersonId personId, final long amount);
 

@@ -67,8 +67,8 @@ public interface FilteredPartitionManager extends Element {
 	 */
 	public int getPersonCount(final Object key);
 	
-	public int getCellPersonCount(Object key , LabelSet labelSet);
-
+	public int getPersonCount(final Object key,LabelSet labelSet);
+	
 	/**
 	 * Returns a randomly selected person from the given index using the given PartitionSampler.
 	 *

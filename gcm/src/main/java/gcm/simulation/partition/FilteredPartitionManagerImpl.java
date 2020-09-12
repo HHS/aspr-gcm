@@ -1,11 +1,12 @@
 package gcm.simulation.partition;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.math3.random.RandomGenerator;
 
 import gcm.scenario.CompartmentId;
 import gcm.scenario.ComponentId;
@@ -13,6 +14,7 @@ import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.BaseElement;
@@ -25,13 +27,12 @@ import gcm.simulation.ProfileManager;
 import gcm.simulation.PropertyManager;
 import gcm.simulation.SimulationWarningManager;
 import gcm.simulation.StochasticPersonSelection;
+import gcm.simulation.StochasticsManager;
 import gcm.simulation.Trigger;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.index.Filter;
 import gcm.simulation.index.FilterInfo;
 import gcm.simulation.index.FilterMapOptionAnalyzer;
-import gcm.simulation.index.IndexedPopulation;
-import gcm.simulation.index.IndexedPopulationImpl;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -65,7 +66,7 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 	/*
 	 * The principle container for all contained IndexedPopulations.
 	 */
-	private final Map<Object, IndexedPopulation> indexedPopulationMap = new LinkedHashMap<>();
+	private final Map<Object, FilteredPopulationPartition> indexedPopulationMap = new LinkedHashMap<>();
 
 	/*
 	 * When an index's filter cannot be matched to any of the maps that we use to
@@ -117,6 +118,8 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 	 */
 	private final Map<GroupTypeId, Set<FilteredPopulationPartition>> groupTypeIndexedPopulations = new LinkedHashMap<>();
 
+	private final Set<FilteredPopulationPartition> groupIndexedPopulationsWhoJustDontCare = new LinkedHashSet<>();
+
 	private PersonLocationManger personLocationManger;
 
 	private PropertyManager propertyManager;
@@ -133,12 +136,11 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 
 	private long masterTransactionId;
 
-	private long getNextTransactionId() {
-		// TODO this is enough for 52 trillion events per person before potentially
-		// encountering a collision with the initial value of the partition's internal
-		// transaction id. So.
+	private long getNextTransactionId() {		
 		return masterTransactionId++;
 	}
+
+	private StochasticsManager stochasticsManager;
 
 	@Override
 	public void init(final Context context) {
@@ -150,6 +152,7 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		this.personGroupManger = context.getPersonGroupManger();
 		this.profileManager = context.getProfileManager();
 		this.simulationWarningManager = context.getSimulationWarningManager();
+		this.stochasticsManager = context.getStochasticsManager();
 	}
 
 	@Override
@@ -174,10 +177,27 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * 
 		 * 
 		 */
+		if (componentId == null) {
+			throw new RuntimeException("null component id");
+		}
+
+		if (partition == null) {
+			throw new RuntimeException("null population partition definition");
+		}
+		
+		if (filter == null) {
+			throw new RuntimeException("null population partition definition");
+		}
+
+		if (key == null) {
+			throw new RuntimeException("null key");
+		}
+
+		
 		if (indexedPopulationMap.get(key) != null) {
 			throw new RuntimeException("duplicated key" + key);
 		}
-		
+
 		FilterInfo filterInfo = FilterInfo.build(filter);
 
 		/*
@@ -201,9 +221,10 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		}
 
 		PartitionInfo partitionInfo = PartitionInfo.build(partition);
-		FilteredPopulationPartition filteredPopulationPartition = new FilteredPopulationPartition(key, context, partitionInfo, filterInfo, componentId);
+		FilteredPopulationPartition filteredPopulationPartition = new FilteredPopulationPartition(key, context,
+				partitionInfo, filterInfo, componentId);
 
-		//TODO -- implement profiler
+		// TODO -- implement profiler
 //		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
 //		if (useProfiledFilters) {
 //			indexedPopulation = profileManager.getProfiledProxy(indexedPopulation);
@@ -214,12 +235,12 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		Trigger trigger = new Trigger(filterInfo, context);
 
 		final Set<CompartmentId> compartmentIds;
-		if(partitionInfo.getCompartmentPartitionFunction() != null) {
+		if (partitionInfo.getCompartmentPartitionFunction() != null) {
 			compartmentIds = context.getScenario().getCompartmentIds();
-		}else {
+		} else {
 			compartmentIds = trigger.getCompartmentIdentifiers();
-		}	
-		
+		}
+
 		for (final CompartmentId compartmentId : compartmentIds) {
 			Set<FilteredPopulationPartition> set = compartmentIndexedPopulations.get(compartmentId);
 			if (set == null) {
@@ -229,13 +250,13 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			set.add(filteredPopulationPartition);
 			filterCount++;
 		}
-		
+
 		final Set<RegionId> regionIds;
-		if(partitionInfo.getRegionPartitionFunction()!=null) {
-			//TODO -- do something faster than this
+		if (partitionInfo.getRegionPartitionFunction() != null) {
+			// TODO -- do something faster than this
 			regionIds = context.getScenario().getRegionIds();
-		}else {
-			regionIds = trigger.getRegionIdentifiers();	
+		} else {
+			regionIds = trigger.getRegionIdentifiers();
 		}
 
 		for (final RegionId regionId : regionIds) {
@@ -247,8 +268,7 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			set.add(filteredPopulationPartition);
 			filterCount++;
 		}
-		
-		
+
 		Set<ResourceId> resourceIds = partitionInfo.getPersonResourceIds();
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
@@ -262,69 +282,82 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			filterCount++;
 		}
 
+		// The trigger's value-sensitive and value-insensitive property ids are expected
+		// to be disjoint. However, the partition may demand evaluation for a particular
+		// property id, and thus for all values of that property, overriding the
+		// expectations of the trigger. We blend those expectations, favoring
+		// value-insensitive re-evaluations.
 
-		for (final PersonPropertyId personPropertyId : trigger.getValueInsensitivePropertyIdentifiers()) {
-			Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
-			if (indexedPopulations == null) {
-				indexedPopulations = new LinkedHashSet<>();
-				propertyIdIndexedPopulations.put(personPropertyId, indexedPopulations);
+		Set<PersonPropertyId> valueInsensitivePropertyIdentifiers = trigger.getValueInsensitivePropertyIdentifiers();
+		valueInsensitivePropertyIdentifiers.addAll(partitionInfo.getPersonPropertyIds());
+
+		Set<PersonPropertyId> valueSensitivePropertyIdentifiers = trigger.getValueSensitivePropertyIdentifiers();
+		valueSensitivePropertyIdentifiers.removeAll(valueInsensitivePropertyIdentifiers);
+
+		for (final PersonPropertyId personPropertyId : valueInsensitivePropertyIdentifiers) {
+			Set<FilteredPopulationPartition> set = propertyIdIndexedPopulations.get(personPropertyId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				propertyIdIndexedPopulations.put(personPropertyId, set);
 			}
-			indexedPopulations.add(indexedPopulation);
+			set.add(filteredPopulationPartition);
 
 			filterCount++;
 		}
 
-		for (final PersonPropertyId personPropertyId : trigger.getValueSensitivePropertyIdentifiers()) {
+		for (final PersonPropertyId personPropertyId : valueSensitivePropertyIdentifiers) {
 
 			final Set<Object> personPropertyValues = trigger.getPropertyValues(personPropertyId);
 
-			Map<Object, Set<IndexedPopulation>> map = propertyValueIndexedPopulations.get(personPropertyId);
+			Map<Object, Set<FilteredPopulationPartition>> map = propertyValueIndexedPopulations.get(personPropertyId);
 			if (map == null) {
 				map = new LinkedHashMap<>();
 				propertyValueIndexedPopulations.put(personPropertyId, map);
 			}
 
 			for (final Object personPropertyValue : personPropertyValues) {
-				Set<IndexedPopulation> set = map.get(personPropertyValue);
+				Set<FilteredPopulationPartition> set = map.get(personPropertyValue);
 				if (set == null) {
 					set = new LinkedHashSet<>();
 					map.put(personPropertyValue, set);
 				}
-				set.add(indexedPopulation);
+				set.add(filteredPopulationPartition);
 				filterCount++;
 			}
 
 		}
 
-		
+		if (partitionInfo.getGroupPartitionFunction() != null) {
+			groupIndexedPopulationsWhoJustDontCare.add(filteredPopulationPartition);
+		}
+
 		for (GroupId groupId : trigger.getGroupIdentifiers()) {
-			Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
-			if (indexedPopulations == null) {
-				indexedPopulations = new LinkedHashSet<>();
-				groupIndexedPopulations.put(groupId, indexedPopulations);
+			Set<FilteredPopulationPartition> set = groupIndexedPopulations.get(groupId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				groupIndexedPopulations.put(groupId, set);
 			}
-			indexedPopulations.add(indexedPopulation);
+			set.add(filteredPopulationPartition);
 
 			filterCount++;
 		}
 
 		for (GroupTypeId groupTypeId : trigger.getGroupTypeIdentifiers()) {
-			Set<IndexedPopulation> indexedPopulations = groupTypeIndexedPopulations.get(groupTypeId);
-			if (indexedPopulations == null) {
-				indexedPopulations = new LinkedHashSet<>();
-				groupTypeIndexedPopulations.put(groupTypeId, indexedPopulations);
+			Set<FilteredPopulationPartition> set = groupTypeIndexedPopulations.get(groupTypeId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				groupTypeIndexedPopulations.put(groupTypeId, set);
 			}
-			indexedPopulations.add(indexedPopulation);
+			set.add(filteredPopulationPartition);
 			filterCount++;
 		}
 
 		if (filterCount == 0) {
-			unfilteredIndexedPopulations.add(indexedPopulation);
+			unfilteredIndexedPopulations.add(filteredPopulationPartition);
 		}
 
-		indexedPopulation.init();
-		indexedPopulationMap.put(key, indexedPopulation);
-
+		filteredPopulationPartition.init();
+		indexedPopulationMap.put(key, filteredPopulationPartition);
 	}
 
 	@Override
@@ -334,15 +367,43 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 
 	@Override
 	public int getPersonCount(final Object key) {
-		return indexedPopulationMap.get(key).size();
+		return indexedPopulationMap.get(key).getPeopleCount();
+	}
+
+	@Override
+	public int getPersonCount(final Object key, LabelSet labelSet) {
+		// TODO -- we should convert to label set info instances at the environment
+		// level during validation
+		return indexedPopulationMap.get(key).getPeopleCount(LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
-		// TODO implement
+		// TODO consider conversion to partition sampler info at the environment level
 
-		// return indexedPopulationMap.get(key).sampleIndex(excludedPersonId);
-		return null;
+		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
+
+		RandomGenerator randomGenerator;
+		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId()
+				.orElse(null);
+		if (randomNumberGeneratorId == null) {
+			randomGenerator = stochasticsManager.getRandomGenerator();
+		} else {
+			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+		}
+
+		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
+
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction()
+				.orElse(null);
+
+		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
+
+		return indexedPopulationMap.get(key).samplePartition(labelSetInfo, labelSetWeightingFunction, randomGenerator,
+				excludedPersonId);
+
 	}
 
 	@Override
@@ -367,55 +428,63 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * 
 		 */
 		long transactionId = getNextTransactionId();
+
 		for (final ResourceId resourceId : resourceIndexedPopulations.keySet()) {
 			Set<FilteredPopulationPartition> filteredPopulationPartitions = resourceIndexedPopulations.get(resourceId);
 			if (filteredPopulationPartitions != null) {
 				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
-					filteredPopulationPartition.handleAddPerson(transactionId,personId);
+					filteredPopulationPartition.handleAddPerson(transactionId, personId);
 				}
 			}
 		}
 
 		for (final PersonPropertyId personPropertyId : propertyValueIndexedPopulations.keySet()) {
 			final Object personPropertyValue = propertyManager.getPersonPropertyValue(personId, personPropertyId);
-			final Map<Object, Set<IndexedPopulation>> map = propertyValueIndexedPopulations.get(personPropertyId);
+			final Map<Object, Set<FilteredPopulationPartition>> map = propertyValueIndexedPopulations
+					.get(personPropertyId);
 			if (map != null) {
-				final Set<IndexedPopulation> indexedPopulations = map.get(personPropertyValue);
-				if (indexedPopulations != null) {
-					for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-						indexedPopulation.evaluate(personId);
+				final Set<FilteredPopulationPartition> filteredPopulationPartitions = map.get(personPropertyValue);
+				if (filteredPopulationPartitions != null) {
+					for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+						filteredPopulationPartition.handleAddPerson(transactionId, personId);
 					}
 				}
 			}
 		}
 
 		for (final PersonPropertyId personPropertyId : propertyIdIndexedPopulations.keySet()) {
-			final Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.evaluate(personId);
+			final Set<FilteredPopulationPartition> filteredPopulationPartitions = propertyIdIndexedPopulations
+					.get(personPropertyId);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handleAddPerson(transactionId, personId);
 				}
 			}
 		}
 
 		final RegionId regionId = personLocationManger.getPersonRegion(personId);
-		Set<IndexedPopulation> indexedPopulations = regionIndexedPopulations.get(regionId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = regionIndexedPopulations.get(regionId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleAddPerson(transactionId, personId);
 			}
 		}
 
 		final CompartmentId compartmentId = personLocationManger.getPersonCompartment(personId);
-		indexedPopulations = compartmentIndexedPopulations.get(compartmentId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		filteredPopulationPartitions = compartmentIndexedPopulations.get(compartmentId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleAddPerson(transactionId, personId);
 			}
 		}
 
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+		/*
+		 * Note that we do not consider the group-based filtered poplulation partitions
+		 * since a newly added person should not yet be in any group
+		 */
+
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleAddPerson(transactionId, personId);
 		}
 
 	}
@@ -430,22 +499,22 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * the person.
 		 */
 		long transactionId = getNextTransactionId();
-		Set<IndexedPopulation> indexedPopulations = compartmentIndexedPopulations.get(oldCompartmentId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = compartmentIndexedPopulations.get(oldCompartmentId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleCompartmentChange(transactionId,personId);
 			}
 		}
 
-		indexedPopulations = compartmentIndexedPopulations.get(newCompartmentId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		filteredPopulationPartitions = compartmentIndexedPopulations.get(newCompartmentId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleCompartmentChange(transactionId,personId);
 			}
 		}
 
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleCompartmentChange(transactionId,personId);			
 		}
 
 	}
@@ -464,22 +533,23 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 
 		long transactionId = getNextTransactionId();
 
-		Set<IndexedPopulation> indexedPopulations = regionIndexedPopulations.get(oldRegionId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = regionIndexedPopulations.get(oldRegionId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleRegionChange(transactionId,personId);
 			}
 		}
 
-		indexedPopulations = regionIndexedPopulations.get(newRegionId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		filteredPopulationPartitions = regionIndexedPopulations.get(newRegionId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleRegionChange(transactionId,personId);
 			}
 		}
 
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleRegionChange(transactionId,personId);			
 		}
 	}
 
@@ -493,25 +563,32 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
+		
 		long transactionId = getNextTransactionId();
-		Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
-		if (indexedPopulations != null) {
-			for (IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		
+		for (final FilteredPopulationPartition filteredPopulationPartition : groupIndexedPopulationsWhoJustDontCare) {
+			filteredPopulationPartition.handleGroupMembershipChange(transactionId, personId);
+		}
+		
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = groupIndexedPopulations.get(groupId);
+		if (filteredPopulationPartitions != null) {
+			for (FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleGroupMembershipChange(transactionId,personId);
 			}
 		}
 		GroupTypeId groupType = personGroupManger.getGroupType(groupId);
 
-		indexedPopulations = groupTypeIndexedPopulations.get(groupType);
-		if (indexedPopulations != null) {
-			for (IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		filteredPopulationPartitions = groupTypeIndexedPopulations.get(groupType);
+		
+		if (filteredPopulationPartitions != null) {
+			for (FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleGroupMembershipChange(transactionId,personId);
 			}
 		}
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+		
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
-
 	}
 
 	@Override
@@ -524,24 +601,32 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
+		
 		long transactionId = getNextTransactionId();
-		Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
-		if (indexedPopulations != null) {
-			for (IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		for (final FilteredPopulationPartition filteredPopulationPartition : groupIndexedPopulationsWhoJustDontCare) {
+			filteredPopulationPartition.handleGroupMembershipChange(transactionId, personId);
+		}
+		
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = groupIndexedPopulations.get(groupId);
+		if (filteredPopulationPartitions != null) {
+			for (FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleGroupMembershipChange(transactionId,personId);
 			}
 		}
 		GroupTypeId groupType = personGroupManger.getGroupType(groupId);
 
-		indexedPopulations = groupTypeIndexedPopulations.get(groupType);
-		if (indexedPopulations != null) {
-			for (IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		filteredPopulationPartitions = groupTypeIndexedPopulations.get(groupType);
+		
+		if (filteredPopulationPartitions != null) {
+			for (FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleGroupMembershipChange(transactionId,personId);
 			}
 		}
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+		
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
+
 	}
 
 	@Override
@@ -554,54 +639,61 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		long transactionId = getNextTransactionId();
 
 		for (final ResourceId resourceId : resourceIndexedPopulations.keySet()) {
-			final Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.remove(personId);
+			final Set<FilteredPopulationPartition> filteredPopulationPartitions = resourceIndexedPopulations
+					.get(resourceId);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handleRemovePerson(transactionId, personId);
 				}
 			}
 		}
 
 		for (final PersonPropertyId personPropertyId : propertyValueIndexedPopulations.keySet()) {
 			final Object personPropertyValue = propertyManager.getPersonPropertyValue(personId, personPropertyId);
-			final Map<Object, Set<IndexedPopulation>> map = propertyValueIndexedPopulations.get(personPropertyId);
+			final Map<Object, Set<FilteredPopulationPartition>> map = propertyValueIndexedPopulations.get(personPropertyId);
 			if (map != null) {
-				final Set<IndexedPopulation> indexedPopulations = map.get(personPropertyValue);
-				if (indexedPopulations != null) {
-					for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-						indexedPopulation.remove(personId);
+				final Set<FilteredPopulationPartition> filteredPopulationPartitions = map.get(personPropertyValue);
+				if (filteredPopulationPartitions != null) {
+					for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+						filteredPopulationPartition.handleRemovePerson(transactionId, personId);
 					}
 				}
 			}
 		}
 
 		for (final PersonPropertyId personPropertyId : propertyIdIndexedPopulations.keySet()) {
-			final Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.remove(personId);
+			final Set<FilteredPopulationPartition> filteredPopulationPartitions = propertyIdIndexedPopulations.get(personPropertyId);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handleRemovePerson(transactionId, personId);
 				}
 			}
 		}
 
 		final RegionId regionId = personLocationManger.getPersonRegion(personId);
-		Set<IndexedPopulation> indexedPopulations = regionIndexedPopulations.get(regionId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.remove(personId);
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = regionIndexedPopulations.get(regionId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleRemovePerson(transactionId, personId);
 			}
 		}
 
 		final CompartmentId compartmentId = personLocationManger.getPersonCompartment(personId);
-		indexedPopulations = compartmentIndexedPopulations.get(compartmentId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.remove(personId);
+		filteredPopulationPartitions = compartmentIndexedPopulations.get(compartmentId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handleRemovePerson(transactionId, personId);
 			}
 		}
 
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.remove(personId);
+		/*
+		 * Note that we do not consider group-base filtered population partitions since
+		 * a person should have been removed from their groups prior to their removal
+		 * here.
+		 */
+
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handleRemovePerson(transactionId,personId);
 		}
 
 	}
@@ -609,38 +701,24 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 	@Override
 	public void handlePersonResourceLevelChange(final PersonId personId, final ResourceId resourceId) {
 
-		/*
-		 * We identify the indexed populations associated with the two levels of
-		 * resources.
-		 * 
-		 * Each identified indexed population, including the unfiltered indexed
-		 * populations, are invoked to evaluate the person.
-		 * 
-		 */
-
 		long transactionId = getNextTransactionId();
 
-		/*
-		 * Evaluation of the unfiltered is done now since we may escape out on the
-		 * resource associated indexed populations
-		 */
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
-		}
-
-		final Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		final Set<FilteredPopulationPartition> filteredPopulationPartitions = resourceIndexedPopulations.get(resourceId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handlePersonResourceChange(transactionId,personId,resourceId);
 			}
 		}
-
+		
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handlePersonResourceChange(transactionId,personId,resourceId);
+		}
 	}
 
 	@Override
 	public boolean partitionExists(final Object key) {
-		final IndexedPopulation indexedPopulation = indexedPopulationMap.get(key);
-		return indexedPopulation != null;
+		FilteredPopulationPartition filteredPopulationPartition = indexedPopulationMap.get(key);
+		return filteredPopulationPartition != null;
 	}
 
 	@Override
@@ -650,47 +728,97 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 		 * Attempt to remove the indexed population from the main storage container for
 		 * all indexed populations.
 		 */
-		final IndexedPopulation indexedPopulation = indexedPopulationMap.get(key);
+		final FilteredPopulationPartition filteredPopulationPartition = indexedPopulationMap.get(key);
 
 		indexedPopulationMap.remove(key);
 
 		/*
 		 * Remove the indexed population from the various filter-related maps and set.
 		 */
-		FilterInfo filterInfo = indexedPopulation.getFilterInfo();
+		FilterInfo filterInfo = filteredPopulationPartition.getFilterInfo();
+		PartitionInfo partitionInfo = filteredPopulationPartition.getPartitionInfo();
+
 		Trigger trigger = new Trigger(filterInfo, context);
 
-		for (final CompartmentId compartmentId : trigger.getCompartmentIdentifiers()) {
-			final Set<IndexedPopulation> set = compartmentIndexedPopulations.get(compartmentId);
-			set.remove(indexedPopulation);
+		final Set<CompartmentId> compartmentIds;
+		if (partitionInfo.getCompartmentPartitionFunction() != null) {
+			compartmentIds = context.getScenario().getCompartmentIds();
+		} else {
+			compartmentIds = trigger.getCompartmentIdentifiers();
+		}
+
+		for (final CompartmentId compartmentId : compartmentIds) {
+			final Set<FilteredPopulationPartition> set = compartmentIndexedPopulations.get(compartmentId);
+			set.remove(filteredPopulationPartition);
 			if (set.size() == 0) {
 				compartmentIndexedPopulations.remove(compartmentId);
 			}
 		}
 
-		for (final RegionId regionId : trigger.getRegionIdentifiers()) {
-			final Set<IndexedPopulation> set = regionIndexedPopulations.get(regionId);
-			set.remove(indexedPopulation);
+		final Set<RegionId> regionIds;
+		if (partitionInfo.getRegionPartitionFunction() != null) {
+			// TODO -- do something faster than this
+			regionIds = context.getScenario().getRegionIds();
+		} else {
+			regionIds = trigger.getRegionIdentifiers();
+		}
+
+		for (final RegionId regionId : regionIds) {
+			final Set<FilteredPopulationPartition> set = regionIndexedPopulations.get(regionId);
+			set.remove(filteredPopulationPartition);
 			if (set.size() == 0) {
 				regionIndexedPopulations.remove(regionId);
 			}
 		}
 
-		for (final PersonPropertyId personPropertyId : trigger.getValueInsensitivePropertyIdentifiers()) {
-			final Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
-			indexedPopulations.remove(indexedPopulation);
-			if (indexedPopulations.size() == 0) {
+		Set<ResourceId> resourceIds = partitionInfo.getPersonResourceIds();
+		resourceIds.addAll(trigger.getResourceIdentifiers());
+		for (final ResourceId resourceId : resourceIds) {
+
+			Set<FilteredPopulationPartition> set = resourceIndexedPopulations.get(resourceId);
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				resourceIndexedPopulations.put(resourceId, set);
+			}
+			set.add(filteredPopulationPartition);
+
+		}
+
+		for (final ResourceId resourceId : resourceIds) {
+			final Set<FilteredPopulationPartition> indexedPopulations = resourceIndexedPopulations.get(resourceId);
+			indexedPopulations.remove(filteredPopulationPartition);
+		}
+
+		// The trigger's value-sensitive and value-insensitive property ids are expected
+		// to be disjoint. However, the partition may demand evaluation for a particular
+		// property id, and thus for all values of that property, overriding the
+		// expectations of the trigger. We blend those expectations, favoring
+		// value-insensitive re-evaluations.
+
+		Set<PersonPropertyId> valueInsensitivePropertyIdentifiers = trigger.getValueInsensitivePropertyIdentifiers();
+		valueInsensitivePropertyIdentifiers.addAll(partitionInfo.getPersonPropertyIds());
+
+		Set<PersonPropertyId> valueSensitivePropertyIdentifiers = trigger.getValueSensitivePropertyIdentifiers();
+		valueSensitivePropertyIdentifiers.removeAll(valueInsensitivePropertyIdentifiers);
+
+		for (final PersonPropertyId personPropertyId : valueInsensitivePropertyIdentifiers) {
+			final Set<FilteredPopulationPartition> set = propertyIdIndexedPopulations.get(personPropertyId);
+			set.remove(filteredPopulationPartition);
+			if (set.size() == 0) {
 				propertyIdIndexedPopulations.remove(personPropertyId);
 			}
 		}
 
-		for (final PersonPropertyId personPropertyId : trigger.getValueSensitivePropertyIdentifiers()) {
-			final Map<Object, Set<IndexedPopulation>> map = propertyValueIndexedPopulations.get(personPropertyId);
+		for (final PersonPropertyId personPropertyId : valueSensitivePropertyIdentifiers) {
+			final Map<Object, Set<FilteredPopulationPartition>> map = propertyValueIndexedPopulations
+					.get(personPropertyId);
 			for (final Object personPropertyValue : trigger.getPropertyValues(personPropertyId)) {
-				final Set<IndexedPopulation> indexedPopulations = map.get(personPropertyValue);
-				indexedPopulations.remove(indexedPopulation);
-				if (indexedPopulations.size() == 0) {
-					map.remove(personPropertyValue);
+				final Set<FilteredPopulationPartition> set = map.get(personPropertyValue);
+				if (set != null) {
+					set.remove(filteredPopulationPartition);
+					if (set.size() == 0) {
+						map.remove(personPropertyValue);
+					}
 				}
 			}
 			if (map.size() == 0) {
@@ -698,32 +826,31 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			}
 		}
 
+		if (partitionInfo.getGroupPartitionFunction() != null) {
+			groupIndexedPopulationsWhoJustDontCare.remove(filteredPopulationPartition);
+		}
+
 		for (GroupId groupId : trigger.getGroupIdentifiers()) {
-			Set<IndexedPopulation> indexedPopulations = groupIndexedPopulations.get(groupId);
-			if (indexedPopulations != null) {
-				indexedPopulations.remove(indexedPopulation);
-				if (indexedPopulations.size() == 0) {
+			Set<FilteredPopulationPartition> set = groupIndexedPopulations.get(groupId);
+			if (set != null) {
+				set.remove(filteredPopulationPartition);
+				if (set.size() == 0) {
 					groupIndexedPopulations.remove(groupId);
 				}
 			}
 		}
 
 		for (GroupTypeId groupTypeId : trigger.getGroupTypeIdentifiers()) {
-			Set<IndexedPopulation> indexedPopulations = groupTypeIndexedPopulations.get(groupTypeId);
-			if (indexedPopulations != null) {
-				indexedPopulations.remove(indexedPopulation);
-				if (indexedPopulations.size() == 0) {
+			Set<FilteredPopulationPartition> set = groupTypeIndexedPopulations.get(groupTypeId);
+			if (set != null) {
+				set.remove(filteredPopulationPartition);
+				if (set.size() == 0) {
 					groupTypeIndexedPopulations.remove(groupTypeId);
 				}
 			}
 		}
 
-		for (final ResourceId resourceId : trigger.getResourceIdentifiers()) {
-			final Set<IndexedPopulation> indexedPopulations = resourceIndexedPopulations.get(resourceId);
-			indexedPopulations.remove(indexedPopulation);
-		}
-
-		unfilteredIndexedPopulations.remove(indexedPopulation);
+		unfilteredIndexedPopulations.remove(filteredPopulationPartition);
 
 	}
 
@@ -744,32 +871,32 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 
 		long transactionId = getNextTransactionId();
 
-		Set<IndexedPopulation> indexedPopulations = propertyIdIndexedPopulations.get(personPropertyId);
-		if (indexedPopulations != null) {
-			for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-				indexedPopulation.evaluate(personId);
+		Set<FilteredPopulationPartition> filteredPopulationPartitions = propertyIdIndexedPopulations.get(personPropertyId);
+		if (filteredPopulationPartitions != null) {
+			for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+				filteredPopulationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
 			}
 		}
 
-		final Map<Object, Set<IndexedPopulation>> map = propertyValueIndexedPopulations.get(personPropertyId);
+		final Map<Object, Set<FilteredPopulationPartition>> map = propertyValueIndexedPopulations.get(personPropertyId);
 		if (map != null) {
-			indexedPopulations = map.get(oldValue);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.evaluate(personId);
+			filteredPopulationPartitions = map.get(oldValue);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
 				}
 			}
 
-			indexedPopulations = map.get(newValue);
-			if (indexedPopulations != null) {
-				for (final IndexedPopulation indexedPopulation : indexedPopulations) {
-					indexedPopulation.evaluate(personId);
+			filteredPopulationPartitions = map.get(newValue);
+			if (filteredPopulationPartitions != null) {
+				for (final FilteredPopulationPartition filteredPopulationPartition : filteredPopulationPartitions) {
+					filteredPopulationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
 				}
 			}
 		}
 
-		for (final IndexedPopulation indexedPopulation : unfilteredIndexedPopulations) {
-			indexedPopulation.evaluate(personId);
+		for (final FilteredPopulationPartition filteredPopulationPartition : unfilteredIndexedPopulations) {
+			filteredPopulationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);			
 		}
 	}
 
@@ -780,62 +907,52 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 
 	@Override
 	public void collectMemoryLinks(MemoryPartition memoryPartition) {
-		Map<ComponentId, List<IndexedPopulation>> map = new LinkedHashMap<>();
-		for (IndexedPopulation indexedPopulation : indexedPopulationMap.values()) {
-			ComponentId owningComponentId = indexedPopulation.getOwningComponentId();
-			List<IndexedPopulation> list = map.get(owningComponentId);
-			if (list == null) {
-				list = new ArrayList<>();
-				map.put(owningComponentId, list);
-			}
-			list.add(indexedPopulation);
-		}
-
-		for (ComponentId componentId : map.keySet()) {
-			List<IndexedPopulation> list = map.get(componentId);
-			boolean useIndex = list.size() > 1;
-			int index = 1;
-			for (IndexedPopulation indexedPopulation : list) {
-				String name = "Index for " + componentId.toString();
-				if (useIndex) {
-					name += "_" + index;
-					index++;
-				}
-				memoryPartition.addMemoryLink(this, indexedPopulation, name);
-			}
-		}
+		// TODO implement memory reporting
+//		Map<ComponentId, List<IndexedPopulation>> map = new LinkedHashMap<>();
+//		for (IndexedPopulation indexedPopulation : indexedPopulationMap.values()) {
+//			ComponentId owningComponentId = indexedPopulation.getOwningComponentId();
+//			List<IndexedPopulation> list = map.get(owningComponentId);
+//			if (list == null) {
+//				list = new ArrayList<>();
+//				map.put(owningComponentId, list);
+//			}
+//			list.add(indexedPopulation);
+//		}
+//
+//		for (ComponentId componentId : map.keySet()) {
+//			List<IndexedPopulation> list = map.get(componentId);
+//			boolean useIndex = list.size() > 1;
+//			int index = 1;
+//			for (IndexedPopulation indexedPopulation : list) {
+//				String name = "Index for " + componentId.toString();
+//				if (useIndex) {
+//					name += "_" + index;
+//					index++;
+//				}
+//				memoryPartition.addMemoryLink(this, indexedPopulation, name);
+//			}
+//		}
 
 	}
 
 	@Override
 	public List<PersonId> getPeople(Object key, LabelSet labelSet) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getCellPersonCount(Object key, LabelSet labelSet) {
-		// TODO Auto-generated method stub
-		return 0;
+		return indexedPopulationMap.get(key).getPeople(LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public boolean contains(PersonId personId, Object key) {
-		// return indexedPopulationMap.get(key).personInPopulationIndex(personId);
-		// TODO Auto-generated method stub
-		return false;
+		return indexedPopulationMap.get(key).contains(personId);
 	}
 
 	@Override
 	public boolean contains(PersonId personId, LabelSet labelSet, Object key) {
-		// TODO Auto-generated method stub
-		return false;
+		return indexedPopulationMap.get(key).contains(personId, LabelSetInfo.build(labelSet));
 	}
 
 	@Override
 	public boolean validateLabelSet(Object key, LabelSet labelSet) {
-		// TODO Auto-generated method stub
-		return false;
+		return indexedPopulationMap.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));		
 	}
 
 }

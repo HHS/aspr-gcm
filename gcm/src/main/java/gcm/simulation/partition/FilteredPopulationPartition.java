@@ -375,8 +375,8 @@ public final class FilteredPopulationPartition {
 	 * Precondition: Person must exist
 	 *
 	 */
-	public void handleRemovePerson(long tranactionId, PersonId personId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handleRemovePerson(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		evaluate(personId);
@@ -407,8 +407,8 @@ public final class FilteredPopulationPartition {
 
 	}
 
-	public void handleRegionChange(long tranactionId, PersonId personId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handleRegionChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		if (!evaluate(personId)) {
@@ -444,8 +444,8 @@ public final class FilteredPopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handlePersonPropertyChange(long tranactionId, PersonId personId, PersonPropertyId personPropertyId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handlePersonPropertyChange(long transactionId, PersonId personId, PersonPropertyId personPropertyId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		if (!evaluate(personId)) {
@@ -483,8 +483,8 @@ public final class FilteredPopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handlePersonResourceChange(long tranactionId, PersonId personId, ResourceId resourceId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handlePersonResourceChange(long transactionId, PersonId personId, ResourceId resourceId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		if (!evaluate(personId)) {
@@ -522,8 +522,8 @@ public final class FilteredPopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handleCompartmentChange(long tranactionId, PersonId personId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handleCompartmentChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		if (!evaluate(personId)) {
@@ -559,8 +559,8 @@ public final class FilteredPopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handleGroupMembershipChange(long tranactionId, PersonId personId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handleGroupMembershipChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		if (groupLabelIndex < 0) {
@@ -741,7 +741,15 @@ public final class FilteredPopulationPartition {
 		}
 		return result;
 	}
-
+	
+	public int getPeopleCount() {
+		int result = 0;		
+		for(PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+			result += peopleContainer.size();			
+		}
+		return result;
+	}
+	
 	public int getPeopleCount(LabelSetInfo labelSetInfo) {
 		Key key = getKey(labelSetInfo);
 
@@ -794,7 +802,7 @@ public final class FilteredPopulationPartition {
 		return key;
 	}
 
-	private boolean contains(PersonId personId) {
+	public boolean contains(PersonId personId) {
 		if (personId == null) {
 			return false;
 		}
@@ -827,6 +835,9 @@ public final class FilteredPopulationPartition {
 			return peopleContainer.contains(personId);
 		}
 	}
+	
+	
+
 
 	/**
 	 * 
@@ -857,6 +868,14 @@ public final class FilteredPopulationPartition {
 		}
 	}
 
+	public List<PersonId> getPeople() {
+		List<PersonId> result = new ArrayList<>();
+		for(PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+			result.addAll(peopleContainer.getPeople());
+		}
+		return result;
+	}
+	
 	public void init() {
 		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
 				.forEach(personId -> addPerson(personId));//
@@ -1038,5 +1057,16 @@ public final class FilteredPopulationPartition {
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
 		return new StochasticPersonSelection(selectedPerson, false);
 	}
+	
+	
+	
+	public FilterInfo getFilterInfo() {
+		return filterInfo;
+	}
+	
+	public PartitionInfo getPartitionInfo() {
+		return partitionInfo;
+	}
+
 
 }

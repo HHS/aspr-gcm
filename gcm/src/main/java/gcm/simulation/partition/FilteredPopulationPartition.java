@@ -24,6 +24,7 @@ import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.index.FilterEvaluator;
 import gcm.simulation.index.FilterInfo;
 import gcm.simulation.index.FilterPopulationMatcher;
+import gcm.util.TimeElapser;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -741,15 +742,15 @@ public final class FilteredPopulationPartition {
 		}
 		return result;
 	}
-	
+
 	public int getPeopleCount() {
-		int result = 0;		
-		for(PeopleContainer peopleContainer : keyToPeopleMap.values()) {
-			result += peopleContainer.size();			
+		int result = 0;
+		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+			result += peopleContainer.size();
 		}
 		return result;
 	}
-	
+
 	public int getPeopleCount(LabelSetInfo labelSetInfo) {
 		Key key = getKey(labelSetInfo);
 
@@ -806,6 +807,9 @@ public final class FilteredPopulationPartition {
 		if (personId == null) {
 			return false;
 		}
+		if (personToKeyMap.size() <= personId.getValue()) {
+			return false;
+		}
 		Key key = personToKeyMap.get(personId.getValue());
 		if (key == null) {
 			return false;
@@ -814,31 +818,18 @@ public final class FilteredPopulationPartition {
 		return peopleContainer.contains(personId);
 	}
 
+	
+
 	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {
-		Key key = getKey(labelSetInfo);
-
-		if (key.isPartialKey()) {
-			Set<Key> fullKeys = getFullKeys(key);
-			for (Key fullKey : fullKeys) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				if (peopleContainer != null && peopleContainer.contains(personId)) {
-					return true;
-				}
-			}
+		if (personToKeyMap.size() <= personId.getValue()) {
 			return false;
-		} else {
-			PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-
-			if (peopleContainer == null) {
-				return false;
-			}
-			return peopleContainer.contains(personId);
 		}
+		Key key = personToKeyMap.get(personId.getValue());
+		LabelSetInfo fullLabelSetInfo = labelSetInfoMap.get(key);
+		return fullLabelSetInfo.isSubsetMatch(labelSetInfo);
 	}
-	
-	
 
-
+	
 	/**
 	 * 
 	 * 
@@ -870,12 +861,12 @@ public final class FilteredPopulationPartition {
 
 	public List<PersonId> getPeople() {
 		List<PersonId> result = new ArrayList<>();
-		for(PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
 			result.addAll(peopleContainer.getPeople());
 		}
 		return result;
 	}
-	
+
 	public void init() {
 		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
 				.forEach(personId -> addPerson(personId));//
@@ -1057,16 +1048,13 @@ public final class FilteredPopulationPartition {
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
 		return new StochasticPersonSelection(selectedPerson, false);
 	}
-	
-	
-	
+
 	public FilterInfo getFilterInfo() {
 		return filterInfo;
 	}
-	
+
 	public PartitionInfo getPartitionInfo() {
 		return partitionInfo;
 	}
-
 
 }

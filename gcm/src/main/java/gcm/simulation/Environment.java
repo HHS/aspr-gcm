@@ -3629,7 +3629,7 @@ public interface Environment extends Element {
 	 * 
 	 *
 	 */
-	public void addPopulationPartition(Partition partition, Object key);
+	public void addFilteredPartition(Filter filter, Partition partition, Object key);
 
 	/**
 	 * Returns the size of an indexed population.

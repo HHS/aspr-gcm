@@ -269,7 +269,7 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			filterCount++;
 		}
 
-		Set<ResourceId> resourceIds = partitionInfo.getPersonResourceIds();
+		Set<ResourceId> resourceIds = new LinkedHashSet<>( partitionInfo.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 
@@ -771,7 +771,7 @@ public final class FilteredPartitionManagerImpl extends BaseElement implements F
 			}
 		}
 
-		Set<ResourceId> resourceIds = partitionInfo.getPersonResourceIds();
+		Set<ResourceId> resourceIds = new LinkedHashSet<>( partitionInfo.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 

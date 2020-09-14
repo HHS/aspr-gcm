@@ -34,6 +34,67 @@ public final class LabelSetInfo {
 		return result;
 	}
 
+	/**
+	 * Returns true if and only if the give {@link LabelSetInfo} is a subset of this
+	 * {@link LabelSetInfo}. Only Non-null values in the input are compared to the
+	 * corresponding values in this label set info.
+	 */
+	public boolean isSubsetMatch(LabelSetInfo labelSetInfo) {
+		if (labelSetInfo.compartmentLabel != null) {
+			if (compartmentLabel == null) {
+				return false;
+			} else {
+				if (!compartmentLabel.equals(labelSetInfo.compartmentLabel)) {
+					return false;
+				}
+			}
+		}
+
+		if (labelSetInfo.groupLabel != null) {
+			if (groupLabel == null) {
+				return false;
+			} else {
+				if (!groupLabel.equals(labelSetInfo.groupLabel)) {
+					return false;
+				}
+			}
+		}
+
+		if (labelSetInfo.regionLabel == null) {
+			if (regionLabel == null) {
+				return false;
+			}
+		} else {
+			if (!regionLabel.equals(labelSetInfo.regionLabel)) {
+				return false;
+			}
+		}
+
+		for (PersonPropertyId personPropertyId : labelSetInfo.personPropertyLabels.keySet()) {
+			if (!personPropertyLabels.containsKey(personPropertyId)) {
+				return false;
+			}
+			Object localPropertyLabel = personPropertyLabels.get(personPropertyId);
+			Object propertyLabel = labelSetInfo.personPropertyLabels.get(personPropertyId);
+			
+			if (!localPropertyLabel.equals(propertyLabel)) {
+				return false;
+			}
+		}
+
+		for (ResourceId resourceId : labelSetInfo.personResourceLabels.keySet()) {
+			if (!personResourceLabels.containsKey(resourceId)) {
+				return false;
+			}
+			Object localResourceLabel = personResourceLabels.get(resourceId);
+			Object resourceLabel = labelSetInfo.personResourceLabels.get(resourceId);			
+			if (!localResourceLabel.equals(resourceLabel)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

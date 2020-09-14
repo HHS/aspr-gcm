@@ -41,8 +41,8 @@ import gcm.scenario.StageId;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.index.Filter;
 import gcm.simulation.index.IndexedPopulationManager;
+import gcm.simulation.partition.FilteredPartitionManager;
 import gcm.simulation.partition.Partition;
-import gcm.simulation.partition.PopulationPartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
@@ -77,7 +77,7 @@ import gcm.util.annotations.TestStatus;
 public final class MutationResolverImpl extends BaseElement implements MutationResolver {
 
 	private IndexedPopulationManager indexedPopulationManager;
-	private PopulationPartitionManager populationPartitionManager;
+	private FilteredPartitionManager populationPartitionManager;
 	private ObservationManager observationManager;
 	private MaterialsManager materialsManager;
 	private ReportsManager reportsManager;
@@ -104,7 +104,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		materialsManager = context.getMaterialsManager();
 		personLocationManger = context.getPersonLocationManger();
 		indexedPopulationManager = context.getIndexedPopulationManager();
-		populationPartitionManager = context.getPopulationPartitionManager();
+		populationPartitionManager = context.getFilteredPartitionManager();
 		resourceManager = context.getResourceManager();
 		personGroupManger = context.getPersonGroupManger();
 		eventManager = context.getEventManager();
@@ -466,7 +466,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 		indexedPopulationManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
 				personPropertyValue);
-		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId);
+		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId,oldValue,personPropertyValue);
 		reportsManager.handlePersonPropertyValueAssignment(personId, personPropertyId, oldValue);
 	}
 
@@ -590,7 +590,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupAddition(groupId, personId);
-		populationPartitionManager.handleGroupMembershipChange(personId);
+		populationPartitionManager.handlePersonGroupAddition(groupId,personId);
 		reportsManager.handleGroupMembershipAddition(groupId, personId);
 	}
 
@@ -1140,7 +1140,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 			for (PersonId personId : peopleForGroup) {
 				indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
-				populationPartitionManager.handleGroupMembershipChange(personId);
+				populationPartitionManager.handlePersonGroupRemoval(groupId,personId);
 			}
 			personGroupManger.removeGroup(groupId);
 			propertyManager.handleGroupRemoval(groupId);
@@ -1235,7 +1235,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
-		populationPartitionManager.handleGroupMembershipChange(personId);
+		populationPartitionManager.handlePersonGroupRemoval(groupId,personId);
 		reportsManager.handleGroupMembershipRemoval(groupId, personId);
 	}
 
@@ -1300,7 +1300,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonCompartmentChange(personId, oldCompartmentId, compartmentId);
-		populationPartitionManager.handlePersonCompartmentChange(personId);
+		populationPartitionManager.handlePersonCompartmentChange(personId, oldCompartmentId, compartmentId);
 		reportsManager.handleCompartmentAssignment(personId, oldCompartmentId);
 	}
 
@@ -1316,7 +1316,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonRegionChange(personId, oldRegionId, regionId);
-		populationPartitionManager.handlePersonRegionChange(personId);
+		populationPartitionManager.handlePersonRegionChange(personId, oldRegionId, regionId);
 		reportsManager.handleRegionAssignment(personId, oldRegionId);
 	}
 
@@ -1690,7 +1690,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void addPopulationPartition(ComponentId componentId,
+	public void addFilteredPartition(ComponentId componentId,Filter filter,
 			Partition partition, Object key) {
 		//TODO -- review methods that require callbacks and perhaps lock down external write access?
 		// externalAccessManager.acquireExternalReadAccessLock();
@@ -1699,12 +1699,12 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// } finally {
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
-		populationPartitionManager.addPopulationPartition(componentId, partition, key);
+		populationPartitionManager.addFilteredPartition(componentId, filter,partition, key);
 	}
 
 	@Override
-	public void removePopulationPartition(Object key) {		
-		populationPartitionManager.removePartition(key);		
+	public void removeFilteredPartition(Object key) {		
+		populationPartitionManager.removeFilteredPartition(key);		
 	}
 
 }

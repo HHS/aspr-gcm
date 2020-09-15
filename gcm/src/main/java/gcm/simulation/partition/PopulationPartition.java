@@ -19,8 +19,11 @@ import gcm.simulation.Context;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservableEnvironment;
-import gcm.simulation.PersonIdManager;
+import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
+import gcm.simulation.index.FilterEvaluator;
+import gcm.simulation.index.FilterInfo;
+import gcm.simulation.index.FilterPopulationMatcher;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -28,7 +31,7 @@ import gcm.util.containers.BasePeopleContainer;
 import gcm.util.containers.PeopleContainer;
 
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class PopulationPartition {
+public final class FilteredPopulationPartition {
 
 	private static class LabelCounter {
 		int count;
@@ -155,27 +158,56 @@ public final class PopulationPartition {
 
 	private final PartitionInfo partitionInfo;
 
-	private final Environment environment;
+	private final FilterInfo filterInfo;
 
-	private PersonIdManager personIdManager;
+	private final FilterEvaluator filterEvaluator;
+
+	private final Environment environment;
 
 	private final Context context;
 
 	private final ObservableEnvironment observableEnvironment;
 
+	private final ObservationManager observationManager;
+
+	private final Object key;
+
 	public ComponentId getOwningComponentId() {
 		return owningComponentId;
 	}
 
-	public PopulationPartition(final Context context, final PartitionInfo partitionInfo,
-			final ComponentId owningComponentId) {
+	// Returns true if and only if the person is contained in this filtered
+	// population partition after the evaluation of the person against the filter.
+	// This will force the addition or removal of the person from the corresponding
+	// partition cell.
+
+	private boolean evaluate(final PersonId personId) {
+		if (filterEvaluator.evaluate(environment, personId)) {
+			boolean added = addPerson(personId);
+			if (added) {
+				observationManager.handlePopulationIndexPersonAddition(key, personId);
+			}
+			return true;
+		}
+		boolean removed = removePerson(personId);
+		if (removed) {
+			observationManager.handlePopulationIndexPersonRemoval(key, personId);
+		}
+		return false;
+	}
+
+	public FilteredPopulationPartition(final Object key, final Context context, final PartitionInfo partitionInfo,
+			final FilterInfo filterInfo, final ComponentId owningComponentId) {
 		this.context = context;
+		this.key = key;
 		this.observableEnvironment = context.getObservableEnvironment();
-		this.personIdManager = context.getPersonIdManager();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.partitionInfo = partitionInfo;
+		this.filterInfo = filterInfo;
 		this.environment = context.getEnvironment();
 		this.owningComponentId = owningComponentId;
+		this.filterEvaluator = FilterEvaluator.build(filterInfo);
+		this.observationManager = context.getObservationManager();
 		int size = 0;
 
 		if (partitionInfo.getRegionPartitionFunction() != null) {
@@ -220,12 +252,40 @@ public final class PopulationPartition {
 		return result;
 	}
 
+	private long lastTransactionId = -1;
+
+	/*
+	 * Returns true if and only if the given transaction id is not the most recent
+	 * transaction id. This prevents duplicate updates when a filtered partition
+	 * meets more than one of the trigger conditions maintained by the filtered
+	 * partition manager.
+	 */
+	private boolean acceptTransactionId(long transactionId) {
+		if (transactionId == lastTransactionId) {
+			return false;
+		}
+		lastTransactionId = transactionId;
+		return true;
+	}
+
 	/**
 	 * Precondition : the person id is not null.
 	 */
-	public void handleAddPerson(PersonId personId) {
-		if (personId == null) {
+	public void handleAddPerson(long tranactionId, PersonId personId) {
+		if (!acceptTransactionId(tranactionId)) {
 			return;
+		}
+		evaluate(personId);
+	}
+
+	private boolean addPerson(PersonId personId) {
+
+		if (personId == null) {
+			return false;
+		}
+
+		if (contains(personId)) {
+			return false;
 		}
 
 		while (personId.getValue() >= personToKeyMap.size()) {
@@ -277,6 +337,7 @@ public final class PopulationPartition {
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
 		keyToPeopleMap.get(cleanedKey).add(personId);
+		return true;
 	}
 
 	private LabelSetInfo getLabelSetInfo(Key key) {
@@ -314,26 +375,45 @@ public final class PopulationPartition {
 	 * Precondition: Person must exist
 	 *
 	 */
-	public void handleRemovePerson(PersonId personId) {
+	public void handleRemovePerson(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
+		evaluate(personId);
+		removePerson(personId);
+	}
+
+	private boolean removePerson(PersonId personId) {
+
 		Key key = personToKeyMap.get(personId.getValue());
 		if (key == null) {
-			return;
+			return false;
 		}
 		personToKeyMap.set(personId.getValue(), null);
 		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		peopleContainer.remove(personId);
-		if (peopleContainer.size() == 0) {
-			keyToPeopleMap.remove(key);
-			keyMap.remove(key);
-			labelSetInfoMap.remove(key);
+		boolean removed = peopleContainer.remove(personId);
+		if (removed) {
+			if (peopleContainer.size() == 0) {
+				keyToPeopleMap.remove(key);
+				keyMap.remove(key);
+				labelSetInfoMap.remove(key);
+			}
+			for (int i = 0; i < keySize; i++) {
+				LabelManager labelManager = labelManagers[i];
+				labelManager.removeLabel(key.keys[i]);
+			}
 		}
-		for (int i = 0; i < keySize; i++) {
-			LabelManager labelManager = labelManagers[i];
-			labelManager.removeLabel(key.keys[i]);
-		}
+		return removed;
+
 	}
 
-	public void handleRegionChange(PersonId personId) {
+	public void handleRegionChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
+		if (!evaluate(personId)) {
+			return;
+		}
 		if (regionLabelIndex < 0) {
 			return;
 		}
@@ -364,7 +444,13 @@ public final class PopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handlePersonPropertyChange(PersonId personId, PersonPropertyId personPropertyId) {
+	public void handlePersonPropertyChange(long transactionId, PersonId personId, PersonPropertyId personPropertyId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
+		if (!evaluate(personId)) {
+			return;
+		}
 		int personPropertyLabelIndex = personPropertyLabelIndexes.get(personPropertyId);
 		if (personPropertyLabelIndex < 0) {
 			return;
@@ -397,7 +483,13 @@ public final class PopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handlePersonResourceChange(PersonId personId, ResourceId resourceId) {
+	public void handlePersonResourceChange(long transactionId, PersonId personId, ResourceId resourceId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
+		if (!evaluate(personId)) {
+			return;
+		}
 		int resourceLabelIndex = resourceLabelIndexes.get(resourceId);
 		if (resourceLabelIndex < 0) {
 			return;
@@ -430,7 +522,13 @@ public final class PopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handleCompartmentChange(PersonId personId) {
+	public void handleCompartmentChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
+		if (!evaluate(personId)) {
+			return;
+		}
 		if (compartmentLabelIndex < 0) {
 			return;
 		}
@@ -461,11 +559,16 @@ public final class PopulationPartition {
 		move(currentKey, newKey, personId);
 	}
 
-	public void handleGroupMembershipChange(PersonId personId) {
+	public void handleGroupMembershipChange(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
+			return;
+		}
 		if (groupLabelIndex < 0) {
 			return;
 		}
-
+		if (!evaluate(personId)) {
+			return;
+		}
 		Key currentKey = personToKeyMap.get(personId.getValue());
 
 		// get the current label
@@ -639,6 +742,14 @@ public final class PopulationPartition {
 		return result;
 	}
 
+	public int getPeopleCount() {
+		int result = 0;
+		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+			result += peopleContainer.size();
+		}
+		return result;
+	}
+
 	public int getPeopleCount(LabelSetInfo labelSetInfo) {
 		Key key = getKey(labelSetInfo);
 
@@ -691,8 +802,11 @@ public final class PopulationPartition {
 		return key;
 	}
 
-	private boolean contains(PersonId personId) {
+	public boolean contains(PersonId personId) {
 		if (personId == null) {
+			return false;
+		}
+		if (personToKeyMap.size() <= personId.getValue()) {
 			return false;
 		}
 		Key key = personToKeyMap.get(personId.getValue());
@@ -703,28 +817,18 @@ public final class PopulationPartition {
 		return peopleContainer.contains(personId);
 	}
 
+	
+
 	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {
-		Key key = getKey(labelSetInfo);
-
-		if (key.isPartialKey()) {
-			Set<Key> fullKeys = getFullKeys(key);
-			for (Key fullKey : fullKeys) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-				if (peopleContainer != null && peopleContainer.contains(personId)) {
-					return true;
-				}
-			}
+		if (personToKeyMap.size() <= personId.getValue()) {
 			return false;
-		} else {
-			PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-
-			if (peopleContainer == null) {
-				return false;
-			}
-			return peopleContainer.contains(personId);
 		}
+		Key key = personToKeyMap.get(personId.getValue());
+		LabelSetInfo fullLabelSetInfo = labelSetInfoMap.get(key);
+		return fullLabelSetInfo.isSubsetMatch(labelSetInfo);
 	}
 
+	
 	/**
 	 * 
 	 * 
@@ -754,15 +858,24 @@ public final class PopulationPartition {
 		}
 	}
 
-	public void init() {
-		for (PersonId personId : personIdManager.getPeople()) {
-			handleAddPerson(personId);
+	public List<PersonId> getPeople() {
+		List<PersonId> result = new ArrayList<>();
+		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+			result.addAll(peopleContainer.getPeople());
 		}
+		return result;
+	}
+
+	public void init() {
+		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
+				.forEach(personId -> addPerson(personId));//
 	}
 
 	// Guard for both weights array and weightedKeys array
 	private boolean weightsAreLocked;
+
 	private double[] weights;
+
 	private Key[] weightedKeys;
 
 	private void aquireWeightsLock() {
@@ -933,6 +1046,14 @@ public final class PopulationPartition {
 
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
 		return new StochasticPersonSelection(selectedPerson, false);
+	}
+
+	public FilterInfo getFilterInfo() {
+		return filterInfo;
+	}
+
+	public PartitionInfo getPartitionInfo() {
+		return partitionInfo;
 	}
 
 }

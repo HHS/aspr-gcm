@@ -24,7 +24,6 @@ import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.index.FilterEvaluator;
 import gcm.simulation.index.FilterInfo;
 import gcm.simulation.index.FilterPopulationMatcher;
-import gcm.util.TimeElapser;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

@@ -53,7 +53,7 @@ import gcm.simulation.index.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.index.FilterInfo.RegionFilterInfo;
 import gcm.simulation.index.FilterInfo.ResourceFilterInfo;
 import gcm.simulation.index.IndexedPopulationManager;
-import gcm.simulation.partition.FilteredPartitionManager;
+import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionInfo;
@@ -118,7 +118,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 * manager of changes that are relevant to partition management without having
 	 * to know the actual partitions.
 	 */
-	private FilteredPartitionManager filteredPartitionManager;
+	private PartitionManager partitionManager;
 
 	/*
 	 * The IndexedPopulationManager maintains the population indexes. The
@@ -1739,7 +1739,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		componentManager = context.getComponentManager();
 		eventManager = context.getEventManager();
 		indexedPopulationManager = context.getIndexedPopulationManager();
-		filteredPartitionManager = context.getFilteredPartitionManager();
+		partitionManager = context.getPartitionManager();
 
 		observableEnvironment = context.getObservableEnvironment();
 		propertyDefinitionManager = context.getPropertyDefinitionsManager();
@@ -3900,7 +3900,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	private void validatePopulationPartitionExists(final Object key) {
-		if (!filteredPartitionManager.partitionExists(key)) {
+		if (!partitionManager.partitionExists(key)) {
 			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY, key);
 		}
 	}
@@ -3909,11 +3909,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		if (labelSet == null) {
 			throwModelException(SimulationErrorType.NULL_LABEL_SET, key);
 		}
-		if (!filteredPartitionManager.partitionExists(key)) {
+		if (!partitionManager.partitionExists(key)) {
 			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 		}
 
-		if (!filteredPartitionManager.validateLabelSet(key, labelSet)) {
+		if (!partitionManager.validateLabelSet(key, labelSet)) {
 			throwModelException(SimulationErrorType.INCOMPATIBLE_LABEL_SET, key);
 		}
 	}
@@ -3925,7 +3925,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
-			return filteredPartitionManager.getPeople(key, labelSet);
+			return partitionManager.getPeople(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -3955,20 +3955,20 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	private void validatePopulationPartitionDoesNotExist(final Object key) {
-		if (filteredPartitionManager.partitionExists(key)) {
+		if (partitionManager.partitionExists(key)) {
 			throwModelException(SimulationErrorType.DUPLICATE_POPULATION_PARTITION, key);
 		}
 	}
 
 	@Override
-	public void addFilteredPartition(Filter filter, Partition partition, Object key) {
+	public void addPartition(Filter filter, Partition partition, Object key) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
 			validatePopulationPartitionDefinition(partition);
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionDoesNotExist(key);
-			mutationResolver.addFilteredPartition(componentManager.getFocalComponentId(), filter, partition, key);
+			mutationResolver.addPartition(componentManager.getFocalComponentId(), filter, partition, key);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -3981,26 +3981,26 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
-			return filteredPartitionManager.getPersonCount(key, labelSet);
+			return partitionManager.getPersonCount(key, labelSet);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
 
 	private void validatePopulationPartitionIsOwnedByFocalComponent(final Object key) {
-		if (!filteredPartitionManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {
+		if (!partitionManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {
 			throwModelException(SimulationErrorType.POPULATION_PARTITION_DELETION_BY_NON_OWNER, key);
 		}
 	}
 
 	@Override
-	public void removePopulationPartition(final Object key) {
+	public void removePartition(final Object key) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePopulationPartitionIsOwnedByFocalComponent(key);
-			mutationResolver.removeFilteredPartition(key);
+			mutationResolver.removePartition(key);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
@@ -4010,7 +4010,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	public boolean populationPartitionExists(Object key) {
 		externalAccessManager.acquireReadAccess();
 		try {
-			return filteredPartitionManager.partitionExists(key);
+			return partitionManager.partitionExists(key);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4024,7 +4024,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validateLabelSet(key, labelSet);
-			return filteredPartitionManager.contains(personId, labelSet, key);
+			return partitionManager.contains(personId, labelSet, key);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4034,7 +4034,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		if (partitionSampler == null) {
 			throwModelException(SimulationErrorType.NULL_PARTITION_SAMPLER, key);
 		}
-		if (!filteredPartitionManager.partitionExists(key)) {
+		if (!partitionManager.partitionExists(key)) {
 			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 		}
 
@@ -4063,7 +4063,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePartitionSampler(key, partitionSampler);
-			final StochasticPersonSelection stochasticPersonSelection = filteredPartitionManager.samplePartition(key,
+			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
 					partitionSampler);
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());

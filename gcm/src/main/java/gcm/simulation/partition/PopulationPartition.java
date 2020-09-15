@@ -31,7 +31,7 @@ import gcm.util.containers.BasePeopleContainer;
 import gcm.util.containers.PeopleContainer;
 
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class FilteredPopulationPartition {
+public final class PopulationPartition {
 
 	private static class LabelCounter {
 		int count;
@@ -196,7 +196,7 @@ public final class FilteredPopulationPartition {
 		return false;
 	}
 
-	public FilteredPopulationPartition(final Object key, final Context context, final PartitionInfo partitionInfo,
+	public PopulationPartition(final Object key, final Context context, final PartitionInfo partitionInfo,
 			final FilterInfo filterInfo, final ComponentId owningComponentId) {
 		this.context = context;
 		this.key = key;

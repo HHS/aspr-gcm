@@ -41,7 +41,7 @@ import gcm.scenario.StageId;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.index.Filter;
 import gcm.simulation.index.IndexedPopulationManager;
-import gcm.simulation.partition.FilteredPartitionManager;
+import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.Partition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -77,7 +77,7 @@ import gcm.util.annotations.TestStatus;
 public final class MutationResolverImpl extends BaseElement implements MutationResolver {
 
 	private IndexedPopulationManager indexedPopulationManager;
-	private FilteredPartitionManager populationPartitionManager;
+	private PartitionManager populationPartitionManager;
 	private ObservationManager observationManager;
 	private MaterialsManager materialsManager;
 	private ReportsManager reportsManager;
@@ -104,7 +104,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		materialsManager = context.getMaterialsManager();
 		personLocationManger = context.getPersonLocationManger();
 		indexedPopulationManager = context.getIndexedPopulationManager();
-		populationPartitionManager = context.getFilteredPartitionManager();
+		populationPartitionManager = context.getPartitionManager();
 		resourceManager = context.getResourceManager();
 		personGroupManger = context.getPersonGroupManger();
 		eventManager = context.getEventManager();
@@ -1690,7 +1690,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void addFilteredPartition(ComponentId componentId,Filter filter,
+	public void addPartition(ComponentId componentId,Filter filter,
 			Partition partition, Object key) {
 		//TODO -- review methods that require callbacks and perhaps lock down external write access?
 		// externalAccessManager.acquireExternalReadAccessLock();
@@ -1699,12 +1699,12 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// } finally {
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
-		populationPartitionManager.addFilteredPartition(componentId, filter,partition, key);
+		populationPartitionManager.addPartition(componentId, filter,partition, key);
 	}
 
 	@Override
-	public void removeFilteredPartition(Object key) {		
-		populationPartitionManager.removeFilteredPartition(key);		
+	public void removePartition(Object key) {		
+		populationPartitionManager.removePartition(key);		
 	}
 
 }

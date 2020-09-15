@@ -239,7 +239,7 @@ public interface MutationResolver extends Element {
 	
 	public void addGlobalComponent(GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass);
 
-	public void addFilteredPartition(ComponentId componentId,final Filter filter, final Partition partition, final Object key);
+	public void addPartition(ComponentId componentId,final Filter filter, final Partition partition, final Object key);
 	
-	public void removeFilteredPartition(Object key);
+	public void removePartition(Object key);
 }

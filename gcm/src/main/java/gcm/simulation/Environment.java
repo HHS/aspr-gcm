@@ -3629,7 +3629,7 @@ public interface Environment extends Element {
 	 * 
 	 *
 	 */
-	public void addFilteredPartition(Filter filter, Partition partition, Object key);
+	public void addPartition(Filter filter, Partition partition, Object key);
 
 	/**
 	 * Returns the size of an indexed population.
@@ -3679,7 +3679,7 @@ public interface Environment extends Element {
 	 *                        index
 	 *
 	 */
-	public void removePopulationPartition(final Object key);
+	public void removePartition(final Object key);
 
 	/**
 	 * Returns true if and only if the a population partition exists with the given

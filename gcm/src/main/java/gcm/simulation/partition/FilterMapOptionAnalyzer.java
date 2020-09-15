@@ -1,4 +1,4 @@
-package gcm.simulation.index;
+package gcm.simulation.partition;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,12 +9,12 @@ import gcm.scenario.PropertyDefinition;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
-import gcm.simulation.index.FilterInfo.AndFilterInfo;
-import gcm.simulation.index.FilterInfo.CompartmentFilterInfo;
-import gcm.simulation.index.FilterInfo.NegateFilterInfo;
-import gcm.simulation.index.FilterInfo.OrFilterInfo;
-import gcm.simulation.index.FilterInfo.PropertyFilterInfo;
-import gcm.simulation.index.FilterInfo.RegionFilterInfo;
+import gcm.simulation.partition.FilterInfo.AndFilterInfo;
+import gcm.simulation.partition.FilterInfo.CompartmentFilterInfo;
+import gcm.simulation.partition.FilterInfo.NegateFilterInfo;
+import gcm.simulation.partition.FilterInfo.OrFilterInfo;
+import gcm.simulation.partition.FilterInfo.PropertyFilterInfo;
+import gcm.simulation.partition.FilterInfo.RegionFilterInfo;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

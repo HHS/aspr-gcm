@@ -59,7 +59,7 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.index.Filter;
+import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;

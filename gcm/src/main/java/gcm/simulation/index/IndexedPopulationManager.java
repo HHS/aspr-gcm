@@ -13,6 +13,7 @@ import gcm.scenario.ResourceId;
 import gcm.simulation.Element;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.Filter;
 import gcm.util.annotations.Source;
 
 /**

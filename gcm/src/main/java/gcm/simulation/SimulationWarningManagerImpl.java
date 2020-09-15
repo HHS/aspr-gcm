@@ -11,7 +11,7 @@ import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
-import gcm.simulation.index.FilterDisplay;
+import gcm.simulation.partition.FilterDisplay;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

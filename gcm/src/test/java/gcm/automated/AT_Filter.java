@@ -1,16 +1,16 @@
 package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.index.Filter.allPeople;
-import static gcm.simulation.index.Filter.compartment;
-import static gcm.simulation.index.Filter.groupMember;
-import static gcm.simulation.index.Filter.groupTypesForPerson;
-import static gcm.simulation.index.Filter.groupsForPerson;
-import static gcm.simulation.index.Filter.groupsForPersonAndGroupType;
-import static gcm.simulation.index.Filter.noPeople;
-import static gcm.simulation.index.Filter.property;
-import static gcm.simulation.index.Filter.region;
-import static gcm.simulation.index.Filter.resource;
+import static gcm.simulation.partition.Filter.allPeople;
+import static gcm.simulation.partition.Filter.compartment;
+import static gcm.simulation.partition.Filter.groupMember;
+import static gcm.simulation.partition.Filter.groupTypesForPerson;
+import static gcm.simulation.partition.Filter.groupsForPerson;
+import static gcm.simulation.partition.Filter.groupsForPersonAndGroupType;
+import static gcm.simulation.partition.Filter.noPeople;
+import static gcm.simulation.partition.Filter.property;
+import static gcm.simulation.partition.Filter.region;
+import static gcm.simulation.partition.Filter.resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -62,7 +62,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.index.Filter;
+import gcm.simulation.partition.Filter;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 

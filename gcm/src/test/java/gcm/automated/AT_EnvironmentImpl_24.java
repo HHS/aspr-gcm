@@ -50,7 +50,7 @@ import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.group.GroupSampler;
 import gcm.simulation.group.GroupWeightingFunction;
-import gcm.simulation.index.Filter;
+import gcm.simulation.partition.Filter;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 

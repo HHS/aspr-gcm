@@ -5,6 +5,7 @@ import java.util.List;
 import gcm.scenario.ComponentId;
 import gcm.scenario.PersonId;
 import gcm.scenario.RandomNumberGeneratorId;
+import gcm.simulation.partition.FilterInfo;
 
 /**
  * Note: IndexedPopulation is not exposed to the Components by GCM. The relevant

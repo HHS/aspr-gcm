@@ -1,8 +1,8 @@
 package gcm.manual.demo.components;
 
-import static gcm.simulation.index.Filter.compartment;
-import static gcm.simulation.index.Filter.groupsForPersonAndGroupType;
-import static gcm.simulation.index.Filter.property;
+import static gcm.simulation.partition.Filter.compartment;
+import static gcm.simulation.partition.Filter.groupsForPersonAndGroupType;
+import static gcm.simulation.partition.Filter.property;
 
 import java.util.Optional;
 
@@ -16,7 +16,7 @@ import gcm.scenario.PersonId;
 import gcm.simulation.Environment;
 import gcm.simulation.Equality;
 import gcm.simulation.Plan;
-import gcm.simulation.index.Filter;
+import gcm.simulation.partition.Filter;
 
 public class Immunizer extends AbstractComponent {
 

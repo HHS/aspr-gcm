@@ -1,4 +1,4 @@
-package gcm.simulation.index;
+package gcm.simulation.partition;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,19 +16,19 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.index.Filter.AllPeopleFilter;
-import gcm.simulation.index.Filter.AndFilter;
-import gcm.simulation.index.Filter.CompartmentFilter;
-import gcm.simulation.index.Filter.EmptyPeopleFilter;
-import gcm.simulation.index.Filter.GroupMemberFilter;
-import gcm.simulation.index.Filter.GroupTypesForPersonFilter;
-import gcm.simulation.index.Filter.GroupsForPersonAndGroupTypeFilter;
-import gcm.simulation.index.Filter.GroupsForPersonFilter;
-import gcm.simulation.index.Filter.NegateFilter;
-import gcm.simulation.index.Filter.OrFilter;
-import gcm.simulation.index.Filter.PropertyFilter;
-import gcm.simulation.index.Filter.RegionFilter;
-import gcm.simulation.index.Filter.ResourceFilter;
+import gcm.simulation.partition.Filter.AllPeopleFilter;
+import gcm.simulation.partition.Filter.AndFilter;
+import gcm.simulation.partition.Filter.CompartmentFilter;
+import gcm.simulation.partition.Filter.EmptyPeopleFilter;
+import gcm.simulation.partition.Filter.GroupMemberFilter;
+import gcm.simulation.partition.Filter.GroupTypesForPersonFilter;
+import gcm.simulation.partition.Filter.GroupsForPersonAndGroupTypeFilter;
+import gcm.simulation.partition.Filter.GroupsForPersonFilter;
+import gcm.simulation.partition.Filter.NegateFilter;
+import gcm.simulation.partition.Filter.OrFilter;
+import gcm.simulation.partition.Filter.PropertyFilter;
+import gcm.simulation.partition.Filter.RegionFilter;
+import gcm.simulation.partition.Filter.ResourceFilter;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 

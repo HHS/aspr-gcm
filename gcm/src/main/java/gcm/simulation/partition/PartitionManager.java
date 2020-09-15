@@ -13,7 +13,6 @@ import gcm.simulation.Element;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.StochasticPersonSelection;
-import gcm.simulation.index.Filter;
 import gcm.util.annotations.Source;
 
 /**

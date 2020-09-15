@@ -1,7 +1,7 @@
 package gcm.manual.demo.components;
 
-import static gcm.simulation.index.Filter.groupsForPersonAndGroupType;
-import static gcm.simulation.index.Filter.region;
+import static gcm.simulation.partition.Filter.groupsForPersonAndGroupType;
+import static gcm.simulation.partition.Filter.region;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ import gcm.scenario.RegionId;
 import gcm.simulation.Environment;
 import gcm.simulation.Equality;
 import gcm.simulation.Plan;
-import gcm.simulation.index.Filter;
+import gcm.simulation.partition.Filter;
 import gcm.util.TimeElapser;
 
 public class PopulationLoader extends AbstractComponent {

@@ -37,7 +37,7 @@ public interface PartitionManager extends Element {
 	 *             if the key is already associated with a population index
 	 */
 
-	public void addPartition(final ComponentId componentId, final Filter filter, final Partition partition, final Object key);
+	public void addPartition(final ComponentId componentId, final Partition partition, final Object key);
 
 	/**
 	 * Returns the list of person identifiers in the index for the given key.
@@ -72,7 +72,7 @@ public interface PartitionManager extends Element {
 	 * Returns a randomly selected person from the given index using the given PartitionSampler.
 	 *
 	 */
-	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler);
+	public StochasticPersonSelection samplePartition(Object key, PartitionSamplerInfo partitionSamplerInfo);
 
 
 	

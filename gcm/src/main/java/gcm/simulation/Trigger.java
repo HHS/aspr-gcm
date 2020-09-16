@@ -57,7 +57,7 @@ public final class Trigger {
 			CompartmentFilterInfo compartmentFilterInfo = (CompartmentFilterInfo) filterInfo;
 			compartmentIdentifiers.add(compartmentFilterInfo.getCompartmentId());
 			break;
-		case EMPTY:
+		case NONE:
 			break;
 		case GROUPS_FOR_PERSON:
 			groupTypeIds.addAll(context.getScenario().getGroupTypeIds());

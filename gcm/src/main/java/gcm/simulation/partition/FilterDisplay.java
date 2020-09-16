@@ -102,7 +102,7 @@ public class FilterDisplay {
 			sb.append(compartmentFilterInfo.getCompartmentId());
 			sb.append("]");
 			break;
-		case EMPTY:
+		case NONE:
 			sb.append(tabString);
 			sb.append("FALSE[");
 			sb.append("]");

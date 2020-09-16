@@ -19,7 +19,7 @@ import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter.AllPeopleFilter;
 import gcm.simulation.partition.Filter.AndFilter;
 import gcm.simulation.partition.Filter.CompartmentFilter;
-import gcm.simulation.partition.Filter.EmptyPeopleFilter;
+import gcm.simulation.partition.Filter.NonePeopleFilter;
 import gcm.simulation.partition.Filter.GroupMemberFilter;
 import gcm.simulation.partition.Filter.GroupTypesForPersonFilter;
 import gcm.simulation.partition.Filter.GroupsForPersonAndGroupTypeFilter;
@@ -33,8 +33,8 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
 /**
- * A utility class that mirrors the Filter class, publishes the internal data
- * of a filter and presents behaviors convenient for filter validation, trigger
+ * A utility class that mirrors the Filter class, publishes the internal data of
+ * a filter and presents behaviors convenient for filter validation, trigger
  * formation and other filter related tasks.
  * 
  * @author Shawn Hatch
@@ -59,7 +59,7 @@ public abstract class FilterInfo {
 
 		ALL(AllPeopleFilterInfo.class),
 
-		EMPTY(EmptyPeopleFilterInfo.class),
+		NONE(NonePeopleFilterInfo.class),
 
 		PROPERTY(PropertyFilterInfo.class),
 
@@ -103,7 +103,7 @@ public abstract class FilterInfo {
 
 		ALL(AllPeopleFilter.class),
 
-		EMPTY(EmptyPeopleFilter.class),
+		NONE(NonePeopleFilter.class),
 
 		PROPERTY(PropertyFilter.class),
 
@@ -144,30 +144,100 @@ public abstract class FilterInfo {
 
 	private FilterInfo() {
 	}
-	
-	
+
 	/*
 	 * Put self to list and recursively invoke on children.
 	 */
 	protected void putHierarchyToList(List<FilterInfo> list) {
 		list.add(this);
 	}
-	
-	public static List<FilterInfo> getHierarchyAsList(FilterInfo filterInfo){
+
+	public static List<FilterInfo> getHierarchyAsList(FilterInfo filterInfo) {
 		List<FilterInfo> result = new ArrayList<>();
 		filterInfo.putHierarchyToList(result);
 		return result;
 	}
 
+	private static FilterInfo getFilterInfoFromAndFilter(AndFilter andFilter) {
+
+		FilterInfo a = build(andFilter.a);
+		FilterInfo b = build(andFilter.b);
+		if ((a.getFilterInfoType() == FilterInfoType.NONE) || (b.getFilterInfoType() == FilterInfoType.NONE)) {
+			return new NonePeopleFilterInfo();
+		}
+
+		if (a.getFilterInfoType() == FilterInfoType.ALL) {
+			if (b.getFilterInfoType() == FilterInfoType.ALL) {
+				return a;
+			} else {
+				return b;
+			}
+		} else {
+			if (b.getFilterInfoType() == FilterInfoType.ALL) {
+				return a;
+			} else {
+				return new AndFilterInfo(a, b);
+			}
+		}
+
+	}
+
+	private static FilterInfo getFilterInfoFromOrFilter(OrFilter orFilter) {
+
+		FilterInfo a = build(orFilter.a);
+		FilterInfo b = build(orFilter.b);
+		if ((a.getFilterInfoType() == FilterInfoType.ALL) || (b.getFilterInfoType() == FilterInfoType.ALL)) {
+			return new AllPeopleFilterInfo();
+		}
+
+		if (a.getFilterInfoType() == FilterInfoType.NONE) {
+			if (b.getFilterInfoType() == FilterInfoType.NONE) {
+				return a;
+			} else {
+				return b;
+			}
+		} else {
+			if (b.getFilterInfoType() == FilterInfoType.NONE) {
+				return a;
+			} else {
+				return new OrFilterInfo(a, b);
+			}
+		}
+
+	}
+	
+	private static FilterInfo getFilterInfoFromNegateFilter(NegateFilter negateFilter) {
+		FilterInfo a = build(negateFilter.a);
+		switch(a.getFilterInfoType()) {
+		case ALL:
+			return new NonePeopleFilterInfo();
+		case NONE:
+			return new AllPeopleFilterInfo();
+		default:
+			return new NegateFilterInfo(a);
+		}		
+	}
+
+
+	/**
+	 * Returns the {@link FilterInfo} that corresponds to the given Filter. Note
+	 * that this is not a direct one for one structural translation of the filter.
+	 * AND, OR, and NEGATE filters can collapse when they have
+	 * {@link AllPeopleFilterInfo} or {@link NonePeopleFilterInfo} children,
+	 * allowing the top level filter to be identified as possibly an always true or
+	 * always false filter. Partitions that have an always true filter can
+	 * effectively ignore the filter. When a partition has an always false filter,
+	 * the partition is known to be empty.
+	 */
 	public static FilterInfo build(Filter filter) {
-		if(filter == null) {
+		if (filter == null) {
 			throw new ModelException(SimulationErrorType.NULL_FILTER, "");
 		}
 		FilterType filterType = FilterType.getFilterType(filter);
 		switch (filterType) {
 		case AND:
 			AndFilter andFilter = (AndFilter) filter;
-			return new AndFilterInfo(build(andFilter.a), build(andFilter.b));
+			return getFilterInfoFromAndFilter(andFilter);
 		case COMPARTMENT:
 			CompartmentFilter compartmentFilter = (CompartmentFilter) filter;
 			return new CompartmentFilterInfo(compartmentFilter.compartmentId);
@@ -176,32 +246,36 @@ public abstract class FilterInfo {
 			return new RegionFilterInfo(regionFilter.regionIds);
 		case NEGATE:
 			NegateFilter negateFilter = (NegateFilter) filter;
-			return new NegateFilterInfo(build(negateFilter.a));
+			return getFilterInfoFromNegateFilter(negateFilter);
 		case OR:
 			OrFilter orFilter = (OrFilter) filter;
-			return new OrFilterInfo(build(orFilter.a), build(orFilter.b));
+			return getFilterInfoFromOrFilter(orFilter);
 		case ALL:
 			return new AllPeopleFilterInfo();
-		case EMPTY:
-			return new EmptyPeopleFilterInfo();
+		case NONE:
+			return new NonePeopleFilterInfo();
 		case PROPERTY:
 			PropertyFilter propertyFilter = (PropertyFilter) filter;
-			return new PropertyFilterInfo(propertyFilter.personPropertyId, propertyFilter.equality, propertyFilter.personPropertyValue);
+			return new PropertyFilterInfo(propertyFilter.personPropertyId, propertyFilter.equality,
+					propertyFilter.personPropertyValue);
 		case RESOURCE:
 			ResourceFilter resourceFilter = (ResourceFilter) filter;
-			return new ResourceFilterInfo(resourceFilter.resourceId, resourceFilter.equality, resourceFilter.resourceValue);
+			return new ResourceFilterInfo(resourceFilter.resourceId, resourceFilter.equality,
+					resourceFilter.resourceValue);
 		case GROUP_MEMBER:
 			GroupMemberFilter groupMemberFilter = (GroupMemberFilter) filter;
 			return new GroupMemberFilterInfo(groupMemberFilter.groupId);
 		case GROUPS_FOR_PERSON_AND_GROUP_TYPE:
 			GroupsForPersonAndGroupTypeFilter groupsForPersonAndGroupTypeFilter = (GroupsForPersonAndGroupTypeFilter) filter;
-			return new GroupsForPersonAndGroupTypeFilterInfo(groupsForPersonAndGroupTypeFilter.groupTypeId, groupsForPersonAndGroupTypeFilter.equality, groupsForPersonAndGroupTypeFilter.groupCount);
+			return new GroupsForPersonAndGroupTypeFilterInfo(groupsForPersonAndGroupTypeFilter.groupTypeId,
+					groupsForPersonAndGroupTypeFilter.equality, groupsForPersonAndGroupTypeFilter.groupCount);
 		case GROUPS_FOR_PERSON:
 			GroupsForPersonFilter groupsForPersonFilter = (GroupsForPersonFilter) filter;
 			return new GroupsForPersonFilterInfo(groupsForPersonFilter.equality, groupsForPersonFilter.groupCount);
 		case GROUP_TYPES_FOR_PERSON:
 			GroupTypesForPersonFilter groupTypesForPersonFilter = (GroupTypesForPersonFilter) filter;
-			return new GroupTypesForPersonFilterInfo(groupTypesForPersonFilter.equality, groupTypesForPersonFilter.groupTypeCount);
+			return new GroupTypesForPersonFilterInfo(groupTypesForPersonFilter.equality,
+					groupTypesForPersonFilter.groupTypeCount);
 		default:
 			throw new RuntimeException("unhandled filter type " + filterType);
 		}
@@ -216,10 +290,10 @@ public abstract class FilterInfo {
 
 	}
 
-	public static class EmptyPeopleFilterInfo extends FilterInfo {
+	public static class NonePeopleFilterInfo extends FilterInfo {
 		@Override
 		public FilterInfoType getFilterInfoType() {
-			return FilterInfoType.EMPTY;
+			return FilterInfoType.NONE;
 		}
 	}
 
@@ -247,7 +321,7 @@ public abstract class FilterInfo {
 			return FilterInfoType.REGION;
 		}
 
-		//the instance of the region ids will be unmodifiable
+		// the instance of the region ids will be unmodifiable
 		private final Set<RegionId> regionIds;
 
 		public RegionFilterInfo(Set<RegionId> regionIds) {
@@ -281,9 +355,9 @@ public abstract class FilterInfo {
 		public FilterInfo getB() {
 			return b;
 		}
-		
+
 		@Override
-		protected void putHierarchyToList(List<FilterInfo> list) {			
+		protected void putHierarchyToList(List<FilterInfo> list) {
 			super.putHierarchyToList(list);
 			a.putHierarchyToList(list);
 			b.putHierarchyToList(list);
@@ -300,7 +374,7 @@ public abstract class FilterInfo {
 		private final FilterInfo a;
 		private final FilterInfo b;
 
-		public OrFilterInfo(FilterInfo a, FilterInfo b) {			
+		public OrFilterInfo(FilterInfo a, FilterInfo b) {
 			this.a = a;
 			this.b = b;
 		}
@@ -312,9 +386,9 @@ public abstract class FilterInfo {
 		public FilterInfo getB() {
 			return b;
 		}
-		
+
 		@Override
-		protected void putHierarchyToList(List<FilterInfo> list) {			
+		protected void putHierarchyToList(List<FilterInfo> list) {
 			super.putHierarchyToList(list);
 			a.putHierarchyToList(list);
 			b.putHierarchyToList(list);
@@ -337,9 +411,9 @@ public abstract class FilterInfo {
 		public FilterInfo getA() {
 			return a;
 		}
-		
+
 		@Override
-		protected void putHierarchyToList(List<FilterInfo> list) {			
+		protected void putHierarchyToList(List<FilterInfo> list) {
 			super.putHierarchyToList(list);
 			a.putHierarchyToList(list);
 		}
@@ -501,7 +575,7 @@ public abstract class FilterInfo {
 			return groupTypeCount;
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return FilterDisplay.getPrettyPrint(this);

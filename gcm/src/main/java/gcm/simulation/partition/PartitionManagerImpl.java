@@ -6,15 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
 import gcm.scenario.CompartmentId;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
-import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.BaseElement;
@@ -27,7 +24,6 @@ import gcm.simulation.ProfileManager;
 import gcm.simulation.PropertyManager;
 import gcm.simulation.SimulationWarningManager;
 import gcm.simulation.StochasticPersonSelection;
-import gcm.simulation.StochasticsManager;
 import gcm.simulation.Trigger;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.util.MemoryPartition;
@@ -137,8 +133,6 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		return masterTransactionId++;
 	}
 
-	private StochasticsManager stochasticsManager;
-
 	@Override
 	public void init(final Context context) {
 		super.init(context);
@@ -149,11 +143,10 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		this.personGroupManger = context.getPersonGroupManger();
 		this.profileManager = context.getProfileManager();
 		this.simulationWarningManager = context.getSimulationWarningManager();
-		this.stochasticsManager = context.getStochasticsManager();
 	}
 
 	@Override
-	public void addPartition(final ComponentId componentId, final Filter filter, final Partition partition,
+	public void addPartition(final ComponentId componentId, final Partition partition,
 			final Object key) {
 		/*
 		 * 
@@ -182,9 +175,6 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			throw new RuntimeException("null population partition definition");
 		}
 		
-		if (filter == null) {
-			throw new RuntimeException("null population partition definition");
-		}
 
 		if (key == null) {
 			throw new RuntimeException("null key");
@@ -195,7 +185,9 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			throw new RuntimeException("duplicated key" + key);
 		}
 
-		FilterInfo filterInfo = FilterInfo.build(filter);
+		
+		PartitionInfo partitionInfo = PartitionInfo.build(partition);
+		FilterInfo filterInfo = partitionInfo.getFilterInfo();
 
 		/*
 		 * Review the filter, looking for map option setting that might improve the
@@ -217,9 +209,9 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			simulationWarningManager.processPopulationIndexEfficiencyWarning(populationIndexEfficiencyWarning);
 		}
 
-		PartitionInfo partitionInfo = PartitionInfo.build(partition);
+		
 		PopulationPartition populationPartition = new PopulationPartition(key, context,
-				partitionInfo, filterInfo, componentId);
+				partitionInfo, componentId);
 
 		// TODO -- implement profiler
 //		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
@@ -375,32 +367,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
-		// TODO consider conversion to partition sampler info at the environment level
-
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
-
-		RandomGenerator randomGenerator;
-		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId()
-				.orElse(null);
-		if (randomNumberGeneratorId == null) {
-			randomGenerator = stochasticsManager.getRandomGenerator();
-		} else {
-			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
-		}
-
-		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
-
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-
-		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction()
-				.orElse(null);
-
-		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
-
-		return indexedPopulationMap.get(key).samplePartition(labelSetInfo, labelSetWeightingFunction, randomGenerator,
-				excludedPersonId);
-
+	public StochasticPersonSelection samplePartition(Object key, PartitionSamplerInfo partitionSamplerInfo) {
+		return indexedPopulationMap.get(key).samplePartition(partitionSamplerInfo);
 	}
 
 	@Override

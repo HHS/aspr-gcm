@@ -12,6 +12,7 @@ import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.partition.Partition.CompartmentPartition;
 import gcm.simulation.partition.Partition.EmptyPartition;
+import gcm.simulation.partition.Partition.FilterPartition;
 import gcm.simulation.partition.Partition.GroupPartition;
 import gcm.simulation.partition.Partition.PropertyPartition;
 import gcm.simulation.partition.Partition.RegionPartition;
@@ -33,6 +34,12 @@ public final class PartitionInfo {
 	private Map<PersonPropertyId, Function<Object, Object>> personPropertyPartitionFunctions = new LinkedHashMap<>();
 
 	private Map<ResourceId, Function<Long, Object>> personResourcePartitionFunctions = new LinkedHashMap<>();
+	
+	private FilterInfo filterInfo = FilterInfo.build(Filter.allPeople());
+	
+	public FilterInfo getFilterInfo() {
+		return filterInfo;
+	}
 
 	public Function<GroupTypeCountMap, Object> getGroupPartitionFunction() {
 		return groupPartitionFunction;
@@ -92,6 +99,8 @@ public final class PartitionInfo {
 		RESOURCE(ResourcePartition.class),
 
 		GROUP(GroupPartition.class),
+		
+		FILTER(FilterPartition.class),
 
 		EMPTY(EmptyPartition.class);
 
@@ -147,6 +156,10 @@ public final class PartitionInfo {
 			WithPartition withPartition = (WithPartition) partition;
 			processPartition(withPartition.a);
 			processPartition(withPartition.b);
+			break;
+		case FILTER:
+			FilterPartition filterPartition = (FilterPartition)partition;
+			this.filterInfo = FilterInfo.build(filterPartition.filter);
 			break;
 		case EMPTY:
 			break;

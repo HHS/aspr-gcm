@@ -62,7 +62,7 @@ public abstract class FilterEvaluator {
 			return new OrFilterEvaluator(build(orFilterInfo.getA()), build(orFilterInfo.getB()));
 		case ALL:
 			return new AllPeopleFilterEvaluator();
-		case EMPTY:
+		case NONE:
 			return new EmptyPeopleFilterEvaluator();
 		case PROPERTY:
 			PropertyFilterInfo propertyFilterInfo = (PropertyFilterInfo) filterInfo;

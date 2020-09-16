@@ -31,7 +31,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
@@ -59,7 +58,6 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;
@@ -473,7 +471,7 @@ public class AT_EnvironmentImpl_25 {
 
 			// add the partition to the simulation
 			
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -517,7 +515,7 @@ public class AT_EnvironmentImpl_25 {
 
 			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
 					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
-			environment.addPartition(Filter.allPeople(),partition, key3);
+			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
 			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0)
@@ -573,7 +571,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -622,7 +620,7 @@ public class AT_EnvironmentImpl_25 {
 			Object key3 = "key3";
 			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
 					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
-			environment.addPartition(Filter.allPeople(),partition, key3);
+			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
 			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0)
@@ -675,21 +673,21 @@ public class AT_EnvironmentImpl_25 {
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -712,26 +710,26 @@ public class AT_EnvironmentImpl_25 {
 			Partition badResourcePartition = Partition.create().compartment(compartmentPartitionFunction)
 					.resource(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction);
 
-			environment.addPartition(Filter.allPeople(),partition, key1);
+			environment.addPartition(partition, key1);
 
 			// if the population partition definition is null
-			assertModelException(() -> environment.addPartition(Filter.allPeople(),null, key2),
+			assertModelException(() -> environment.addPartition(null, key2),
 					SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 
 			// if the key is null
-			assertModelException(() -> environment.addPartition(Filter.allPeople(),partition, null),
+			assertModelException(() -> environment.addPartition(partition, null),
 					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 
 			// if the key corresponds to an existing population partition
-			assertModelException(() -> environment.addPartition(Filter.allPeople(),partition, key1),
+			assertModelException(() -> environment.addPartition(partition, key1),
 					SimulationErrorType.DUPLICATE_POPULATION_PARTITION);
 
 			// if the definition contains an unknown person property id
-			assertModelException(() -> environment.addPartition(Filter.allPeople(),badPropertyPartition, key2),
+			assertModelException(() -> environment.addPartition(badPropertyPartition, key2),
 					SimulationErrorType.UNKNOWN_PERSON_PROPERTY_ID);
 
 			// if the definition contains an unknown resource id
-			assertModelException(() -> environment.addPartition(Filter.allPeople(),badResourcePartition, key2),
+			assertModelException(() -> environment.addPartition(badResourcePartition, key2),
 					SimulationErrorType.UNKNOWN_RESOURCE_ID);
 
 		});
@@ -769,21 +767,21 @@ public class AT_EnvironmentImpl_25 {
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -842,21 +840,21 @@ public class AT_EnvironmentImpl_25 {
 			Object key = "key";
 			Set<PartitionChoice> partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT);
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.COMPARTMENT, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
 
 			partitionChoices = EnumSet.of(PartitionChoice.GROUP, PartitionChoice.PROPERTY1);
 			partition = createPopulationPartitionDefinition(partitionChoices);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 			assertTrue(environment.populationPartitionExists(key));
 			environment.removePartition(key);
 			assertFalse(environment.populationPartitionExists(key));
@@ -906,7 +904,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -955,7 +953,7 @@ public class AT_EnvironmentImpl_25 {
 			Object key3 = "key3";
 			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
 					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
-			environment.addPartition(Filter.allPeople(),partition, key3);
+			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.create().compartment(0).property(TestPersonPropertyId.PERSON_PROPERTY_1, 1);
 			LabelSet incompatiblelabelSet = LabelSet.create().compartment(0)
@@ -1101,7 +1099,7 @@ public class AT_EnvironmentImpl_25 {
 			Object badKey = "badKey";
 			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_25.compartmentPartitionFunction)
 					.region(AT_EnvironmentImpl_25.regionPartitionFunction);
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			// if the key is null
 			assertModelException(() -> environment.samplePartition(null, PartitionSampler.create()),
@@ -1180,7 +1178,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1252,7 +1250,7 @@ public class AT_EnvironmentImpl_25 {
 			Object key2 = "key2";
 			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
-			environment.addPartition(Filter.allPeople(),partitionDefinition, key2);
+			environment.addPartition(partitionDefinition, key2);
 			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			PartitionSampler partitionSampler = PartitionSampler.create().labelSet(labelSet)
 					.generator(randomNumberGeneratorId).excludePerson(personId);
@@ -1305,7 +1303,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1356,7 +1354,7 @@ public class AT_EnvironmentImpl_25 {
 			Object key2 = "key2";
 			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
-			environment.addPartition(Filter.allPeople(),partitionDefinition, key2);
+			environment.addPartition(partitionDefinition, key2);
 			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			PartitionSampler partitionSampler = PartitionSampler.create().labelSet(labelSet);
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
@@ -1402,7 +1400,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1471,7 +1469,7 @@ public class AT_EnvironmentImpl_25 {
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
 			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
-			environment.addPartition(Filter.allPeople(),partition, key2);
+			environment.addPartition(partition, key2);
 			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			PartitionSampler partitionSampler = PartitionSampler.create().labelSet(labelSet).excludePerson(personId);
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
@@ -1527,7 +1525,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			environment.addPartition(Filter.allPeople(),partition, key);
+			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
 
@@ -1578,7 +1576,7 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			Object key2 = "key2";
 			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
-			environment.addPartition(Filter.allPeople(),partition, key2);
+			environment.addPartition(partition, key2);
 			LabelSet labelSet = LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
 			PartitionSampler partitionSampler = PartitionSampler.create().labelSet(labelSet);
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);

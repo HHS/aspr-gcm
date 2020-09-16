@@ -1,5 +1,6 @@
 package gcm.automated;
 
+import static gcm.automated.support.ExceptionAssertion.assertException;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static gcm.simulation.partition.Filter.allPeople;
 import static gcm.simulation.partition.Filter.compartment;
@@ -217,7 +218,7 @@ public class AT_Filter {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			// precondition: if the filter is null
-			assertModelException(() -> environment.addPopulationIndex(allPeople().and(null), "bad filter"), SimulationErrorType.NULL_FILTER);
+			assertException(() -> allPeople().and(null), RuntimeException.class);
 		});
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
@@ -312,8 +313,8 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			// precondition: if the filter is null
-			Filter badFilter = allPeople().or(null);
-			assertModelException(() -> environment.addPopulationIndex(badFilter, "bad filter"), SimulationErrorType.NULL_FILTER);
+			
+			assertException(() -> allPeople().or(null), RuntimeException.class);
 
 		});
 

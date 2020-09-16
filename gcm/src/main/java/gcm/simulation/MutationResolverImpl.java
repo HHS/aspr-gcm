@@ -1690,7 +1690,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void addPartition(ComponentId componentId,Filter filter,
+	public void addPartition(ComponentId componentId,
 			Partition partition, Object key) {
 		//TODO -- review methods that require callbacks and perhaps lock down external write access?
 		// externalAccessManager.acquireExternalReadAccessLock();
@@ -1699,7 +1699,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// } finally {
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
-		populationPartitionManager.addPartition(componentId, filter,partition, key);
+		populationPartitionManager.addPartition(componentId, partition, key);
 	}
 
 	@Override

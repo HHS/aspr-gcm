@@ -99,7 +99,7 @@ public class FilterMapOptionAnalyzer {
 			}
 			break;
 		case ALL:// fall through
-		case EMPTY:// fall through
+		case NONE:// fall through
 		case GROUPS_FOR_PERSON:// fall through
 		case GROUPS_FOR_PERSON_AND_GROUP_TYPE:// fall through
 		case GROUP_MEMBER:// fall through

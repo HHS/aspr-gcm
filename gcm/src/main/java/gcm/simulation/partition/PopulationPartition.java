@@ -14,6 +14,7 @@ import gcm.scenario.ComponentId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
+import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Context;
 import gcm.simulation.Environment;
@@ -21,6 +22,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
+import gcm.simulation.StochasticsManager;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -193,20 +195,24 @@ public final class PopulationPartition {
 		return false;
 	}
 
+	private StochasticsManager stochasticsManager;
+	
 	public PopulationPartition(final Object key, final Context context, final PartitionInfo partitionInfo,
-			final FilterInfo filterInfo, final ComponentId owningComponentId) {
+			final ComponentId owningComponentId) {
 		this.context = context;
 		this.key = key;
 		this.observableEnvironment = context.getObservableEnvironment();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.partitionInfo = partitionInfo;
-		this.filterInfo = filterInfo;
+		this.filterInfo = partitionInfo.getFilterInfo();
 		this.environment = context.getEnvironment();
 		this.owningComponentId = owningComponentId;
 		this.filterEvaluator = FilterEvaluator.build(filterInfo);
 		this.observationManager = context.getObservationManager();
+		this.stochasticsManager = context.getStochasticsManager();
 		int size = 0;
 
+				
 		if (partitionInfo.getRegionPartitionFunction() != null) {
 			regionLabelIndex = size++;
 		}
@@ -936,9 +942,26 @@ public final class PopulationPartition {
 	 * person identifier given. When the excludedPersonId is null it indicates that
 	 * no person is being excluded.
 	 */
-	public StochasticPersonSelection samplePartition(final LabelSetInfo labelSetInfo,
-			final LabelSetWeightingFunction labelSetWeightingFunction, final RandomGenerator randomGenerator,
-			final PersonId excludedPersonId) {
+	public StochasticPersonSelection samplePartition(final PartitionSamplerInfo partitionSamplerInfo) {
+		
+		RandomGenerator randomGenerator;
+		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId()
+				.orElse(null);
+		if (randomNumberGeneratorId == null) {
+			randomGenerator = stochasticsManager.getRandomGenerator();
+		} else {
+			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
+		}
+
+		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
+
+		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction()
+				.orElse(null);
+
+		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
+		
 
 		Key selectedKey = null;
 		Key keyForExcludedPersonId = null;

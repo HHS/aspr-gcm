@@ -338,7 +338,7 @@ public class FilterPopulationMatcher {
 			return getFullPopulationFilterSolution(environment, true);
 		case ALL:
 			return getFullPopulationFilterSolution(environment, false);
-		case EMPTY:
+		case NONE:
 			return getEmptyPopulationFilterSolution();
 		case GROUPS_FOR_PERSON:
 			/*

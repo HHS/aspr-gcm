@@ -59,6 +59,28 @@ public class Partition {
 		return new WithPartition(this,
 				new RegionPartition(regionPartitionFunction));
 	}
+	
+	
+	static class FilterPartition extends Partition {
+		final Filter filter;
+
+		private FilterPartition(Filter filter) {
+			this.filter = filter;
+		}
+	}
+	/**
+	 * Sets a filter on the partition
+	 * 
+	 * @throws RuntimeException
+	 *                          <li>if the filter is null
+	 */
+	public final Partition filter(Filter filter) {
+		if (filter == null) {
+			throw new RuntimeException("null fitler");
+		}
+		return new WithPartition(this,
+		new FilterPartition(filter));
+	}
 
 	static class GroupPartition extends Partition {
 		final Function<GroupTypeCountMap, Object> groupPartitionFunction;
@@ -67,6 +89,8 @@ public class Partition {
 			this.groupPartitionFunction = groupPartitionFunction;
 		}
 	}
+	
+	
 
 	/**
 	 * Creates a group partition function for a partition

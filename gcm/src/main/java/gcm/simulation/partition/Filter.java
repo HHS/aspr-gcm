@@ -39,9 +39,8 @@ import gcm.util.annotations.Source;
 @Source
 public abstract class Filter {
 
-
 	static class AllPeopleFilter extends Filter {
-		//TODO  convert filters to use an instance-based fluent build pattern
+		// TODO convert filters to use an instance-based fluent build pattern
 	}
 
 	static class AndFilter extends Filter {
@@ -64,9 +63,9 @@ public abstract class Filter {
 
 	}
 
-	static class EmptyPeopleFilter extends Filter {
+	static class NonePeopleFilter extends Filter {
 
-		public EmptyPeopleFilter() {
+		public NonePeopleFilter() {
 
 		}
 
@@ -86,7 +85,8 @@ public abstract class Filter {
 		final Equality equality;
 		final int groupCount;
 
-		public GroupsForPersonAndGroupTypeFilter(final GroupTypeId groupTypeId, final Equality equality, final int groupCount) {
+		public GroupsForPersonAndGroupTypeFilter(final GroupTypeId groupTypeId, final Equality equality,
+				final int groupCount) {
 
 			this.equality = equality;
 			this.groupCount = groupCount;
@@ -143,7 +143,8 @@ public abstract class Filter {
 		final Object personPropertyValue;
 		final Equality equality;
 
-		public PropertyFilter(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
+		public PropertyFilter(final PersonPropertyId personPropertyId, final Equality equality,
+				final Object personPropertyValue) {
 			this.personPropertyId = personPropertyId;
 			this.personPropertyValue = personPropertyValue;
 			this.equality = equality;
@@ -177,16 +178,15 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a filter that passes all people. Used for concatenating filters
-	 * in an AND loop.
+	 * Returns a filter that passes all people. Used for concatenating filters in an
+	 * AND loop.
 	 */
 	public static Filter allPeople() {
 		return new AllPeopleFilter();
 	}
 
 	/**
-	 * Returns a filter that selects people associated with the given
-	 * compartment.
+	 * Returns a filter that selects people associated with the given compartment.
 	 */
 	public static Filter compartment(final CompartmentId compartmentId) {
 		return new CompartmentFilter(compartmentId);
@@ -211,7 +211,8 @@ public abstract class Filter {
 	 * Returns a filter that selects people who are associated with the equality
 	 * relation to the given number of groups of the given group type.
 	 */
-	public static Filter groupsForPersonAndGroupType(final GroupTypeId groupTypeId, final Equality equality, final int groupCount) {
+	public static Filter groupsForPersonAndGroupType(final GroupTypeId groupTypeId, final Equality equality,
+			final int groupCount) {
 		return new GroupsForPersonAndGroupTypeFilter(groupTypeId, equality, groupCount);
 	}
 
@@ -224,39 +225,39 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a filter that passes no people. Used for concatenating filters in
-	 * an OR loop.
+	 * Returns a filter that passes no people. Used for concatenating filters in an
+	 * OR loop.
 	 */
 	public static Filter noPeople() {
-		return new EmptyPeopleFilter();
+		return new NonePeopleFilter();
 	}
 
 	/**
 	 * Returns a filter that selects people who are associated with the equality
 	 * relation to the given property id and value.
 	 */
-	public static Filter property(final PersonPropertyId personPropertyId, final Equality equality, final Object personPropertyValue) {
+	public static Filter property(final PersonPropertyId personPropertyId, final Equality equality,
+			final Object personPropertyValue) {
 		return new PropertyFilter(personPropertyId, equality, personPropertyValue);
 	}
 
 	/**
 	 * Returns a filter that selects people associated with the given region(s).
 	 */
-	public static Filter region(final RegionId ... regionIds ) {
+	public static Filter region(final RegionId... regionIds) {
 		Set<RegionId> set = new LinkedHashSet<>();
-		for(RegionId regionId : regionIds) {
+		for (RegionId regionId : regionIds) {
 			set.add(regionId);
 		}
 		return new RegionFilter(set);
 	}
-	
+
 	/**
 	 * Returns a filter that selects people associated with the given region(s).
-	 */	
+	 */
 	public static Filter region(Set<RegionId> regionIds) {
 		return new RegionFilter(regionIds);
 	}
-
 
 	/**
 	 * Returns a filter that selects people who are associated with the equality
@@ -270,10 +271,16 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a composed filter that represents a short-circuiting logical AND
-	 * of this filter and another.
+	 * Returns a composed filter that represents a short-circuiting logical AND of
+	 * this filter and another.
+	 * 
+	 * @throws RuntimeException
+	 *                          <li>if the given filter is null
 	 */
 	public final Filter and(final Filter other) {
+		if(other == null) {
+			throw new RuntimeException("null filter");
+		}
 		return new AndFilter(this, other);
 	}
 
@@ -285,10 +292,17 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a composed filter that represents a short-circuiting logical OR
-	 * of this filter and another.
+	 * Returns a composed filter that represents a short-circuiting logical OR of
+	 * this filter and another.
+	 * 
+	 * @throws RuntimeException
+	 *                          <li>if the given filter is null
+ 
 	 */
 	public final Filter or(final Filter other) {
+		if(other == null) {
+			throw new RuntimeException("null filter");
+		}
 		return new OrFilter(this, other);
 	}
 }

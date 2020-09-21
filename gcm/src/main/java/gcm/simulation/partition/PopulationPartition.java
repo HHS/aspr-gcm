@@ -2,10 +2,11 @@ package gcm.simulation.partition;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -169,7 +170,7 @@ public final class PopulationPartition {
 
 	private final ObservationManager observationManager;
 
-	private final Object key;
+	private final Object identifierKey;
 
 	public ComponentId getOwningComponentId() {
 		return owningComponentId;
@@ -184,23 +185,23 @@ public final class PopulationPartition {
 		if (filterEvaluator.evaluate(environment, personId)) {
 			boolean added = addPerson(personId);
 			if (added) {
-				observationManager.handlePopulationIndexPersonAddition(key, personId);
+				observationManager.handlePopulationIndexPersonAddition(identifierKey, personId);
 			}
 			return true;
 		}
 		boolean removed = removePerson(personId);
 		if (removed) {
-			observationManager.handlePopulationIndexPersonRemoval(key, personId);
+			observationManager.handlePopulationIndexPersonRemoval(identifierKey, personId);
 		}
 		return false;
 	}
 
 	private StochasticsManager stochasticsManager;
-	
-	public PopulationPartition(final Object key, final Context context, final PartitionInfo partitionInfo,
+
+	public PopulationPartition(final Object identifierKey, final Context context, final PartitionInfo partitionInfo,
 			final ComponentId owningComponentId) {
 		this.context = context;
-		this.key = key;
+		this.identifierKey = identifierKey;
 		this.observableEnvironment = context.getObservableEnvironment();
 		personToKeyMap = new ArrayList<>(context.getPersonIdManager().getPersonIdLimit());
 		this.partitionInfo = partitionInfo;
@@ -212,7 +213,6 @@ public final class PopulationPartition {
 		this.stochasticsManager = context.getStochasticsManager();
 		int size = 0;
 
-				
 		if (partitionInfo.getRegionPartitionFunction() != null) {
 			regionLabelIndex = size++;
 		}
@@ -441,7 +441,7 @@ public final class PopulationPartition {
 		labelManager.removeLabel(currentRegionLabel);
 		labelManager.addLabel(newRegionLabel);
 
-		// build the new key from the person
+		// build the new identifierKey from the person
 		Key newKey = buildKey(currentKey, regionLabelIndex, newRegionLabel);
 
 		move(currentKey, newKey, personId);
@@ -480,7 +480,7 @@ public final class PopulationPartition {
 		labelManager.removeLabel(currentPropertyLabel);
 		labelManager.addLabel(newPropertyLabel);
 
-		// build the new key from the person
+		// build the new identifierKey from the person
 		Key newKey = buildKey(currentKey, personPropertyLabelIndex, newPropertyLabel);
 
 		move(currentKey, newKey, personId);
@@ -519,7 +519,7 @@ public final class PopulationPartition {
 		labelManager.removeLabel(currentResourceLabel);
 		labelManager.addLabel(newResourceLabel);
 
-		// build the new key from the person
+		// build the new identifierKey from the person
 		Key newKey = buildKey(currentKey, resourceLabelIndex, newResourceLabel);
 
 		move(currentKey, newKey, personId);
@@ -556,7 +556,7 @@ public final class PopulationPartition {
 		labelManager.removeLabel(currentCompartmentLabel);
 		labelManager.addLabel(newCompartmentLabel);
 
-		// build the new key from the person
+		// build the new identifierKey from the person
 		Key newKey = buildKey(currentKey, compartmentLabelIndex, newCompartmentLabel);
 
 		move(currentKey, newKey, personId);
@@ -601,7 +601,7 @@ public final class PopulationPartition {
 		labelManager.removeLabel(currentGroupLabel);
 		labelManager.addLabel(newGroupLabel);
 
-		// build the new key from the person
+		// build the new identifierKey from the person
 		Key newKey = buildKey(currentKey, groupLabelIndex, newGroupLabel);
 
 		move(currentKey, newKey, personId);
@@ -663,55 +663,110 @@ public final class PopulationPartition {
 
 		return true;
 	}
+	private static interface KeyIterator extends Iterator<Key> {
+		public int size();
+	}
+	
+	private class FullKeyIterator implements KeyIterator {
+		
+		private Iterator<Key> iterator = keyToPeopleMap.keySet().iterator();
 
-	/*
-	 * Returns a list of non-partial keys from the given partial key where each full
-	 * key is currently present in the key map and is associated with a Population
-	 * Container.
-	 */
-	private Set<Key> getFullKeys(Key partialKey) {
-
-		Set<Key> result = new LinkedHashSet<>();
-
-		int dimensionCount = 0;
-		for (int i = 0; i < keySize; i++) {
-			if (partialKey.keys[i] == null) {
-				dimensionCount++;
-			}
-		}
-		int[] tuple = new int[dimensionCount];
-		int[] keyIndexes = new int[dimensionCount];
-		int index = 0;
-		for (int i = 0; i < keySize; i++) {
-			if (partialKey.keys[i] == null) {
-				keyIndexes[index++] = i;
-			}
+		@Override
+		public boolean hasNext() {
+			return iterator.hasNext();
 		}
 
-		Tuplator.Builder builder = Tuplator.builder();
-		for (int i = 0; i < dimensionCount; i++) {
-			int labelIndex = keyIndexes[i];
-			LabelManager labelManager = labelManagers[labelIndex];
-			builder.addDimension(labelManager.getLabelCount());
-		}
-		Tuplator tuplator = builder.build();
-
-		for (int i = 0; i < tuplator.size(); i++) {
-			tuplator.getTuple(i, tuple);
-			Key fullKey = new Key(partialKey);
-			for (int j = 0; j < dimensionCount; j++) {
-				LabelManager labelManager = labelManagers[keyIndexes[j]];
-				fullKey.keys[keyIndexes[j]] = labelManager.getLabel(tuple[j]);
-			}
-			fullKey = keyMap.get(fullKey);
-			if (fullKey != null) {
-				result.add(fullKey);
-			}
+		@Override
+		public Key next() {
+			return iterator.next();
 		}
 
-		return result;
+		@Override
+		public int size() {
+			return keyToPeopleMap.keySet().size();
+		}
+		
+	}
+	
+	private class PartialKeyIterator implements KeyIterator {
+		private final Tuplator tuplator;
+		private int index;
+		private Key baseKey;
+		private Key nextKey;
+		int[] tuple;
+		int dimensionCount;
+		int[] keyIndexes;
+		
+		public PartialKeyIterator(Key partialKey) {
+
+			dimensionCount = 0;
+			for (int i = 0; i < keySize; i++) {
+				if (partialKey.keys[i] == null) {
+					dimensionCount++;
+				}
+			}
+			tuple = new int[dimensionCount];
+			keyIndexes = new int[dimensionCount];
+			int index = 0;
+			for (int i = 0; i < keySize; i++) {
+				if (partialKey.keys[i] == null) {
+					keyIndexes[index++] = i;
+				}
+			}
+
+			Tuplator.Builder builder = Tuplator.builder();
+			for (int i = 0; i < dimensionCount; i++) {
+				int labelIndex = keyIndexes[i];
+				LabelManager labelManager = labelManagers[labelIndex];
+				builder.addDimension(labelManager.getLabelCount());
+			}
+			tuplator = builder.build();
+
+			baseKey = new Key(partialKey);
+			calculateNextKey();
+		}
+
+		@Override
+		public boolean hasNext() {
+			return nextKey != null;
+		}
+
+		private void calculateNextKey() {
+			if (index >= tuplator.size()) {
+				nextKey = null;
+			} else {
+				while (index < tuplator.size()) {
+					tuplator.getTuple(index++, tuple);
+					for (int j = 0; j < dimensionCount; j++) {
+						LabelManager labelManager = labelManagers[keyIndexes[j]];
+						baseKey.keys[keyIndexes[j]] = labelManager.getLabel(tuple[j]);
+					}
+					nextKey = keyMap.get(baseKey);
+					if (nextKey != null) {
+						break;
+					}
+
+				}
+			}
+		}
+
+		@Override
+		public Key next() {
+			if (nextKey == null) {
+				throw new NoSuchElementException();
+			}
+			Key result = nextKey;
+			calculateNextKey();
+			return result;
+		}
+
+		@Override
+		public int size() {
+			return tuplator.size();
+		}
 
 	}
+
 
 	private PersonId getRandomPersonId(Key key, RandomGenerator randomGenerator, final PersonId excludedPersonId) {
 
@@ -757,10 +812,10 @@ public final class PopulationPartition {
 		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
-			Set<Key> fullKeys = getFullKeys(key);
-
+			PartialKeyIterator partialKeyIterator = new PartialKeyIterator(key);
 			int result = 0;
-			for (Key fullKey : fullKeys) {
+			while (partialKeyIterator.hasNext()) {
+				Key fullKey = partialKeyIterator.next();
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 				if (peopleContainer != null) {
 					result += peopleContainer.size();
@@ -776,6 +831,8 @@ public final class PopulationPartition {
 			return peopleContainer.size();
 		}
 	}
+	
+
 
 	private Key getKey(LabelSetInfo labelSetInfo) {
 		Key key = new Key(keySize);
@@ -820,8 +877,6 @@ public final class PopulationPartition {
 		return peopleContainer.contains(personId);
 	}
 
-	
-
 	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {
 		if (personToKeyMap.size() <= personId.getValue()) {
 			return false;
@@ -831,7 +886,6 @@ public final class PopulationPartition {
 		return fullLabelSetInfo.isSubsetMatch(labelSetInfo);
 	}
 
-	
 	/**
 	 * 
 	 * 
@@ -844,9 +898,11 @@ public final class PopulationPartition {
 		Key key = getKey(labelSetInfo);
 
 		if (key.isPartialKey()) {
-			Set<Key> fullKeys = getFullKeys(key);
+			PartialKeyIterator partialKeyIterator = new PartialKeyIterator(key);
+			
 			List<PersonId> result = new ArrayList<>();
-			for (Key fullKey : fullKeys) {
+			while (partialKeyIterator.hasNext()) {
+				Key fullKey = partialKeyIterator.next();
 				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 				result.addAll(peopleContainer.getPeople());
 			}
@@ -937,13 +993,23 @@ public final class PopulationPartition {
 		return low;
 	}
 
+
+
+	private KeyIterator getKeyIterator (LabelSetInfo labelSetInfo) {
+		if(labelSetInfo == null) {
+			return new FullKeyIterator();
+		}
+		Key key = getKey(labelSetInfo);
+		return new PartialKeyIterator(key);
+	}
+	
 	/**
 	 * Returns a randomly chosen person identifier from the partition, excluding the
 	 * person identifier given. When the excludedPersonId is null it indicates that
 	 * no person is being excluded.
 	 */
 	public StochasticPersonSelection samplePartition(final PartitionSamplerInfo partitionSamplerInfo) {
-		
+
 		RandomGenerator randomGenerator;
 		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId()
 				.orElse(null);
@@ -953,30 +1019,26 @@ public final class PopulationPartition {
 			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		}
 
+		LabelSetInfo labelSetInfo = null;
 		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
-
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-
+		if (labelSet != null) {
+			labelSetInfo = LabelSetInfo.build(labelSet);
+		}
 		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction()
 				.orElse(null);
 
 		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
-		
 
 		Key selectedKey = null;
 		Key keyForExcludedPersonId = null;
-		Set<Key> fullKeys;
+		KeyIterator keyIterator;
 
-		if (labelSetInfo != null) {
-			Key key = getKey(labelSetInfo);
-			fullKeys = getFullKeys(key);
-		} else {
-			fullKeys = keyToPeopleMap.keySet();
-		}
+		
 		if (labelSetWeightingFunction == null) {
 			int candidateCount = 0;
-			for (Key fullKey : fullKeys) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+			keyIterator = getKeyIterator(labelSetInfo);
+			while (keyIterator.hasNext()) {				
+				PeopleContainer peopleContainer = keyToPeopleMap.get(keyIterator.next());
 				candidateCount += peopleContainer.size();
 			}
 			if (contains(excludedPersonId)) {
@@ -985,7 +1047,9 @@ public final class PopulationPartition {
 			}
 			if (candidateCount > 0) {
 				int selectedIndex = randomGenerator.nextInt(candidateCount);
-				for (Key fullKey : fullKeys) {
+				keyIterator = getKeyIterator(labelSetInfo);
+				while (keyIterator.hasNext()) {
+					Key fullKey = keyIterator.next();
 					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 					int containerSize = peopleContainer.size();
 					if (fullKey == keyForExcludedPersonId) {
@@ -1001,7 +1065,8 @@ public final class PopulationPartition {
 		} else {
 			aquireWeightsLock();
 			try {
-				allocateWeights(fullKeys.size());
+				keyIterator = getKeyIterator(labelSetInfo);
+				allocateWeights(keyIterator.size());
 				/*
 				 * Initialize the sum of the weights to zero and set the index in the weights
 				 * and weightedKeys to zero.
@@ -1013,11 +1078,12 @@ public final class PopulationPartition {
 
 				double sum = 0;
 				int weightsLength = 0;
-				for (Key key : fullKeys) {
-					LabelSetInfo lsInfo = labelSetInfoMap.get(key);
-					PeopleContainer peopleContainer = keyToPeopleMap.get(key);
+				while (keyIterator.hasNext()) {
+					Key fullKey = keyIterator.next();
+					LabelSetInfo lsInfo = labelSetInfoMap.get(fullKey);
+					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
 					double weight = labelSetWeightingFunction.getWeight(observableEnvironment, lsInfo);
-					if (key != keyForExcludedPersonId) {
+					if (fullKey != keyForExcludedPersonId) {
 						weight *= peopleContainer.size();
 					} else {
 						weight *= (peopleContainer.size() - 1);
@@ -1032,14 +1098,14 @@ public final class PopulationPartition {
 					if (weight > 0) {
 						sum += weight;
 						weights[weightsLength] = sum;
-						weightedKeys[weightsLength] = key;
+						weightedKeys[weightsLength] = fullKey;
 						weightsLength++;
 					}
 
 				}
 
 				/*
-				 * If at least one key was accepted for selection, then we attempt a random
+				 * If at least one identifierKey was accepted for selection, then we attempt a random
 				 * selection.
 				 */
 				if (weightsLength > 0) {
@@ -1067,7 +1133,8 @@ public final class PopulationPartition {
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
 		return new StochasticPersonSelection(selectedPerson, false);
 	}
-
+	
+	
 	public FilterInfo getFilterInfo() {
 		return filterInfo;
 	}

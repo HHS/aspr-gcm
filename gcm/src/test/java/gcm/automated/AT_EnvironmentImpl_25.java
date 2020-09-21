@@ -58,11 +58,13 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
+import gcm.util.StopWatch;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -387,29 +389,25 @@ public class AT_EnvironmentImpl_25 {
 		for (PartitionChoice partitionChoice : partionChoices) {
 			switch (partitionChoice) {
 			case COMPARTMENT:
-				result = result.with(Partition.create().compartment(compartmentPartitionFunction));
+				result = result.compartment(compartmentPartitionFunction);
 				break;
 			case GROUP:
-				result = result.with(Partition.create().group(groupPartitionFunction));
+				result = result.group(groupPartitionFunction);
 				break;
 			case PROPERTY1:
-				result = result
-						.with(Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function));
+				result = result.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 				break;
 			case PROPERTY2:
-				result = result
-						.with(Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function));
+				result = result.property(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function);
 				break;
 			case REGION:
-				result = result.with(Partition.create().region(regionPartitionFunction));
+				result = result.region(regionPartitionFunction);
 				break;
 			case RESOURCE1:
-				result = result
-						.with(Partition.create().resource(TestResourceId.RESOURCE1, personResource1PartitionFunction));
+				result = result.resource(TestResourceId.RESOURCE1, personResource1PartitionFunction);
 				break;
 			case RESOURCE2:
-				result = result
-						.with(Partition.create().resource(TestResourceId.RESOURCE2, personResource2PartitionFunction));
+				result = result.resource(TestResourceId.RESOURCE2, personResource2PartitionFunction);
 				break;
 			default:
 				throw new RuntimeException("unhandled case");
@@ -470,7 +468,7 @@ public class AT_EnvironmentImpl_25 {
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
 			// add the partition to the simulation
-			
+
 			environment.addPartition(partition, key);
 
 			makeRandomPersonAssignments(environment, randomGenerator);
@@ -547,7 +545,7 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@Test
 	@UnitTestMethod(name = "getPartitionPeople", args = { Object.class, LabelSet.class })
-	public void testGetPartitionPeople() {
+	public void testGetPartitionPeople_Object_LabelSet() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -874,8 +872,8 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object,
-	 * LabelSet)
+	 * Tests
+	 * {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object, LabelSet)
 	 */
 	@Test
 	@UnitTestMethod(name = "personIsInPopulationPartition", args = { PersonId.class, Object.class, LabelSet.class })
@@ -1588,6 +1586,82 @@ public class AT_EnvironmentImpl_25 {
 		simulation.setReplication(getReplication(randomGenerator));
 		simulation.setScenario(scenario);
 		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
+
+	}
+
+	/**
+	 * Tests {@link EnvironmentImpl#getPartitionPeople(Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "getPartitionPeople", args = { Object.class })
+	public void testGetPartitionPeople_Object() {
+
+		final long seed = SEED_PROVIDER.getSeedValue(100);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			StopWatch stopWatch = new StopWatch();
+			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
+
+				final Set<PersonId> expectedPeopleInCompartment = new LinkedHashSet<>();
+				for (final PersonId personId : scenario.getPeopleIds()) {
+					final CompartmentId personCompartment = scenario.getPersonCompartment(personId);
+					if (personCompartment.equals(testCompartmentId)) {
+						expectedPeopleInCompartment.add(personId);
+					}
+				}
+
+				final Object key = new Object();
+
+				
+				environment.addPartition(Partition.create().filter(Filter.compartment(testCompartmentId)), key);
+				
+
+				stopWatch.start();
+				final Set<PersonId> actualPeopleInCompartment = new LinkedHashSet<>(
+						environment.getPartitionPeople(key));
+				stopWatch.stop();
+
+				assertEquals(expectedPeopleInCompartment, actualPeopleInCompartment);
+				environment.removePartition(key);
+			}
+			System.out.println("AT_EnvironmentImpl_25.testGetPartitionPeople_Object()"+stopWatch.getElapsedMilliSeconds());
+
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			// if the key is null
+			assertModelException(() -> environment.getPartitionPeople((Object[]) null),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getPartitionPeople("bad key"),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
 		assertAllPlansExecuted(taskPlanContainer);
 
 	}

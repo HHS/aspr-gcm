@@ -3573,7 +3573,7 @@ public interface Environment extends Element {
 
 	/**
 	 * Returns a list of person identifiers associated with the population
-	 * partition.
+	 * partition and label set.
 	 *
 	 *
 	 * @throws ModelException
@@ -3592,6 +3592,22 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public List<PersonId> getPartitionPeople(final Object key, LabelSet labelSet);
+	
+	/**
+	 * Returns a list of person identifiers associated with the population
+	 * partition.
+	 *
+	 *
+	 * @throws ModelException
+	 *
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population partition
+	 * 
+	 */
+	public List<PersonId> getPartitionPeople(final Object key);
 
 	/**
 	 * Adds a population partition using the supplied population partition

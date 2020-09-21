@@ -4119,4 +4119,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
+	@Override
+	public List<PersonId> getPartitionPeople(Object key) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);			
+			return partitionManager.getPeople(key);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}	}
+
 }

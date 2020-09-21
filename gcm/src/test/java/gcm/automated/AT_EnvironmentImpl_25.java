@@ -648,11 +648,11 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#addPopulationPartition(Partition, Object)
+	 * Tests {@link EnvironmentImpl#addPartition(Partition, Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "addPopulationPartition", args = { Partition.class, Object.class })
-	public void testAddPopulationPartition() {
+	@UnitTestMethod(name = "addPartition", args = { Partition.class, Object.class })
+	public void testAddPartition() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's
@@ -745,8 +745,8 @@ public class AT_EnvironmentImpl_25 {
 	 * Tests {@link EnvironmentImpl#removePartition(Object)
 	 */
 	@Test
-	@UnitTestMethod(name = "removePopulationPartition", args = { Object.class })
-	public void testRemovePopulationPartition() {
+	@UnitTestMethod(name = "removePartition", args = { Object.class })
+	public void testRemovePartition() {
 		/*
 		 * Go through the boilerplate steps of generating a scenario that will support
 		 * the testing of a population partition that exercises all of the partition's

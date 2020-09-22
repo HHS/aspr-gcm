@@ -59,6 +59,7 @@ import gcm.simulation.partition.FilterInfo.GroupsForPersonFilterInfo;
 import gcm.simulation.partition.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.partition.FilterInfo.RegionFilterInfo;
 import gcm.simulation.partition.FilterInfo.ResourceFilterInfo;
+import gcm.util.StopWatch;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
@@ -1405,6 +1406,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
+	
+	public static StopWatch indexStopWatch = new StopWatch();
 
 	@Override
 	public Optional<PersonId> sampleIndex(final Object key, final PersonId excludedPersonId) {
@@ -1413,11 +1416,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
+			indexStopWatch.start();
 			final PersonId personId = indexedPopulationManager.sampleIndex(key, excludedPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
+			indexStopWatch.stop();
+			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -4069,6 +4071,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	}
 
+	
+	public static StopWatch partitionStopWatch = new StopWatch();
 	@Override
 	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
 		externalAccessManager.acquireReadAccess();
@@ -4078,8 +4082,10 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePartitionSampler(partitionSampler);
 			PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
 			validatePartitionSamplerInfo(key, partitionSamplerInfo);
+			partitionStopWatch.start();
 			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
 					partitionSamplerInfo);
+			partitionStopWatch.stop();
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {

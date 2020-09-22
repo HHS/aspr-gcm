@@ -51,7 +51,6 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
-import gcm.util.StopWatch;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -107,7 +106,7 @@ public class AT_EnvironmentImpl_06 {
 
 		
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			StopWatch stopWatch = new StopWatch();
+			
 			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 
 				final Set<PersonId> expectedPeopleInCompartment = new LinkedHashSet<>();
@@ -121,14 +120,13 @@ public class AT_EnvironmentImpl_06 {
 				final Object key = new Object();
 				environment.addPopulationIndex(Filter.compartment(testCompartmentId), key);
 
-				stopWatch.start();
+				
 				final Set<PersonId> actualPeopleInCompartment = new LinkedHashSet<>(environment.getIndexedPeople(key));
-				stopWatch.stop();
+				
 
 				assertEquals(expectedPeopleInCompartment, actualPeopleInCompartment);
 				environment.removePopulationIndex(key);
 			}
-			System.out.println("AT_EnvironmentImpl_06.testGetIndexedPeople() "+stopWatch.getElapsedMilliSeconds());
 
 		});
 

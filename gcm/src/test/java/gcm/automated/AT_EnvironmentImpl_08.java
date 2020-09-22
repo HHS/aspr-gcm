@@ -50,7 +50,6 @@ import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.util.StopWatch;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -1032,8 +1031,8 @@ public class AT_EnvironmentImpl_08 {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
-			StopWatch stopWatch = new StopWatch();
-			EnvironmentImpl.indexStopWatch.reset();
+			
+			
 			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 				final Set<PersonId> peopleInCompartment = new LinkedHashSet<>();
 				for (final PersonId personId : scenario.getPeopleIds()) {
@@ -1046,9 +1045,7 @@ public class AT_EnvironmentImpl_08 {
 				environment.addPopulationIndex(compartment(testCompartmentId), key);
 				for (int i = 0; i < 100; i++) {
 					for (final PersonId personId : peopleInCompartment) {
-						stopWatch.start();
 						final PersonId selectedPersonId = environment.sampleIndex(key,personId).get();
-						stopWatch.stop();
 						assertTrue(peopleInCompartment.contains(selectedPersonId));
 						assertFalse(selectedPersonId.equals(personId));
 					}
@@ -1056,9 +1053,6 @@ public class AT_EnvironmentImpl_08 {
 
 				environment.removePopulationIndex(key);
 			}
-			System.out.println("AT_EnvironmentImpl_08.testSampleIndex_Object_PersonId() "+stopWatch.getElapsedMilliSeconds());
-			System.out.println("AT_EnvironmentImpl_08.testSampleIndex_Object_PersonId() "+EnvironmentImpl.indexStopWatch.getElapsedMilliSeconds());
-
 		});
 
 		/*

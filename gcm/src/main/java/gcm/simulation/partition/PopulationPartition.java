@@ -24,6 +24,7 @@ import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
+import gcm.util.StopWatch;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -330,7 +331,11 @@ public final class PopulationPartition {
 		if (cleanedKey == null) {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
-			keyToPeopleMap.put(cleanedKey, new BasePeopleContainer(context));
+			BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);
+			if (keySize == 0) {
+				degeneratePeopleContainer = basePeopleContainer;
+			}
+			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			LabelSetInfo labelSetInfo = getLabelSetInfo(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSetInfo);
 		}
@@ -342,6 +347,8 @@ public final class PopulationPartition {
 		keyToPeopleMap.get(cleanedKey).add(personId);
 		return true;
 	}
+
+	private PeopleContainer degeneratePeopleContainer;
 
 	private LabelSetInfo getLabelSetInfo(Key key) {
 		LabelSet labelSet = LabelSet.create();
@@ -871,8 +878,7 @@ public final class PopulationPartition {
 		if (key == null) {
 			return false;
 		}
-		PeopleContainer peopleContainer = keyToPeopleMap.get(key);
-		return peopleContainer.contains(personId);
+		return true;
 	}
 
 	public boolean contains(PersonId personId, LabelSetInfo labelSetInfo) {
@@ -924,7 +930,7 @@ public final class PopulationPartition {
 				result.addAll(peopleContainer.getPeople());
 			}
 		}
-		if(result == null) {
+		if (result == null) {
 			result = new ArrayList<>();
 		}
 		return result;
@@ -1006,12 +1012,16 @@ public final class PopulationPartition {
 		return new PartialKeyIterator(key);
 	}
 
+//	public static StopWatch partitionStopWatch = new StopWatch();
+
 	/**
-	 * Returns a randomly chosen person identifier from the partition, excluding the
-	 * person identifier given. When the excludedPersonId is null it indicates that
-	 * no person is being excluded.
+	 * Returns a randomly chosen person identifier from the partition consistent
+	 * with the partition sampler info. Note that the sampler must be consistent
+	 * with the partition definition used to create this population partition. No
+	 * precondition tests will be performed.
 	 */
 	public StochasticPersonSelection samplePartition(final PartitionSamplerInfo partitionSamplerInfo) {
+//		partitionStopWatch.start();
 
 		RandomGenerator randomGenerator;
 		RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId()
@@ -1022,6 +1032,34 @@ public final class PopulationPartition {
 			randomGenerator = stochasticsManager.getRandomGeneratorFromId(randomNumberGeneratorId);
 		}
 
+		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
+
+		if (keySize == 0) {
+			//PeopleContainer peopleContainer = keyToPeopleMap.values().iterator().next();
+			if(degeneratePeopleContainer == null) {
+				return new StochasticPersonSelection(null, false);
+			}
+
+			int candidateCount = degeneratePeopleContainer.size();
+			if (excludedPersonId != null) {
+				if (degeneratePeopleContainer.contains(excludedPersonId)) {
+					candidateCount--;
+				}
+			}
+			PersonId result = null;
+			if (candidateCount > 0) {
+				while (true) {
+					result = degeneratePeopleContainer.getRandomPersonId(randomGenerator);
+					if (!result.equals(excludedPersonId)) {
+						break;
+					}
+				}
+			}
+//			partitionStopWatch.stop();
+			return new StochasticPersonSelection(result, false);
+
+		}
+
 		LabelSetInfo labelSetInfo = null;
 		LabelSet labelSet = partitionSamplerInfo.getLabelSet().orElse(null);
 		if (labelSet != null) {
@@ -1029,8 +1067,6 @@ public final class PopulationPartition {
 		}
 		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction()
 				.orElse(null);
-
-		PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().orElse(null);
 
 		Key selectedKey = null;
 		Key keyForExcludedPersonId = null;
@@ -1092,6 +1128,7 @@ public final class PopulationPartition {
 					}
 
 					if (!Double.isFinite(weight) || (weight < 0)) {
+//						partitionStopWatch.stop();
 						return new StochasticPersonSelection(null, true);
 					}
 					/*
@@ -1116,6 +1153,7 @@ public final class PopulationPartition {
 					 * weights is not finite no legitimate selection can be made
 					 */
 					if (!Double.isFinite(sum)) {
+//						partitionStopWatch.stop();
 						return new StochasticPersonSelection(null, true);
 					}
 
@@ -1129,10 +1167,12 @@ public final class PopulationPartition {
 		}
 
 		if (selectedKey == null) {
+//			partitionStopWatch.stop();
 			return new StochasticPersonSelection(null, false);
 		}
 
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
+//		partitionStopWatch.stop();
 		return new StochasticPersonSelection(selectedPerson, false);
 	}
 

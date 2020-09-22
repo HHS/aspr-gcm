@@ -24,7 +24,6 @@ import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
-import gcm.util.StopWatch;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;

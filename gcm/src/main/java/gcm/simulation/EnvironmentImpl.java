@@ -1424,6 +1424,29 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
+	
+	public static StopWatch partitionStopWatch = new StopWatch();
+	
+	@Override
+	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);
+			validatePartitionSampler(partitionSampler);
+			
+			PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
+			validatePartitionSamplerInfo(key, partitionSamplerInfo);
+			partitionStopWatch.start();
+			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
+					partitionSamplerInfo);
+			partitionStopWatch.stop();
+			validateStochasticPersonSelection(stochasticPersonSelection);
+			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
 
 	@Override
 	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
@@ -4072,26 +4095,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	
-	public static StopWatch partitionStopWatch = new StopWatch();
-	@Override
-	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validatePartitionSampler(partitionSampler);
-			PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
-			validatePartitionSamplerInfo(key, partitionSamplerInfo);
-			partitionStopWatch.start();
-			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
-					partitionSamplerInfo);
-			partitionStopWatch.stop();
-			validateStochasticPersonSelection(stochasticPersonSelection);
-			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
+	
 
 	private void validateGroupSampler(GroupSampler groupSampler) {
 		if (groupSampler == null) {

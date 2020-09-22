@@ -1,4 +1,4 @@
-package gcm.automated;
+package gcm.manual;
 
 import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
 import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
@@ -10,11 +10,9 @@ import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static gcm.simulation.partition.Filter.compartment;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -29,7 +27,6 @@ import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
-import gcm.automated.support.TestRegionId;
 import gcm.replication.Replication;
 import gcm.scenario.PersonId;
 import gcm.scenario.Scenario;
@@ -41,14 +38,13 @@ import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.simulation.partition.PopulationPartition;
 import gcm.util.StopWatch;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
 @UnitTest(target = EnvironmentImpl.class)
 
-public class AT_EnvironmentImpl_26 {
+public class MT_Sample {
 
 	private static SeedProvider SEED_PROVIDER;
 
@@ -64,7 +60,7 @@ public class AT_EnvironmentImpl_26 {
 	@AfterClass
 	public static void afterClass() {
 //		System.out
-//				.println(AT_EnvironmentImpl_26.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//				.println(MT_Sample.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 	
 	/**
@@ -72,7 +68,7 @@ public class AT_EnvironmentImpl_26 {
 	 */
 	@Test
 	@UnitTestMethod(name = "samplePartition", args = {Object.class,PartitionSampler.class})
-	public void testSamplePartition_Object_PersonId() {
+	public void testPartition() {
 		/*
 		 * Show that we can retrieve people from a population index while
 		 * excluding a person who is in the index. We will do this repeatedly to
@@ -125,24 +121,13 @@ public class AT_EnvironmentImpl_26 {
 
 				environment.removePartition(key);
 			}
-			System.out.println("AT_EnvironmentImpl_26.testSamplePartition_Object_PersonId()"+stopWatch.getElapsedMilliSeconds());
-			System.out.println("AT_EnvironmentImpl_26.testSamplePartition_Object_PersonId()"+EnvironmentImpl.partitionStopWatch.getElapsedMilliSeconds());
-//			System.out.println("AT_EnvironmentImpl_26.testSamplePartition_Object_PersonId()"+PopulationPartition.partitionStopWatch.getElapsedMilliSeconds());
+			System.out.println("MT_Sample.testPartition()"+stopWatch.getElapsedMilliSeconds());
+			System.out.println("MT_Sample.testPartition()"+EnvironmentImpl.partitionStopWatch.getElapsedMilliSeconds());
+//			System.out.println("MT_Sample.testSamplePartition_Object_PersonId()"+PopulationPartition.partitionStopWatch.getElapsedMilliSeconds());
 
 		});
 
-		/*
-		 * Precondition tests -- this does not cover all the cases for the partition sampler failing
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// if the key is null
-			assertModelException(() -> environment.samplePartition((Object[]) null,PartitionSampler.create()), SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
-			// if the key does not correspond to an existing population
-			// index
-			assertModelException(() -> environment.samplePartition(new Object(),PartitionSampler.create()), SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
-
-		});
+		
 
 		Simulation simulation = new Simulation();
 		simulation.setReplication(replication);
@@ -158,7 +143,7 @@ public class AT_EnvironmentImpl_26 {
 	 */
 	@Test
 	@UnitTestMethod(name = "sampleIndex", args = {Object.class,PersonId.class})
-	public void testSampleIndex_Object_PersonId() {
+	public void testIndex() {
 		/*
 		 * Show that we can retrieve people from a population index while
 		 * excluding a person who is in the index. We will do this repeatedly to
@@ -209,23 +194,11 @@ public class AT_EnvironmentImpl_26 {
 
 				environment.removePopulationIndex(key);
 			}
-			System.out.println("AT_EnvironmentImpl_26.testSampleIndex_Object_PersonId()"+stopWatch.getElapsedMilliSeconds());
-			System.out.println("AT_EnvironmentImpl_26.testSampleIndex_Object_PersonId()"+EnvironmentImpl.indexStopWatch.getElapsedMilliSeconds());
+			System.out.println("MT_Sample.testIndex()"+stopWatch.getElapsedMilliSeconds());
+			System.out.println("MT_Sample.testIndex()"+EnvironmentImpl.indexStopWatch.getElapsedMilliSeconds());
 		});
 
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// if the key is null
-			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-			// if the key does not correspond to an existing population
-			// index
-			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-
-		});
-
+		
 		Simulation simulation = new Simulation();
 		simulation.setReplication(replication);
 		simulation.setScenario(scenario);

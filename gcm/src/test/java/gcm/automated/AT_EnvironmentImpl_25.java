@@ -58,13 +58,11 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.LabelSetInfo;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.util.StopWatch;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -1026,8 +1024,8 @@ public class AT_EnvironmentImpl_25 {
 //		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 //
 //			Object key = "key1";
-//			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-//					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
+//			Partition partition = Partition.create().compartment(MT_Sample.compartmentPartitionFunction)
+//					.region(MT_Sample.regionPartitionFunction);
 //			environment.addPopulationPartition(partition, key);
 //
 //			// use a uniform distribution with 10000 repetitions
@@ -1053,7 +1051,7 @@ public class AT_EnvironmentImpl_25 {
 //
 //			for (int i = 0; i < 10000; i++) {
 //
-//				Optional<PersonId> opt = environment.samplePartition(key, AT_EnvironmentImpl_26::getWeight,
+//				Optional<PersonId> opt = environment.samplePartition(key, MT_Sample::getWeight,
 //						randomNumberGeneratorId);
 //
 //				assertTrue(opt.isPresent());
@@ -1081,11 +1079,11 @@ public class AT_EnvironmentImpl_25 {
 //		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 //
 //			Object key = "key2";
-//			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_26.compartmentPartitionFunction)
-//					.region(AT_EnvironmentImpl_26.regionPartitionFunction);
+//			Partition partition = Partition.create().compartment(MT_Sample.compartmentPartitionFunction)
+//					.region(MT_Sample.regionPartitionFunction);
 //			environment.addPopulationPartition(partition, key);
 //
-//			Optional<PersonId> opt = environment.samplePartition(key, AT_EnvironmentImpl_26::getZeroWeight,
+//			Optional<PersonId> opt = environment.samplePartition(key, MT_Sample::getZeroWeight,
 //					randomNumberGeneratorId);
 //			assertTrue(!opt.isPresent());
 //		});

@@ -48,7 +48,7 @@ public class AT_LabelSetInfo {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(AT_LabelSetInfo.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out.println(MT_LabelSet.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**

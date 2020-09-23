@@ -97,7 +97,7 @@ public class MT_LabelSet {
 		return 0;
 	}
 	
-	@Test
+	//@Test
 	public void testPartitionSampler() {
 		
 		PersonId personId = new PersonId(1234);

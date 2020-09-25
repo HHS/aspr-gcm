@@ -1,7 +1,6 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -11,120 +10,99 @@ import gcm.automated.support.TestRandomGeneratorId;
 import gcm.scenario.PersonId;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.LabelSetInfo;
 import gcm.simulation.partition.LabelSetWeightingFunction;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.simulation.partition.PartitionSamplerInfo;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
 /**
- * Test class for {@link PartitionSamplerInfo}
+ * Test class for {@link PartitionSampler}
  * 
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PartitionSamplerInfo.class)
-public class AT_PartitionSamplerInfo {
-	
+@UnitTest(target = PartitionSampler.class)
+public class AT_PartitionSampler {
+
 	/**
-	 * Tests {@linkplain PartitionSamplerInfo#build(PartitionSampler)
+	 * Tests {@linkplain PartitionSampler#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "build", args = { PartitionSampler.class })
+	@UnitTestMethod(name = "builder", args = { PartitionSampler.class })
 	public void testBuilder() {
-
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create());
-
-		assertNotNull(partitionSamplerInfo);
-		
-		assertNotNull(partitionSamplerInfo.getExcludedPerson());
-		assertFalse(partitionSamplerInfo.getExcludedPerson().isPresent());
-		
-		assertNotNull(partitionSamplerInfo.getLabelSet());
-		assertFalse(partitionSamplerInfo.getLabelSet().isPresent());
-		
-		assertNotNull(partitionSamplerInfo.getLabelSetWeightingFunction());
-		assertFalse(partitionSamplerInfo.getLabelSetWeightingFunction().isPresent());
-		
-		assertNotNull(partitionSamplerInfo.getRandomNumberGeneratorId());
-		assertFalse(partitionSamplerInfo.getRandomNumberGeneratorId().isPresent());
-
+		assertNotNull(PartitionSampler.builder());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionSamplerInfo#getExcludedPerson()
+	 * Tests {@linkplain PartitionSampler#getExcludedPerson()
 	 */
 	@Test
 	@UnitTestMethod(name = "getExcludedPerson", args = {})
 	public void testGetExcludedPerson() {
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo
-				.build(PartitionSampler.create().excludePerson(new PersonId(67)));
-
-		assertNotNull(partitionSamplerInfo);
-		assertNotNull(partitionSamplerInfo.getExcludedPerson());
-		assertTrue(partitionSamplerInfo.getExcludedPerson().isPresent());
-		assertEquals(67, partitionSamplerInfo.getExcludedPerson().get().getValue());
-
+		PartitionSampler partitionSampler = PartitionSampler.builder().setExcludedPerson(new PersonId(67)).build();
+		assertNotNull(partitionSampler);
+		assertNotNull(partitionSampler.getExcludedPerson());
+		assertTrue(partitionSampler.getExcludedPerson().isPresent());
+		assertEquals(67, partitionSampler.getExcludedPerson().get().getValue());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionSamplerInfo#getRandomNumberGeneratorId()
+	 * Tests {@linkplain PartitionSampler#getRandomNumberGeneratorId()
 	 */
 	@Test
 	@UnitTestMethod(name = "getRandomNumberGeneratorId", args = {})
 	public void testGetRandomNumberGeneratorId() {
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
-				.generator(TestRandomGeneratorId.DASHER).generator(TestRandomGeneratorId.VIXEN));
+		PartitionSampler partitionSampler = PartitionSampler.builder()
+				.setRandomNumberGeneratorId(TestRandomGeneratorId.DASHER)
+				.setRandomNumberGeneratorId(TestRandomGeneratorId.VIXEN).build();
 
-		assertNotNull(partitionSamplerInfo);
-		assertNotNull(partitionSamplerInfo.getRandomNumberGeneratorId());
-		assertTrue(partitionSamplerInfo.getRandomNumberGeneratorId().isPresent());
-		assertEquals(TestRandomGeneratorId.VIXEN, partitionSamplerInfo.getRandomNumberGeneratorId().get());
+		assertNotNull(partitionSampler);
+		assertNotNull(partitionSampler.getRandomNumberGeneratorId());
+		assertTrue(partitionSampler.getRandomNumberGeneratorId().isPresent());
+		assertEquals(TestRandomGeneratorId.VIXEN, partitionSampler.getRandomNumberGeneratorId().get());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionSamplerInfo#getLabelSet()
+	 * Tests {@linkplain PartitionSampler#getLabelSet()
 	 */
 	@Test
 	@UnitTestMethod(name = "getLabelSet", args = {})
 	public void testGetLabelSet() {
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
-				.labelSet(LabelSet.create().compartment("compartmentLabel").region("regionLabel")));
+		PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(
+				LabelSet.builder().setCompartmentLabel("compartmentLabel").setRegionLabel("regionLabel").build())
+				.build();
 
-		assertNotNull(partitionSamplerInfo);
-		assertNotNull(partitionSamplerInfo.getLabelSet());
-		assertTrue(partitionSamplerInfo.getLabelSet().isPresent());
-		LabelSet labelSet = partitionSamplerInfo.getLabelSet().get();
+		assertNotNull(partitionSampler);
+		assertNotNull(partitionSampler.getLabelSet());
+		assertTrue(partitionSampler.getLabelSet().isPresent());
+		LabelSet labelSet = partitionSampler.getLabelSet().get();
 		
-
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-		assertTrue(labelSetInfo.getCompartmentLabel().isPresent());
-		assertEquals("compartmentLabel", labelSetInfo.getCompartmentLabel().get());
-		assertTrue(labelSetInfo.getRegionLabel().isPresent());
-		assertEquals("regionLabel", labelSetInfo.getRegionLabel().get());
+		assertTrue(labelSet.getCompartmentLabel().isPresent());
+		assertEquals("compartmentLabel", labelSet.getCompartmentLabel().get());
+		assertTrue(labelSet.getRegionLabel().isPresent());
+		assertEquals("regionLabel", labelSet.getRegionLabel().get());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionSamplerInfo#getLabelSetWeightingFunction()
+	 * Tests {@linkplain PartitionSampler#getLabelSetWeightingFunction()
 	 */
 	@Test
 	@UnitTestMethod(name = "getLabelSetWeightingFunction", args = {})
 	public void testGetLabelSetWeightingFunction() {
-		
-		double expectedValue = 17.5;
-		
-		PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(PartitionSampler.create()
-				.labelWeight((ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo)-> expectedValue));
 
-		assertNotNull(partitionSamplerInfo);
-		assertNotNull(partitionSamplerInfo.getLabelSetWeightingFunction());
-		assertTrue(partitionSamplerInfo.getLabelSetWeightingFunction().isPresent());
-		LabelSetWeightingFunction labelSetWeightingFunction = partitionSamplerInfo.getLabelSetWeightingFunction().get();
+		double expectedValue = 17.5;
+
+		PartitionSampler partitionSampler = PartitionSampler.builder()
+				.setLabelSetWeightingFunction((ObservableEnvironment observableEnvironment, LabelSet labelSet) -> expectedValue)
+				.build();
+
+		assertNotNull(partitionSampler);
+		assertNotNull(partitionSampler.getLabelSetWeightingFunction());
+		assertTrue(partitionSampler.getLabelSetWeightingFunction().isPresent());
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction().get();
 		assertNotNull(labelSetWeightingFunction);
-		
-		
-		assertEquals(expectedValue,labelSetWeightingFunction.getWeight(null, null),0);		
+
+		assertEquals(expectedValue, labelSetWeightingFunction.getWeight(null, null), 0);
 	}
 
 }

@@ -1,185 +1,290 @@
 package gcm.simulation.partition;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.REQUIRED, proxy = LabelSetInfo.class)
+@Source(status = TestStatus.REQUIRED)
 public class LabelSet {
+
+	@Override
+	public int hashCode() {
+		return scaffold.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		LabelSet other = (LabelSet) obj;
+		return scaffold.equals(other.scaffold);
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
+	@Source(proxy = LabelSet.class)
+	public static class Builder {
+
+		private Builder() {
+		}
+
+		Scaffold scaffold = new Scaffold();
+
+		public LabelSet build() {
+			try {
+				return new LabelSet(scaffold);
+			} finally {
+				scaffold = new Scaffold();
+			}
+		}
+
+		public Builder setCompartmentLabel(Object compartmentLabel) {
+			scaffold.compartmentLabel = compartmentLabel;
+			return this;
+		}
+
+		public Builder setRegionLabel(Object regionLabel) {
+			scaffold.regionLabel = regionLabel;
+			return this;
+		}
+
+		public Builder setGroupLabel(Object groupLabel) {
+			scaffold.groupLabel = groupLabel;
+			return this;
+		}
+
+		public Builder setResourceLabel(ResourceId resourceId, Object resourceLabel) {
+			scaffold.personResourceLabels.put(resourceId, resourceLabel);
+			return this;
+		}
+
+		public Builder setPropertyLabel(PersonPropertyId personPropertyId, Object propertyLabel) {
+			scaffold.personPropertyLabels.put(personPropertyId, propertyLabel);
+			return this;
+		}
+
+	}
+
+	/**
+	 * Returns true if and only if the given {@link LabelSet2} is a subset of this
+	 * {@link LabelSet2}. Only Non-null values in the input are compared to the
+	 * corresponding values in this label set.
+	 */
+	public boolean isSubsetMatch(LabelSet labelSet) {
+		if (labelSet.scaffold.compartmentLabel != null) {
+			if (scaffold.compartmentLabel == null) {
+				return false;
+			} else {
+				if (!scaffold.compartmentLabel.equals(labelSet.scaffold.compartmentLabel)) {
+					return false;
+				}
+			}
+		}
+
+		if (labelSet.scaffold.groupLabel != null) {
+			if (scaffold.groupLabel == null) {
+				return false;
+			} else {
+				if (!scaffold.groupLabel.equals(labelSet.scaffold.groupLabel)) {
+					return false;
+				}
+			}
+		}
+
+		if (labelSet.scaffold.regionLabel != null) {
+			if (scaffold.regionLabel == null) {
+				return false;
+			} else {
+				if (!scaffold.regionLabel.equals(labelSet.scaffold.regionLabel)) {
+					return false;
+				}
+			}
+		}
+
+		for (PersonPropertyId personPropertyId : labelSet.scaffold.personPropertyLabels.keySet()) {
+			if (!scaffold.personPropertyLabels.containsKey(personPropertyId)) {
+				return false;
+			}
+			Object localPropertyLabel = scaffold.personPropertyLabels.get(personPropertyId);
+			Object propertyLabel = labelSet.scaffold.personPropertyLabels.get(personPropertyId);
+
+			if (!localPropertyLabel.equals(propertyLabel)) {
+				return false;
+			}
+		}
+
+		for (ResourceId resourceId : labelSet.scaffold.personResourceLabels.keySet()) {
+			if (!scaffold.personResourceLabels.containsKey(resourceId)) {
+				return false;
+			}
+			Object localResourceLabel = scaffold.personResourceLabels.get(resourceId);
+			Object resourceLabel = labelSet.scaffold.personResourceLabels.get(resourceId);
+			if (!localResourceLabel.equals(resourceLabel)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	@SourceMethod(status = TestStatus.UNREQUIRED)
 	public String toString() {
-		return LabelSetInfo.build(this).toString();
+		return scaffold.toString();
 	}
 
-	private LabelSet() {
+	private static class Scaffold {
 
-	}
+		private Object compartmentLabel;
 
-	static class CompartmentLabelSet extends LabelSet {
-		final Object compartmentLabel;
+		private Object regionLabel;
 
-		public CompartmentLabelSet(Object compartmentLabel) {
-			this.compartmentLabel = compartmentLabel;
+		private Object groupLabel;
+
+		private Map<PersonPropertyId, Object> personPropertyLabels = new LinkedHashMap<>();
+
+		private Map<ResourceId, Object> personResourceLabels = new LinkedHashMap<>();
+
+		@Override
+		public String toString() {
+			return "LabelSet [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel + ", groupLabel="
+					+ groupLabel + ", personPropertyLabels=" + personPropertyLabels + ", personResourceLabels="
+					+ personResourceLabels + "]";
 		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((compartmentLabel == null) ? 0 : compartmentLabel.hashCode());
+			result = prime * result + ((groupLabel == null) ? 0 : groupLabel.hashCode());
+			result = prime * result + ((personPropertyLabels == null) ? 0 : personPropertyLabels.hashCode());
+			result = prime * result + ((personResourceLabels == null) ? 0 : personResourceLabels.hashCode());
+			result = prime * result + ((regionLabel == null) ? 0 : regionLabel.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			Scaffold other = (Scaffold) obj;
+			if (compartmentLabel == null) {
+				if (other.compartmentLabel != null) {
+					return false;
+				}
+			} else if (!compartmentLabel.equals(other.compartmentLabel)) {
+				return false;
+			}
+			if (groupLabel == null) {
+				if (other.groupLabel != null) {
+					return false;
+				}
+			} else if (!groupLabel.equals(other.groupLabel)) {
+				return false;
+			}
+			if (personPropertyLabels == null) {
+				if (other.personPropertyLabels != null) {
+					return false;
+				}
+			} else if (!personPropertyLabels.equals(other.personPropertyLabels)) {
+				return false;
+			}
+			if (personResourceLabels == null) {
+				if (other.personResourceLabels != null) {
+					return false;
+				}
+			} else if (!personResourceLabels.equals(other.personResourceLabels)) {
+				return false;
+			}
+			if (regionLabel == null) {
+				if (other.regionLabel != null) {
+					return false;
+				}
+			} else if (!regionLabel.equals(other.regionLabel)) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	private final Scaffold scaffold;
+	private final boolean empty;
+
+	public Optional<Object> getCompartmentLabel() {
+		return Optional.ofNullable(scaffold.compartmentLabel);
+	}
+
+	public Optional<Object> getGroupLabel() {
+		return Optional.ofNullable(scaffold.groupLabel);
+	}
+
+	public Optional<Object> getPersonPropertyLabel(PersonPropertyId personPropertyId) {
+		return Optional.ofNullable(scaffold.personPropertyLabels.get(personPropertyId));
+	}
+
+	public Optional<Object> getPersonResourceLabel(ResourceId resourceId) {
+		return Optional.ofNullable(scaffold.personResourceLabels.get(resourceId));
 	}
 
 	/**
-	 * Creates a compartment label for a label set
+	 * Returns an unmodifiable set of {@link PersonPropertyId} values associated
+	 * with this {@link LabelSetInfo}
 	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the compartmentLabel is null
 	 */
-	public final LabelSet compartment(final Object compartmentLabel) {
-		if (compartmentLabel == null) {
-			throw new RuntimeException("null compartment label");
-		}
+	public Set<PersonPropertyId> getPersonPropertyIds() {
+		return Collections.unmodifiableSet(scaffold.personPropertyLabels.keySet());
+	}
+
+	/**
+	 * Returns an unmodifiable set of {@link ResourceId} values associated with this
+	 * {@link LabelSetInfo}
+	 * 
+	 */
+	public Set<ResourceId> getPersonResourceIds() {
+		return Collections.unmodifiableSet(scaffold.personResourceLabels.keySet());
+	}
+
+	public Optional<Object> getRegionLabel() {
+		return Optional.ofNullable(scaffold.regionLabel);
+	}
+	
+	public boolean isEmpty() {
+		return empty;
+	}
+
+	private LabelSet(Scaffold scaffold) {
+		this.scaffold = scaffold;
 		
-		return new WithLabelSet(this,new  
-				CompartmentLabelSet(compartmentLabel));
-	}
-
-	static class RegionLabelSet extends LabelSet {
-		final Object regionLabel;
-
-		public RegionLabelSet(Object regionLabel) {
-			this.regionLabel = regionLabel;
-		}
-	}
-
-	/**
-	 * Creates a region label for a label set.
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the regionLabel is null
-	 */
-	public final LabelSet region(final Object regionLabel) {
-		if (regionLabel == null) {
-			throw new RuntimeException("null region label");
-		}
-		return new WithLabelSet(this, new  
-				RegionLabelSet(regionLabel));
-	}
-
-	static class PersonPropertyLabelSet extends LabelSet {
-		final PersonPropertyId personPropertyId;
-		final Object personPropertyLabel;
-
-		public PersonPropertyLabelSet(PersonPropertyId personPropertyId, Object personPropertyLabel) {
-			this.personPropertyLabel = personPropertyLabel;
-			this.personPropertyId = personPropertyId;
-		}
-	}
-
-	/**
-	 * Creates a person property label for a label set.
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the personPropertyId is null
-	 *                          <li>if the personPropertyLabel is null
-	 */
-	public final LabelSet property(PersonPropertyId personPropertyId, Object personPropertyLabel) {
-		if(personPropertyId == null) {
-			throw new RuntimeException("null person property id");
-		}
-		
-		if(personPropertyLabel == null) {
-			throw new RuntimeException("null person property label");
-		}
-
-		return new WithLabelSet(this, 
-				new PersonPropertyLabelSet(personPropertyId, personPropertyLabel));
-	}
-
-	static class ResourceLabelSet extends LabelSet {
-		final ResourceId resourceId;
-		final Object personResourceLabel;
-
-		public ResourceLabelSet(ResourceId resourceId, Object personResourceLabel) {
-			this.personResourceLabel = personResourceLabel;
-			this.resourceId = resourceId;
-		}
-	}
-
-	/**
-	 * Creates a resource label for a label set.
-	 * 
-	 * @throws RuntimeException
-	 * <li> if the resourceId is null
-	 * <li> if the resourceLabel is null
-	 */
-	public final LabelSet resource(ResourceId resourceId, Object resourceLabel) {
-		
-		if(resourceId == null) {
-			throw new RuntimeException("null resource id");
-		}
-		
-		if(resourceLabel == null) {
-			throw new RuntimeException("null resource label");
-		}
-
-		return new WithLabelSet(this, new ResourceLabelSet(resourceId, resourceLabel));
-	}
-
-	static class GroupLabelSet extends LabelSet {
-		final Object groupLabel;
-
-		public GroupLabelSet(Object groupLabel) {
-			this.groupLabel = groupLabel;
-		}
-	}
-
-	/**
-	 * Creates a compartment label for a label set
-	 * 
-	 * @throws RuntimeException
-	 * <li> if the groupLabel is null
-	 */
-	public final LabelSet group(final Object groupLabel) {
-		
-		if(groupLabel == null) {
-			throw new RuntimeException("null group label");
-		}
-		
-		return new WithLabelSet(this, new GroupLabelSet(groupLabel));
-	}
-
-	static class WithLabelSet extends LabelSet {
-		final LabelSet a;
-		final LabelSet b;
-
-		public WithLabelSet(final LabelSet a, final LabelSet b) {
-			this.a = a;
-			this.b = b;
-		}
-	}
-
-	/**
-	 * Returns a composed {@link LabelSet} that joins label sets
-	 * 
-	 * @throws RuntimeException
-	 * <li> if other is null 
-	 * 
-	 */
-	public final LabelSet with(final LabelSet other) {
-		if(other == null) {
-			throw new RuntimeException("null label set");
-		}
-		return new WithLabelSet(this, other);
-	}
-
-	static class EmptyLabelSet extends LabelSet {
+		empty = (scaffold.compartmentLabel == null)&&
+				(scaffold.regionLabel == null)&&
+				(scaffold.groupLabel == null)&&
+				(scaffold.personPropertyLabels.isEmpty())&&
+				(scaffold.personResourceLabels.isEmpty());
 
 	}
-
-	/**
-	 * Creates an empty label for a label set.
-	 */
-	public final static LabelSet create() {
-		return new EmptyLabelSet();
-	}
-
 }

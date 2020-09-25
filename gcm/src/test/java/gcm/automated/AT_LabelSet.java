@@ -1,8 +1,6 @@
 package gcm.automated;
 
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
-import static gcm.automated.support.ExceptionAssertion.assertException;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -22,7 +20,6 @@ import gcm.automated.support.TestResourceId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.LabelSetInfo;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -32,9 +29,9 @@ import gcm.util.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = LabelSetInfo.class)
+@UnitTest(target = LabelSet.class)
 
-public class AT_LabelSetInfo {
+public class AT_LabelSet {
 	private static SeedProvider SEED_PROVIDER;
 
 	@BeforeClass
@@ -48,11 +45,12 @@ public class AT_LabelSetInfo {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(MT_LabelSet.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out.println(AT_LabelSet.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
+	
 	/**
-	 * Tests {@linkplain LabelSetInfo#getPersonPropertyIds()
+	 * Tests {@linkplain LabelSet#getPersonPropertyIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
@@ -63,49 +61,33 @@ public class AT_LabelSetInfo {
 		for (int i = 0; i < 20; i++) {
 			Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
 
-			LabelSet labelSet = LabelSet.create();
+			LabelSet.Builder builder = LabelSet.builder();
 			for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					labelSet = labelSet.with(LabelSet.create().property(testPersonPropertyId, "label"));
+					builder.setPropertyLabel(testPersonPropertyId, "label");
 					expectedPersonPropertyIds.add(testPersonPropertyId);
 				}
 			}
-			LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-			Set<PersonPropertyId> actualPersonPropertyIds = labelSetInfo.getPersonPropertyIds();
+			LabelSet labelSet = builder.build();
+			Set<PersonPropertyId> actualPersonPropertyIds = labelSet.getPersonPropertyIds();
 			assertEquals(expectedPersonPropertyIds, actualPersonPropertyIds);
 		}
 	}
 
+	
+
+
 	/**
-	 * Tests {@linkplain LabelSetInfo#build(LabelSet)
+	 * Tests {@linkplain LabelSet#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "build", args = { LabelSet.class })
+	@UnitTestMethod(name = "builder", args = { LabelSet.class })
 	public void testBuild() {
-
-		LabelSet labelSet = LabelSet.create()//
-				.compartment("compartment")//
-				.region("region")//
-				.group("group")//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_1, "prop1")//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_2, 45)//
-				.resource(TestResourceId.RESOURCE2, 2342L);//
-
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-		assertNotNull(labelSetInfo);
-
-		// precondition tests
-		assertException(() -> LabelSetInfo.build(LabelSet.create().property(null, "label")), RuntimeException.class);
-		assertException(
-				() -> LabelSetInfo.build(LabelSet.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, null)),
-				RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(LabelSet.create().resource(null, "label")), RuntimeException.class);
-		assertException(() -> LabelSetInfo.build(LabelSet.create().resource(TestResourceId.RESOURCE1, null)),
-				RuntimeException.class);
+		assertNotNull(LabelSet.builder());
 	}
-
+	
 	/**
-	 * Tests {@linkplain LabelSetInfo#getPersonResourceIds()
+	 * Tests {@linkplain LabelSet#getPersonResourceIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourceIds", args = {})
@@ -116,33 +98,37 @@ public class AT_LabelSetInfo {
 		for (int i = 0; i < 20; i++) {
 			Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 
-			LabelSet labelSet = LabelSet.create();
+			LabelSet.Builder builder = LabelSet.builder();
 			for (TestResourceId testResourceId : TestResourceId.values()) {
 				if (randomGenerator.nextBoolean()) {
-					labelSet = labelSet.with(LabelSet.create().resource(testResourceId, "label"));
+					builder.setResourceLabel(testResourceId, "label");
 					expectedResourceIds.add(testResourceId);
 				}
 			}
 
-			LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
-			Set<ResourceId> actualResourceIds = labelSetInfo.getPersonResourceIds();
+			LabelSet labelSet = builder.build();
+			Set<ResourceId> actualResourceIds = labelSet.getPersonResourceIds();
 			assertEquals(expectedResourceIds, actualResourceIds);
 		}
 
 	}
 
+	
+	
 	/**
-	 * Tests {@linkplain LabelSetInfo#getGroupLabel()
+	 * Tests {@linkplain LabelSet#getGroupLabel()
 	 */
 	@Test
 	@UnitTestMethod(name = "getGroupLabel", args = {})
 	public void testGetGroupLabel() {
 		Object expectedGroupLabel = "Group Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().group(expectedGroupLabel));
-		assertTrue(labelSetInfo.getGroupLabel().isPresent());
-		Object actualGroupLabel = labelSetInfo.getGroupLabel().get();
+		LabelSet labelSet = LabelSet.builder().setGroupLabel(expectedGroupLabel).build();
+		assertTrue(labelSet.getGroupLabel().isPresent());
+		Object actualGroupLabel = labelSet.getGroupLabel().get();
 		assertEquals(expectedGroupLabel, actualGroupLabel);
 	}
+
+	
 
 	/**
 	 * Tests {@linkplain LabelSet#getRegionLabel()
@@ -151,11 +137,13 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getRegionLabel", args = {})
 	public void testGetRegionLabel() {
 		Object expectedRegionLabel = "Region Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().region(expectedRegionLabel));
-		assertTrue(labelSetInfo.getRegionLabel().isPresent());
-		Object actualRegionLabel = labelSetInfo.getRegionLabel().get();
+		LabelSet labelSet = LabelSet.builder().setRegionLabel(expectedRegionLabel).build();
+		assertTrue(labelSet.getRegionLabel().isPresent());
+		Object actualRegionLabel = labelSet.getRegionLabel().get();
 		assertEquals(expectedRegionLabel, actualRegionLabel);
 	}
+
+
 
 	/**
 	 * Tests {@linkplain LabelSet#getCompartmentLabel()
@@ -164,85 +152,201 @@ public class AT_LabelSetInfo {
 	@UnitTestMethod(name = "getCompartmentLabel", args = {})
 	public void testGetCompartmentLabel() {
 		Object expectedCompartmentLabel = "Compartment Label";
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(LabelSet.create().compartment(expectedCompartmentLabel));
-		assertTrue(labelSetInfo.getCompartmentLabel().isPresent());
-		Object actualCompartmentLabel = labelSetInfo.getCompartmentLabel().get();
+		LabelSet labelSet = LabelSet.builder().setCompartmentLabel(expectedCompartmentLabel).build();
+		assertTrue(labelSet.getCompartmentLabel().isPresent());
+		Object actualCompartmentLabel = labelSet.getCompartmentLabel().get();
 		assertEquals(expectedCompartmentLabel, actualCompartmentLabel);
 	}
 
+	
+	
 	/**
-	 * Tests {@linkplain LabelSetInfo#getPersonPropertyLabel(PersonPropertyId)
+	 * Tests {@linkplain LabelSet#getPersonPropertyLabel(PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyLabel", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyLabel() {
-		LabelSet labelSet = LabelSet.create();
+		LabelSet.Builder builder = LabelSet.builder();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
-			labelSet = labelSet.with(LabelSet.create().property(testPersonPropertyId, testPersonPropertyId.toString()));
+			builder.setPropertyLabel(testPersonPropertyId, testPersonPropertyId.toString());
 		}
 
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+		LabelSet labelSet = builder.build();
 		for (TestPersonPropertyId testPersonPropertyId : TestPersonPropertyId.values()) {
 			Object expectedPersonPropertyLabel = testPersonPropertyId.toString();
-			assertTrue(labelSetInfo.getPersonPropertyLabel(testPersonPropertyId).isPresent());
-			Object actualPersonPropertyLabel = labelSetInfo.getPersonPropertyLabel(testPersonPropertyId).get();
+			assertTrue(labelSet.getPersonPropertyLabel(testPersonPropertyId).isPresent());
+			Object actualPersonPropertyLabel = labelSet.getPersonPropertyLabel(testPersonPropertyId).get();
 			assertEquals(expectedPersonPropertyLabel, actualPersonPropertyLabel);
 		}
 	}
 
+	
+
 	/**
-	 * Tests {@linkplain LabelSetInfo#getPersonResourceLabel(ResourceId)
+	 * Tests {@linkplain LabelSet#getPersonResourceLabel(ResourceId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourceLabel", args = { ResourceId.class })
 	public void testGetPersonResourceLabel() {
-		LabelSet labelSet = LabelSet.create();
+		LabelSet.Builder builder = LabelSet.builder();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
-			labelSet = labelSet.with(LabelSet.create().resource(testResourceId, testResourceId.toString()));
+			builder.setResourceLabel(testResourceId, testResourceId.toString());
 		}
 
-		LabelSetInfo labelSetInfo = LabelSetInfo.build(labelSet);
+		LabelSet labelSet = builder.build();
 
 		for (TestResourceId testResourceId : TestResourceId.values()) {
 			Object expectedResourceLabel = testResourceId.toString();
-			assertTrue(labelSetInfo.getPersonResourceLabel(testResourceId).isPresent());
-			Object actualResourceLabel = labelSetInfo.getPersonResourceLabel(testResourceId).get();
+			assertTrue(labelSet.getPersonResourceLabel(testResourceId).isPresent());
+			Object actualResourceLabel = labelSet.getPersonResourceLabel(testResourceId).get();
 			assertEquals(expectedResourceLabel, actualResourceLabel);
 		}
 	}
 
+
+	
 	/**
-	 * Tests {@linkplain LabelSetInfo#equals(Object)
+	 * Tests {@linkplain LabelSet#equals(Object)
 	 */
 	@Test
 	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
-		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
-		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
-		LabelSetInfo labelSetInfo3 = LabelSetInfo.build(LabelSet.create().region("compartment label"));
+		LabelSet labelSet1 = LabelSet.builder().setCompartmentLabel("compartment label").build();
+		LabelSet labelSet2 = LabelSet.builder().setCompartmentLabel("compartment label").build();
+		LabelSet labelSet3 = LabelSet.builder().setCompartmentLabel("compartment label2").build();
 
-		assertFalse(labelSetInfo1 == labelSetInfo2);
-		assertTrue(labelSetInfo1.equals(labelSetInfo1));
-		assertTrue(labelSetInfo1.equals(labelSetInfo2));
-		assertTrue(labelSetInfo2.equals(labelSetInfo1));
-		assertFalse(labelSetInfo1.equals(labelSetInfo3));
+		assertFalse(labelSet1 == labelSet2);
+		assertTrue(labelSet1.equals(labelSet1));
+		assertTrue(labelSet1.equals(labelSet2));
+		assertTrue(labelSet2.equals(labelSet1));
+		assertFalse(labelSet1.equals(labelSet3));
 
 	}
 
 	/**
-	 * Tests {@linkplain LabelSetInfo#hashCode()
+	 * Tests {@linkplain LabelSet#hashCode()
 	 */
 	@Test
 	@UnitTestMethod(name = "hashCode", args = {})
 	public void testHashCode() {
 
-		LabelSetInfo labelSetInfo1 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
-		LabelSetInfo labelSetInfo2 = LabelSetInfo.build(LabelSet.create().compartment("compartment label"));
+		LabelSet labelSet1 = LabelSet.builder().setCompartmentLabel("compartment label").build();
+		LabelSet labelSet2 = LabelSet.builder().setCompartmentLabel("compartment label").build();
 
-		assertFalse(labelSetInfo1 == labelSetInfo2);
-		assertEquals(labelSetInfo1, labelSetInfo2);
-		assertEquals(labelSetInfo1.hashCode(), labelSetInfo2.hashCode());
+		assertFalse(labelSet1 == labelSet2);
+		assertEquals(labelSet1, labelSet2);
+		assertEquals(labelSet1.hashCode(), labelSet2.hashCode());
 	}
+	
+	
+	/**
+	 * Tests {@linkplain LabelSet#isSubsetMatch(LabelSet)
+	 */
+	@Test
+	@UnitTestMethod(name = "isSubsetMatch", args = {LabelSet.class})
+	public void testIsSubsetMatch() {
+
+		LabelSet labelSet1 = LabelSet.builder()//
+				.setCompartmentLabel("compartment label")//				
+				.build();//
+		
+		LabelSet labelSet2 = LabelSet.builder()//
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		
+
+		assertTrue(labelSet1.isSubsetMatch(labelSet2));
+		assertTrue(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setCompartmentLabel("compartment label")//
+				.setRegionLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		
+
+		assertTrue(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setGroupLabel("group label")//				
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setGroupLabel("group label2")//	
+				.build();//
+		assertFalse(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		labelSet1 = LabelSet.builder()//
+				.setGroupLabel("group label")//				
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setGroupLabel("group label")//	
+				.build();//
+		assertTrue(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1,"property label")//				
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_2,"property label")//	
+				.build();//
+		assertFalse(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1,"property label")//				
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1,"property label")//	
+				.build();//
+		assertTrue(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setResourceLabel(TestResourceId.RESOURCE1,"resource label")//				
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setResourceLabel(TestResourceId.RESOURCE2,"resource label")//	
+				.build();//
+		assertFalse(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+		
+		
+		labelSet1 = LabelSet.builder()//
+				.setResourceLabel(TestResourceId.RESOURCE1,"resource label")//				
+				.setCompartmentLabel("compartment label")//
+				.build();//
+		
+		labelSet2 = LabelSet.builder()//
+				.setResourceLabel(TestResourceId.RESOURCE1,"resource label")//	
+				.build();//
+		assertTrue(labelSet1.isSubsetMatch(labelSet2));
+		assertFalse(labelSet2.isSubsetMatch(labelSet1));
+
+		
+	}
+	
 
 }

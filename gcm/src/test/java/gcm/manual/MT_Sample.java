@@ -8,7 +8,6 @@ import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
-import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static gcm.simulation.partition.Filter.compartment;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -34,7 +33,6 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
-import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
@@ -112,7 +110,7 @@ public class MT_Sample {
 				for (int i = 0; i < 100; i++) {
 					for (final PersonId personId : peopleInCompartment) {
 						stopWatch.start();
-						final PersonId selectedPersonId = environment.samplePartition(key,PartitionSampler.create().excludePerson(personId)).get();
+						final PersonId selectedPersonId = environment.samplePartition(key,PartitionSampler.builder().setExcludedPerson(personId).build()).get();
 						stopWatch.stop();
 						assertTrue(peopleInCompartment.contains(selectedPersonId));
 						assertFalse(selectedPersonId.equals(personId));

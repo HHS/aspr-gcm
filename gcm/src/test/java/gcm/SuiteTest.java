@@ -53,7 +53,7 @@ import gcm.automated.AT_HashIntSet;
 import gcm.automated.AT_ImmutableStat;
 import gcm.automated.AT_IntId;
 import gcm.automated.AT_IntValueContainer;
-import gcm.automated.AT_LabelSetInfo;
+import gcm.automated.AT_LabelSet;
 import gcm.automated.AT_LatLon;
 import gcm.automated.AT_LatLonAlt;
 import gcm.automated.AT_LatLonBox;
@@ -68,7 +68,7 @@ import gcm.automated.AT_MutableVector2D;
 import gcm.automated.AT_MutableVector3D;
 import gcm.automated.AT_ObjectValueContainer;
 import gcm.automated.AT_PartitionInfo;
-import gcm.automated.AT_PartitionSamplerInfo;
+import gcm.automated.AT_PartitionSampler;
 import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
 import gcm.automated.AT_PlanningQueueReportItem;
@@ -185,9 +185,9 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_Replication.class,
 	AT_GroupTypeCountMap.class,
 	AT_PartitionInfo.class,
-	AT_LabelSetInfo.class,
+	AT_LabelSet.class,
 	AT_Tuplator.class,
-	AT_PartitionSamplerInfo.class,
+	AT_PartitionSampler.class,
 	AT_GroupSamplerInfo.class
 	})
 

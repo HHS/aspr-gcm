@@ -8,7 +8,7 @@ import java.util.Set;
 
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.ResourceId;
-import gcm.simulation.partition.LabelSetInfo;
+
 import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;

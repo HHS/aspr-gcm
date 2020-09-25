@@ -129,7 +129,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	private long masterTransactionId;
 
-	private long getNextTransactionId() {		
+	private long getNextTransactionId() {
 		return masterTransactionId++;
 	}
 
@@ -146,8 +146,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	}
 
 	@Override
-	public void addPartition(final ComponentId componentId, final Partition partition,
-			final Object key) {
+	public void addPartition(final ComponentId componentId, final Partition partition, final Object key) {
 		/*
 		 * 
 		 * We must integrate the indexedPopulation into the various mapping structures
@@ -174,18 +173,15 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		if (partition == null) {
 			throw new RuntimeException("null population partition definition");
 		}
-		
 
 		if (key == null) {
 			throw new RuntimeException("null key");
 		}
 
-		
 		if (indexedPopulationMap.get(key) != null) {
 			throw new RuntimeException("duplicated key" + key);
 		}
 
-		
 		PartitionInfo partitionInfo = PartitionInfo.build(partition);
 		FilterInfo filterInfo = partitionInfo.getFilterInfo();
 
@@ -209,10 +205,15 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			simulationWarningManager.processPopulationIndexEfficiencyWarning(populationIndexEfficiencyWarning);
 		}
 
+		PopulationPartition populationPartition;
+		if (partitionInfo.isDegenerate()) {
+			populationPartition = new DegeneratePopulationPartitionImpl(key, context, partitionInfo,
+					componentId);
+		} else {
+			populationPartition = new PopulationPartitionImpl(key, context, partitionInfo,
+					componentId);
+		}
 		
-		PopulationPartition populationPartition = new PopulationPartition(key, context,
-				partitionInfo, componentId);
-
 		// TODO -- implement profiler
 //		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
 //		if (useProfiledFilters) {
@@ -258,7 +259,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			filterCount++;
 		}
 
-		Set<ResourceId> resourceIds = new LinkedHashSet<>( partitionInfo.getPersonResourceIds());
+		Set<ResourceId> resourceIds = new LinkedHashSet<>(partitionInfo.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 
@@ -363,12 +364,12 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 	public int getPersonCount(final Object key, LabelSet labelSet) {
 		// TODO -- we should convert to label set info instances at the environment
 		// level during validation
-		return indexedPopulationMap.get(key).getPeopleCount(LabelSetInfo.build(labelSet));
+		return indexedPopulationMap.get(key).getPeopleCount(labelSet);
 	}
 
 	@Override
-	public StochasticPersonSelection samplePartition(Object key, PartitionSamplerInfo partitionSamplerInfo) {
-		return indexedPopulationMap.get(key).samplePartition(partitionSamplerInfo);
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler) {
+		return indexedPopulationMap.get(key).samplePartition(partitionSampler);
 	}
 
 	@Override
@@ -405,8 +406,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 		for (final PersonPropertyId personPropertyId : propertyValueIndexedPopulations.keySet()) {
 			final Object personPropertyValue = propertyManager.getPersonPropertyValue(personId, personPropertyId);
-			final Map<Object, Set<PopulationPartition>> map = propertyValueIndexedPopulations
-					.get(personPropertyId);
+			final Map<Object, Set<PopulationPartition>> map = propertyValueIndexedPopulations.get(personPropertyId);
 			if (map != null) {
 				final Set<PopulationPartition> populationPartitions = map.get(personPropertyValue);
 				if (populationPartitions != null) {
@@ -418,8 +418,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		for (final PersonPropertyId personPropertyId : propertyIdIndexedPopulations.keySet()) {
-			final Set<PopulationPartition> populationPartitions = propertyIdIndexedPopulations
-					.get(personPropertyId);
+			final Set<PopulationPartition> populationPartitions = propertyIdIndexedPopulations.get(personPropertyId);
 			if (populationPartitions != null) {
 				for (final PopulationPartition populationPartition : populationPartitions) {
 					populationPartition.handleAddPerson(transactionId, personId);
@@ -467,19 +466,19 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		Set<PopulationPartition> populationPartitions = compartmentIndexedPopulations.get(oldCompartmentId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleCompartmentChange(transactionId,personId);
+				populationPartition.handleCompartmentChange(transactionId, personId);
 			}
 		}
 
 		populationPartitions = compartmentIndexedPopulations.get(newCompartmentId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleCompartmentChange(transactionId,personId);
+				populationPartition.handleCompartmentChange(transactionId, personId);
 			}
 		}
 
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
-			populationPartition.handleCompartmentChange(transactionId,personId);			
+			populationPartition.handleCompartmentChange(transactionId, personId);
 		}
 
 	}
@@ -501,20 +500,19 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		Set<PopulationPartition> populationPartitions = regionIndexedPopulations.get(oldRegionId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleRegionChange(transactionId,personId);
+				populationPartition.handleRegionChange(transactionId, personId);
 			}
 		}
 
 		populationPartitions = regionIndexedPopulations.get(newRegionId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleRegionChange(transactionId,personId);
+				populationPartition.handleRegionChange(transactionId, personId);
 			}
 		}
 
-
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
-			populationPartition.handleRegionChange(transactionId,personId);			
+			populationPartition.handleRegionChange(transactionId, personId);
 		}
 	}
 
@@ -528,29 +526,29 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
-		
+
 		long transactionId = getNextTransactionId();
-		
+
 		for (final PopulationPartition populationPartition : groupIndexedPopulationsWhoJustDontCare) {
 			populationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
-		
+
 		Set<PopulationPartition> populationPartitions = groupIndexedPopulations.get(groupId);
 		if (populationPartitions != null) {
 			for (PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleGroupMembershipChange(transactionId,personId);
+				populationPartition.handleGroupMembershipChange(transactionId, personId);
 			}
 		}
 		GroupTypeId groupType = personGroupManger.getGroupType(groupId);
 
 		populationPartitions = groupTypeIndexedPopulations.get(groupType);
-		
+
 		if (populationPartitions != null) {
 			for (PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleGroupMembershipChange(transactionId,personId);
+				populationPartition.handleGroupMembershipChange(transactionId, personId);
 			}
 		}
-		
+
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
 			populationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
@@ -566,28 +564,28 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 * populations, are invoked to evaluate the person.
 		 * 
 		 */
-		
+
 		long transactionId = getNextTransactionId();
 		for (final PopulationPartition populationPartition : groupIndexedPopulationsWhoJustDontCare) {
 			populationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
-		
+
 		Set<PopulationPartition> populationPartitions = groupIndexedPopulations.get(groupId);
 		if (populationPartitions != null) {
 			for (PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleGroupMembershipChange(transactionId,personId);
+				populationPartition.handleGroupMembershipChange(transactionId, personId);
 			}
 		}
 		GroupTypeId groupType = personGroupManger.getGroupType(groupId);
 
 		populationPartitions = groupTypeIndexedPopulations.get(groupType);
-		
+
 		if (populationPartitions != null) {
 			for (PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handleGroupMembershipChange(transactionId,personId);
+				populationPartition.handleGroupMembershipChange(transactionId, personId);
 			}
 		}
-		
+
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
 			populationPartition.handleGroupMembershipChange(transactionId, personId);
 		}
@@ -604,8 +602,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		long transactionId = getNextTransactionId();
 
 		for (final ResourceId resourceId : resourceIndexedPopulations.keySet()) {
-			final Set<PopulationPartition> populationPartitions = resourceIndexedPopulations
-					.get(resourceId);
+			final Set<PopulationPartition> populationPartitions = resourceIndexedPopulations.get(resourceId);
 			if (populationPartitions != null) {
 				for (final PopulationPartition populationPartition : populationPartitions) {
 					populationPartition.handleRemovePerson(transactionId, personId);
@@ -658,7 +655,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 */
 
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
-			populationPartition.handleRemovePerson(transactionId,personId);
+			populationPartition.handleRemovePerson(transactionId, personId);
 		}
 
 	}
@@ -671,12 +668,12 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		final Set<PopulationPartition> populationPartitions = resourceIndexedPopulations.get(resourceId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handlePersonResourceChange(transactionId,personId,resourceId);
+				populationPartition.handlePersonResourceChange(transactionId, personId, resourceId);
 			}
 		}
-		
+
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
-			populationPartition.handlePersonResourceChange(transactionId,personId,resourceId);
+			populationPartition.handlePersonResourceChange(transactionId, personId, resourceId);
 		}
 	}
 
@@ -736,7 +733,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			}
 		}
 
-		Set<ResourceId> resourceIds = new LinkedHashSet<>( partitionInfo.getPersonResourceIds());
+		Set<ResourceId> resourceIds = new LinkedHashSet<>(partitionInfo.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 
@@ -775,8 +772,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		for (final PersonPropertyId personPropertyId : valueSensitivePropertyIdentifiers) {
-			final Map<Object, Set<PopulationPartition>> map = propertyValueIndexedPopulations
-					.get(personPropertyId);
+			final Map<Object, Set<PopulationPartition>> map = propertyValueIndexedPopulations.get(personPropertyId);
 			for (final Object personPropertyValue : trigger.getPropertyValues(personPropertyId)) {
 				final Set<PopulationPartition> set = map.get(personPropertyValue);
 				if (set != null) {
@@ -839,7 +835,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		Set<PopulationPartition> populationPartitions = propertyIdIndexedPopulations.get(personPropertyId);
 		if (populationPartitions != null) {
 			for (final PopulationPartition populationPartition : populationPartitions) {
-				populationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
+				populationPartition.handlePersonPropertyChange(transactionId, personId, personPropertyId);
 			}
 		}
 
@@ -848,20 +844,20 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			populationPartitions = map.get(oldValue);
 			if (populationPartitions != null) {
 				for (final PopulationPartition populationPartition : populationPartitions) {
-					populationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
+					populationPartition.handlePersonPropertyChange(transactionId, personId, personPropertyId);
 				}
 			}
 
 			populationPartitions = map.get(newValue);
 			if (populationPartitions != null) {
 				for (final PopulationPartition populationPartition : populationPartitions) {
-					populationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);
+					populationPartition.handlePersonPropertyChange(transactionId, personId, personPropertyId);
 				}
 			}
 		}
 
 		for (final PopulationPartition populationPartition : unfilteredIndexedPopulations) {
-			populationPartition.handlePersonPropertyChange(transactionId,personId,personPropertyId);			
+			populationPartition.handlePersonPropertyChange(transactionId, personId, personPropertyId);
 		}
 	}
 
@@ -902,7 +898,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	@Override
 	public List<PersonId> getPeople(Object key, LabelSet labelSet) {
-		return indexedPopulationMap.get(key).getPeople(LabelSetInfo.build(labelSet));
+		return indexedPopulationMap.get(key).getPeople(labelSet);
 	}
 
 	@Override
@@ -912,12 +908,12 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	@Override
 	public boolean contains(PersonId personId, LabelSet labelSet, Object key) {
-		return indexedPopulationMap.get(key).contains(personId, LabelSetInfo.build(labelSet));
+		return indexedPopulationMap.get(key).contains(personId, labelSet);
 	}
 
 	@Override
 	public boolean validateLabelSet(Object key, LabelSet labelSet) {
-		return indexedPopulationMap.get(key).validateLabelSetInfo(LabelSetInfo.build(labelSet));		
+		return indexedPopulationMap.get(key).validateLabelSetInfo(labelSet);
 	}
 
 }

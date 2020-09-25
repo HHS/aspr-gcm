@@ -50,7 +50,6 @@ import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionInfo;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.simulation.partition.PartitionSamplerInfo;
 import gcm.simulation.partition.FilterInfo.CompartmentFilterInfo;
 import gcm.simulation.partition.FilterInfo.GroupMemberFilterInfo;
 import gcm.simulation.partition.FilterInfo.GroupTypesForPersonFilterInfo;
@@ -1432,14 +1431,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);
-			validatePartitionSampler(partitionSampler);
-			
-			PartitionSamplerInfo partitionSamplerInfo = PartitionSamplerInfo.build(partitionSampler);
-			validatePartitionSamplerInfo(key, partitionSamplerInfo);
+			validatePopulationPartitionExists(key);			
+			validatePartitionSampler(key, partitionSampler);
 			partitionStopWatch.start();
 			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
-					partitionSamplerInfo);
+					partitionSampler);
 			partitionStopWatch.stop();
 			validateStochasticPersonSelection(stochasticPersonSelection);
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
@@ -4066,34 +4062,29 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validatePartitionSamplerInfo(Object key, PartitionSamplerInfo partitionSamplerInfo) {
-
-		if (partitionSamplerInfo.getLabelSet().isPresent()) {
-			LabelSet labelSet = partitionSamplerInfo.getLabelSet().get();
+	private void validatePartitionSampler(Object key, PartitionSampler partitionSampler) {
+		if (partitionSampler == null) {
+			throwModelException(SimulationErrorType.NULL_PARTITION_SAMPLER);
+		}
+		
+		if (partitionSampler.getLabelSet().isPresent()) {
+			LabelSet labelSet = partitionSampler.getLabelSet().get();
 			validateLabelSet(key, labelSet);
 		}
 
-		if (partitionSamplerInfo.getExcludedPerson().isPresent()) {
-			PersonId excludedPersonId = partitionSamplerInfo.getExcludedPerson().get();
+		if (partitionSampler.getExcludedPerson().isPresent()) {
+			PersonId excludedPersonId = partitionSampler.getExcludedPerson().get();
 			validatePersonExists(excludedPersonId);
 		}
 
-		if (partitionSamplerInfo.getRandomNumberGeneratorId().isPresent()) {
-			RandomNumberGeneratorId randomNumberGeneratorId = partitionSamplerInfo.getRandomNumberGeneratorId().get();
+		if (partitionSampler.getRandomNumberGeneratorId().isPresent()) {
+			RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().get();
 			validateRandomNumberGeneratorId(randomNumberGeneratorId);
 		}
 
 	}
 
-	private void validatePartitionSampler(PartitionSampler partitionSampler) {
-
-		if (partitionSampler == null) {
-			throwModelException(SimulationErrorType.NULL_PARTITION_SAMPLER);
-		}
-
-
-	}
-
+	
 	
 	
 

@@ -17,5 +17,5 @@ public interface LabelSetWeightingFunction {
 	 * Repeated invocations with the same arguments should return the same value
 	 * while no mutations to simulation state have taken place.
 	 */
-	public double getWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo);
+	public double getWeight(ObservableEnvironment observableEnvironment, LabelSet labelSet);
 }

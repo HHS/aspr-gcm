@@ -72,7 +72,7 @@ public interface PartitionManager extends Element {
 	 * Returns a randomly selected person from the given index using the given PartitionSampler.
 	 *
 	 */
-	public StochasticPersonSelection samplePartition(Object key, PartitionSamplerInfo partitionSamplerInfo);
+	public StochasticPersonSelection samplePartition(Object key, PartitionSampler partitionSampler);
 
 
 	

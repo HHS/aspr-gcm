@@ -20,9 +20,19 @@ import gcm.simulation.partition.Partition.ResourcePartition;
 import gcm.simulation.partition.Partition.WithPartition;
 
 public final class PartitionInfo {
+	private final boolean degenerate;
 
 	private PartitionInfo(Partition partition) {
 		processPartition(partition);
+
+		degenerate = (regionPartitionFunction == null) && (compartmentPartitionFunction == null)
+				&& (groupPartitionFunction == null) && personPropertyPartitionFunctions.isEmpty()
+				&& personResourcePartitionFunctions.isEmpty();
+
+	}
+
+	public boolean isDegenerate() {
+		return degenerate;
 	}
 
 	private Function<GroupTypeCountMap, Object> groupPartitionFunction;
@@ -34,9 +44,9 @@ public final class PartitionInfo {
 	private Map<PersonPropertyId, Function<Object, Object>> personPropertyPartitionFunctions = new LinkedHashMap<>();
 
 	private Map<ResourceId, Function<Long, Object>> personResourcePartitionFunctions = new LinkedHashMap<>();
-	
+
 	private FilterInfo filterInfo = FilterInfo.build(Filter.allPeople());
-	
+
 	public FilterInfo getFilterInfo() {
 		return filterInfo;
 	}
@@ -86,6 +96,7 @@ public final class PartitionInfo {
 	public static PartitionInfo build(Partition partition) {
 		return new PartitionInfo(partition);
 	}
+
 	private static enum PartitionType {
 
 		WITH(WithPartition.class),
@@ -99,7 +110,7 @@ public final class PartitionInfo {
 		RESOURCE(ResourcePartition.class),
 
 		GROUP(GroupPartition.class),
-		
+
 		FILTER(FilterPartition.class),
 
 		EMPTY(EmptyPartition.class);
@@ -128,7 +139,7 @@ public final class PartitionInfo {
 			return result;
 		}
 	}
-	
+
 	private void processPartition(Partition partition) {
 		PartitionType partitionType = PartitionType.getPartitionType(partition);
 		switch (partitionType) {
@@ -142,7 +153,8 @@ public final class PartitionInfo {
 			break;
 		case PROPERTY:
 			PropertyPartition propertyPartition = (PropertyPartition) partition;
-			personPropertyPartitionFunctions.put(propertyPartition.personPropertyId, propertyPartition.personPropertyPartitionFunction);
+			personPropertyPartitionFunctions.put(propertyPartition.personPropertyId,
+					propertyPartition.personPropertyPartitionFunction);
 			break;
 		case REGION:
 			RegionPartition regionPartition = (RegionPartition) partition;
@@ -150,7 +162,8 @@ public final class PartitionInfo {
 			break;
 		case RESOURCE:
 			ResourcePartition resourcePartition = (ResourcePartition) partition;
-			this.personResourcePartitionFunctions.put(resourcePartition.resourceId, resourcePartition.personResourcePartitionFunction);
+			this.personResourcePartitionFunctions.put(resourcePartition.resourceId,
+					resourcePartition.personResourcePartitionFunction);
 			break;
 		case WITH:
 			WithPartition withPartition = (WithPartition) partition;
@@ -158,7 +171,7 @@ public final class PartitionInfo {
 			processPartition(withPartition.b);
 			break;
 		case FILTER:
-			FilterPartition filterPartition = (FilterPartition)partition;
+			FilterPartition filterPartition = (FilterPartition) partition;
 			this.filterInfo = FilterInfo.build(filterPartition.filter);
 			break;
 		case EMPTY:

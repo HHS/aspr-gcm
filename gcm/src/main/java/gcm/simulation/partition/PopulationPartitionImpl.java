@@ -333,10 +333,7 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (cleanedKey == null) {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
-			BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);
-			if (keySize == 0) {
-				degeneratePeopleContainer = basePeopleContainer;
-			}
+			BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);			
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -349,8 +346,6 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		keyToPeopleMap.get(cleanedKey).add(personId);
 		return true;
 	}
-
-	private PeopleContainer degeneratePeopleContainer;
 
 	private LabelSet getLabelSet(Key key) {
 		Builder builder = LabelSet.builder();
@@ -1049,32 +1044,6 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		}
 
 		PersonId excludedPersonId = partitionSampler.getExcludedPerson().orElse(null);
-
-		if (keySize == 0) {
-			// PeopleContainer peopleContainer = keyToPeopleMap.values().iterator().next();
-			if (degeneratePeopleContainer == null) {
-				return new StochasticPersonSelection(null, false);
-			}
-
-			int candidateCount = degeneratePeopleContainer.size();
-			if (excludedPersonId != null) {
-				if (degeneratePeopleContainer.contains(excludedPersonId)) {
-					candidateCount--;
-				}
-			}
-			PersonId result = null;
-			if (candidateCount > 0) {
-				while (true) {
-					result = degeneratePeopleContainer.getRandomPersonId(randomGenerator);
-					if (!result.equals(excludedPersonId)) {
-						break;
-					}
-				}
-			}
-//			partitionStopWatch.stop();
-			return new StochasticPersonSelection(result, false);
-
-		}
 		
 		LabelSet labelSet = partitionSampler.getLabelSet().orElse(LabelSet.builder().build());
 		

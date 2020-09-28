@@ -1415,9 +1415,9 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
-			indexStopWatch.start();
+			//indexStopWatch.start();
 			final PersonId personId = indexedPopulationManager.sampleIndex(key, excludedPersonId);
-			indexStopWatch.stop();
+			//indexStopWatch.stop();
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -1430,14 +1430,17 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
 		externalAccessManager.acquireReadAccess();
 		try {
+//			partitionStopWatch.start();
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);			
 			validatePartitionSampler(key, partitionSampler);
-			partitionStopWatch.start();
+//			partitionStopWatch.stop();
+
 			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
 					partitionSampler);
-			partitionStopWatch.stop();
+			
 			validateStochasticPersonSelection(stochasticPersonSelection);
+			
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();

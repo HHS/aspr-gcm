@@ -60,12 +60,12 @@ public class EnvironmentSupport {
 	 * is used to provide seeds for the Seed Providers associated with each of
 	 * the numbered environment tests.
 	 */
-	private static SeedProvider META_LEVEL_SEED_PROVIDER = new SeedProvider(4800196005692919747L);
+	//private static SeedProvider META_LEVEL_SEED_PROVIDER = new SeedProvider(4800196005692919747L);
 
 	// This version of the META_LEVEL_SEED_PROVIDER's declaration is used by
 	// getMetaSeed when manually testing the automated test suite.
 
-	// private static SeedProvider META_LEVEL_SEED_PROVIDER;
+	 private static SeedProvider META_LEVEL_SEED_PROVIDER;
 
 	/**
 	 * Returns a long seed value to associate with each of the numbered

@@ -214,6 +214,9 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 					componentId);
 		}
 		
+//		populationPartition = new PopulationPartitionImpl(key, context, partitionInfo,
+//				componentId);
+		
 		// TODO -- implement profiler
 //		IndexedPopulation indexedPopulation = new IndexedPopulationImpl(context, componentId, key, filterInfo);
 //		if (useProfiledFilters) {

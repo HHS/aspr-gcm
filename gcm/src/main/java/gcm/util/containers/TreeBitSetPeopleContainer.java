@@ -248,7 +248,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			}
 		}
 		/*
-		 * We have arrived element of the tree array that corresponds to the desired
+		 * We have arrived at the element of the tree array that corresponds to the desired
 		 * block in the bitset. We will need to determine the positions to scan in the
 		 * bitset
 		 */

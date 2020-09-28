@@ -9,12 +9,12 @@ import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.simulation.partition.Filter.compartment;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.AfterClass;
@@ -33,7 +33,6 @@ import gcm.replication.Replication;
 import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
-import gcm.scenario.PropertyDefinition.Builder;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
@@ -222,12 +221,9 @@ public class MT_Sample {
 
 			for (int i = 0; i < n; i++) {
 				PersonId excludedPersonId = new PersonId(environment.getRandomGenerator().nextInt(n));
-				// for (final PersonId personId : peopleInCompartment) {
-				// PartitionSampler partitionSampler =
-				// PartitionSampler.builder().setExcludedPerson(personId).build();
-				// PartitionSampler partitionSampler = PartitionSampler.builder().build();
+				
 				stopWatch.start();
-				environment.samplePartition(key, 
+				Optional<PersonId> optional = environment.samplePartition(key, 
 						PartitionSampler.builder()
 						.setExcludedPerson(excludedPersonId)
 						.setLabelSet(LabelSet.builder()
@@ -236,9 +232,13 @@ public class MT_Sample {
 								.build())				
 						.build());
 				stopWatch.stop();
-				// assertTrue(peopleInCompartment.contains(selectedPersonId));
-				// assertFalse(selectedPersonId.equals(personId));
-				// }
+				
+				assertTrue(optional.isPresent());
+				PersonId personId = optional.get();
+				
+				assertEquals(2,prop1LabelFunction(environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1)));
+				assertEquals(5,prop2LabelFunction(environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_2)));
+				
 			}
 
 			environment.removePartition(key);

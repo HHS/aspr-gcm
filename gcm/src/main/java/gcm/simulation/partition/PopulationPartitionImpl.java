@@ -187,13 +187,13 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (filterEvaluator.evaluate(environment, personId)) {
 			boolean added = addPerson(personId);
 			if (added) {
-				observationManager.handlePopulationIndexPersonAddition(identifierKey, personId);
+				observationManager.handlePartitionPersonAddition(identifierKey, personId);
 			}
 			return true;
 		}
 		boolean removed = removePerson(personId);
 		if (removed) {
-			observationManager.handlePopulationIndexPersonRemoval(identifierKey, personId);
+			observationManager.handlePartitionPersonRemoval(identifierKey, personId);
 		}
 		return false;
 	}

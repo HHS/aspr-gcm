@@ -311,4 +311,17 @@ public interface Component {
 	 * has been removed from a population index
 	 */
 	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId);
+	
+	/**
+	 * An alert from the simulation to the component indicating that a person
+	 * has been added to a partition
+	 */
+	public void observePartitionPersonAddition(Environment environment, Object key, PersonId personId);
+
+	/**
+	 * An alert from the simulation to the component indicating that a person
+	 * has been removed from a partition
+	 */
+	public void observePartitionPersonRemoval(Environment environment, Object key, PersonId personId);
+
 }

@@ -354,7 +354,17 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 				key = observationRecord.getArgument(1);
 				personId = observationRecord.getArgument(2);
 				component.observePopulationIndexPersonRemoval(environment, key, personId);
-				break;				
+				break;
+			case PARTITION_PERSON_ADDITION:
+				key = observationRecord.getArgument(1);
+				personId = observationRecord.getArgument(2);				
+				component.observePartitionPersonAddition(environment, key, personId);
+				break;
+			case PARTITION_PERSON_REMOVAL:
+				key = observationRecord.getArgument(1);
+				personId = observationRecord.getArgument(2);
+				component.observePartitionPersonRemoval(environment, key, personId);
+				break;
 			default:
 				throw new RuntimeException("unhandled observation case " + observationType);
 			}

@@ -3850,6 +3850,19 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseWriteAccess();
 		}
 	}
+	
+	@Override
+	public void observePartitionChange(boolean observe, Object key) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validateComponentHasFocus();
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);			
+			mutationResolver.observePartitionChange(observe, key);
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}
+	}
 
 	@Override
 	public void observeStageTransferBySourceMaterialsProducerId(boolean observe,

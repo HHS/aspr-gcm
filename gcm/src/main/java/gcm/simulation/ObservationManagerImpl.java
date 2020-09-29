@@ -118,6 +118,8 @@ public final class ObservationManagerImpl extends BaseElement implements Observa
 	private final Map<StageId, Set<ComponentId>> individualStageTransferObservers = new LinkedHashMap<>();
 	
 	private final Map<Object, Set<ComponentId>> populationIndexObservers = new LinkedHashMap<>();
+	
+	private final Map<Object, Set<ComponentId>> partitionObservers = new LinkedHashMap<>();
 
 	private final Set<ComponentId> stageTransferObservers = new LinkedHashSet<>();
 	
@@ -542,6 +544,11 @@ public final class ObservationManagerImpl extends BaseElement implements Observa
 	@Override
 	public void handlePopulationIndexRemoval(final Object key) {
 		populationIndexObservers.remove(key);
+	}
+	
+	@Override
+	public void handlePartitionRemoval(final Object key) {
+		partitionObservers.remove(key);
 	}
 	
 
@@ -1837,6 +1844,25 @@ public final class ObservationManagerImpl extends BaseElement implements Observa
 			}
 		}		
 	}
+	
+	@Override
+	public void observePartitionChange(boolean observe, Object key) {
+		Set<ComponentId> set = partitionObservers.get(key);
+		if (observe) {
+			if (set == null) {
+				set = new LinkedHashSet<>();
+				partitionObservers.put(key, set);
+			}
+			set.add(componentManager.getFocalComponentId());
+		} else {
+			if (set != null) {
+				set.remove(componentManager.getFocalComponentId());
+				if (set.isEmpty()) {
+					partitionObservers.remove(key);
+				}
+			}
+		}		
+	}
 
 	@Override
 	public void handlePopulationIndexPersonAddition(Object key, PersonId personId) {
@@ -1851,6 +1877,22 @@ public final class ObservationManagerImpl extends BaseElement implements Observa
 		Set<ComponentId> set = populationIndexObservers.get(key);
 		if(set != null && !set.isEmpty()) {
 			addToObservationQueue(set, ObservationType.POPULATION_INDEX_PERSON_REMOVAL, key,personId);
+		}		
+	}
+	
+	@Override
+	public void handlePartitionPersonAddition(Object key, PersonId personId) {
+		Set<ComponentId> set = partitionObservers.get(key);
+		if(set != null && !set.isEmpty()) {
+			addToObservationQueue(set, ObservationType.PARTITION_PERSON_ADDITION, key,personId);
+		}
+	}
+
+	@Override
+	public void handlePartitionPersonRemoval(Object key, PersonId personId) {
+		Set<ComponentId> set = partitionObservers.get(key);
+		if(set != null && !set.isEmpty()) {
+			addToObservationQueue(set, ObservationType.PARTITION_PERSON_REMOVAL, key,personId);
 		}		
 	}
 	

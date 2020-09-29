@@ -382,6 +382,28 @@ public abstract class AbstractComponent implements Component {
 	 * @throws RuntimeException
 	 *             if invoked
 	 */
+	public void observePartitionPersonAddition(Environment environment, Object key, PersonId personId) {
+		throwNoConcreteImplementation();
+	}
+
+	/**
+	 * Placeholder convenience implementation that throws an
+	 * {@link RuntimeException} if invoked.
+	 * 
+	 * @throws RuntimeException
+	 *             if invoked
+	 */
+	public void observePartitionPersonRemoval(Environment environment, Object key, PersonId personId) {
+		throwNoConcreteImplementation();
+	}
+	
+	/**
+	 * Placeholder convenience implementation that throws an
+	 * {@link RuntimeException} if invoked.
+	 * 
+	 * @throws RuntimeException
+	 *             if invoked
+	 */
 	@Override
 	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId){
 		throwNoConcreteImplementation();

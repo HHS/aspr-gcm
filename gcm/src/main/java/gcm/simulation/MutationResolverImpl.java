@@ -1651,6 +1651,17 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 
 	}
+	
+	@Override
+	public void observePartitionChange(boolean observe, Object key) {
+		externalAccessManager.acquireGlobalReadAccessLock();
+		try {
+			observationManager.observePartitionChange(observe, key);
+		} finally {
+			externalAccessManager.releaseGlobalReadAccessLock();
+		}
+
+	}
 
 	@Override
 	public void observeStageTransferBySourceMaterialsProducerId(boolean observe,
@@ -1704,7 +1715,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 	@Override
 	public void removePartition(Object key) {		
-		populationPartitionManager.removePartition(key);		
+		populationPartitionManager.removePartition(key);	
+		observationManager.handlePartitionRemoval(key);
 	}
 
 }

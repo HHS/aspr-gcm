@@ -30,6 +30,7 @@ import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.replication.Replication;
+import gcm.scenario.CompartmentId;
 import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
@@ -235,7 +236,8 @@ public class MT_Sample {
 				
 				assertTrue(optional.isPresent());
 				PersonId personId = optional.get();
-				
+				CompartmentId personCompartment = environment.getPersonCompartment(personId);
+				assertTrue(personCompartment.equals(TestCompartmentId.COMPARTMENT_1)||personCompartment.equals(TestCompartmentId.COMPARTMENT_2));
 				assertEquals(2,prop1LabelFunction(environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1)));
 				assertEquals(5,prop2LabelFunction(environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_2)));
 				

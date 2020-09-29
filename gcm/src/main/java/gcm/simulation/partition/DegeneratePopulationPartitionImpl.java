@@ -219,12 +219,12 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		if (filterEvaluator.evaluate(environment, personId)) {
 			boolean added = peopleContainer.add(personId);
 			if (added) {
-				observationManager.handlePopulationIndexPersonAddition(key, personId);
+				observationManager.handlePartitionPersonAddition(key, personId);
 			}
 		} else {
 			boolean removed = remove(personId);
 			if (removed) {
-				observationManager.handlePopulationIndexPersonRemoval(key, personId);
+				observationManager.handlePartitionPersonRemoval(key, personId);
 			}
 		}
 	}

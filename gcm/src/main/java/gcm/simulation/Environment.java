@@ -3372,6 +3372,20 @@ public interface Environment extends Element {
 	 */
 	public void observePopulationIndexChange(final boolean observe, final Object key);
 
+	
+
+	/**
+	 * Starts or stops observation of a change to a partition
+	 *
+	 * @throws ModelException
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population index
+	 */
+	public void observePartitionChange(boolean observe, Object key);
+
 	/**
 	 * Starts or stops observation of the departure of the given person from the
 	 * given group

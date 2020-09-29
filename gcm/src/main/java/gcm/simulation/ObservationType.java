@@ -176,6 +176,18 @@ public enum ObservationType {
 	 * Supports
 	 * {@link Component#observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId)}
 	 */
-	POPULATION_INDEX_PERSON_REMOVAL;
+	POPULATION_INDEX_PERSON_REMOVAL,
+	
+	/**
+	 * Supports
+	 * {@link Component#observePartitionPersonAddition(Environment, Object, PersonId)}
+	 */
+	PARTITION_PERSON_ADDITION,
+
+	/**
+	 * Supports
+	 * {@link Component#observePartitionPersonRemoval(Environment, Object, PersonId)}
+	 */
+	PARTITION_PERSON_REMOVAL;
 
 }

@@ -233,6 +233,8 @@ public interface MutationResolver extends Element {
 	
 	public void observePopulationIndexChange(boolean observe, Object key);
 	
+	public void observePartitionChange(boolean observe, Object key);
+	
 	public void observeStageTransferBySourceMaterialsProducerId(boolean observe, MaterialsProducerId sourceMaterialsProducerId);
 
 	public void observeStageTransferByDestinationMaterialsProducerId(boolean observe, MaterialsProducerId destinationMaterialsProducerId);

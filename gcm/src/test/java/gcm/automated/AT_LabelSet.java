@@ -81,8 +81,8 @@ public class AT_LabelSet {
 	 * Tests {@linkplain LabelSet#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = { LabelSet.class })
-	public void testBuild() {
+	@UnitTestMethod(name = "builder", args = { })
+	public void testBuilder() {
 		assertNotNull(LabelSet.builder());
 	}
 	

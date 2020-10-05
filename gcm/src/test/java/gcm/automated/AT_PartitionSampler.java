@@ -28,7 +28,7 @@ public class AT_PartitionSampler {
 	 * Tests {@linkplain PartitionSampler#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "builder", args = { PartitionSampler.class })
+	@UnitTestMethod(name = "builder", args = { })
 	public void testBuilder() {
 		assertNotNull(PartitionSampler.builder());
 	}

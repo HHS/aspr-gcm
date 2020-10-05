@@ -45,10 +45,9 @@ import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
 import gcm.util.StopWatch;
 import gcm.util.TimeElapser;
-import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
-@UnitTest(target = EnvironmentImpl.class)
+
 
 public class MT_Sample {
 

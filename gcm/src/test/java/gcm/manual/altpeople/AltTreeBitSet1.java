@@ -1,16 +1,12 @@
-package gcm.util.containers.people;
+package gcm.manual.altpeople;
 
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.math3.random.RandomGenerator;
-
 import gcm.scenario.PersonId;
-import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.PersonIdManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
@@ -24,7 +20,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public class TreeBitSetPeopleContainer implements PeopleContainer {
+public class AltTreeBitSet1 implements AltPeopleContainer {
 	// MAX_POWER is the highest power of two in a positive integer
 	private final int MAX_POWER = 30;
 	// BLOCK_POWER is the power of two that is the block length -- i.e. 64
@@ -34,7 +30,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	private final int BLOCK_LENGTH = 1 << BLOCK_POWER;
 	// power is the power of two that sets the length of the tree array
 	private int power = 1;
-	private final PersonIdManager personIdManager;
+	private final AltPersonIdManager personIdManager;
 	// bitSet holds the values for each person
 	private BitSet bitSet;
 	// the tree holds summation nodes in an array that is length two the
@@ -44,17 +40,12 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	// contained at the current power.
 	int maxPid = 1 << (power + BLOCK_POWER - 1);
 
-	public TreeBitSetPeopleContainer(Context context, PeopleContainer peopleContainer) {
-		personIdManager = context.getPersonIdManager();
+	public AltTreeBitSet1(AltPersonIdManager personIdManager) {
+		this.personIdManager = personIdManager;
 		// initialize the size of the bitSet to that of the full population,
 		// including removed people
 		int capacity = personIdManager.getPersonIdLimit();
 		bitSet = new BitSet(capacity);
-
-		// take the people from the people container that is being replaced
-		for (PersonId personId : peopleContainer.getPeople()) {
-			add(personId);
-		}
 	}
 
 	@Override
@@ -218,14 +209,18 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		return bitSet.get(personId.getValue());
 	}
 
+	
 	@Override
-	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
+	public PersonId getPersonId(int index) {
+		if(index>=size()) {
+			return null;
+		}
 
 		/*
 		 * We need to use an integer that is at least one, so we add one to the randomly
 		 * selected index. We will reduce this amount until it reaches zero.
 		 */
-		int targetCount = randomGenerator.nextInt(size()) + 1;
+		int targetCount = index + 1;
 
 		/*
 		 * Find the mid point of the tree. Think of the tree array as a triangle with a
@@ -270,4 +265,5 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		}
 		return null;
 	}
+
 }

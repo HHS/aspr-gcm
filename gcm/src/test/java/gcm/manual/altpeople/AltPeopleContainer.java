@@ -1,9 +1,7 @@
-package gcm.util.containers.people;
+package gcm.manual.altpeople;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.apache.commons.math3.random.RandomGenerator;
 
 import gcm.scenario.PersonId;
 
@@ -13,7 +11,7 @@ import gcm.scenario.PersonId;
  * 
  * @author Shawn Hatch
  */
-public interface PeopleContainer {
+public interface AltPeopleContainer {
 
 	/*
 	 * Returns a list of the people in the set with no duplicates
@@ -46,8 +44,8 @@ public interface PeopleContainer {
 	public boolean contains(PersonId personId);
 
 	/*
-	 * Returns a randomly selected person if this container has any people. Returns
-	 * null otherwise.
+	 * Returns the person at the given index. If no such person exists, returns
+	 * null.
 	 */
-	public PersonId getRandomPersonId(RandomGenerator randomGenerator);
+	public PersonId getPersonId(int index);
 }

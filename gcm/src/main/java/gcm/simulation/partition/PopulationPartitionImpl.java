@@ -28,8 +28,8 @@ import gcm.simulation.partition.LabelSet.Builder;
 import gcm.util.Tuplator;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.containers.BasePeopleContainer;
-import gcm.util.containers.PeopleContainer;
+import gcm.util.containers.people.BasePeopleContainer;
+import gcm.util.containers.people.PeopleContainer;
 
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PopulationPartitionImpl  implements PopulationPartition{

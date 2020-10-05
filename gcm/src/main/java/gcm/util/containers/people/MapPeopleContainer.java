@@ -1,4 +1,4 @@
-package gcm.util.containers;
+package gcm.util.containers.people;
 
 import java.util.ArrayList;
 import java.util.Collection;

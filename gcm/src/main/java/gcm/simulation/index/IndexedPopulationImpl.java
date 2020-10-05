@@ -18,8 +18,8 @@ import gcm.simulation.partition.FilterInfo;
 import gcm.simulation.partition.FilterPopulationMatcher;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.containers.BasePeopleContainer;
-import gcm.util.containers.PeopleContainer;
+import gcm.util.containers.people.BasePeopleContainer;
+import gcm.util.containers.people.PeopleContainer;
 
 /**
  * Note: IndexedPopulation is not exposed to the Components by GCM. The relevant

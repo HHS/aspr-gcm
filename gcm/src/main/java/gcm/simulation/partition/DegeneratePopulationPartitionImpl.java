@@ -14,8 +14,8 @@ import gcm.simulation.Environment;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
-import gcm.util.containers.BasePeopleContainer;
-import gcm.util.containers.PeopleContainer;
+import gcm.util.containers.people.BasePeopleContainer;
+import gcm.util.containers.people.PeopleContainer;
 
 /**
  * Implementation of PopulationPartition for degenerate partitions having only a

@@ -2,7 +2,7 @@ package gcm.manual.altpeople;
 
 import org.apache.commons.math3.util.FastMath;
 
-public class Peeps {
+public class TradeSpace {
 	private final long blockSize;
 	private final long populationSize;
 	private final boolean useExtendedValues;
@@ -47,7 +47,7 @@ public class Peeps {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Peeps [blockSize=");
+		builder.append("TradeSpace [blockSize=");
 		builder.append(blockSize);
 		builder.append(", populationSize=");
 		builder.append(populationSize);
@@ -109,7 +109,7 @@ public class Peeps {
 		return builder.toString();
 	}
 
-	private Peeps(int populationSize, int blockSize, boolean useExtendedValues) {
+	private TradeSpace(int populationSize, int blockSize, boolean useExtendedValues) {
 		this.blockSize = blockSize;
 		this.populationSize = populationSize;
 		this.useExtendedValues = useExtendedValues;
@@ -200,16 +200,16 @@ public class Peeps {
 	}
 
 	public static void main(String[] args) {
-		// Peeps peeps = new Peeps(350_000_000,31, true);
+		// TradeSpace peeps = new TradeSpace(350_000_000,31, true);
 		// peeps.execute();
 		// System.out.println(peeps.toString().replaceAll(",", "\n"));
 
 		System.out.println("blockSize" + "\t" + "bitsPerPerson" + "\t" + "treeWalk" + "\t" + "bitWalk");
 		for (int i = 0; i < 4000; i++) {
 			int blockSize = i + 1;
-			Peeps peeps = new Peeps(350_000_000, blockSize, true);
-			peeps.execute();
-			System.out.println(blockSize + "\t" + peeps.bitsPerPerson + "\t" + peeps.treeWalk + "\t" + peeps.bitWalk);
+			TradeSpace tradeSpace = new TradeSpace(350_000_000, blockSize, true);
+			tradeSpace.execute();
+			System.out.println(blockSize + "\t" + tradeSpace.bitsPerPerson + "\t" + tradeSpace.treeWalk + "\t" + tradeSpace.bitWalk);
 		}
 	}
 }

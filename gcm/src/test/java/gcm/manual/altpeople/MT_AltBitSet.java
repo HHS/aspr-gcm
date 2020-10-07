@@ -13,25 +13,30 @@ import gcm.automated.support.EnvironmentSupport;
 import gcm.scenario.PersonId;
 import gcm.util.TimeElapser;
 
-public class AltTest1 {
-	private final  static int POPULATION_SIZE = 3_000_000;
+public class MT_AltBitSet {
+	private final static int POPULATION_SIZE = 10;
+
 	private static enum BitSetType {
-		TYPE1,TYPE2,TYPE3;
+		BASE, //
+		TREE_HOLDER, //
+		BLOCK_SIZED, //
+		ULLAGE;//
 	}
-	
+
 	@Test
-	public void test () {
-		for(BitSetType bitSetType : BitSetType.values()) {
-			testBitSetType(bitSetType, 64);
-		}
+	public void test() {
+		testBitSetType(BitSetType.ULLAGE, 5);
+		
+//		for (BitSetType bitSetType : BitSetType.values()) {
+//			testBitSetType(bitSetType, 63);
+//		}
 	}
-	
-	private void testBitSetType(BitSetType bitSetType , int blockSize) { 
+
+	private void testBitSetType(BitSetType bitSetType, int blockSize) {
 
 		RandomGenerator randomGenerator = EnvironmentSupport.getRandomGenerator(235634545);
 
 		// set the population size
-		
 
 		// create a person id manager
 		AltPersonIdManager personIdManager = new AltPersonIdManager();
@@ -41,10 +46,10 @@ public class AltTest1 {
 			personIdManager.addPersonId();
 		}
 
-		//get a list of all person id values
+		// get a list of all person id values
 		List<PersonId> people = personIdManager.getPeople();
 
-		//select about half of the people to be in the bit set
+		// select about half of the people to be in the bit set
 		List<PersonId> peopleInBitSet = new ArrayList<>();
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 			if (randomGenerator.nextDouble() < 0.5) {
@@ -52,40 +57,42 @@ public class AltTest1 {
 			}
 		}
 
-		
-		//place the people in the bit set
+		// place the people in the bit set
 		AltPeopleContainer tbs;
-		switch(bitSetType) {
-		case TYPE1:
-			tbs = new AltTreeBitSet1(personIdManager);
+		switch (bitSetType) {
+		case BASE:
+			tbs = new AltTreeBitSet1_Base(personIdManager);
 			break;
-		case TYPE2:
-			tbs = new AltTreeBitSet2(personIdManager);
+		case TREE_HOLDER:
+			tbs = new AltTreeBitSet2_TreeHolder(personIdManager);
 			break;
-		case TYPE3:
-			tbs = new AltTreeBitSet3(personIdManager,blockSize);
+		case BLOCK_SIZED:
+			tbs = new AltTreeBitSet3_BlockSized(personIdManager, blockSize);
+			break;
+		case ULLAGE:
+			tbs = new AltTreeBitSet4_Ullage(personIdManager, blockSize);
 			break;
 		default:
 			throw new RuntimeException("unhandled bit set type");
 		}
-		
-		for(PersonId personId : peopleInBitSet) {
+
+		for (PersonId personId : peopleInBitSet) {
 			tbs.add(personId);
 		}
 		
-		//show that the number of people in the bit set is correct
-		assertTrue(tbs.size()==peopleInBitSet.size());
-		
+
+		// show that the number of people in the bit set is correct
+		assertTrue(tbs.size() == peopleInBitSet.size());
+
 		TimeElapser timeElapser = new TimeElapser();
-		
-		for(int i = 0;i<peopleInBitSet.size();i++) {
-			assertEquals(peopleInBitSet.get(i),	tbs.getPersonId(i));
-			//tbs.getPersonId(i);
+
+		for (int i = 0; i < peopleInBitSet.size(); i++) {
+			assertEquals(peopleInBitSet.get(i), tbs.getPersonId(i));
+			// tbs.getPersonId(i);
 		}
-		
-		System.out.println(bitSetType+" "+timeElapser.getElapsedMilliSeconds());
+
+		System.out.println(bitSetType + " " + timeElapser.getElapsedMilliSeconds());
 
 	}
-	
-	
+
 }

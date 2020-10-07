@@ -20,7 +20,7 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public class AltTreeBitSet1 implements AltPeopleContainer {
+public class AltTreeBitSet1_Base implements AltPeopleContainer {
 	// MAX_POWER is the highest power of two in a positive integer
 	private final int MAX_POWER = 30;
 	// BLOCK_POWER is the power of two that is the block length -- i.e. 64
@@ -40,7 +40,7 @@ public class AltTreeBitSet1 implements AltPeopleContainer {
 	// contained at the current power.
 	int maxPid = 1 << (power + BLOCK_POWER - 1);
 
-	public AltTreeBitSet1(AltPersonIdManager personIdManager) {
+	public AltTreeBitSet1_Base(AltPersonIdManager personIdManager) {
 		this.personIdManager = personIdManager;
 		// initialize the size of the bitSet to that of the full population,
 		// including removed people

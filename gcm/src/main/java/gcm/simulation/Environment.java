@@ -3662,7 +3662,7 @@ public interface Environment extends Element {
 	public void addPartition(Partition partition, Object key);
 
 	/**
-	 * Returns the size of an indexed population.
+	 * Returns the size of the partition cells consistent with the label set for the partition.
 	 *
 	 *
 	 * @throws ModelException
@@ -3679,6 +3679,20 @@ public interface Environment extends Element {
 	 *                        partition
 	 */
 	public int getPartitionSize(final Object key, LabelSet labelSet);
+	
+	/**
+	 * Returns the size of an partition.
+	 *
+	 *
+	 * @throws ModelException
+	 *
+	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
+	 *                        if the key is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
+	 *                        if the key does not correspond to an existing
+	 *                        population partition
+	 */
+	public int getPartitionSize(final Object key);
 
 	/**
 	 * Removes an indexed population.

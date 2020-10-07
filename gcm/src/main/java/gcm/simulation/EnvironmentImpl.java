@@ -4034,6 +4034,18 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
+	
+	@Override
+	public int getPartitionSize(final Object key) {
+		externalAccessManager.acquireReadAccess();
+		try {
+			validatePopulationPartitionKeyNotNull(key);
+			validatePopulationPartitionExists(key);			
+			return partitionManager.getPersonCount(key);
+		} finally {
+			externalAccessManager.releaseReadAccess();
+		}
+	}
 
 	private void validatePopulationPartitionIsOwnedByFocalComponent(final Object key) {
 		if (!partitionManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {

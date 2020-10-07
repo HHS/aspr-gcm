@@ -32,7 +32,7 @@ import gcm.util.containers.people.BasePeopleContainer;
 import gcm.util.containers.people.PeopleContainer;
 
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class PopulationPartitionImpl  implements PopulationPartition{
+public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private static class LabelCounter {
 		int count;
@@ -172,6 +172,13 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 	private final ObservationManager observationManager;
 
 	private final Object identifierKey;
+
+	private int personCount;
+
+	private boolean isEmpty() {
+		
+		return personCount == 0;
+	}
 
 	@Override
 	public ComponentId getOwningComponentId() {
@@ -333,7 +340,7 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (cleanedKey == null) {
 			cleanedKey = key;
 			keyMap.put(cleanedKey, cleanedKey);
-			BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);			
+			BasePeopleContainer basePeopleContainer = new BasePeopleContainer(context);
 			keyToPeopleMap.put(cleanedKey, basePeopleContainer);
 			LabelSet labelSet = getLabelSet(cleanedKey);
 			labelSetInfoMap.put(cleanedKey, labelSet);
@@ -344,6 +351,7 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
 		keyToPeopleMap.get(cleanedKey).add(personId);
+		personCount++;
 		return true;
 	}
 
@@ -389,10 +397,26 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		evaluate(personId);
 		removePerson(personId);
 	}
+	
+	private Key getKeyForPerson(PersonId personId) {
+		if (personId == null) {
+			return null;
+		}
+		if (personToKeyMap.size() <= personId.getValue()) {
+			return null;
+		}
+		Key key = personToKeyMap.get(personId.getValue());
+		
+		return key;
+	}
+	
+	@Override
+	public boolean contains(PersonId personId) {
+		return getKeyForPerson(personId)!= null;	
+	}
 
 	private boolean removePerson(PersonId personId) {
-
-		Key key = personToKeyMap.get(personId.getValue());
+		Key key = getKeyForPerson(personId);
 		if (key == null) {
 			return false;
 		}
@@ -409,6 +433,7 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 				LabelManager labelManager = labelManagers[i];
 				labelManager.removeLabel(key.keys[i]);
 			}
+			personCount--;
 		}
 		return removed;
 
@@ -425,7 +450,10 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (regionLabelIndex < 0) {
 			return;
 		}
-		Key currentKey = personToKeyMap.get(personId.getValue());
+		Key currentKey = getKeyForPerson(personId);
+		if(currentKey == null) {
+			return;
+		}
 
 		// get the current label
 		Object currentRegionLabel = currentKey.keys[regionLabelIndex];
@@ -464,7 +492,10 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (personPropertyLabelIndex < 0) {
 			return;
 		}
-		Key currentKey = personToKeyMap.get(personId.getValue());
+		Key currentKey = getKeyForPerson(personId);
+		if(currentKey == null) {
+			return;
+		}
 
 		// get the current label
 		Object currentPropertyLabel = currentKey.keys[personPropertyLabelIndex];
@@ -504,7 +535,10 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (resourceLabelIndex < 0) {
 			return;
 		}
-		Key currentKey = personToKeyMap.get(personId.getValue());
+		Key currentKey = getKeyForPerson(personId);
+		if(currentKey == null) {
+			return;
+		}
 
 		// get the current label
 		Object currentResourceLabel = currentKey.keys[resourceLabelIndex];
@@ -543,7 +577,10 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (compartmentLabelIndex < 0) {
 			return;
 		}
-		Key currentKey = personToKeyMap.get(personId.getValue());
+		Key currentKey = getKeyForPerson(personId);
+		if(currentKey == null) {
+			return;
+		}
 
 		// get the current label
 		Object currentCompartmentLabel = currentKey.keys[compartmentLabelIndex];
@@ -581,7 +618,10 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		if (!evaluate(personId)) {
 			return;
 		}
-		Key currentKey = personToKeyMap.get(personId.getValue());
+		Key currentKey = getKeyForPerson(personId);
+		if(currentKey == null) {
+			return;
+		}
 
 		// get the current label
 		Object currentGroupLabel = currentKey.keys[groupLabelIndex];
@@ -812,15 +852,19 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 
 	@Override
 	public int getPeopleCount() {
-		int result = 0;
-		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
-			result += peopleContainer.size();
-		}
-		return result;
+		return personCount;
+//		int result = 0;
+//		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+//			result += peopleContainer.size();
+//		}
+//		return result;
 	}
 
 	@Override
 	public int getPeopleCount(LabelSet labelSet) {
+		if (isEmpty()) {
+			return 0;
+		}
 		Key key = getKey(labelSet);
 
 		if (key.isPartialKey()) {
@@ -872,27 +916,14 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		return key;
 	}
 
-	@Override
-	public boolean contains(PersonId personId) {
-		if (personId == null) {
-			return false;
-		}
-		if (personToKeyMap.size() <= personId.getValue()) {
-			return false;
-		}
-		Key key = personToKeyMap.get(personId.getValue());
-		if (key == null) {
-			return false;
-		}
-		return true;
-	}
+	
 
 	@Override
 	public boolean contains(PersonId personId, LabelSet labelSet) {
-		if (personToKeyMap.size() <= personId.getValue()) {
+		Key key = getKeyForPerson(personId);
+		if (key==null) {
 			return false;
-		}
-		Key key = personToKeyMap.get(personId.getValue());
+		}		
 		LabelSet fullLabelSet = labelSetInfoMap.get(key);
 		return fullLabelSet.isSubsetMatch(labelSet);
 	}
@@ -906,6 +937,9 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 	 */
 	@Override
 	public List<PersonId> getPeople(LabelSet labelSet) {
+		if (isEmpty()) {
+			return new ArrayList<>();
+		}
 
 		Key key = getKey(labelSet);
 
@@ -1032,11 +1066,13 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 	 */
 	@Override
 	public StochasticPersonSelection samplePartition(final PartitionSampler partitionSampler) {
+		if (isEmpty()) {
+			return new StochasticPersonSelection(null, false);
+		}
 //		partitionStopWatch.start();
 
 		RandomGenerator randomGenerator;
-		RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId()
-				.orElse(null);
+		RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().orElse(null);
 		if (randomNumberGeneratorId == null) {
 			randomGenerator = stochasticsManager.getRandomGenerator();
 		} else {
@@ -1044,14 +1080,14 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 		}
 
 		PersonId excludedPersonId = partitionSampler.getExcludedPerson().orElse(null);
-		
+
 		LabelSet labelSet = partitionSampler.getLabelSet().orElse(LabelSet.builder().build());
-		
+
 		LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction()
 				.orElse(null);
 
 		Key selectedKey = null;
-		Key keyForExcludedPersonId = null;
+		Key keyForExcludedPersonId = getKeyForPerson(excludedPersonId);
 		KeyIterator keyIterator;
 
 		if (labelSetWeightingFunction == null) {
@@ -1061,8 +1097,7 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 				PeopleContainer peopleContainer = keyToPeopleMap.get(keyIterator.next());
 				candidateCount += peopleContainer.size();
 			}
-			if (contains(excludedPersonId)) {
-				keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
+			if (keyForExcludedPersonId!=null) {				
 				candidateCount--;
 			}
 			if (candidateCount > 0) {
@@ -1091,10 +1126,6 @@ public final class PopulationPartitionImpl  implements PopulationPartition{
 				 * Initialize the sum of the weights to zero and set the index in the weights
 				 * and weightedKeys to zero.
 				 */
-
-				if (contains(excludedPersonId)) {
-					keyForExcludedPersonId = personToKeyMap.get(excludedPersonId.getValue());
-				}
 
 				double sum = 0;
 				int weightsLength = 0;

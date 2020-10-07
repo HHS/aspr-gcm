@@ -55,8 +55,10 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.Equality;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
@@ -81,8 +83,8 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out
-//				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+		System.out
+				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/*
@@ -1163,7 +1165,8 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet)
-							.setRandomNumberGeneratorId(randomNumberGeneratorId).setExcludedPerson(excludedPersonId).build();
+							.setRandomNumberGeneratorId(randomNumberGeneratorId).setExcludedPerson(excludedPersonId)
+							.build();
 					Optional<PersonId> optional = environment.samplePartition(key, partitionSampler);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
@@ -1194,7 +1197,8 @@ public class AT_EnvironmentImpl_25 {
 
 				for (int i = 0; i < 10; i++) {
 					PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet)
-							.setRandomNumberGeneratorId(randomNumberGeneratorId).setExcludedPerson(excludedPersonId).build();
+							.setRandomNumberGeneratorId(randomNumberGeneratorId).setExcludedPerson(excludedPersonId)
+							.build();
 					Optional<PersonId> optional = environment.samplePartition(key, partitionSampler);
 					if (expectedPeople.size() > 1) {
 						assertTrue(optional.isPresent());
@@ -1213,7 +1217,8 @@ public class AT_EnvironmentImpl_25 {
 			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
 			environment.addPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
+			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
+					.build();
 			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet)
 					.setRandomNumberGeneratorId(randomNumberGeneratorId).setExcludedPerson(personId).build();
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
@@ -1222,8 +1227,8 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in a partition containing only the
 			// excluded person cannot return a randomly selected person
 			environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 1000);
-			partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).setRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN)
-					.setExcludedPerson(personId).build();
+			partitionSampler = PartitionSampler.builder().setLabelSet(labelSet)
+					.setRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN).setExcludedPerson(personId).build();
 			optional = environment.samplePartition(key2, partitionSampler);
 		});
 
@@ -1315,7 +1320,8 @@ public class AT_EnvironmentImpl_25 {
 			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
 					property1Function);
 			environment.addPartition(partitionDefinition, key2);
-			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
+			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
+					.build();
 			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
 			assertFalse(optional.isPresent());
@@ -1428,8 +1434,10 @@ public class AT_EnvironmentImpl_25 {
 			Object key2 = "key2";
 			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPartition(partition, key2);
-			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
-			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).setExcludedPerson(personId).build();
+			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
+					.build();
+			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet)
+					.setExcludedPerson(personId).build();
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
 			assertFalse(optional.isPresent());
 
@@ -1533,9 +1541,87 @@ public class AT_EnvironmentImpl_25 {
 			Object key2 = "key2";
 			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 			environment.addPartition(partition, key2);
-			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
+			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
+					.build();
 			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
 			Optional<PersonId> optional = environment.samplePartition(key2, partitionSampler);
+			assertFalse(optional.isPresent());
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(getReplication(randomGenerator));
+		simulation.setScenario(scenario);
+		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
+
+	}
+
+	/**
+	 * Tests {@link EnvironmentImpl#samplePartition(Object, LabelSet). Test limited
+	 * to sampling from a non-degenerate, but empty partition.
+	 */
+	@Test
+	@UnitTestMethod(name = "samplePartition", args = { Object.class, PartitionSampler.class })
+	public void testSamplePartition_Empty() {
+		/*
+		 * Sample from a non-degenerate, but empty partition
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(19);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		buildBaseScenario(scenarioBuilder, randomGenerator);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+		Scenario scenario = scenarioBuilder.build();
+
+		int testTime = 1;
+		Object key = "key";
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
+
+			// define the partition
+			String prop2TestValue = "prop2TestValue";
+			
+			Partition partition = createPopulationPartitionDefinition(partitionChoices).filter(Filter.property(TestPersonPropertyId.PERSON_PROPERTY_2,Equality.EQUAL,prop2TestValue));
+
+			// add the partition to the simulation
+			environment.addPartition(partition, key);
+
+			makeRandomPersonAssignments(environment, randomGenerator);
+
+			LabelSet labelSet = LabelSet.builder().setCompartmentLabel(0).build();
+
+			// show that an empty partition will not return a person selection
+			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
+			Optional<PersonId> optional = environment.samplePartition(key, partitionSampler);
+			assertFalse(optional.isPresent());
+			
+			for(PersonId personId : environment.getPeople()) {
+				environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_2, prop2TestValue);
+			}
+			
+			optional = environment.samplePartition(key, partitionSampler);
+			assertTrue(optional.isPresent());
+			
+			makeRandomPersonAssignments(environment, randomGenerator);
+			
+			optional = environment.samplePartition(key, partitionSampler);
+			assertFalse(optional.isPresent());
+			
+		
+			// show that a population query resulting in a non-existing partition cannot return a
+			// randomly selected person
+			Object key2 = "key2";
+			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
+					property1Function);
+			environment.addPartition(partition, key2);
+			labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
+					.build();
+			partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
+			optional = environment.samplePartition(key2, partitionSampler);
 			assertFalse(optional.isPresent());
 
 		});

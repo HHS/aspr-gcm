@@ -14,22 +14,23 @@ import gcm.scenario.PersonId;
 import gcm.util.TimeElapser;
 
 public class MT_AltBitSet {
-	private final static int POPULATION_SIZE = 10;
+	private final static int POPULATION_SIZE = 3_000_000;
 
 	private static enum BitSetType {
 		BASE, //
 		TREE_HOLDER, //
 		BLOCK_SIZED, //
-		ULLAGE;//
+		ULLAGE,//
+		SPLIT_ARRAY;//
 	}
 
 	@Test
 	public void test() {
-		testBitSetType(BitSetType.ULLAGE, 5);
+//		testBitSetType(BitSetType.ULLAGE, 64);
 		
-//		for (BitSetType bitSetType : BitSetType.values()) {
-//			testBitSetType(bitSetType, 63);
-//		}
+		for (BitSetType bitSetType : BitSetType.values()) {
+			testBitSetType(bitSetType, 63);
+		}
 	}
 
 	private void testBitSetType(BitSetType bitSetType, int blockSize) {
@@ -72,11 +73,14 @@ public class MT_AltBitSet {
 		case ULLAGE:
 			tbs = new AltTreeBitSet4_Ullage(personIdManager, blockSize);
 			break;
+		case SPLIT_ARRAY:
+			tbs = new AltTreeBitSet5_SplitArray(personIdManager, blockSize);
+			break;
 		default:
 			throw new RuntimeException("unhandled bit set type");
 		}
 
-		for (PersonId personId : peopleInBitSet) {
+		for (PersonId personId : peopleInBitSet) {			
 			tbs.add(personId);
 		}
 		

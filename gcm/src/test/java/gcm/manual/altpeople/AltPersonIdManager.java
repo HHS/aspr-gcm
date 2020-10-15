@@ -41,8 +41,7 @@ public final class AltPersonIdManager {
 	public PersonId addPersonId() {	
 		PersonId personId = new PersonId(personIds.size());
 		personIds.add(personId);
-		return personId;
-		
+		return personId;		
 	}
 	
 	public PersonId getCleanedPersonId(final PersonId personId) {

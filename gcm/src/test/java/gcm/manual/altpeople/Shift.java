@@ -3,8 +3,19 @@ package gcm.manual.altpeople;
 public class Shift {
 	public static void main(String[] args) {
 		
-		System.out.println(getNextPowerOfTwo(37));
-
+		System.out.println(getMidWay(3));
+		
+	}
+	
+	private static int getMidWay(int size) {		
+		int result = 1;
+		while(true) {
+			int nextResult= 2*result;
+			if(nextResult>=size) {
+				return result;
+			}
+			result = nextResult;
+		}		
 	}
 	
 	private static int getNextPowerOfTwo(int value) {
@@ -13,6 +24,21 @@ public class Shift {
 		while(v != 0 && result != value) {
 			v/=2;
 			result*=2;
+		}
+		return result;
+	}
+	
+	private static int getPower2(int n) {
+
+		if (n < 1) {
+			throw new RuntimeException("Non-positive value");
+		}
+		
+		int result = 0;
+		int value = 1;
+		while (value<n) {
+			value*=2;
+			result++;
 		}
 		return result;
 	}

@@ -20,28 +20,32 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
+public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 	private static int getMidWay(int size) {
-		if(size<2) {
+		if (size < 2) {
 			throw new RuntimeException("cannot be calculated");
 		}
 		int result = 1;
-		while(true) {
-			int nextResult= 2*result;
-			if(nextResult>=size) {
+		while (true) {
+			int nextResult = 2 * result;
+			if (nextResult >= size) {
 				return result;
 			}
 			result = nextResult;
-		}		
+		}
 	}
+
 	private static class TreeHolder {
 		private final int blockStartingIndex;
+
 		public int getBlockStartingIndex() {
 			return blockStartingIndex;
 		}
 
 		public TreeHolder(int size) {
-			tree = new int[size];			
+			byte maxValue = Byte.MAX_VALUE;
+			short maxValue2 = Short.MAX_VALUE;
+			tree = new int[size];
 			blockStartingIndex = getMidWay(size);
 		}
 
@@ -73,14 +77,7 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 
 	}
 
-	// BLOCK_POWER is the power of two that is the block length -- i.e. 64
-	// bits
-	// private final int BLOCK_POWER = 6;
-	// blockSize is the 64 bit length of a block
-	// private final int blockSize = 1 << BLOCK_POWER;
 	private final int blockSize;
-
-	// power is the power of two that sets the length of the tree array
 
 	private final AltPersonIdManager personIdManager;
 	// bitSet holds the values for each person
@@ -94,15 +91,19 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 	// int maxPid = 1 << (power + BLOCK_POWER - 1);
 	int maxPid;
 
-	public AltTreeBitSet4_Ullage(AltPersonIdManager personIdManager, int blockSize) {
+	public AltTreeBitSet5_SplitArray(AltPersonIdManager personIdManager, int blockSize) {
 		this.blockSize = blockSize;
 		this.maxPid = blockSize;
 		this.personIdManager = personIdManager;
 		// initialize the size of the bitSet to that of the full population,
-		// including removed people
+		// including any removed people
 		int capacity = personIdManager.getPersonIdLimit();
-		bitSet = new BitSet(capacity);		
-		grow(capacity-1, false);	
+		bitSet = new BitSet(capacity);
+		int numberOfBlocks = (capacity - 1) / blockSize + 1;
+		int treeTop = getNextPowerOfTwo(numberOfBlocks);
+		int newTreeSize = treeTop + numberOfBlocks;
+		maxPid = numberOfBlocks * blockSize;
+		treeHolder = new TreeHolder(newTreeSize);
 	}
 
 	@Override
@@ -116,8 +117,6 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 		}
 		return result;
 	}
-
-	
 
 	private int getPower2(int n) {
 
@@ -148,20 +147,15 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 	 * Grows the tree to allow the given pid to exist, filling the ullage in the
 	 * base layer of the tree as required
 	 */
-	private void grow(int pid, boolean fillUllage) {
+	private void grow(int pid) {
 		// determine the new size of the tree array
 		// int newTreeSize = getNearestPowerOfTwo(pid) >> (BLOCK_POWER - 2);
 
 		int numberOfBlocks = pid / blockSize + 1;
 		int treeTop = getNextPowerOfTwo(numberOfBlocks);
-		int newTreeSize;
-		if (fillUllage) {
-			newTreeSize = treeTop * 2;
-			maxPid = treeTop*blockSize;
-		} else {
-			newTreeSize = treeTop + numberOfBlocks;
-			maxPid = numberOfBlocks*blockSize;
-		}
+		int newTreeSize = treeTop * 2;
+		maxPid = treeTop * blockSize;
+
 		/*
 		 * The tree array grows by powers of two. We determine how many power levels the
 		 * new tree array is over the existing one to help us transport values from the
@@ -201,10 +195,6 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 		// swap the tree
 		// tree = newTree;
 		treeHolder = newTreeHolder;
-
-		
-		
-
 	}
 
 	@Override
@@ -214,7 +204,7 @@ public class AltTreeBitSet4_Ullage implements AltPeopleContainer {
 
 		// do we need to grow?
 		if (pid >= maxPid) {
-			grow(pid, true);
+			grow(pid);
 		}
 		// add the value
 		if (!bitSet.get(pid)) {

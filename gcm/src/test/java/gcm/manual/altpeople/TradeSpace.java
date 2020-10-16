@@ -8,7 +8,7 @@ public class TradeSpace {
 	private final boolean useExtendedValues;
 	private long baseLayerBlockCount;
 	private long treePower;
-	private long ullageNodeCount;
+
 	// .replaceAll(",", "\n");
 
 	long bitsPerByte = 8;
@@ -17,13 +17,6 @@ public class TradeSpace {
 
 	long maxByteValue;
 	long maxShortValue;
-
-	long maxLayersOfByteNodes;
-	long maxLayersOfShortNodes;
-
-	long byteLayers;
-	long shortLayers;
-	long intLayers;
 
 	long intNodeCount;
 	long shortNodeCount;
@@ -44,23 +37,76 @@ public class TradeSpace {
 	double treeWalk;
 	double bitWalk;
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("TradeSpace [intNodeCount=");
-		builder.append(intNodeCount);
-		builder.append(", shortNodeCount=");
-		builder.append(shortNodeCount);
-		builder.append(", byteNodeCount=");
-		builder.append(byteNodeCount);
-		builder.append("]");
-		return builder.toString();
-	}
+//	@Override
+//	public String toString() {
+//		StringBuilder builder = new StringBuilder();
+//		builder.append("TradeSpace [intNodeCount=");
+//		builder.append(intNodeCount);
+//		builder.append(", shortNodeCount=");
+//		builder.append(shortNodeCount);
+//		builder.append(", byteNodeCount=");
+//		builder.append(byteNodeCount);
+//		builder.append("]");
+//		return builder.toString();
+//	}
 
 	private TradeSpace(int populationSize, int blockSize, boolean useExtendedValues) {
 		this.blockSize = blockSize;
 		this.populationSize = populationSize;
 		this.useExtendedValues = useExtendedValues;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("TradeSpace [blockSize=");
+		builder.append(blockSize);
+		builder.append(", populationSize=");
+		builder.append(populationSize);
+		builder.append(", useExtendedValues=");
+		builder.append(useExtendedValues);
+		builder.append(", baseLayerBlockCount=");
+		builder.append(baseLayerBlockCount);
+		builder.append(", treePower=");
+		builder.append(treePower);
+		builder.append(", bitsPerByte=");
+		builder.append(bitsPerByte);
+		builder.append(", bitsPerShort=");
+		builder.append(bitsPerShort);
+		builder.append(", bitsPerInt=");
+		builder.append(bitsPerInt);
+		builder.append(", maxByteValue=");
+		builder.append(maxByteValue);
+		builder.append(", maxShortValue=");
+		builder.append(maxShortValue);		
+		builder.append(", intNodeCount=");
+		builder.append(intNodeCount);
+		builder.append(", shortNodeCount=");
+		builder.append(shortNodeCount);
+		builder.append(", byteNodeCount=");
+		builder.append(byteNodeCount);
+		builder.append(", bitsInIntNodes=");
+		builder.append(bitsInIntNodes);
+		builder.append(", bitsInShortNodes=");
+		builder.append(bitsInShortNodes);
+		builder.append(", bitsInByteNodes=");
+		builder.append(bitsInByteNodes);
+		builder.append(", originalTotalBits=");
+		builder.append(originalTotalBits);
+		builder.append(", totalBits=");
+		builder.append(totalBits);
+		builder.append(", originalBitsPersPerson=");
+		builder.append(originalBitsPersPerson);
+		builder.append(", bitsPerPerson=");
+		builder.append(bitsPerPerson);
+		builder.append(", memRatio=");
+		builder.append(memRatio);
+		builder.append(", treeWalk=");
+		builder.append(treeWalk);
+		builder.append(", bitWalk=");
+		builder.append(bitWalk);
+		builder.append("]");
+		return builder.toString();
 	}
 
 	private void execute() {
@@ -72,46 +118,54 @@ public class TradeSpace {
 			maxShortValue = 32767;
 		}
 
-		double x = populationSize;
-		x /= blockSize;
-		baseLayerBlockCount = (long) FastMath.ceil(x);
-		treePower = (long) FastMath.ceil(FastMath.log(2, baseLayerBlockCount)) + 1;
-		int lowestTreeCells = 1 << (treePower - 1);
-		ullageNodeCount = lowestTreeCells - baseLayerBlockCount;
-
-		x = maxByteValue;
-		x /= blockSize;
-		maxLayersOfByteNodes = (long) FastMath.floor(FastMath.log(2, x))+1;
-
-		x = maxShortValue;
-		x /= blockSize;
-		maxLayersOfShortNodes = (long) FastMath.floor(FastMath.log(2, x))+1;
-		maxLayersOfShortNodes -= maxLayersOfByteNodes;
-
-		byteLayers = FastMath.min(treePower, maxLayersOfByteNodes);
-		shortLayers = FastMath.min(treePower - byteLayers, maxLayersOfShortNodes);
-		intLayers = treePower - shortLayers - byteLayers;
-
-		intNodeCount = 1;
-		int layerSize = 1;
-		for (int i = 1; i <= intLayers; i++) {
-			intNodeCount += layerSize;
-			layerSize *= 2;
+		
+		baseLayerBlockCount = populationSize/blockSize;
+		if(populationSize%blockSize!=0) {
+			baseLayerBlockCount++;
 		}
-
-		shortNodeCount = 0;
-		for (int i = 1; i <= shortLayers; i++) {
-			shortNodeCount += layerSize;
-			layerSize *= 2;
+		baseLayerBlockCount = FastMath.max(baseLayerBlockCount, 1);
+		
+		
+		treePower = 0;
+		long nodeCount = 1;
+		while(nodeCount<baseLayerBlockCount) {
+			treePower++;
+			nodeCount*=2;
 		}
+		treePower++;
+		
+		
 
 		byteNodeCount = 0;
-		for (int i = 1; i <= byteLayers; i++) {
-			byteNodeCount += layerSize;
-			layerSize *= 2;
+		shortNodeCount = 0;
+		intNodeCount = 0;
+
+		long maxNodeValue = blockSize;
+		for (long power = treePower - 1; power >= 0; power--) {
+			long nodesOnLayer;
+			if (power == treePower - 1) {
+				nodesOnLayer = baseLayerBlockCount;
+			} else {
+				nodesOnLayer = 1 << power;
+			}
+			if (maxNodeValue <= maxByteValue) {
+				byteNodeCount += nodesOnLayer;
+			} else if (maxNodeValue <= maxShortValue) {
+				shortNodeCount += nodesOnLayer;
+			} else {
+				intNodeCount += nodesOnLayer;
+			}
+			maxNodeValue *= 2;
+		}
+		if (intNodeCount > 0) {
+			intNodeCount++;
+		} else if (shortNodeCount > 0) {
+			shortNodeCount++;
+		} else {
+			byteNodeCount++;
 		}
 
-		byteNodeCount -= ullageNodeCount;
+		////////////////////////////////////////////////////////
 
 		bitsInIntNodes = 32 * intNodeCount;
 		bitsInShortNodes = 16 * shortNodeCount;
@@ -125,7 +179,7 @@ public class TradeSpace {
 
 		//////////////
 
-		x = populationSize;
+		double x = populationSize;
 		x /= blockSize;
 		x = FastMath.ceil(FastMath.log(2, x));
 		x = FastMath.pow(2, x) * 2;
@@ -153,11 +207,11 @@ public class TradeSpace {
 		// System.out.println(peeps.toString().replaceAll(",", "\n"));
 
 		// int blockSize = i + 1;
-		int blockSize = 2;
-		TradeSpace tradeSpace = new TradeSpace(10, blockSize, false);
+		int blockSize = 63;
+		TradeSpace tradeSpace = new TradeSpace(350_000_000, blockSize, false);
 		tradeSpace.execute();
-		
-		System.out.println(tradeSpace.toString().replace(",","\n"));
-		
+
+		System.out.println(tradeSpace.toString().trim().replace(",","\n"));
+
 	}
 }

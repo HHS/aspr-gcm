@@ -7,7 +7,7 @@ public class Shift {
 		
 	}
 	
-	private static int getMidWay(int size) {		
+	public static int getMidWay(int size) {		
 		int result = 1;
 		while(true) {
 			int nextResult= 2*result;
@@ -18,7 +18,7 @@ public class Shift {
 		}		
 	}
 	
-	private static int getNextPowerOfTwo(int value) {
+	public static int getNextPowerOfTwo(int value) {
 		int v = value;
 		int result = 1;
 		while(v != 0 && result != value) {
@@ -28,7 +28,7 @@ public class Shift {
 		return result;
 	}
 	
-	private static int getPower2(int n) {
+	public static int getPower2(int n) {
 
 		if (n < 1) {
 			throw new RuntimeException("Non-positive value");

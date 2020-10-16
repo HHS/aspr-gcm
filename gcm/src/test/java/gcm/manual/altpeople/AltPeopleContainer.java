@@ -1,10 +1,5 @@
 package gcm.manual.altpeople;
 
-import java.util.Collection;
-import java.util.List;
-
-import gcm.scenario.PersonId;
-
 /**
  * Interface for abstracting the details of how people ids are stored as either
  * a Set or a Boolean container.
@@ -14,38 +9,27 @@ import gcm.scenario.PersonId;
 public interface AltPeopleContainer {
 
 	/*
-	 * Returns a list of the people in the set with no duplicates
+	 * Returns true if and only if the value was successfully added
 	 */
-	public List<PersonId> getPeople();
+	public boolean add(int value);
 
 	/*
-	 * Returns true if and only if the person was successfully added
+	 * Returns true if and only if the value was successfully removed
 	 */
-	public boolean add(PersonId personId);
+	public boolean remove(int value);
 
 	/*
-	 * Returns true if and only if the person was successfully removed
-	 */
-	public boolean remove(PersonId personId);
-
-	/*
-	 * Returns the number of people in this container
+	 * Returns the number of values in this container
 	 */
 	public int size();
 
 	/*
-	 * Adds the given collection of people to this container
+	 * Returns true if and only if the value is contained.
 	 */
-	public void addAll(Collection<PersonId> collection);
+	public boolean contains(int value);
 
 	/*
-	 * Returns true if and only if the person is contained.
+	 * Returns the value at the given index in the range [0,size()). Returns -1.
 	 */
-	public boolean contains(PersonId personId);
-
-	/*
-	 * Returns the person at the given index. If no such person exists, returns
-	 * null.
-	 */
-	public PersonId getPersonId(int index);
+	public int getValue(int index);
 }

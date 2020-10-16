@@ -1,11 +1,9 @@
 package gcm.manual.altpeople;
 
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.List;
 
-import gcm.scenario.PersonId;
+import org.apache.commons.math3.util.FastMath;
+
 import gcm.simulation.EnvironmentImpl;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -21,19 +19,6 @@ import gcm.util.annotations.TestStatus;
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
-	private static int getMidWay(int size) {
-		if (size < 2) {
-			throw new RuntimeException("cannot be calculated");
-		}
-		int result = 1;
-		while (true) {
-			int nextResult = 2 * result;
-			if (nextResult >= size) {
-				return result;
-			}
-			result = nextResult;
-		}
-	}
 
 	private static class TreeHolder {
 		private final int blockStartingIndex;
@@ -42,105 +27,147 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 			return blockStartingIndex;
 		}
 
-		public TreeHolder(int size) {
-			byte maxValue = Byte.MAX_VALUE;
-			short maxValue2 = Short.MAX_VALUE;
-			tree = new int[size];
-			blockStartingIndex = getMidWay(size);
+		// maxPid is the maximum(exclusive) person id value(int) that can be
+		int maxPid;
+
+		public int getMaxPid() {
+			return maxPid;
 		}
 
-		private int[] tree;
+		private long maxByteValue = 127;
+		private long maxShortValue = 32767;
 
-		public int size() {
-			return tree[1];
+		public TreeHolder(int capacity, int blockSize, boolean fillUllage) {
+			System.out.println("AltTreeBitSet5_SplitArray.TreeHolder.TreeHolder() " + capacity);
+
+//			if (useExtendedValues) {
+//				maxByteValue = 127 + 128;
+//				maxShortValue = 32767 + 32768;
+//			} else {
+//				maxByteValue = 127;
+//				maxShortValue = 32767;
+//			}
+			long baseLayerBlockCount = capacity / blockSize;
+			if (capacity % blockSize != 0) {
+				baseLayerBlockCount++;
+			}
+			baseLayerBlockCount = FastMath.max(baseLayerBlockCount, 1);
+
+			long treePower = 0;
+			long nodeCount = 1;
+			while (nodeCount < baseLayerBlockCount) {
+				treePower++;
+				nodeCount *= 2;
+			}
+			blockStartingIndex = 1 << treePower;
+			if (fillUllage) {
+				baseLayerBlockCount = blockStartingIndex;
+			}
+
+			maxPid = (int) baseLayerBlockCount * blockSize;
+
+			treePower++;
+
+			long byteNodeCount = 0;
+			long shortNodeCount = 0;
+			long intNodeCount = 0;
+
+			long maxNodeValue = blockSize;
+			for (long power = treePower - 1; power >= 0; power--) {
+				long nodesOnLayer;
+				if (power == treePower - 1) {
+					nodesOnLayer = baseLayerBlockCount;
+				} else {
+					nodesOnLayer = 1 << power;
+				}
+				if (maxNodeValue <= maxByteValue) {
+					byteNodeCount += nodesOnLayer;
+				} else if (maxNodeValue <= maxShortValue) {
+					shortNodeCount += nodesOnLayer;
+				} else {
+					intNodeCount += nodesOnLayer;
+				}
+				maxNodeValue *= 2;
+			}
+			if (intNodeCount > 0) {
+				intNodeCount++;
+			} else if (shortNodeCount > 0) {
+				shortNodeCount++;
+			} else {
+				byteNodeCount++;
+			}
+
+			System.out.println(intNodeCount + shortNodeCount + byteNodeCount);
+
+			intNodes = new int[(int) intNodeCount];
+			shortNodes = new short[(int) shortNodeCount];
+			byteNodes = new byte[(int) byteNodeCount];
+
 		}
 
-		public int length() {
-			return tree.length;
-		}
+		private int[] intNodes;
+		private short[] shortNodes;
+		private byte[] byteNodes;
 
 		public void increment(int index) {
-			tree[index]++;
-		}
 
-		public void set(int index, int value) {
-			tree[index] = value;
+			if (index < intNodes.length) {
+				intNodes[index]++;
+			} else {
+				index -= intNodes.length;
+				if (index < shortNodes.length) {
+					shortNodes[index]++;
+				} else {
+					index -= shortNodes.length;
+					if (index < byteNodes.length) {
+						byteNodes[index]++;
+					}
+				}
+			}
 		}
 
 		public void decrement(int index) {
-			tree[index]--;
+			if (index < intNodes.length) {
+				intNodes[index]--;
+			} else {
+				index -= intNodes.length;
+				if (index < shortNodes.length) {
+					shortNodes[index]--;
+				} else {
+					index -= shortNodes.length;
+					if (index < byteNodes.length) {
+						byteNodes[index]--;
+					}
+				}
+			}
 		}
 
 		public int get(int index) {
-			return tree[index];
+			if (index < intNodes.length) {
+				return intNodes[index];
+			}
+			index -= intNodes.length;
+			if (index < shortNodes.length) {
+				return shortNodes[index];
+			}
+			index -= shortNodes.length;
+			return byteNodes[index];
 		}
 
 	}
 
 	private final int blockSize;
 
-	private final AltPersonIdManager personIdManager;
 	// bitSet holds the values for each person
 	private BitSet bitSet;
 	// the tree holds summation nodes in an array that is length two the
 	// power
-	private TreeHolder treeHolder = new TreeHolder(2);
-	// private int[] tree = new int[1 << power];
-	// maxPid is the maximum(exclusive) person id value(int) that can be
-	// contained at the current power.
-	// int maxPid = 1 << (power + BLOCK_POWER - 1);
-	int maxPid;
+	private TreeHolder treeHolder;
 
-	public AltTreeBitSet5_SplitArray(AltPersonIdManager personIdManager, int blockSize) {
+	public AltTreeBitSet5_SplitArray(int capacity, int blockSize) {
 		this.blockSize = blockSize;
-		this.maxPid = blockSize;
-		this.personIdManager = personIdManager;
-		// initialize the size of the bitSet to that of the full population,
-		// including any removed people
-		int capacity = personIdManager.getPersonIdLimit();
 		bitSet = new BitSet(capacity);
-		int numberOfBlocks = (capacity - 1) / blockSize + 1;
-		int treeTop = getNextPowerOfTwo(numberOfBlocks);
-		int newTreeSize = treeTop + numberOfBlocks;
-		maxPid = numberOfBlocks * blockSize;
-		treeHolder = new TreeHolder(newTreeSize);
-	}
-
-	@Override
-	public List<PersonId> getPeople() {
-		List<PersonId> result = new ArrayList<>(size());
-		int n = bitSet.size();
-		for (int i = 0; i < n; i++) {
-			if (bitSet.get(i)) {
-				result.add(personIdManager.getBoxedPersonId(i));
-			}
-		}
-		return result;
-	}
-
-	private int getPower2(int n) {
-
-		if (n < 1) {
-			throw new RuntimeException("Non-positive value");
-		}
-
-		int result = 0;
-		int value = 1;
-		while (value < n) {
-			value *= 2;
-			result++;
-		}
-		return result;
-	}
-
-	private int getNextPowerOfTwo(int value) {
-		int v = value;
-		int result = 1;
-		while (v != 0 && result != value) {
-			v /= 2;
-			result *= 2;
-		}
-		return result;
+		treeHolder = new TreeHolder(capacity, blockSize, false);
 	}
 
 	/*
@@ -148,102 +175,113 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 	 * base layer of the tree as required
 	 */
 	private void grow(int pid) {
-		// determine the new size of the tree array
-		// int newTreeSize = getNearestPowerOfTwo(pid) >> (BLOCK_POWER - 2);
-
-		int numberOfBlocks = pid / blockSize + 1;
-		int treeTop = getNextPowerOfTwo(numberOfBlocks);
-		int newTreeSize = treeTop * 2;
-		maxPid = treeTop * blockSize;
-
-		/*
-		 * The tree array grows by powers of two. We determine how many power levels the
-		 * new tree array is over the existing one to help us transport values from the
-		 * old array into the new array rather than recalculate those values.
-		 * Essentially, the old tree will slide down the left hand side of the new tree,
-		 * while leaving a trail of the old tree's head value behind.
-		 * 
-		 */
-
-		// moving the old tree's values into the new tree
-		int power = getPower2(treeHolder.length());
-		int powerShift = getPower2(newTreeSize) - power;
-		// int[] newTree = new int[newTreeSize];
-		TreeHolder newTreeHolder = new TreeHolder(newTreeSize);
-		int base = 1;
-		int newBase = base << powerShift;
-		for (int p = 0; p < power; p++) {
-			for (int i = 0; i < base; i++) {
-				// newTree[newBase + i] = tree[i + base];
-				int index = i + base;
-				if (index < treeHolder.length()) {
-					newTreeHolder.set(newBase + i, treeHolder.get(index));
-				}
+		System.out.println("AltTreeBitSet5_SplitArray.grow()");
+		int capacity = pid + 1;
+		BitSet oldBitSet = bitSet;
+		size = 0;
+		treeHolder = new TreeHolder(capacity, blockSize, true);
+		bitSet = new BitSet(capacity);
+		for (int i = 0; i < treeHolder.getMaxPid(); i++) {
+			if (oldBitSet.get(i)) {
+				add(i);
 			}
-			base <<= 1;
-			newBase <<= 1;
 		}
-		/*
-		 * The old tree's root value now has to propagate up the new tree to its root
-		 */
-		base = 1 << powerShift;
-		while (base > 1) {
-			base >>= 1;
-			// newTree[base] = tree[1];
-			newTreeHolder.set(base, treeHolder.get(1));
-		}
-		// swap the tree
-		// tree = newTree;
-		treeHolder = newTreeHolder;
 	}
 
-	@Override
-	public boolean add(PersonId personId) {
+//	private void grow_smart(int pid) {		
+//		// determine the new size of the tree array
+//		// int newTreeSize = getNearestPowerOfTwo(pid) >> (BLOCK_POWER - 2);
+//
+//		int numberOfBlocks = pid / blockSize + 1;
+//		int treeTop = getNextPowerOfTwo(numberOfBlocks);
+//		int newTreeSize = treeTop * 2;
+//
+//		/*
+//		 * The tree array grows by powers of two. We determine how many power levels the
+//		 * new tree array is over the existing one to help us transport values from the
+//		 * old array into the new array rather than recalculate those values.
+//		 * Essentially, the old tree will slide down the left hand side of the new tree,
+//		 * while leaving a trail of the old tree's head value behind.
+//		 * 
+//		 */
+//
+//		// moving the old tree's values into the new tree
+//		int power = getPower2(treeHolder.length());
+//		int powerShift = getPower2(newTreeSize) - power;
+//		// int[] newTree = new int[newTreeSize];
+//		TreeHolder newTreeHolder = new TreeHolder(pid+1,blockSize,true);
+//		int base = 1;
+//		int newBase = base << powerShift;
+//		for (int p = 0; p < power; p++) {
+//			for (int i = 0; i < base; i++) {
+//				// newTree[newBase + i] = tree[i + base];
+//				int index = i + base;
+//				if (index < treeHolder.length()) {
+//					newTreeHolder.set(newBase + i, treeHolder.get(index));
+//				}
+//			}
+//			base <<= 1;
+//			newBase <<= 1;
+//		}
+//		/*
+//		 * The old tree's root value now has to propagate up the new tree to its root
+//		 */
+//		base = 1 << powerShift;
+//		while (base > 1) {
+//			base >>= 1;
+//			// newTree[base] = tree[1];
+//			newTreeHolder.set(base, treeHolder.get(1));
+//		}
+//		// swap the tree
+//		// tree = newTree;
+//		treeHolder = newTreeHolder;
+//	}
 
-		int pid = personId.getValue();
+	private int size;
+
+	@Override
+	public boolean add(int value) {
 
 		// do we need to grow?
-		if (pid >= maxPid) {
-			grow(pid);
+		if (value >= treeHolder.getMaxPid()) {
+			grow(value);
 		}
 		// add the value
-		if (!bitSet.get(pid)) {
-			bitSet.set(pid);
+		if (!bitSet.get(value)) {
+			bitSet.set(value);
 			// select the block(index) that will receive the bit flip.
-			// int block = pid >> BLOCK_POWER;
-			int block = pid / blockSize;
-			// block += (tree.length >> 1);
+			int block = value / blockSize;
 			block += treeHolder.getBlockStartingIndex();
 			/*
 			 * Propagate the change up through the tree to the root node
 			 */
 			while (block > 0) {
-				// tree[block] += 1;
 				treeHolder.increment(block);
 				block >>= 1;
 			}
+			size++;
 			return true;
 		}
 		return false;
 	}
 
 	@Override
-	public boolean remove(PersonId personId) {
+	public boolean remove(int value) {
 		/*
 		 * If the person is not contained, then don't try to remove them. This protects
 		 * us from removals that are >= maxPid.
 		 */
-		if (!contains(personId)) {
+		if (!contains(value)) {
 			return false;
 		}
-		int pid = personId.getValue();
-		if (bitSet.get(pid)) {
-			bitSet.set(pid, false);
+
+		if (bitSet.get(value)) {
+			bitSet.set(value, false);
 			// select the block(index) that will receive the bit flip.
 			// int block = pid >> BLOCK_POWER;
-			int block = pid / blockSize;
+			int block = value / blockSize;
 			// block += (tree.length >> 1);
-			block += (treeHolder.length() >> 1);
+			block += treeHolder.getBlockStartingIndex();// (treeHolder.length() >> 1);
 			/*
 			 * Propagate the change up through the tree to the root node
 			 */
@@ -252,6 +290,7 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 				treeHolder.decrement(block);
 				block >>= 1;
 			}
+			size--;
 			return true;
 		}
 		return false;
@@ -259,31 +298,23 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 
 	@Override
 	public int size() {
-		// return tree[1];
-		return treeHolder.size();
+		return size;
 	}
 
 	@Override
-	public void addAll(Collection<PersonId> collection) {
-		for (PersonId personId : collection) {
-			add(personId);
-		}
+	public boolean contains(int value) {
+		return bitSet.get(value);
 	}
 
 	@Override
-	public boolean contains(PersonId personId) {
-		return bitSet.get(personId.getValue());
-	}
-
-	@Override
-	public PersonId getPersonId(int index) {
-		if (index >= size()) {
-			return null;
+	public int getValue(int index) {
+		if (index >= size || index < 0) {
+			return -1;
 		}
 
 		/*
-		 * We need to use an integer that is at least one, so we add one to the randomly
-		 * selected index. We will reduce this amount until it reaches zero.
+		 * We need to use an integer that is at least one, so we add one to the selected
+		 * index. We will reduce this amount until it reaches zero.
 		 */
 		int targetCount = index + 1;
 
@@ -306,11 +337,6 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 			treeIndex = treeIndex << 1;
 			// if the left child is less than the target count, then reduce the target count
 			// by the number in the left child and move to the right child
-//			if (tree[treeIndex] < targetCount) {
-//				targetCount -= tree[treeIndex];
-//				treeIndex++;
-//			}
-
 			if (treeHolder.get(treeIndex) < targetCount) {
 				targetCount -= treeHolder.get(treeIndex);
 				treeIndex++;
@@ -332,11 +358,11 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 			if (bitSet.get(i)) {
 				targetCount--;
 				if (targetCount == 0) {
-					return personIdManager.getBoxedPersonId(i);
+					return i;
 				}
 			}
 		}
-		return null;
+		return -1;
 	}
 
 }

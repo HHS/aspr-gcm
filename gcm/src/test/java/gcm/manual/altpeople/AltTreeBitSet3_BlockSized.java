@@ -1,11 +1,7 @@
 package gcm.manual.altpeople;
 
-import java.util.ArrayList;
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.List;
 
-import gcm.scenario.PersonId;
 import gcm.simulation.EnvironmentImpl;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -67,7 +63,7 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 
 	// power is the power of two that sets the length of the tree array
 	private int power = 1;
-	private final AltPersonIdManager personIdManager;
+	
 	// bitSet holds the values for each person
 	private BitSet bitSet;
 	// the tree holds summation nodes in an array that is length two the
@@ -79,27 +75,17 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 	// int maxPid = 1 << (power + BLOCK_POWER - 1);
 	int maxPid;
 
-	public AltTreeBitSet3_BlockSized(AltPersonIdManager personIdManager, int blockSize) {
+	public AltTreeBitSet3_BlockSized(int capacity, int blockSize) {
 		this.blockSize = blockSize;
 		this.maxPid = blockSize;
-		this.personIdManager = personIdManager;
+		
 		// initialize the size of the bitSet to that of the full population,
 		// including removed people
-		int capacity = personIdManager.getPersonIdLimit();
+		
 		bitSet = new BitSet(capacity);
 	}
 
-	@Override
-	public List<PersonId> getPeople() {
-		List<PersonId> result = new ArrayList<>(size());
-		int n = bitSet.size();
-		for (int i = 0; i < n; i++) {
-			if (bitSet.get(i)) {
-				result.add(personIdManager.getBoxedPersonId(i));
-			}
-		}
-		return result;
-	}
+	
 
 	
 
@@ -138,14 +124,14 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 	}
 
 	@Override
-	public boolean add(PersonId personId) {
-		int pid = personId.getValue();
+	public boolean add(int value) {
+		
 		// do we need to grow?
-		if (pid >= maxPid) {
+		if (value >= maxPid) {
 			// determine the new size of the tree array
 			// int newTreeSize = getNearestPowerOfTwo(pid) >> (BLOCK_POWER - 2);
 
-			int numberOfBlocks = pid / blockSize +1;
+			int numberOfBlocks = value / blockSize +1;
 			int treeBottom = getNextPowerOfTwo(numberOfBlocks);
 			int newTreeSize = treeBottom * 2;
 
@@ -190,11 +176,11 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 			power += powerShift;
 		}
 		// add the value
-		if (!bitSet.get(pid)) {
-			bitSet.set(pid);
+		if (!bitSet.get(value)) {
+			bitSet.set(value);
 			// select the block(index) that will receive the bit flip.
 			// int block = pid >> BLOCK_POWER;
-			int block = pid / blockSize;
+			int block = value / blockSize;
 			// block += (tree.length >> 1);
 			block += (treeHolder.length() >> 1);
 			/*
@@ -211,20 +197,20 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 	}
 
 	@Override
-	public boolean remove(PersonId personId) {
+	public boolean remove(int value) {
 		/*
 		 * If the person is not contained, then don't try to remove them. This protects
 		 * us from removals that are >= maxPid.
 		 */
-		if (!contains(personId)) {
+		if (!contains(value)) {
 			return false;
 		}
-		int pid = personId.getValue();
-		if (bitSet.get(pid)) {
-			bitSet.set(pid, false);
+		
+		if (bitSet.get(value)) {
+			bitSet.set(value, false);
 			// select the block(index) that will receive the bit flip.
 			// int block = pid >> BLOCK_POWER;
-			int block = pid / blockSize;
+			int block = value / blockSize;
 			// block += (tree.length >> 1);
 			block += (treeHolder.length() >> 1);
 			/*
@@ -246,22 +232,16 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 		return treeHolder.size();
 	}
 
+	
 	@Override
-	public void addAll(Collection<PersonId> collection) {
-		for (PersonId personId : collection) {
-			add(personId);
-		}
+	public boolean contains(int value) {
+		return bitSet.get(value);
 	}
 
 	@Override
-	public boolean contains(PersonId personId) {
-		return bitSet.get(personId.getValue());
-	}
-
-	@Override
-	public PersonId getPersonId(int index) {
+	public int getValue(int index) {
 		if (index >= size()) {
-			return null;
+			return -1;
 		}
 
 		/*
@@ -315,11 +295,11 @@ public class AltTreeBitSet3_BlockSized implements AltPeopleContainer {
 			if (bitSet.get(i)) {
 				targetCount--;
 				if (targetCount == 0) {
-					return personIdManager.getBoxedPersonId(i);
+					return i;
 				}
 			}
 		}
-		return null;
+		return -1;
 	}
 
 }

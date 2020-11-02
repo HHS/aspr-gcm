@@ -50,9 +50,9 @@ public class BasePeopleContainer implements PeopleContainer {
 
 	private static int TREE_BIT_SET_FAST_THRESHOLD = 150;
 	
-	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 33;
+	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 28;
 	
-	private static final int INT_SET_THRESHOLD = 28;
+	private static final int INT_SET_THRESHOLD = 33;
 
 	/*
 	 * indexed populations start small and so we default to PeopleContainerMode.SET

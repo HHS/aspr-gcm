@@ -158,6 +158,7 @@ public class AT_EnvironmentImpl_25 {
 		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.TRUE,
 				randomGenerator);
 		addStandardPeople(scenarioBuilder, 300);
+		scenarioBuilder.setUseDensePartitions(true);
 
 	}
 

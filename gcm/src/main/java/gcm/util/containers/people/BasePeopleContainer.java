@@ -24,7 +24,7 @@ public class BasePeopleContainer implements PeopleContainer {
 	 * Enumeration for the two ways that people are stored in an IndexedPopulation
 	 */
 	private static enum PeopleContainerMode {
-		MAP, TREE_BIT_SET
+		MAP, TREE_BIT_SET_FAST, INTSET, TREE_BIT_SET_SLOW
 	}
 
 	/*
@@ -48,22 +48,33 @@ public class BasePeopleContainer implements PeopleContainer {
 	 * thrashing between the two container types to a minimum.
 	 */
 
-	private static int TREE_BIT_SET_THRESHOLD = 150;
+	private static int TREE_BIT_SET_FAST_THRESHOLD = 150;
+	
+	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 33;
+	
+	private static final int INT_SET_THRESHOLD = 28;
 
 	/*
 	 * indexed populations start small and so we default to PeopleContainerMode.SET
 	 */
-	private PeopleContainerMode mode = PeopleContainerMode.MAP;
+	private PeopleContainerMode mode;
 
 	private final Context context;
 
 	private final PersonLocationManger personLocationManger;
 
-	private PeopleContainer internalPeopleContainer = new MapPeopleContainer();
+	private PeopleContainer internalPeopleContainer;
 
 	public BasePeopleContainer(Context context) {
 		this.context = context;
 		this.personLocationManger = context.getPersonLocationManger();
+		if(context.getScenario().useDensePartitions()) {
+			mode = PeopleContainerMode.INTSET;
+			internalPeopleContainer = new IntSetPeopleContainer();
+		}else {
+			mode = PeopleContainerMode.MAP;
+			internalPeopleContainer = new MapPeopleContainer();
+		}
 	}
 
 	/*
@@ -78,16 +89,31 @@ public class BasePeopleContainer implements PeopleContainer {
 	private void determineMode(int size) {
 
 		switch (mode) {
-		case TREE_BIT_SET:
+		case TREE_BIT_SET_FAST:
 			if (size <= personLocationManger.getPopulationCount() / MAP_THRESHOLD) {
 				mode = PeopleContainerMode.MAP;
 				internalPeopleContainer = new MapPeopleContainer(internalPeopleContainer);
 			}
 			break;
 		case MAP:
-			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_THRESHOLD) {
-				mode = PeopleContainerMode.TREE_BIT_SET;
-				internalPeopleContainer = new TreeBitSetPeopleContainer(context.getPersonIdManager(), internalPeopleContainer);
+			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_FAST_THRESHOLD) {
+				mode = PeopleContainerMode.TREE_BIT_SET_FAST;
+				internalPeopleContainer = new TreeBitSetPeopleContainer_Fast(context.getPersonIdManager(),
+						internalPeopleContainer);
+			}
+			break;
+			
+		case TREE_BIT_SET_SLOW:
+			if (size <= personLocationManger.getPopulationCount() / INT_SET_THRESHOLD) {
+				mode = PeopleContainerMode.INTSET;
+				internalPeopleContainer = new IntSetPeopleContainer(internalPeopleContainer);
+			}
+			break;
+		case INTSET:
+			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_SLOW_THRESHOLD) {
+				mode = PeopleContainerMode.TREE_BIT_SET_SLOW;
+				internalPeopleContainer = new TreeBitSetPeopleContainer(context.getPersonIdManager(),
+						internalPeopleContainer);
 			}
 			break;
 		default:

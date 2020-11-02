@@ -211,6 +211,15 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 		this.targetDepth = DEFAULT_TARGET_DEPTH;
 		this.tolerateDuplicates = true;
 	}
+	
+	public IntSetPeopleContainer(PeopleContainer peopleContainer) {
+		this.targetDepth = DEFAULT_TARGET_DEPTH;
+		this.tolerateDuplicates = true;
+		
+		for (PersonId personId : peopleContainer.getPeople()) {
+			add(personId);
+		}
+	}
 
 	/*
 	 * Grows the values and maxSizes arrays to achieve an average bucket depth that

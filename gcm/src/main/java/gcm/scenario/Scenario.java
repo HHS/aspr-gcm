@@ -662,5 +662,10 @@ public interface Scenario {
 	 * Returns the random generator identifiers for this scenario.
 	 */
 	public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds();
+	
+	/**
+	 * Returns true if and only if partitions are using a dense storage mechanism.
+	 */
+	public Boolean useDensePartitions();
 
 }

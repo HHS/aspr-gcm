@@ -347,6 +347,12 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 				structuredScenarioBuilder.setSuggestedPopulationSize(suggestedPopulationSize);
 			}
 			
+			for (final MultiKey multiKey : get(ActionType.DENSE_PARTITIONS)) {
+				final Boolean useDensePartitions = multiKey.getKey(0);
+				structuredScenarioBuilder.setUseDensePartitions(useDensePartitions);
+			}
+			
+			
 		} finally {
 			data = new LinkedHashMap<>();
 		}
@@ -525,6 +531,12 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 	@Override
 	public void addRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		put(ActionType.RANDOM_NUMBER_GENERATOR_ID_ADDITION, randomNumberGeneratorId);
+	}
+
+	@Override
+	public void setUseDensePartitions(boolean useDensePartitions) {
+		// TODO Auto-generated method stub
+		put(ActionType.DENSE_PARTITIONS,useDensePartitions);
 	}
 
 }

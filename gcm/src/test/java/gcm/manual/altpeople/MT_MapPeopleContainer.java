@@ -8,6 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.manual.AltPersonIdManager;
 import gcm.scenario.PersonId;
 import gcm.util.MemSizer;
 import gcm.util.TimeElapser;

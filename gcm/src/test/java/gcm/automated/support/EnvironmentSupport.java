@@ -386,7 +386,7 @@ public class EnvironmentSupport {
 		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
-		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);
+		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);		
 	}
 
 	/*

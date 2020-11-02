@@ -18,6 +18,7 @@ public enum ActionType {
 	// assignment of the scenario identifier
 	SCENARIO_ID_ASSIGNMENT("scenario_id_assignment"),
 	SUGGESTED_POPULATION_SIZE("suggested_population_size"),
+	DENSE_PARTITIONS("dense partitions"),
 
 	// assignments of property values
 	GLOBAL_PROPERTY_VALUE_ASSIGNMENT("global_property"),

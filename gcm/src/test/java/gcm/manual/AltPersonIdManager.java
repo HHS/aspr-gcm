@@ -1,4 +1,4 @@
-package gcm.manual.altpeople;
+package gcm.manual;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,19 +7,28 @@ import gcm.scenario.PersonId;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.PersonIdManager;
+import gcm.simulation.PersonIdManagerImpl;
 import gcm.util.MemoryPartition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class AltPersonIdManager implements PersonIdManager{
+/**
+ * An alternative to {@link PersonIdManagerImpl} that can be initialized from a
+ * null {@linkplain Context}. Used for testing.
+ * 
+ * @author Shawn Hatch
+ *
+ */
+
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
+public final class AltPersonIdManager implements PersonIdManager {
 	/*
 	 * We keep the person records in a list rather than a map so that we can
 	 * retrieve a person record by index (personId).
 	 */
 	private List<PersonId> personIds = new ArrayList<>();
-	
-	@Override	
+
+	@Override
 	public boolean personIndexExists(int personId) {
 		boolean result = false;
 		if ((personId >= 0) && (personId < personIds.size())) {
@@ -48,13 +57,13 @@ public final class AltPersonIdManager implements PersonIdManager{
 	}
 
 	@Override
-	public PersonId addPersonId() {	
+	public PersonId addPersonId() {
 		PersonId personId = new PersonId(personIds.size());
 		personIds.add(personId);
 		return personId;
-		
+
 	}
-	
+
 	@Override
 	public PersonId getCleanedPersonId(final PersonId personId) {
 		if (personId == null) {
@@ -62,7 +71,7 @@ public final class AltPersonIdManager implements PersonIdManager{
 		}
 
 		if (!personExists(personId)) {
-			throw new RuntimeException("Person does not exist "+personId);
+			throw new RuntimeException("Person does not exist " + personId);
 		}
 		return personIds.get(personId.getValue());
 	}
@@ -101,20 +110,19 @@ public final class AltPersonIdManager implements PersonIdManager{
 	@Override
 	public void removePerson(PersonId personId) {
 		if (!personExists(personId)) {
-			throw new RuntimeException("Person does not exist "+personId);
+			throw new RuntimeException("Person does not exist " + personId);
 		}
 		personIds.set(personId.getValue(), null);
 	}
-	
+
 	@Override
-	public void init(Context context) {		
-				
+	public void init(Context context) {
+		// do nothing
 	}
 
 	@Override
 	public void collectMemoryLinks(MemoryPartition memoryPartition) {
-
-		
+		// do nothing
 	}
 
 }

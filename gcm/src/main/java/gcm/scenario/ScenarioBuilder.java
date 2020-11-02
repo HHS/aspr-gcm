@@ -716,5 +716,10 @@ public interface ScenarioBuilder {
 	 * 
 	 */
 	public void setSuggestedPopulationSize(int suggestedPopulationSize);
+	
+	/**
+	 * Set the policy of using dense partitions for all partitions in the simulation.
+	 */
+	public void setUseDensePartitions(boolean useDensePartitions);
 
 }

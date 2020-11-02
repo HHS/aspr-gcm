@@ -52,6 +52,8 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	private final static class ScenarioData {
 
 		private ScenarioId scenarioId;
+		
+		private boolean useDensePartitions;
 
 		private Integer suggestedPopulationSize;
 
@@ -1201,6 +1203,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 				result.add((T) randomNumberGeneratorId);
 			}
 			return result;
+		}
+
+		@Override
+		public Boolean useDensePartitions() {
+			return scenarioData.useDensePartitions;
 		}
 
 	}
@@ -2754,6 +2761,16 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+	}
+
+	@Override
+	public void setUseDensePartitions(boolean useDensePartitions) {
+		acquireLock();
+		try {			
+			scenarioData.useDensePartitions = useDensePartitions;
+		} finally {
+			releaseLock();
+		}		
 	}
 
 }

@@ -1,67 +1,49 @@
-package gcm.util.containers.people;
-
-import java.util.ArrayList;
+package gcm.manual.altpeople;
 
 import java.util.BitSet;
-import java.util.Collection;
-import java.util.List;
 
-import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.util.FastMath;
 
-import gcm.scenario.PersonId;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.PersonIdManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-
 /**
- * 
  * PeopleContainer implementor that uses a BitSet to record a boolean value of
- * true for each person contained. Uses ~1.3 bits for each person in the ENTIRE
- * POPULATION OF THE SIMULATION.
+ * true for each person contained. Since the BitSet will tend to be the size of
+ * the full population of the simulation at approximately three bits per person,
+ * this container is preferred to a Set-based implementor when the number of
+ * people in the set exceeds 0.67% of the total population.
+ * 
+ * The tree holder class has been eliminated
  * 
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public class TreeBitSetPeopleContainer implements PeopleContainer {
-
+public class AltTreeBitSet6_SplitArraySmooth implements AltPeopleContainer {
+	
 	private final int blockSize;
 	private int[] intNodes;
 	private short[] shortNodes;
 	private byte[] byteNodes;
-	private int blockStartingIndex;
+	private int blockStartingIndex;		
 	private int exclusizeMaxId;
 	private int size;
-
+	
 	// bitSet holds the values for each person
 	private BitSet bitSet;
 	// the tree holds summation nodes in an array that is length two the
 	// power
-	// private TreeHolder treeHolder;
+	//private TreeHolder treeHolder;
 
-	private final PersonIdManager personIdManager;
-
-	public TreeBitSetPeopleContainer(PersonIdManager personIdManager, PeopleContainer peopleContainer) {
-		this(personIdManager);
-		for (PersonId personId : peopleContainer.getPeople()) {
-			add(personId);
-		}
-	}
-
-	public TreeBitSetPeopleContainer(PersonIdManager personIdManager) {
-		blockSize = 63;
-		this.personIdManager = personIdManager;
-		// initialize the size of the bitSet to that of the full population,
-		// including removed people
-		int capacity = personIdManager.getPersonIdLimit();
+	public AltTreeBitSet6_SplitArraySmooth(int capacity, int blockSize) {
+		this.blockSize = blockSize;
 		bitSet = new BitSet(capacity);
 		initTrees(capacity, false);
 	}
 
 	private void initTrees(int capacity, boolean fillUllage) {
-
+		
 		long baseLayerBlockCount = capacity / blockSize;
 		if (capacity % blockSize != 0) {
 			baseLayerBlockCount++;
@@ -75,12 +57,16 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			nodeCount *= 2;
 		}
 		blockStartingIndex = 1 << baseLayerPower;
-
+		
+		
 		if (fillUllage) {
 			baseLayerBlockCount = blockStartingIndex;
 		}
 
 		exclusizeMaxId = (int) baseLayerBlockCount * blockSize;
+	
+
+	
 
 		int byteNodeCount = 0;
 		int shortNodeCount = 0;
@@ -89,7 +75,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		long maxNodeValue = blockSize;
 		for (long power = baseLayerPower; power >= 0; power--) {
 			long nodesOnLayer;
-			if (power == baseLayerPower) {
+			if (power == baseLayerPower ) {
 				nodesOnLayer = baseLayerBlockCount;
 			} else {
 				nodesOnLayer = 1 << power;
@@ -111,12 +97,13 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			byteNodeCount++;
 		}
 
+
 		intNodes = new int[intNodeCount];
 		shortNodes = new short[shortNodeCount];
 		byteNodes = new byte[byteNodeCount];
 
 	}
-
+	
 	private int get(int index) {
 		if (index < intNodes.length) {
 			return intNodes[index];
@@ -129,22 +116,24 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		return byteNodes[index];
 	}
 
+	
 	/*
 	 * Grows the tree to allow the given pid to exist, filling the ullage in the
 	 * base layer of the tree as required
 	 */
-	private void grow(int pid) {
+	private void grow(int pid) {		
 		int capacity = pid + 1;
-
+		
+		
 		BitSet oldBitSet = bitSet;
-
+		
 		initTrees(capacity, true);
 		bitSet = new BitSet(capacity);
-
+		
 		size = 0;
 		for (int i = 0; i < exclusizeMaxId; i++) {
 			if (oldBitSet.get(i)) {
-				add(personIdManager.getBoxedPersonId(i));
+				add(i);
 			}
 		}
 	}
@@ -198,9 +187,10 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 //		treeHolder = newTreeHolder;
 //	}
 
+	
+
 	@Override
-	public boolean add(PersonId personId) {
-		int value = personId.getValue();
+	public boolean add(int value) {
 
 		// do we need to grow?
 		if (value >= exclusizeMaxId) {
@@ -217,14 +207,14 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			 */
 			while (block > 0) {
 				increment(block);
-				block /= 2;
+				block /=2;
 			}
 			size++;
 			return true;
 		}
 		return false;
 	}
-
+	
 	private void increment(int index) {
 
 		if (index < intNodes.length) {
@@ -241,14 +231,13 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			}
 		}
 	}
-
+	
 	@Override
-	public boolean remove(PersonId personId) {
-		int value = personId.getValue();
+	public boolean remove(int value) {
 		/*
 		 * If the person is not contained, then don't try to remove them. This protects
 		 * us from removals that are >= exclusizeMaxId.
-		 */
+		 */		
 		if (bitSet.get(value)) {
 			bitSet.set(value, false);
 			// select the block(index) that will receive the bit flip.
@@ -259,14 +248,14 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			 */
 			while (block > 0) {
 				decrement(block);
-				block /= 2;
+				block /=2;
 			}
 			size--;
 			return true;
 		}
 		return false;
 	}
-
+	
 	private void decrement(int index) {
 		if (index < intNodes.length) {
 			intNodes[index]--;
@@ -289,13 +278,15 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 	}
 
 	@Override
-	public boolean contains(PersonId personId) {
-		return bitSet.get(personId.getValue());
+	public boolean contains(int value) {
+		return bitSet.get(value);
 	}
 
 	@Override
-	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
-		int index = randomGenerator.nextInt(size);
+	public int getValue(int index) {
+		if (index >= size || index < 0) {
+			return -1;
+		}
 
 		/*
 		 * We need to use an integer that is at least one, so we add one to the selected
@@ -341,31 +332,11 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 			if (bitSet.get(i)) {
 				targetCount--;
 				if (targetCount == 0) {
-					return personIdManager.getBoxedPersonId(i);
+					return i;
 				}
 			}
 		}
-		return null;
-	}
-
-	@Override
-	public List<PersonId> getPeople() {
-		List<PersonId> result = new ArrayList<>(size());
-		int n = bitSet.size();
-		for (int i = 0; i < n; i++) {
-			if (bitSet.get(i)) {
-				result.add(personIdManager.getBoxedPersonId(i));
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public void addAll(Collection<PersonId> collection) {
-		for (PersonId personId : collection) {
-			add(personId);
-		}
-
+		return -1;
 	}
 
 }

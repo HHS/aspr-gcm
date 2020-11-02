@@ -2,6 +2,7 @@ package gcm.util.containers.people;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,10 +15,8 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
 /**
- * PeopleContainer implementor that uses a LinkedHashMap to contain the people.
- * Since the LinkedHashMap uses significant overhead per person this container
- * is preferred to a BooleanContainer-based implementor when the number of
- * people in the set is less than 0.5% of the total population.
+ * PeopleContainer implementor that uses a HashMap and and ArrayList to contain
+ * the people. Uses ~ 480 bits per person contained. 
  * 
  * @author Shawn Hatch
  */
@@ -33,13 +32,21 @@ public class MapPeopleContainer implements PeopleContainer {
 		}
 	}
 
-	private Map<PersonId, Integer> map = new LinkedHashMap<>();
+	private Map<PersonId, Integer> map = new HashMap<>();
 
 	private List<PersonId> list = new ArrayList<>();
 
 	@Override
 	public List<PersonId> getPeople() {
-		return new ArrayList<>(map.keySet());
+		List<PersonId> result = new ArrayList<>(map.keySet().size());
+
+		for (PersonId personId : list) {
+			if (personId != null) {
+				result.add(personId);
+			}
+		}
+
+		return result;
 	}
 
 	@Override

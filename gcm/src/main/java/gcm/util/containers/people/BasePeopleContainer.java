@@ -87,7 +87,7 @@ public class BasePeopleContainer implements PeopleContainer {
 		case MAP:
 			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.TREE_BIT_SET;
-				internalPeopleContainer = new TreeBitSetPeopleContainer(context, internalPeopleContainer);
+				internalPeopleContainer = new TreeBitSetPeopleContainer(context.getPersonIdManager(), internalPeopleContainer);
 			}
 			break;
 		default:

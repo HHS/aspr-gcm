@@ -14,21 +14,22 @@ import gcm.util.TimeElapser;
 public class MT_AltBitSet {
 	private final static int POPULATION_SIZE = 30_000_000;
 
-	private static enum BitSetType {
+	private static enum BitSetType {		
 		BASE, //
 		TREE_HOLDER, //
 		BLOCK_SIZED, //
 		ULLAGE,//
-		SPLIT_ARRAY;//
+		SPLIT_ARRAY,//
+		SPLIT_ARRAY_SMOOTH;
 	}
 
 	@Test
 	public void test() {
-		//testBitSetType(BitSetType.BASE, 64);
+		testBitSetType(BitSetType.SPLIT_ARRAY_SMOOTH, 64);
 		
-		for (BitSetType bitSetType : BitSetType.values()) {
-			testBitSetType(bitSetType, 63);
-		}
+//		for (BitSetType bitSetType : BitSetType.values()) {
+//			testBitSetType(bitSetType, 63);
+//		}
 	}
 
 	private void testBitSetType(BitSetType bitSetType, int blockSize) {
@@ -64,26 +65,31 @@ public class MT_AltBitSet {
 		case SPLIT_ARRAY:
 			tbs = new AltTreeBitSet5_SplitArray(capacity, blockSize);
 			break;
+		case SPLIT_ARRAY_SMOOTH:
+			tbs = new AltTreeBitSet6_SplitArraySmooth(capacity/10, blockSize);
+			break;
 		default:
 			throw new RuntimeException("unhandled bit set type");
 		}
 
+		
+		TimeElapser timeElapser = new TimeElapser();
 		for (Integer i : values) {			
 			tbs.add(i);
 		}
-		
+		System.out.println(bitSetType + " add time " + timeElapser.getElapsedMilliSeconds());
 
 		// show that the number of people in the bit set is correct
 		assertEquals(values.size(),tbs.size());
 
-		TimeElapser timeElapser = new TimeElapser();
+		timeElapser.reset();
 
 		for (int i = 0; i < values.size(); i++) {
 			assertEquals(values.get(i).intValue(), tbs.getValue(i));
 			//tbs.getValue(i);
 		}
 
-		System.out.println(bitSetType + " " + timeElapser.getElapsedMilliSeconds());
+		System.out.println(bitSetType + " retrieval time " + timeElapser.getElapsedMilliSeconds());
 
 	}
 

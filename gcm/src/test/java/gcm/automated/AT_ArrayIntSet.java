@@ -104,7 +104,13 @@ public class AT_ArrayIntSet {
 		assertEquals(getPersonIds(), new LinkedHashSet<>(intSet.getValues()));
 		
 		
-		
+		intSet = new ArrayIntSet<>(10);
+		for(int i = 0;i<100;i++) {
+			intSet.add(new PersonId(8*i));
+		}
+		for(int i = 0;i<800;i++) {
+			intSet.remove(new PersonId(i));
+		}
 		
 		
 		intSet = new ArrayIntSet<>(5);

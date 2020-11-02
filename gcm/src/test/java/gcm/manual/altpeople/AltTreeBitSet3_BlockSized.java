@@ -13,6 +13,8 @@ import gcm.util.annotations.TestStatus;
  * this container is preferred to a Set-based implementor when the number of
  * people in the set exceeds 0.67% of the total population.
  * 
+ * Block size is now chosen in construction and does not have to be a power of 2
+ * 
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)

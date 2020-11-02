@@ -207,7 +207,7 @@ public class TradeSpace {
 		// System.out.println(peeps.toString().replaceAll(",", "\n"));
 
 		// int blockSize = i + 1;
-		int blockSize = 63;
+		int blockSize = 1023;
 		TradeSpace tradeSpace = new TradeSpace(350_000_000, blockSize, false);
 		tradeSpace.execute();
 

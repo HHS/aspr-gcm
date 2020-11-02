@@ -15,6 +15,9 @@ import gcm.util.annotations.TestStatus;
  * this container is preferred to a Set-based implementor when the number of
  * people in the set exceeds 0.67% of the total population.
  * 
+ * 
+ * The tree is now split across int, short and byte array structures
+ * 
  * @author Shawn Hatch
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
@@ -22,31 +25,10 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 
 	private static class TreeHolder {
 		private final int blockStartingIndex;
-
-		public int getBlockStartingIndex() {
-			return blockStartingIndex;
-		}
-
 		// maxPid is the maximum(exclusive) person id value(int) that can be
 		int maxPid;
 
-		public int getMaxPid() {
-			return maxPid;
-		}
-
-		private long maxByteValue = 127;
-		private long maxShortValue = 32767;
-
 		public TreeHolder(int capacity, int blockSize, boolean fillUllage) {
-			System.out.println("AltTreeBitSet5_SplitArray.TreeHolder.TreeHolder() " + capacity);
-
-//			if (useExtendedValues) {
-//				maxByteValue = 127 + 128;
-//				maxShortValue = 32767 + 32768;
-//			} else {
-//				maxByteValue = 127;
-//				maxShortValue = 32767;
-//			}
 			long baseLayerBlockCount = capacity / blockSize;
 			if (capacity % blockSize != 0) {
 				baseLayerBlockCount++;
@@ -80,9 +62,9 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 				} else {
 					nodesOnLayer = 1 << power;
 				}
-				if (maxNodeValue <= maxByteValue) {
+				if (maxNodeValue <= Byte.MAX_VALUE) {
 					byteNodeCount += nodesOnLayer;
-				} else if (maxNodeValue <= maxShortValue) {
+				} else if (maxNodeValue <= Short.MAX_VALUE) {
 					shortNodeCount += nodesOnLayer;
 				} else {
 					intNodeCount += nodesOnLayer;
@@ -97,14 +79,12 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 				byteNodeCount++;
 			}
 
-			System.out.println(intNodeCount + shortNodeCount + byteNodeCount);
 
 			intNodes = new int[(int) intNodeCount];
 			shortNodes = new short[(int) shortNodeCount];
 			byteNodes = new byte[(int) byteNodeCount];
 
 		}
-
 		private int[] intNodes;
 		private short[] shortNodes;
 		private byte[] byteNodes;
@@ -175,13 +155,12 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 	 * base layer of the tree as required
 	 */
 	private void grow(int pid) {
-		System.out.println("AltTreeBitSet5_SplitArray.grow()");
 		int capacity = pid + 1;
 		BitSet oldBitSet = bitSet;
 		size = 0;
 		treeHolder = new TreeHolder(capacity, blockSize, true);
 		bitSet = new BitSet(capacity);
-		for (int i = 0; i < treeHolder.getMaxPid(); i++) {
+		for (int i = 0; i < treeHolder.maxPid; i++) {
 			if (oldBitSet.get(i)) {
 				add(i);
 			}
@@ -243,7 +222,7 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 	public boolean add(int value) {
 
 		// do we need to grow?
-		if (value >= treeHolder.getMaxPid()) {
+		if (value >= treeHolder.maxPid) {
 			grow(value);
 		}
 		// add the value
@@ -251,7 +230,7 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 			bitSet.set(value);
 			// select the block(index) that will receive the bit flip.
 			int block = value / blockSize;
-			block += treeHolder.getBlockStartingIndex();
+			block += treeHolder.blockStartingIndex;
 			/*
 			 * Propagate the change up through the tree to the root node
 			 */
@@ -281,7 +260,7 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 			// int block = pid >> BLOCK_POWER;
 			int block = value / blockSize;
 			// block += (tree.length >> 1);
-			block += treeHolder.getBlockStartingIndex();// (treeHolder.length() >> 1);
+			block += treeHolder.blockStartingIndex;// (treeHolder.length() >> 1);
 			/*
 			 * Propagate the change up through the tree to the root node
 			 */
@@ -324,21 +303,20 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 		 * row(last half) in the tree. This is the row that maps to the blocks in the
 		 * bitset.
 		 */
-		// int midTreeIndex = tree.length >> 1;
-		int midTreeIndex = treeHolder.getBlockStartingIndex();
 		int treeIndex = 1;
 
 		/*
 		 * Walk downward in the tree. If we move to the right, we have to reduce the
 		 * target value.
 		 */
-		while (treeIndex < midTreeIndex) {
+		while (treeIndex < treeHolder.blockStartingIndex) {
 			// move to the left child
 			treeIndex = treeIndex << 1;
 			// if the left child is less than the target count, then reduce the target count
 			// by the number in the left child and move to the right child
-			if (treeHolder.get(treeIndex) < targetCount) {
-				targetCount -= treeHolder.get(treeIndex);
+			int nodeValue = treeHolder.get(treeIndex);
+			if (nodeValue < targetCount) {
+				targetCount -= nodeValue;
 				treeIndex++;
 			}
 
@@ -349,7 +327,7 @@ public class AltTreeBitSet5_SplitArray implements AltPeopleContainer {
 		 * in the bitset
 		 */
 		// int bitSetStartIndex = (treeIndex - midTreeIndex) << BLOCK_POWER;
-		int bitSetStartIndex = (treeIndex - midTreeIndex) * blockSize;
+		int bitSetStartIndex = (treeIndex - treeHolder.blockStartingIndex) * blockSize;
 		int bitSetStopIndex = bitSetStartIndex + blockSize;
 		/*
 		 * Finally, we scan the bits and reduce the target count until it reaches zero.

@@ -331,24 +331,31 @@ public final class MemSizer {
 	 * accounted for previously will be ignored.
 	 */
 	private void push(final Object obj) {
+		
 
 		if (obj == null) {
+//			System.out.println("rejecting null");
 			return;
 		}
 
 		final Class<?> c = obj.getClass();
 
 		if (excludedClasses.contains(c)) {
+//			System.out.println("rejecting excluded class");
 			return;
 		}
 
 		if (excluded.contains(obj)) {
+//			System.out.println("rejecting excluded object");
 			return;
 		}
 
 		if (explored.contains(obj)) {
+//			System.out.println("rejecting explored object");
 			return;
 		}
+		
+//		System.out.println("pushing "+obj.getClass());
 
 		/*
 		 * Make sure that we cannot account for this instance again

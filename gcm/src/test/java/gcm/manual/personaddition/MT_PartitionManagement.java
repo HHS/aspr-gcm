@@ -40,7 +40,6 @@ import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.util.MemSizer;
 import gcm.util.TimeElapser;
 
 public class MT_PartitionManagement {

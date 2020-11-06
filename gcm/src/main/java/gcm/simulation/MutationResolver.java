@@ -72,6 +72,8 @@ public interface MutationResolver extends Element {
 	public void setStageOffer(final StageId stageId, final boolean offer);
 
 	public PersonId addPerson(final RegionId regionId, final CompartmentId compartmentId);
+	
+	public PersonId addPerson(PersonConstructionInfo personConstructionInfo);
 
 	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue);
 

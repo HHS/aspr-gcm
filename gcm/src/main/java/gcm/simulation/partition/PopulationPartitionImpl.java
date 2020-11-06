@@ -113,9 +113,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				return false;
 			}
 			// We are guaranteed that obj is a Key
-//			if (getClass() != obj.getClass()) {
-//				return false;
-//			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
 			Key other = (Key) obj;
 //			if (!Arrays.deepEquals(keys, other.keys)) {
 //				return false;
@@ -176,7 +176,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private int personCount;
 
 	private boolean isEmpty() {
-		
+
 		return personCount == 0;
 	}
 
@@ -206,6 +206,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	private StochasticsManager stochasticsManager;
+	
+	
 
 	public PopulationPartitionImpl(final Object identifierKey, final Context context, final PartitionInfo partitionInfo,
 			final ComponentId owningComponentId) {
@@ -397,7 +399,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		evaluate(personId);
 		removePerson(personId);
 	}
-	
+
 	private Key getKeyForPerson(PersonId personId) {
 		if (personId == null) {
 			return null;
@@ -406,13 +408,13 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return null;
 		}
 		Key key = personToKeyMap.get(personId.getValue());
-		
+
 		return key;
 	}
-	
+
 	@Override
 	public boolean contains(PersonId personId) {
-		return getKeyForPerson(personId)!= null;	
+		return getKeyForPerson(personId) != null;
 	}
 
 	private boolean removePerson(PersonId personId) {
@@ -451,7 +453,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 		Key currentKey = getKeyForPerson(personId);
-		if(currentKey == null) {
+		if (currentKey == null) {
 			return;
 		}
 
@@ -493,7 +495,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 		Key currentKey = getKeyForPerson(personId);
-		if(currentKey == null) {
+		if (currentKey == null) {
 			return;
 		}
 
@@ -536,7 +538,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 		Key currentKey = getKeyForPerson(personId);
-		if(currentKey == null) {
+		if (currentKey == null) {
 			return;
 		}
 
@@ -578,7 +580,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 		Key currentKey = getKeyForPerson(personId);
-		if(currentKey == null) {
+		if (currentKey == null) {
 			return;
 		}
 
@@ -619,7 +621,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			return;
 		}
 		Key currentKey = getKeyForPerson(personId);
-		if(currentKey == null) {
+		if (currentKey == null) {
 			return;
 		}
 
@@ -916,14 +918,12 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		return key;
 	}
 
-	
-
 	@Override
 	public boolean contains(PersonId personId, LabelSet labelSet) {
 		Key key = getKeyForPerson(personId);
-		if (key==null) {
+		if (key == null) {
 			return false;
-		}		
+		}
 		LabelSet fullLabelSet = labelSetInfoMap.get(key);
 		return fullLabelSet.isSubsetMatch(labelSet);
 	}
@@ -1097,7 +1097,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				PeopleContainer peopleContainer = keyToPeopleMap.get(keyIterator.next());
 				candidateCount += peopleContainer.size();
 			}
-			if (keyForExcludedPersonId!=null) {				
+			if (keyForExcludedPersonId != null) {
 				candidateCount--;
 			}
 			if (candidateCount > 0) {
@@ -1198,5 +1198,39 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	public PartitionInfo getPartitionInfo() {
 		return partitionInfo;
 	}
+
+//	private long reportObject(Object object, String label) {
+//		MemSizer memSizer = context.getContextFreeMemSizer();
+//		memSizer.excludeClass(PersonId.class);
+//		long result = memSizer.getByteCount(object);
+//		System.out.println(label + " = " + result);
+//		return result;
+//	}
+
+//	@Override
+//	public void report() {
+//		// TODO Auto-generated method stub
+//
+//
+//		reportObject(personPropertyLabelIndexes, "personPropertyLabelIndexes");
+//		reportObject(resourceLabelIndexes, "resourceLabelIndexes");
+//		
+//		long totalContainerBytes = 0;
+//		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+//			totalContainerBytes +=
+//			reportObject(peopleContainer,"peopleContainer");			
+//		}
+//		reportObject(keyToPeopleMap, "keyToPeopleMap");
+//		System.out.println("totalContainerBytes = "+totalContainerBytes);
+//		reportObject(personToKeyMap, "personToKeyMap");
+//		reportObject(keyMap, "keyMap");
+//		reportObject(labelSetInfoMap, "labelSetInfoMap");
+//		reportObject(labelManagers, "labelManagers");
+//		reportObject(owningComponentId, "owningComponentId");
+//		reportObject(partitionInfo, "partitionInfo");
+//		reportObject(filterInfo, "filterInfo");
+//		reportObject(filterEvaluator, "filterEvaluator");
+//		reportObject(identifierKey, "identifierKey");
+//	}
 
 }

@@ -43,13 +43,8 @@ import gcm.simulation.group.GroupSampler;
 import gcm.simulation.group.GroupSamplerInfo;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.index.IndexedPopulationManager;
-import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.FilterInfo;
-import gcm.simulation.partition.LabelSet;
-import gcm.simulation.partition.Partition;
-import gcm.simulation.partition.PartitionInfo;
-import gcm.simulation.partition.PartitionSampler;
 import gcm.simulation.partition.FilterInfo.CompartmentFilterInfo;
 import gcm.simulation.partition.FilterInfo.GroupMemberFilterInfo;
 import gcm.simulation.partition.FilterInfo.GroupTypesForPersonFilterInfo;
@@ -58,6 +53,11 @@ import gcm.simulation.partition.FilterInfo.GroupsForPersonFilterInfo;
 import gcm.simulation.partition.FilterInfo.PropertyFilterInfo;
 import gcm.simulation.partition.FilterInfo.RegionFilterInfo;
 import gcm.simulation.partition.FilterInfo.ResourceFilterInfo;
+import gcm.simulation.partition.LabelSet;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionInfo;
+import gcm.simulation.partition.PartitionManager;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.StopWatch;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -1405,7 +1405,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
-	
+
 	public static StopWatch indexStopWatch = new StopWatch();
 
 	@Override
@@ -1415,32 +1415,32 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationIndexKeyNotNull(key);
 			validatePopulationIndexExists(key);
 			validatePersonExists(excludedPersonId);
-			//indexStopWatch.start();
+			// indexStopWatch.start();
 			final PersonId personId = indexedPopulationManager.sampleIndex(key, excludedPersonId);
-			//indexStopWatch.stop();
+			// indexStopWatch.stop();
 			return Optional.ofNullable(personId);
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
-	
+
 	public static StopWatch partitionStopWatch = new StopWatch();
-	
+
 	@Override
 	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
 		externalAccessManager.acquireReadAccess();
 		try {
 //			partitionStopWatch.start();
 			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);			
+			validatePopulationPartitionExists(key);
 			validatePartitionSampler(key, partitionSampler);
 //			partitionStopWatch.stop();
 
 			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
 					partitionSampler);
-			
+
 			validateStochasticPersonSelection(stochasticPersonSelection);
-			
+
 			return Optional.ofNullable(stochasticPersonSelection.getPersonId());
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -3850,14 +3850,14 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseWriteAccess();
 		}
 	}
-	
+
 	@Override
 	public void observePartitionChange(boolean observe, Object key) {
 		externalAccessManager.acquireWriteAccess();
 		try {
 			validateComponentHasFocus();
 			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);			
+			validatePopulationPartitionExists(key);
 			mutationResolver.observePartitionChange(observe, key);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
@@ -4034,13 +4034,13 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
-	
+
 	@Override
 	public int getPartitionSize(final Object key) {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);			
+			validatePopulationPartitionExists(key);
 			return partitionManager.getPersonCount(key);
 		} finally {
 			externalAccessManager.releaseReadAccess();
@@ -4094,7 +4094,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		if (partitionSampler == null) {
 			throwModelException(SimulationErrorType.NULL_PARTITION_SAMPLER);
 		}
-		
+
 		if (partitionSampler.getLabelSet().isPresent()) {
 			LabelSet labelSet = partitionSampler.getLabelSet().get();
 			validateLabelSet(key, labelSet);
@@ -4111,10 +4111,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 	}
-
-	
-	
-	
 
 	private void validateGroupSampler(GroupSampler groupSampler) {
 		if (groupSampler == null) {
@@ -4153,10 +4149,52 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireReadAccess();
 		try {
 			validatePopulationPartitionKeyNotNull(key);
-			validatePopulationPartitionExists(key);			
+			validatePopulationPartitionExists(key);
 			return partitionManager.getPeople(key);
 		} finally {
 			externalAccessManager.releaseReadAccess();
-		}	}
+		}
+	}
 
+	@Override
+	public PersonId addPerson(PersonConstructionInfo personConstructionInfo) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validateFocalComponent(true, false, false, false, null, null, null);
+
+			RegionId regionId = personConstructionInfo.getRegionId();
+			CompartmentId compartmentId = personConstructionInfo.getCompartmentId();
+			validateCompartmentId(compartmentId);
+			validateRegionId(regionId);
+			
+			Map<PersonPropertyId, Object> propertyValues = personConstructionInfo.getPropertyValues();
+			for (PersonPropertyId personPropertyId : propertyValues.keySet()) {
+				Object personPropertyValue = propertyValues.get(personPropertyId);
+				validatePersonPropertyId(personPropertyId);
+				validatePersonPropertyValueNotNull(personPropertyValue);
+				final PropertyDefinition propertyDefinition = propertyDefinitionManager
+						.getPersonPropertyDefinition(personPropertyId);
+				validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
+				validatePropertyMutability(propertyDefinition);				
+			}
+
+			Map<ResourceId, Long> resourceValues = personConstructionInfo.getResourceValues();
+			for (ResourceId resourceId : resourceValues.keySet()) {
+				validateResourceId(resourceId);
+				Long amount = resourceValues.get(resourceId);
+				validateNonnegativeResourceAmount(amount);
+			}
+
+			return mutationResolver.addPerson(personConstructionInfo);
+
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}
+	}
+
+
+//	public long getMemSizeOfPartition(Object partitionId) {
+//		return ((PartitionManagerImpl)partitionManager).getMemSizeOfPartition(partitionId);
+//		
+//	}
 }

@@ -259,4 +259,11 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		return new StochasticPersonSelection(result,false);		
 	}
 
+//	@Override
+//	public void report() {
+//		// TODO Auto-generated method stub
+//		System.out.println("unimplemented");
+//		
+//	}
+
 }

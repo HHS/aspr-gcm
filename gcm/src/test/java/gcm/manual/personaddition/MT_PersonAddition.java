@@ -1,17 +1,12 @@
 package gcm.manual.personaddition;
 
 import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
-import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
-import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefinitions;
 import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
 import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
-import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static org.junit.Assert.assertEquals;
 
-import java.sql.Time;
 import java.util.List;
 import java.util.Set;
 
@@ -20,14 +15,11 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import gcm.automated.support.EnvironmentSupport;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
-import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.replication.Replication;
 import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
@@ -35,10 +27,10 @@ import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
-import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
+import gcm.simulation.PersonConstructionInfo;
+import gcm.simulation.PersonConstructionInfo.Builder;
 import gcm.simulation.Simulation;
-import gcm.simulation.SimulationErrorType;
 import gcm.util.TimeElapser;
 
 public class MT_PersonAddition {
@@ -77,15 +69,14 @@ public class MT_PersonAddition {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
 		addStandardComponentsAndTypes(scenarioBuilder);
-		//addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
 		
-		for(int i = 0;i<propertyCount;i++) {
-			
+		
+		for(int i = 0;i<propertyCount;i++) {			
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
-					.setDefaultValue(3.45)//
-					.setMapOption(MapOption.ARRAY)//
+					.setDefaultValue(5.5)//
+					.setMapOption(MapOption.NONE)//
 					.setPropertyValueMutability(true)//
-					.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
+					//.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 					.setType(Double.class)//
 					.build();//			
 			
@@ -99,11 +90,8 @@ public class MT_PersonAddition {
 
 		Replication replication = getReplication(randomGenerator);
 
-		
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+	
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, 2, (environment) -> {
 			TimeElapser timeElapser = new TimeElapser();
 			
 			for (int i = 0; i < populationSize; i++) {
@@ -116,6 +104,7 @@ public class MT_PersonAddition {
 			List<PersonId> people = environment.getPeople();
 			
 			timeElapser.reset();
+			
 			for(PersonPropertyId personPropertyId : personPropertyIds) {
 				for (PersonId personId : people) {
 					environment.setPersonPropertyValue(personId, personPropertyId, randomGenerator.nextDouble());
@@ -123,6 +112,26 @@ public class MT_PersonAddition {
 			}
 			
 			System.out.println("property resets "+timeElapser.getElapsedMilliSeconds());
+
+		});
+		
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, 1, (environment) -> {
+			
+			TimeElapser timeElapser = new TimeElapser();
+			Set<PersonPropertyId> personPropertyIds = environment.getPersonPropertyIds();
+			for (int i = 0; i < populationSize; i++) {
+				Builder builder = PersonConstructionInfo.builder()//
+				.setPersonRegionId(TestRegionId.getRandomRegionId(randomGenerator))//
+				.setPersonCompartmentId(TestCompartmentId.getRandomCompartmentId(randomGenerator));//
+				
+				for(PersonPropertyId personPropertyId : personPropertyIds) {
+					builder.setPersonPropertyValue(personPropertyId, randomGenerator.nextDouble());
+				}	
+				
+				PersonConstructionInfo personConstructionInfo = builder.build();
+				environment.addPerson(personConstructionInfo);
+			}
+			System.out.println("person addition with properties "+timeElapser.getElapsedMilliSeconds());
 
 		});
 

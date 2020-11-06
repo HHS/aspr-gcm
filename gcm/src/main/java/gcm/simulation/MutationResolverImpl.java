@@ -466,7 +466,8 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 		indexedPopulationManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
 				personPropertyValue);
-		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId,oldValue,personPropertyValue);
+		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
+				personPropertyValue);
 		reportsManager.handlePersonPropertyValueAssignment(personId, personPropertyId, oldValue);
 	}
 
@@ -590,7 +591,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupAddition(groupId, personId);
-		populationPartitionManager.handlePersonGroupAddition(groupId,personId);
+		populationPartitionManager.handlePersonGroupAddition(groupId, personId);
 		reportsManager.handleGroupMembershipAddition(groupId, personId);
 	}
 
@@ -640,7 +641,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		// externalAccessManager.releaseExternalReadAccessLock();
 		// }
 		indexedPopulationManager.addIndex(componentId, filter, key);
-		//TODO why do we observe index removal and not addition?
+		// TODO why do we observe index removal and not addition?
 	}
 	/*
 	 * Creates the information needed to support reports after the stage has been
@@ -1140,7 +1141,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 			for (PersonId personId : peopleForGroup) {
 				indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
-				populationPartitionManager.handlePersonGroupRemoval(groupId,personId);
+				populationPartitionManager.handlePersonGroupRemoval(groupId, personId);
 			}
 			personGroupManger.removeGroup(groupId);
 			propertyManager.handleGroupRemoval(groupId);
@@ -1235,7 +1236,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 		indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
-		populationPartitionManager.handlePersonGroupRemoval(groupId,personId);
+		populationPartitionManager.handlePersonGroupRemoval(groupId, personId);
 		reportsManager.handleGroupMembershipRemoval(groupId, personId);
 	}
 
@@ -1651,7 +1652,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		}
 
 	}
-	
+
 	@Override
 	public void observePartitionChange(boolean observe, Object key) {
 		externalAccessManager.acquireGlobalReadAccessLock();
@@ -1701,9 +1702,9 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void addPartition(ComponentId componentId,
-			Partition partition, Object key) {
-		//TODO -- review methods that require callbacks and perhaps lock down external write access?
+	public void addPartition(ComponentId componentId, Partition partition, Object key) {
+		// TODO -- review methods that require callbacks and perhaps lock down external
+		// write access?
 		// externalAccessManager.acquireExternalReadAccessLock();
 		// try {
 		//
@@ -1714,9 +1715,42 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void removePartition(Object key) {		
-		populationPartitionManager.removePartition(key);	
+	public void removePartition(Object key) {
+		populationPartitionManager.removePartition(key);
 		observationManager.handlePartitionRemoval(key);
 	}
 
+	@Override
+	public PersonId addPerson(PersonConstructionInfo personConstructionInfo) {
+		PersonId personId;
+		externalAccessManager.acquireGlobalReadAccessLock();
+		try {
+			personId = personIdManager.addPersonId();
+			personLocationManger.addPerson(personId, personConstructionInfo.getRegionId(),
+					personConstructionInfo.getCompartmentId());
+			observationManager.handlePersonAddition(personId);
+			propertyManager.handlePersonAddition(personId);
+
+			Map<PersonPropertyId, Object> propertyValues = personConstructionInfo.getPropertyValues();
+			for (PersonPropertyId personPropertyId : propertyValues.keySet()) {
+				Object personPropertyValue = propertyValues.get(personPropertyId);				
+				propertyManager.setPersonPropertyValue(personId, personPropertyId, personPropertyValue);
+				observationManager.handlePersonPropertyChange(personId, personPropertyId);
+			}
+			
+			Map<ResourceId, Long> resourceValues = personConstructionInfo.getResourceValues();
+			for (ResourceId resourceId : resourceValues.keySet()) {
+				Long amount = resourceValues.get(resourceId);
+				resourceManager.incrementPersonResourceLevel(resourceId, personId, amount);
+				observationManager.handlePersonResourceChange(personId, resourceId);
+			}
+		} finally {
+			externalAccessManager.releaseGlobalReadAccessLock();
+		}
+		indexedPopulationManager.handlePersonAddition(personId);
+		populationPartitionManager.handlePersonAddition(personId);
+		reportsManager.handlePersonAddition(personId);
+
+		return personId;
+	}
 }

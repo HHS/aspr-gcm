@@ -74,7 +74,7 @@ public abstract class AbstractPropertyManager implements PersonPropertyManager {
 	private IntSet<PersonId> newIntSet() {
 		switch (mapOption) {
 		case ARRAY:
-			return new ArrayIntSet<>();
+			return new ArrayIntSet<>(5);
 		case HASH:
 			return new HashIntSet<>();
 		case NONE:// fall through

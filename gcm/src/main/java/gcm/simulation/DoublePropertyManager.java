@@ -55,8 +55,9 @@ public final class DoublePropertyManager extends AbstractPropertyManager {
 		return (T) result;
 	}
 
+	
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {
+	public void setPropertyValue(PersonId personId, Object personPropertyValue) {		
 		super.setPropertyValue(personId, personPropertyValue);
 		Double d = (Double) personPropertyValue;
 		doubleValueContainer.setValue(personId.getValue(), d);

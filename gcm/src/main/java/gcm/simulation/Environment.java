@@ -212,6 +212,40 @@ public interface Environment extends Element {
 	public PersonId addPerson(final RegionId regionId, final CompartmentId compartmentId);
 
 	/**
+	 * Returns the PersonId for a new person who is given the region, compartment,
+	 * properties and resources specfied in the {@linkplain PersonConstructionInfo}
+	 *
+	 * @throws ModelException
+	 *
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_REGION_ID} if
+	 *                        the region id is unknown
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_COMPARTMENT_ID}
+	 *                        if the compartment id is unknown
+	 *                        <li>{@link SimulationErrorType#NULL_PERSON_PROPERTY_ID}
+	 *                        if the property id is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_PROPERTY_ID}
+	 *                        if the property id is unknown
+	 *                        <li>{@link SimulationErrorType#NULL_PERSON_PROPERTY_VALUE}
+	 *                        if the value is null
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_VALUE} if
+	 *                        the value is incompatible with the defined type for
+	 *                        the property
+	 *                        <li>{@link SimulationErrorType#IMMUTABLE_VALUE} if the
+	 *                        property has been defined as immutable                        
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if
+	 *                        the resource id is unknown
+	 *                        <li>{@link SimulationErrorType#NEGATIVE_RESOURCE_AMOUNT}
+	 *                        if the amount is negative
+	 *                        <li>{@link SimulationErrorType#RESOURCE_ARITHMETIC_EXCEPTION}
+	 *                        if the amount results in an overflow
+	 *                        <li>{@link SimulationErrorType#COMPONENT_LACKS_PERMISSION}
+	 *                        if the invoking component is not a global component
+	 *
+	 */
+
+	public PersonId addPerson(final PersonConstructionInfo personConstructionInfo);
+
+	/**
 	 * Adds a person to the group associated with the given group type and group
 	 * identifiers.
 	 *
@@ -1132,13 +1166,10 @@ public interface Environment extends Element {
 	public double getMaterialsProducerResourceTime(final MaterialsProducerId materialsProducerId,
 			final ResourceId resourceId);
 
-
-
-
-
 	/**
-	 * Returns a randomly contacted person from the group specified by the groupId and {@link GroupSampler}.
-	 * Optional result will reflect when no selection was possible.
+	 * Returns a randomly contacted person from the group specified by the groupId
+	 * and {@link GroupSampler}. Optional result will reflect when no selection was
+	 * possible.
 	 *
 	 * @throws ModelException
 	 *                        <li>{@link SimulationErrorType#NULL_GROUP_ID} if the
@@ -1148,12 +1179,12 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#MALFORMED_WEIGHTING_FUNCTION}
 	 *                        if the groupWeightingFunction is malformed. (some
 	 *                        evaluate to negative numbers, etc. -- note that if all
-	 *                        weights are zero then the optional will return
-	 *                        an isPresent() of false)
+	 *                        weights are zero then the optional will return an
+	 *                        isPresent() of false)
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the group sampler's randomNumberGeneratorId does not correspond to
-	 *                        an existing RandomNumberGeneratorId found in the
-	 *                        scenario.
+	 *                        if the group sampler's randomNumberGeneratorId does
+	 *                        not correspond to an existing RandomNumberGeneratorId
+	 *                        found in the scenario.
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the excludedPersonId is unknown
 	 *                        <li>{@link SimulationErrorType#NULL_GROUP_SAMPLER} if
@@ -3372,8 +3403,6 @@ public interface Environment extends Element {
 	 */
 	public void observePopulationIndexChange(final boolean observe, final Object key);
 
-	
-
 	/**
 	 * Starts or stops observation of a change to a partition
 	 *
@@ -3586,8 +3615,8 @@ public interface Environment extends Element {
 			Class<? extends Component> globalComponentClass);
 
 	/**
-	 * Returns a list of person identifiers associated with the population
-	 * partition and label set.
+	 * Returns a list of person identifiers associated with the population partition
+	 * and label set.
 	 *
 	 *
 	 * @throws ModelException
@@ -3606,7 +3635,7 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public List<PersonId> getPartitionPeople(final Object key, LabelSet labelSet);
-	
+
 	/**
 	 * Returns a list of person identifiers associated with the population
 	 * partition.
@@ -3662,7 +3691,8 @@ public interface Environment extends Element {
 	public void addPartition(Partition partition, Object key);
 
 	/**
-	 * Returns the size of the partition cells consistent with the label set for the partition.
+	 * Returns the size of the partition cells consistent with the label set for the
+	 * partition.
 	 *
 	 *
 	 * @throws ModelException
@@ -3679,7 +3709,7 @@ public interface Environment extends Element {
 	 *                        partition
 	 */
 	public int getPartitionSize(final Object key, LabelSet labelSet);
-	
+
 	/**
 	 * Returns the size of an partition.
 	 *
@@ -3787,13 +3817,15 @@ public interface Environment extends Element {
 	 *                        if the partition sampler's label set is incompatible
 	 *                        with the population partition
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the partition sampler's randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
+	 *                        if the partition sampler's randomNumberGeneratorId
+	 *                        does not correspond to an existing random Number
+	 *                        Generator Id in the scenario
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
 	 *                        the partition sampler's excluded person is unknown
 	 * 
 	 */
 	public Optional<PersonId> samplePartition(final Object key, PartitionSampler partitionSampler);
+	
 	
 
 }

@@ -575,5 +575,41 @@ public final class Context implements MemoryReportParticipant {
 	public long getPlanningQueueReportThreshold() {
 		return planningQueueReportThreshold;
 	}
+	
+//	public MemSizer getContextFreeMemSizer() {
+//		MemSizer result=  new MemSizer(false);
+//		
+//		result.excludeObject(this);
+//		result.excludeObject(replication);
+//		result.excludeObject(scenario);
+//		result.excludeObject(stochasticsManager);
+//		result.excludeObject(componentManager);
+//		result.excludeObject(reportsManager);
+//		result.excludeObject(environment);
+//		result.excludeObject(memoryReportManager);
+//		result.excludeObject(observationManager);
+//		result.excludeObject(materialsManager);
+//		result.excludeObject(resourceManager);
+//		result.excludeObject(propertyDefinitionManager);
+//		result.excludeObject(propertyManager);
+//		result.excludeObject(personLocationManger);
+//		result.excludeObject(personGroupManger);
+//		result.excludeObject(eventManager);
+//		result.excludeObject(indexedPopulationManager);
+//		result.excludeObject(partitionManager);
+//		result.excludeObject(observableEnvironment);
+//		result.excludeObject(personIdManager);
+//		result.excludeObject(externalAccessManager);
+//		result.excludeObject(mutationResolver);
+//		for(OutputItemHandler outputItemHandler :outputItemHandlers) {
+//			result.excludeObject(outputItemHandler);
+//		}
+//		result.excludeObject(outputItemManager);
+//		result.excludeObject(profileManager);
+//		result.excludeObject(planningQueueReportItemManager);
+//		result.excludeObject(simulationWarningManager);
+//		
+//		return result;
+//	}
 
 }

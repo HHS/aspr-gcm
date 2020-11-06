@@ -80,4 +80,6 @@ public interface PopulationPartition {
 	public FilterInfo getFilterInfo();
 
 	public PartitionInfo getPartitionInfo();
+	
+//	public void report();
 }

@@ -139,42 +139,9 @@ public class MT_PartitionManagement {
 		return AgeGroup.SENIOR;
 	}
 
-	@Test
-	public void test2() {
-		final long seed = SEED_PROVIDER.getSeedValue(1);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		int populationSize = 1_000;
-
-		boolean useDefaultPropertyValues = false;
-		boolean loadPopulationFirst = false;
-		boolean useArray = false;
-		
-		boolean useFilter = false;
-		boolean measureMemory = true;
-		testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,  useFilter,
-				useDefaultPropertyValues, measureMemory);
-
-	}
 	
-	@Test 
-	public void test3() {
-		List<Integer> values = new ArrayList<>();
-		
-		for(int i = 0;i<1000;i++) {
-			values.add(i);
-		}
-		
-		Map<Integer,Integer> map = new LinkedHashMap<>();
-		
-		for(Integer value : values) {
-			map.put(value, value);		
-		}
-		
-		MemSizer memSizer = new MemSizer(false);
-		System.out.println(memSizer.getByteCount(map));
-		
-	}
+	
+	
 
 	/**
 	 * 1_000_000 people
@@ -194,7 +161,7 @@ public class MT_PartitionManagement {
 	 * 
 	 */
 	@Test
-	public void test1() {
+	public void test() {
 		final long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 

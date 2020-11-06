@@ -13,18 +13,14 @@ import gcm.scenario.PersonId;
 import gcm.util.MemSizer;
 import gcm.util.TimeElapser;
 import gcm.util.containers.people.IntSetPeopleContainer;
-import gcm.util.containers.people.MapPeopleContainer;
 import gcm.util.containers.people.PeopleContainer;
 import gcm.util.containers.people.TreeBitSetPeopleContainer;
-import gcm.util.containers.people.TreeBitSetPeopleContainer_Fast;
 
 public class MT_MapPeopleContainer {
 
 	private static enum ContainerType {
-		MAP, // 3_000_000 adds 135.8 milliseconds, 472.5 bits per person
 		INTSET, //
-		TREEBITSET1, // 3_000_000 adds 58.9 milliseconds, 2.40 bits per person
-		TREEBITSET2;// 3_000_000 adds 124.6 milliseconds, 1.39 bits per person
+		TREEBITSET;// 3_000_000 adds 124.6 milliseconds, 1.39 bits per person
 	}
 
 	@Test
@@ -40,19 +36,14 @@ public class MT_MapPeopleContainer {
 		}
 
 		PeopleContainer peopleContainer;
-		ContainerType containerType = ContainerType.TREEBITSET1;
+		ContainerType containerType = ContainerType.TREEBITSET;
 		switch (containerType) {
 
 		case INTSET:
 			peopleContainer = new IntSetPeopleContainer();
-			break;		
-		case MAP:
-			peopleContainer = new MapPeopleContainer();
 			break;
-		case TREEBITSET1:
-			peopleContainer = new TreeBitSetPeopleContainer_Fast(altPersonIdManager);
-			break;
-		case TREEBITSET2:
+
+		case TREEBITSET:
 			peopleContainer = new TreeBitSetPeopleContainer(altPersonIdManager);
 			break;
 		default:
@@ -76,17 +67,15 @@ public class MT_MapPeopleContainer {
 		}
 		System.out.println("random draws " + timeElapser.getElapsedMilliSeconds());
 
-		if (containerType != ContainerType.MAP || populationSize <= 10_000) {
-			MemSizer memSizer = new MemSizer(false);
-			memSizer.excludeClass(PersonId.class);
-			memSizer.excludeClass(AltPersonIdManager.class);
+		MemSizer memSizer = new MemSizer(false);
+		memSizer.excludeClass(PersonId.class);
+		memSizer.excludeClass(AltPersonIdManager.class);
 
-			double bitsPerPerson = memSizer.getByteCount(peopleContainer);
-			bitsPerPerson *= 8;
-			bitsPerPerson /= populationSize;
+		double bitsPerPerson = memSizer.getByteCount(peopleContainer);
+		bitsPerPerson *= 8;
+		bitsPerPerson /= populationSize;
 
-			System.out.println("bits per person = " + bitsPerPerson);
-		}
+		System.out.println("bits per person = " + bitsPerPerson);
 
 	}
 

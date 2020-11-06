@@ -10,13 +10,13 @@ import gcm.scenario.PersonId;
 import gcm.util.annotations.Source;
 
 /**
- * PeopleContainer implementor that uses hash-bucketed ArrayLists and an array-based tree to contain
- * the people. Uses ~ 45 bits per person contained. 
+ * PeopleContainer implementor that uses hash-bucketed ArrayLists and an
+ * array-based tree to contain the people. Uses ~ 45 bits per person contained.
  * 
  * @author Shawn Hatch
  */
 @Source
-public final class IntSetPeopleContainer implements PeopleContainer{
+public final class IntSetPeopleContainer implements PeopleContainer {
 
 	/**
 	 * The general best practice bucket depth for ArrayIntSets containing millions
@@ -143,63 +143,6 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 	 */
 	private final float targetDepth;
 
-	/*
-	 * Dictates whether duplicate values are allowed. If duplicates are allowed then
-	 * performance on add increases significantly since we do not check for a value
-	 * already existing in this IntSet. If the caller to this ArrayIntSet can
-	 * guarantee that no duplicate values are added then tolerateDuplicates should
-	 * be set to false(the default value).
-	 */
-	private boolean tolerateDuplicates;
-
-	/**
-	 * Constructs an ArrayIntSet having the given target depth and tolerance of
-	 * duplicate values. Setting tolerateDuplicates to true will often significantly
-	 * improve performance.
-	 * 
-	 * @throws IllegalArgumentException
-	 *                                  <li>the target depth is not positive
-	 * @param targetDepth
-	 */
-	public IntSetPeopleContainer(float targetDepth, boolean tolerateDuplicates) {
-		if (targetDepth < 1) {
-			throw new IllegalArgumentException("Non-positive target depth: " + targetDepth);
-		}
-		this.targetDepth = targetDepth;
-		this.tolerateDuplicates = tolerateDuplicates;
-	}
-
-	/**
-	 * Constructs an ArrayIntSet having the given target depth that will tolerate
-	 * duplicate values.
-	 * 
-	 * @throws IllegalArgumentException
-	 *                                  <li>the target depth is not positive
-	 * @param targetDepth
-	 */
-	public IntSetPeopleContainer(float targetDepth) {
-		if (targetDepth < 1) {
-			throw new IllegalArgumentException("Non-positive target depth: " + targetDepth);
-		}
-		this.targetDepth = targetDepth;
-		this.tolerateDuplicates = true;
-	}
-
-	/**
-	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
-	 * duplicate values. Setting tolerateDuplicates to true will often significantly
-	 * improve performance.
-	 * 
-	 * @throws IllegalArgumentException
-	 *                                  <li>the target depth is not positive
-	 * @param tolerateDuplicates
-	 */
-	public IntSetPeopleContainer(boolean tolerateDuplicates) {
-
-		this.targetDepth = DEFAULT_TARGET_DEPTH;
-		this.tolerateDuplicates = tolerateDuplicates;
-	}
-
 	/**
 	 * Constructs an ArrayIntSet having the DEFAULT_TARGET_DEPTH and tolerance of
 	 * duplicate values.
@@ -208,18 +151,10 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 	 *                                  <li>the target depth is not positive
 	 */
 	public IntSetPeopleContainer() {
-		this.targetDepth = DEFAULT_TARGET_DEPTH;
-		this.tolerateDuplicates = true;
+		this.targetDepth = DEFAULT_TARGET_DEPTH;		
 	}
+
 	
-	public IntSetPeopleContainer(PeopleContainer peopleContainer) {
-		this.targetDepth = DEFAULT_TARGET_DEPTH;
-		this.tolerateDuplicates = true;
-		
-		for (PersonId personId : peopleContainer.getPeople()) {
-			add(personId);
-		}
-	}
 
 	/*
 	 * Grows the values and maxSizes arrays to achieve an average bucket depth that
@@ -269,9 +204,9 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 		/*
 		 * Place the values from the old values array into the new values array.
 		 */
-		
-		tree = new int[newSize*2];
-		
+
+		tree = new int[newSize * 2];
+
 		for (int i = 0; i < buckets.length; i++) {
 			List<PersonId> list = buckets[i];
 			if (list != null) {
@@ -291,13 +226,13 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 						newList = new ArrayList<>();
 						newValues[index] = newList;
 					}
-					
+
 					int treeIndex = index + newSize;
-					while(treeIndex>0) {
+					while (treeIndex > 0) {
 						tree[treeIndex]++;
-						treeIndex/=2;
+						treeIndex /= 2;
 					}
-					
+
 					/*
 					 * Place the value in the list.
 					 */
@@ -329,7 +264,7 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 
 	@Override
 	public boolean add(PersonId personId) {
-		if (!tolerateDuplicates && contains(personId)) {
+		if (contains(personId)) {
 			return false;
 		}
 		if (buckets == null) {
@@ -349,16 +284,21 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 			list = new ArrayList<>();
 			buckets[index] = list;
 		}
+		
+		if(list.contains(personId)) {
+			System.err.println("WTF");
+		}
 		list.add(personId);
+		
 		size++;
 
-		//increment the values int the tree
+		// increment the values int the tree
 		int treeIndex = index + buckets.length;
 		while (treeIndex > 0) {
 			tree[treeIndex]++;
 			treeIndex /= 2;
 		}
-		
+
 		/*
 		 * Update the maxSizes
 		 */
@@ -395,11 +335,10 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 		 * Remove the value from the list
 		 */
 		List<PersonId> list = buckets[index];
-		
+
 		if (list == null) {
 			return false;
 		}
-				
 
 		if (list.remove(personId)) {
 			size--;
@@ -407,8 +346,8 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 			 * If the list is now less than half its maxSize in the past, then we should
 			 * rebuild the list and record the new maxSize for the list.
 			 */
-			
-			//decrement the values int the tree
+
+			// decrement the values int the tree
 			int treeIndex = index + buckets.length;
 			while (treeIndex > 0) {
 				tree[treeIndex]--;
@@ -431,7 +370,8 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 			 */
 			if (size * 2 < targetDepth * buckets.length) {
 				shrink();
-			}			
+			}
+			return true;
 		}
 		return false;
 
@@ -440,18 +380,19 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 	@Override
 	public List<PersonId> getPeople() {
 		List<PersonId> result = new ArrayList<>(size);
-		for (List<PersonId> list : buckets) {
-			if (list != null) {
-				result.addAll(list);
+		if (buckets != null) {
+			for (List<PersonId> list : buckets) {
+				if (list != null) {
+					result.addAll(list);
+				}
 			}
 		}
 		return result;
 	}
 
-	
 	@Override
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
-	
+
 		int targetCount = randomGenerator.nextInt(size());
 
 		/*
@@ -486,8 +427,6 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 
 	}
 
-	
-
 	@Override
 	public int size() {
 		return size;
@@ -503,6 +442,9 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 		 * Add the value to list located at the index
 		 */
 		List<PersonId> list = buckets[index];
+		if(list == null) {
+			return false;
+		}
 		return list.contains(personId);
 	}
 
@@ -510,9 +452,7 @@ public final class IntSetPeopleContainer implements PeopleContainer{
 	public void addAll(Collection<PersonId> collection) {
 		for (PersonId personId : collection) {
 			add(personId);
-		}		
+		}
 	}
-
-	
 
 }

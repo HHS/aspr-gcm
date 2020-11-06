@@ -1413,13 +1413,7 @@ public final class ExperimentBuilder {
 		scaffold.putScenarioData(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT, mapOption);
 	}
 	
-	/**
-	 * Sets the use of dense partitions for all scenarios. Defaulted
-	 * to FALSE.	 
-	 */
-	public void setUseDensePartitions(final boolean useDensePartitions) {
-		scaffold.putScenarioData(ActionType.DENSE_PARTITIONS, useDensePartitions);
-	}
+	
 
 	/**
 	 * Sets the person compartment time arrival tracking policy, which is
@@ -1989,10 +1983,7 @@ public final class ExperimentBuilder {
 				scenarioBuilder.setBatchPropertyValue(batchId, batchPropertyId, batchPropertyValue);
 			});
 			
-			actionMap.put(ActionType.DENSE_PARTITIONS, (scenarioBuilder, multiKey) -> {
-				Boolean useDensePartitions = multiKey.getKey(1);				
-				scenarioBuilder.setUseDensePartitions(useDensePartitions);
-			});
+			
 
 		}
 

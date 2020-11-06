@@ -149,10 +149,10 @@ public class MT_PartitionManagement {
 		boolean useDefaultPropertyValues = false;
 		boolean loadPopulationFirst = false;
 		boolean useArray = false;
-		boolean useDensePartitions = true;
+		
 		boolean useFilter = false;
 		boolean measureMemory = true;
-		testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray, useDensePartitions, useFilter,
+		testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,  useFilter,
 				useDefaultPropertyValues, measureMemory);
 
 	}
@@ -203,7 +203,6 @@ public class MT_PartitionManagement {
 
 		List<Boolean> populationFirstList = generateBooleanList();
 		List<Boolean> useArrayList = generateBooleanList();
-		List<Boolean> useDensePartitionsList = generateBooleanList();
 		List<Boolean> useFilterList = generateBooleanList();
 		List<Boolean> useDefaultPropertyValuesList = generateBooleanList();
 
@@ -211,13 +210,13 @@ public class MT_PartitionManagement {
 		for (Boolean loadPopulationFirst : populationFirstList) {
 			for (Boolean useDefaultPropertyValues : useDefaultPropertyValuesList) {
 				for (Boolean useArray : useArrayList) {
-					for (Boolean useDensePartitions : useDensePartitionsList) {
+					
 						for (Boolean useFilter : useFilterList) {
 							Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,
-									useDensePartitions, useFilter, useDefaultPropertyValues, measureMemory);
+									 useFilter, useDefaultPropertyValues, measureMemory);
 							System.out.println(report.toString());
 						}
-					}
+					
 				}
 			}
 		}
@@ -237,7 +236,6 @@ public class MT_PartitionManagement {
 		boolean loadPopulationFirst;
 		MapOption mapOption;
 
-		boolean useDensePartitions;
 		boolean useFilter;
 		double partitionLoadTime;
 		int partitionSize;
@@ -258,10 +256,6 @@ public class MT_PartitionManagement {
 
 		public void setMapOption(MapOption mapOption) {
 			this.mapOption = mapOption;
-		}
-
-		public void setUseDensePartitions(boolean useDensePartitions) {
-			this.useDensePartitions = useDensePartitions;
 		}
 
 		public void setUseFilter(boolean useFilter) {
@@ -310,8 +304,6 @@ public class MT_PartitionManagement {
 			sb.append("\t");
 			sb.append("map option");
 			sb.append("\t");
-			sb.append("dense partitions");
-			sb.append("\t");
 			sb.append("filtered");
 			sb.append("\t");
 			sb.append("partition load time");
@@ -341,8 +333,6 @@ public class MT_PartitionManagement {
 			sb.append("\t");
 			sb.append(mapOption);
 			sb.append("\t");
-			sb.append(useDensePartitions);
-			sb.append("\t");
 			sb.append(useFilter);
 			sb.append("\t");
 			sb.append(partitionLoadTime);
@@ -369,7 +359,6 @@ public class MT_PartitionManagement {
 			int populationSize, //
 			boolean loadPopulationFirst, //
 			boolean useArray, //
-			boolean useDensePartitions, //
 			boolean useFilter, //
 			boolean useDefaultPropertyValues, //
 			boolean measureMemory) {//
@@ -377,7 +366,6 @@ public class MT_PartitionManagement {
 		Report report = new Report();
 		report.setPopulationSize(populationSize);
 		report.setLoadPopulationFirst(loadPopulationFirst);
-		report.setUseDensePartitions(useDensePartitions);
 		report.setUseFilter(useFilter);
 		report.setUseDefaultPropertyValues(useDefaultPropertyValues);
 
@@ -402,7 +390,6 @@ public class MT_PartitionManagement {
 		report.setMapOption(mapOption);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		scenarioBuilder.setUseDensePartitions(useDensePartitions);
 		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
 		addStandardComponentsAndTypes(scenarioBuilder);
 

@@ -24,34 +24,11 @@ public class BasePeopleContainer implements PeopleContainer {
 	 * Enumeration for the two ways that people are stored in an IndexedPopulation
 	 */
 	private static enum PeopleContainerMode {
-		MAP, TREE_BIT_SET_FAST, INTSET, TREE_BIT_SET_SLOW
+		INTSET, TREE_BIT_SET_SLOW;
 	}
 
-	/*
-	 * Represents the triggering threshold of 0.5% of the population. When an
-	 * IndexedPopulation is currently storing its people in a BooleanContainer and
-	 * the IndexedPopulation's people are fewer than 0.5% of the total simulation
-	 * population, then those people should be stored in a LinkedHashSet. See {@link
-	 * MT_BooleanContainer} for a derivation of this threshold. SET_THRESHOLD and
-	 * BOOLEAN_CONTAINER_THRESHOLD work as a dual threshold mechanism to keep
-	 * thrashing between the two container types to a minimum.
-	 */
-	private static int MAP_THRESHOLD = 200;
-
-	/*
-	 * Represents the triggering threshold of 2/3% of the population. When an
-	 * IndexedPopulation is currently storing its people in a LinkedHashSet and the
-	 * IndexedPopulation's people are more than 1% of the total simulation
-	 * population, then those people should be stored in a BooleanContainer. See
-	 * {@link MT_BooleanContainer} for a derivation of this threshold. SET_THRESHOLD
-	 * and BOOLEAN_CONTAINER_THRESHOLD work as a dual threshold mechanism to keep
-	 * thrashing between the two container types to a minimum.
-	 */
-
-	private static int TREE_BIT_SET_FAST_THRESHOLD = 150;
-	
 	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 28;
-	
+
 	private static final int INT_SET_THRESHOLD = 33;
 
 	/*
@@ -68,13 +45,8 @@ public class BasePeopleContainer implements PeopleContainer {
 	public BasePeopleContainer(Context context) {
 		this.context = context;
 		this.personLocationManger = context.getPersonLocationManger();
-		if(context.getScenario().useDensePartitions()) {
-			mode = PeopleContainerMode.INTSET;
-			internalPeopleContainer = new IntSetPeopleContainer();
-		}else {
-			mode = PeopleContainerMode.MAP;
-			internalPeopleContainer = new MapPeopleContainer();
-		}
+		mode = PeopleContainerMode.INTSET;
+		internalPeopleContainer = new IntSetPeopleContainer();
 	}
 
 	/*
@@ -89,24 +61,14 @@ public class BasePeopleContainer implements PeopleContainer {
 	private void determineMode(int size) {
 
 		switch (mode) {
-		case TREE_BIT_SET_FAST:
-			if (size <= personLocationManger.getPopulationCount() / MAP_THRESHOLD) {
-				mode = PeopleContainerMode.MAP;
-				internalPeopleContainer = new MapPeopleContainer(internalPeopleContainer);
-			}
-			break;
-		case MAP:
-			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_FAST_THRESHOLD) {
-				mode = PeopleContainerMode.TREE_BIT_SET_FAST;
-				internalPeopleContainer = new TreeBitSetPeopleContainer_Fast(context.getPersonIdManager(),
-						internalPeopleContainer);
-			}
-			break;
-			
+
 		case TREE_BIT_SET_SLOW:
 			if (size <= personLocationManger.getPopulationCount() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
-				internalPeopleContainer = new IntSetPeopleContainer(internalPeopleContainer);
+				List<PersonId> people = internalPeopleContainer.getPeople();
+				internalPeopleContainer = new IntSetPeopleContainer();
+				internalPeopleContainer.addAll(people);
+
 			}
 			break;
 		case INTSET:
@@ -129,7 +91,9 @@ public class BasePeopleContainer implements PeopleContainer {
 	@Override
 	public boolean add(PersonId personId) {
 		boolean result = internalPeopleContainer.add(personId);
-		determineMode(size());
+		if (result) {
+			determineMode(size());
+		}
 		return result;
 	}
 

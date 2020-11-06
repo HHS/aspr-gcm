@@ -1247,7 +1247,7 @@ public class AT_Filter {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
 		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 30);
+		addStandardPeople(scenarioBuilder, 4);
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
 
 		Scenario scenario = scenarioBuilder.build();
@@ -1278,6 +1278,7 @@ public class AT_Filter {
 			final Map<PersonId, Set<GroupId>> peopleToGroupsMap = new LinkedHashMap<>();
 
 			final RandomGenerator rng = environment.getRandomGenerator();
+			
 			assertTrue(environment.getPopulationCount() > 100);
 			for (final PersonId personId : environment.getPeople()) {
 				final Set<GroupId> groupsForPerson = new LinkedHashSet<>();
@@ -1301,7 +1302,6 @@ public class AT_Filter {
 
 			for (int groupTypeCount = -1; groupTypeCount <= maxGroupCount; groupTypeCount++) {
 				for (final Equality equality : Equality.values()) {
-
 					// build the filters
 					final Filter filter1 = groupTypesForPerson(equality, groupTypeCount);
 					environment.addPopulationIndex(filter1, key);
@@ -1331,11 +1331,9 @@ public class AT_Filter {
 							if (randomGenerator.nextBoolean()) {
 								final GroupId groupId = groupIds[i];
 								if (environment.isGroupMember(personId, groupId)) {
-
 									environment.removePersonFromGroup(personId, groupId);
 									groupsForPerson.remove(groupId);
 								} else {
-
 									environment.addPersonToGroup(personId, groupId);
 									groupsForPerson.add(groupId);
 								}
@@ -1360,6 +1358,9 @@ public class AT_Filter {
 					}
 
 					actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					if(!expectedPeople.equals(actualPeople)) {
+						System.out.println(groupTypeCount+" "+equality);
+					}
 					assertEquals(expectedPeople, actualPeople);
 
 					// remove the indexed populations

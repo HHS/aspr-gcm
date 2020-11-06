@@ -53,8 +53,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 
 		private ScenarioId scenarioId;
 		
-		private boolean useDensePartitions;
-
 		private Integer suggestedPopulationSize;
 
 		private TimeTrackingPolicy compartmentArrivalTimeTrackingPolicy;
@@ -1205,10 +1203,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 			return result;
 		}
 
-		@Override
-		public Boolean useDensePartitions() {
-			return scenarioData.useDensePartitions;
-		}
 
 	}
 
@@ -2761,16 +2755,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-	}
-
-	@Override
-	public void setUseDensePartitions(boolean useDensePartitions) {
-		acquireLock();
-		try {			
-			scenarioData.useDensePartitions = useDensePartitions;
-		} finally {
-			releaseLock();
-		}		
 	}
 
 }

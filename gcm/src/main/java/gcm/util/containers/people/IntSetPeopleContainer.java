@@ -151,11 +151,15 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	 *                                  <li>the target depth is not positive
 	 */
 	public IntSetPeopleContainer() {
-		this.targetDepth = DEFAULT_TARGET_DEPTH;		
+		this.targetDepth = DEFAULT_TARGET_DEPTH;
 	}
-
 	
-
+	public IntSetPeopleContainer(Collection<PersonId> collection) {
+		this.targetDepth = DEFAULT_TARGET_DEPTH;
+		for (PersonId personId : collection) {
+			unsafeAdd(personId);
+		}
+	}
 	/*
 	 * Grows the values and maxSizes arrays to achieve an average bucket depth that
 	 * closer to the target bucket depth.
@@ -263,10 +267,17 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 	}
 
 	@Override
-	public boolean add(PersonId personId) {
+	public boolean safeAdd(PersonId personId) {
 		if (contains(personId)) {
 			return false;
 		}
+		return unsafeAdd(personId);
+	}
+
+	
+	@Override
+	public boolean unsafeAdd(PersonId personId) {
+		
 		if (buckets == null) {
 			grow();
 		}
@@ -285,11 +296,8 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			buckets[index] = list;
 		}
 		
-		if(list.contains(personId)) {
-			System.err.println("WTF");
-		}
 		list.add(personId);
-		
+
 		size++;
 
 		// increment the values int the tree
@@ -438,21 +446,13 @@ public final class IntSetPeopleContainer implements PeopleContainer {
 			return false;
 		}
 		int index = personId.getValue() & (buckets.length - 1);
-		/*
-		 * Add the value to list located at the index
-		 */
 		List<PersonId> list = buckets[index];
-		if(list == null) {
+		if (list == null) {
 			return false;
 		}
 		return list.contains(personId);
 	}
 
-	@Override
-	public void addAll(Collection<PersonId> collection) {
-		for (PersonId personId : collection) {
-			add(personId);
-		}
-	}
+	
 
 }

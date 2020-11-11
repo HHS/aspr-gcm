@@ -1,6 +1,5 @@
 package gcm.util.containers.people;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -21,9 +20,17 @@ public interface PeopleContainer {
 	public List<PersonId> getPeople();
 
 	/*
-	 * Returns true if and only if the person was successfully added
+	 * Returns true if and only if the person was successfully added.
 	 */
-	public boolean add(PersonId personId);
+	public boolean safeAdd(PersonId personId);
+
+	/*
+	 * Returns true if and only if the person was successfully added. To use unsafe
+	 * adding, the caller MUST guarantee that the person id being added does not
+	 * already exist in this people container. Depending on the implementor, this
+	 * can reduce the time for addition significantly.
+	 */
+	public boolean unsafeAdd(PersonId personId);
 
 	/*
 	 * Returns true if and only if the person was successfully removed
@@ -34,11 +41,6 @@ public interface PeopleContainer {
 	 * Returns the number of people in this container
 	 */
 	public int size();
-
-	/*
-	 * Adds the given collection of people to this container
-	 */
-	public void addAll(Collection<PersonId> collection);
 
 	/*
 	 * Returns true if and only if the person is contained.

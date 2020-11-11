@@ -56,7 +56,7 @@ public class MT_MapPeopleContainer {
 		List<PersonId> people = altPersonIdManager.getPeople();
 		TimeElapser timeElapser = new TimeElapser();
 		for (PersonId personId : people) {
-			peopleContainer.add(personId);
+			peopleContainer.safeAdd(personId);
 		}
 		System.out.println("adds done " + timeElapser.getElapsedMilliSeconds());
 		assertEquals(populationSize, peopleContainer.size());

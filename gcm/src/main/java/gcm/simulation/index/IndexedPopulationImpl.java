@@ -120,7 +120,7 @@ public final class IndexedPopulationImpl implements IndexedPopulation{
 	public void evaluate(final PersonId personId) {
 
 		if (filterEvaluator.evaluate(environment, personId)) {
-			boolean added = peopleContainer.add(personId);
+			boolean added = peopleContainer.safeAdd(personId);
 			if (added) {
 				observationManager.handlePopulationIndexPersonAddition(key, personId);
 			}
@@ -246,7 +246,7 @@ public final class IndexedPopulationImpl implements IndexedPopulation{
 		 * value X.
 		 */
 		FilterPopulationMatcher	.getMatchingPeople(filterInfo, environment)//
-								.forEach(personId -> peopleContainer.add(personId));//
+								.forEach(personId -> peopleContainer.unsafeAdd(personId));//
 	}
 
 	/**

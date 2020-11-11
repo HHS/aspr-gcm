@@ -152,7 +152,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 		 * who match the filter to just those having property value X.
 		 */
 		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
-				.forEach(personId -> peopleContainer.add(personId));//
+				.forEach(personId -> peopleContainer.unsafeAdd(personId));//
 	}
 
 	@Override
@@ -217,7 +217,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private void evaluate(final PersonId personId) {
 
 		if (filterEvaluator.evaluate(environment, personId)) {
-			boolean added = peopleContainer.add(personId);
+			boolean added = peopleContainer.safeAdd(personId);
 			if (added) {
 				observationManager.handlePartitionPersonAddition(key, personId);
 			}

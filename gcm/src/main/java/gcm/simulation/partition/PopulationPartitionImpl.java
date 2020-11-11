@@ -352,7 +352,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			labelManager.addLabel(cleanedKey.keys[i]);
 		}
 		personToKeyMap.set(personId.getValue(), cleanedKey);
-		keyToPeopleMap.get(cleanedKey).add(personId);
+		keyToPeopleMap.get(cleanedKey).unsafeAdd(personId);
 		personCount++;
 		return true;
 	}
@@ -675,7 +675,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			keyMap.remove(currentKey);
 			labelSetInfoMap.remove(currentKey);
 		}
-		keyToPeopleMap.get(cleanedNewKey).add(personId);
+		keyToPeopleMap.get(cleanedNewKey).unsafeAdd(personId);
 		personToKeyMap.set(personId.getValue(), cleanedNewKey);
 	}
 

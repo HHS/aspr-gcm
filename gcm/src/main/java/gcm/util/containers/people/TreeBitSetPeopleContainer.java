@@ -43,12 +43,13 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 
 	private final PersonIdManager personIdManager;
 
-	public TreeBitSetPeopleContainer(PersonIdManager personIdManager, PeopleContainer peopleContainer) {
+	public TreeBitSetPeopleContainer(PersonIdManager personIdManager, Collection<PersonId> collection) {
 		this(personIdManager);
-		for (PersonId personId : peopleContainer.getPeople()) {
-			add(personId);
+		for (PersonId personId : collection) {
+			safeAdd(personId);
 		}
 	}
+	
 
 	public TreeBitSetPeopleContainer(PersonIdManager personIdManager) {
 		blockSize = 63;
@@ -144,7 +145,7 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		size = 0;
 		for (int i = 0; i < exclusizeMaxId; i++) {
 			if (oldBitSet.get(i)) {
-				add(personIdManager.getBoxedPersonId(i));
+				safeAdd(personIdManager.getBoxedPersonId(i));
 			}
 		}
 	}
@@ -199,7 +200,12 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 //	}
 
 	@Override
-	public boolean add(PersonId personId) {
+	public boolean unsafeAdd(PersonId personId) {
+		return safeAdd(personId);
+	}
+	
+	@Override
+	public boolean safeAdd(PersonId personId) {
 		int value = personId.getValue();
 
 		// do we need to grow?
@@ -360,12 +366,6 @@ public class TreeBitSetPeopleContainer implements PeopleContainer {
 		return result;
 	}
 
-	@Override
-	public void addAll(Collection<PersonId> collection) {
-		for (PersonId personId : collection) {
-			add(personId);
-		}
-
-	}
+	
 
 }

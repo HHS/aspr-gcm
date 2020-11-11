@@ -1,6 +1,5 @@
 package gcm.util.containers.people;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -66,16 +65,15 @@ public class BasePeopleContainer implements PeopleContainer {
 			if (size <= personLocationManger.getPopulationCount() / INT_SET_THRESHOLD) {
 				mode = PeopleContainerMode.INTSET;
 				List<PersonId> people = internalPeopleContainer.getPeople();
-				internalPeopleContainer = new IntSetPeopleContainer();
-				internalPeopleContainer.addAll(people);
-
+				internalPeopleContainer = new IntSetPeopleContainer(people);
 			}
 			break;
 		case INTSET:
 			if (size >= personLocationManger.getPopulationCount() / TREE_BIT_SET_SLOW_THRESHOLD) {
 				mode = PeopleContainerMode.TREE_BIT_SET_SLOW;
+				List<PersonId> people = internalPeopleContainer.getPeople();
 				internalPeopleContainer = new TreeBitSetPeopleContainer(context.getPersonIdManager(),
-						internalPeopleContainer);
+						people);
 			}
 			break;
 		default:
@@ -89,13 +87,23 @@ public class BasePeopleContainer implements PeopleContainer {
 	}
 
 	@Override
-	public boolean add(PersonId personId) {
-		boolean result = internalPeopleContainer.add(personId);
+	public boolean safeAdd(PersonId personId) {
+		boolean result = internalPeopleContainer.safeAdd(personId);
 		if (result) {
 			determineMode(size());
 		}
 		return result;
 	}
+	
+	@Override
+	public boolean unsafeAdd(PersonId personId) {
+		boolean result = internalPeopleContainer.unsafeAdd(personId);
+		if (result) {
+			determineMode(size());
+		}
+		return result;
+	}
+
 
 	@Override
 	public boolean remove(PersonId personId) {
@@ -109,21 +117,7 @@ public class BasePeopleContainer implements PeopleContainer {
 		return internalPeopleContainer.size();
 	}
 
-	@Override
-	public void addAll(Collection<PersonId> collection) {
-		/*
-		 * We are not sure if the collection and the current contents of the
-		 * internalPeopleContainer overlap and we don't want to waste time combining the
-		 * two sets. So we assume conservatively that we will be at least as large as
-		 * the incoming collection.
-		 */
-		determineMode(collection.size());
-		internalPeopleContainer.addAll(collection);
-		/*
-		 * now that all the adds are done, we finally determine the mode correctly
-		 */
-		determineMode(size());
-	}
+
 
 	@Override
 	public boolean contains(PersonId personId) {
@@ -138,4 +132,5 @@ public class BasePeopleContainer implements PeopleContainer {
 	public PersonId getRandomPersonId(RandomGenerator randomGenerator) {
 		return internalPeopleContainer.getRandomPersonId(randomGenerator);
 	}
+
 }

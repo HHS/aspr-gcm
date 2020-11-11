@@ -59,7 +59,6 @@ public class MT_PartitionManagement {
 		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
-
 	private static enum LocalPersonPropertyId implements PersonPropertyId {
 
 		AGE, IMMUNE, VACCINATED, SERUM_DENSITY;
@@ -138,10 +137,6 @@ public class MT_PartitionManagement {
 		return AgeGroup.SENIOR;
 	}
 
-	
-	
-	
-
 	/**
 	 * 1_000_000 people
 	 * 
@@ -176,15 +171,37 @@ public class MT_PartitionManagement {
 		for (Boolean loadPopulationFirst : populationFirstList) {
 			for (Boolean useDefaultPropertyValues : useDefaultPropertyValuesList) {
 				for (Boolean useArray : useArrayList) {
-					
-						for (Boolean useFilter : useFilterList) {
-							Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,
-									 useFilter, useDefaultPropertyValues, measureMemory);
-							System.out.println(report.toString());
-						}
-					
+
+					for (Boolean useFilter : useFilterList) {
+						Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,
+								useFilter, useDefaultPropertyValues, measureMemory);
+						System.out.println(report.toString());
+					}
+
 				}
 			}
+		}
+
+	}
+
+	@Test
+	public void test2() {
+		final long seed = SEED_PROVIDER.getSeedValue(1);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		int populationSize = 1_000_000;
+		boolean measureMemory = false;
+		boolean loadPopulationFirst = false;
+		boolean useArray = false;
+		boolean useFilter = true;
+		boolean useDefaultPropertyValues = false;
+
+		System.out.println(Report.toHeader());
+
+		for (int i = 0; i < 10; i++) {
+			Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray, useFilter,
+					useDefaultPropertyValues, measureMemory);
+			System.out.println(report.toString());
 		}
 
 	}
@@ -285,6 +302,8 @@ public class MT_PartitionManagement {
 			sb.append("partition sample time");
 			sb.append("\t");
 			sb.append("partition sample count");
+			sb.append("\t");
+			sb.append("total time");
 
 			return sb.toString();
 		}
@@ -314,7 +333,9 @@ public class MT_PartitionManagement {
 			sb.append(partitionSampleTime);
 			sb.append("\t");
 			sb.append(partitionSampleCount);
-
+			double totalTime = partitionLoadTime + populationLoadTime + partitionUpdateTime + partitionSampleTime;
+			sb.append("\t");
+			sb.append(totalTime);
 			return sb.toString();
 		}
 

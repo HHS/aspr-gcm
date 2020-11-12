@@ -97,11 +97,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		// for our use case and uses half the runtime of the newer deep versions
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			// result = prime * result + Arrays.deepHashCode(keys);
-			result = prime * result + Arrays.hashCode(keys);
-			return result;
+			return Arrays.hashCode(keys);
 		}
 
 		@Override
@@ -113,13 +109,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				return false;
 			}
 			// We are guaranteed that obj is a Key
-			if (getClass() != obj.getClass()) {
-				return false;
-			}
-			Key other = (Key) obj;
-//			if (!Arrays.deepEquals(keys, other.keys)) {
+//			if (getClass() != obj.getClass()) {
 //				return false;
 //			}
+			Key other = (Key) obj;
+
 			if (!Arrays.equals(keys, other.keys)) {
 				return false;
 			}
@@ -396,8 +390,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
-		evaluate(personId);
-		removePerson(personId);
+		boolean removed = removePerson(personId);
+		if (removed) {
+			observationManager.handlePartitionPersonRemoval(identifierKey, personId);
+		}
 	}
 
 	private Key getKeyForPerson(PersonId personId) {
@@ -1206,23 +1202,23 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 //		System.out.println(label + " = " + result);
 //		return result;
 //	}
+	
+//	private long reportObjectVerbose(Object object, String label) {
+//		MemSizer memSizer = context.getContextFreeMemSizer();
+//		memSizer.setVerbose(true);
+//		memSizer.excludeClass(PersonId.class);
+//		long result = memSizer.getByteCount(object);
+//		System.out.println(label + " = " + result);
+//		return result;
+//	}
 
 //	@Override
 //	public void report() {
 //		// TODO Auto-generated method stub
-//
-//
 //		reportObject(personPropertyLabelIndexes, "personPropertyLabelIndexes");
 //		reportObject(resourceLabelIndexes, "resourceLabelIndexes");
-//		
-//		long totalContainerBytes = 0;
-//		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
-//			totalContainerBytes +=
-//			reportObject(peopleContainer,"peopleContainer");			
-//		}
 //		reportObject(keyToPeopleMap, "keyToPeopleMap");
-//		System.out.println("totalContainerBytes = "+totalContainerBytes);
-//		reportObject(personToKeyMap, "personToKeyMap");
+//		reportObjectVerbose(personToKeyMap, "personToKeyMap");
 //		reportObject(keyMap, "keyMap");
 //		reportObject(labelSetInfoMap, "labelSetInfoMap");
 //		reportObject(labelManagers, "labelManagers");

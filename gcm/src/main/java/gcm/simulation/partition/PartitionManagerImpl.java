@@ -918,11 +918,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 //	public long getMemSizeOfPartition(Object partitionId) {
 //		 PopulationPartition populationPartition = indexedPopulationMap.get(partitionId);
 //		 populationPartition.report();
-//		 MemSizer memSizer = new MemSizer(false);
-//		 memSizer.excludeClass(Context.class);
-//		 memSizer.excludeClass(EnvironmentImpl.class);
-//		 memSizer.excludeClass(ObservableEnvironmentImpl.class);
-//		 memSizer.excludeClass(ObservationManagerImpl.class);		 
+//		 MemSizer memSizer = context.getContextFreeMemSizer();
+//		 //MemSizer memSizer = new MemSizer(false);
 //		 memSizer.excludeClass(PersonId.class);
 //		 return memSizer.getByteCount(populationPartition);
 //	}

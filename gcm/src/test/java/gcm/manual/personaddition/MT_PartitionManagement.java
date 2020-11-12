@@ -535,10 +535,10 @@ public class MT_PartitionManagement {
 //		measure the size of the partition
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, phaseTimeMap.get(Phase.MEASURE_MEMORY),
 				(environment) -> {
-//					if (measureMemory) {
+					if (measureMemory) {
 //						long memSizeOfPartition = ((EnvironmentImpl) environment).getMemSizeOfPartition(partitionId);
 //						System.out.println("memSizeOfPartition = " + memSizeOfPartition);
-//					}
+					}
 				});
 
 		Simulation simulation = new Simulation();

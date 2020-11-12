@@ -4175,7 +4175,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 				final PropertyDefinition propertyDefinition = propertyDefinitionManager
 						.getPersonPropertyDefinition(personPropertyId);
 				validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-				validatePropertyMutability(propertyDefinition);				
+				//we allow all person properties to be mutable for the person's construction
+				//validatePropertyMutability(propertyDefinition);				
 			}
 
 			Map<ResourceId, Long> resourceValues = personConstructionInfo.getResourceValues();

@@ -50,6 +50,7 @@ public enum SimulationErrorType {
 	NULL_GLOBAL_COMPONENT_CLASS("Global component class reference is null"),
 	NULL_GLOBAL_PROPERTY_VALUE("Null global property value"),
 	NULL_GROUP_ID("Null group id"),
+	NULL_GROUP_CONSTRUCTION_INFO("Null group construction info"),
 	NULL_GROUP_PROPERTY_ID("Null group property id"),
 	NULL_GROUP_PROPERTY_VALUE("Null group property value"),
 	NULL_GROUP_TYPE_ID("Null group type id"),

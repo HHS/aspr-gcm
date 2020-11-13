@@ -6,6 +6,7 @@ import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefini
 import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
 import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
+import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
@@ -15,8 +16,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -40,8 +43,10 @@ import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
+import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
+import gcm.scenario.PropertyDefinition;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.Scenario;
@@ -50,6 +55,8 @@ import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
+import gcm.simulation.GroupConstructionInfo;
+import gcm.simulation.GroupConstructionInfo.Builder;
 import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -75,8 +82,8 @@ public class AT_EnvironmentImpl_01 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_EnvironmentImpl_01.class.getSimpleName() + " "
-		// + SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_01.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -84,7 +91,7 @@ public class AT_EnvironmentImpl_01 {
 	 */
 	@Test
 	@UnitTestMethod(name = "addGroup", args = { GroupTypeId.class })
-	public void testAddGroup() {
+	public void testAddGroup_GroupTypeId() {
 		/*
 		 * Assert that the groups can be added
 		 */
@@ -107,7 +114,6 @@ public class AT_EnvironmentImpl_01 {
 		int testTime = 0;
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
 			for (final TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
 				final GroupId groupId = environment.addGroup(testGroupTypeId);
 				assertTrue(environment.groupExists(groupId));
@@ -116,7 +122,8 @@ public class AT_EnvironmentImpl_01 {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			// if the group type id is null
-			assertModelException(() -> environment.addGroup(null), SimulationErrorType.NULL_GROUP_TYPE_ID);
+			GroupTypeId nullGroupTypeId = null;
+			assertModelException(() -> environment.addGroup(nullGroupTypeId), SimulationErrorType.NULL_GROUP_TYPE_ID);
 			// if the group type id is unknown
 			assertModelException(() -> environment.addGroup(TestGroupTypeId.getUnknownGroupTypeId()), SimulationErrorType.UNKNOWN_GROUP_TYPE_ID);
 		});
@@ -134,6 +141,85 @@ public class AT_EnvironmentImpl_01 {
 
 	}
 
+	
+	/**
+	 * Tests {@link EnvironmentImpl#addGroup(GroupConstructionInfo)}
+	 */
+	@Test
+	@UnitTestMethod(name = "addGroup", args = { GroupConstructionInfo.class })
+	public void testAddGroup_GroupConstructionInfo() {
+		/*
+		 * Assert that the groups can be added
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(8);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+		
+		
+		
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 0;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			for (final TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+				
+				
+				
+				Builder builder = GroupConstructionInfo.builder();
+				builder.setGroupTypeId(testGroupTypeId);
+				Map<GroupPropertyId,Object> expectedPropertyValues = new LinkedHashMap<>();
+				for(GroupPropertyId groupPropertyId : testGroupTypeId.getGroupPropertyIds()) {
+					PropertyDefinition propertyDefinition = environment.getGroupPropertyDefinition(testGroupTypeId, groupPropertyId);
+					Object propertyValue = generatePropertyValue(propertyDefinition, randomGenerator);
+					expectedPropertyValues.put(groupPropertyId, propertyValue);
+					builder.setGroupPropertyValue(groupPropertyId, propertyValue);
+				}
+				GroupConstructionInfo groupConstructionInfo = builder.build();
+				final GroupId groupId = environment.addGroup(groupConstructionInfo);
+				assertTrue(environment.groupExists(groupId));
+				for(GroupPropertyId groupPropertyId : testGroupTypeId.getGroupPropertyIds()) {
+					Object actualPropertyValue = environment.getGroupPropertyValue(groupId, groupPropertyId);
+					Object expectedPropertyValue = expectedPropertyValues.get(groupPropertyId);
+					assertEquals(expectedPropertyValue, actualPropertyValue);
+				}
+			}
+		});
+
+		
+		//precondition tests
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			// if the group type id is null
+			GroupConstructionInfo nullGroupConstructionInfo = null;
+			assertModelException(() -> environment.addGroup(nullGroupConstructionInfo), SimulationErrorType.NULL_GROUP_CONSTRUCTION_INFO);			// if the group type id is unknown
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(TestGroupTypeId.getUnknownGroupTypeId()).build();
+			assertModelException(() -> environment.addGroup(groupConstructionInfo), SimulationErrorType.UNKNOWN_GROUP_TYPE_ID);
+		});
+
+		taskPlanContainer.addTaskPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, testTime++, (environment) -> {
+			// if the component is not a global,region or compartment
+			// component
+			GroupConstructionInfo groupConstructionInfo = GroupConstructionInfo.builder().setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1).build();
+			assertModelException(() -> environment.addGroup(groupConstructionInfo), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+	}
 	/**
 	 * Tests {@link EnvironmentImpl#addPerson(RegionId, CompartmentId)}
 	 */

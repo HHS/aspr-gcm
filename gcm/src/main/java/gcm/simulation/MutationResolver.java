@@ -80,6 +80,8 @@ public interface MutationResolver extends Element {
 	public void addResourceToRegion(final ResourceId resourceId, final RegionId regionId, final long amount);
 
 	public GroupId addGroup(GroupTypeId groupTypeId);
+	
+	public GroupId addGroup(GroupConstructionInfo groupConstructionInfo);
 
 	public void addPersonToGroup(PersonId personId, GroupId groupId);
 

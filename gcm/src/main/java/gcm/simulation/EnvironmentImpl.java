@@ -3110,6 +3110,26 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 	}
+	
+	/**
+	 * Validates the group type id
+	 *
+	 * @throws ModelException
+	 *
+	 *                        <li>{@link SimulationErrorType#NULL_GROUP_TYPE_ID} if
+	 *                        the group type id is null
+	 *
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_TYPE_ID}
+	 *                        if the group type id is unknown
+	 */
+	private void validateGroupConstructionInfo(final GroupConstructionInfo groupConstructionInfo) {
+
+		if (groupConstructionInfo == null) {
+			throwModelException(SimulationErrorType.NULL_GROUP_CONSTRUCTION_INFO);
+		}
+		validateGroupTypeId(groupConstructionInfo.getGroupTypeId());
+
+	}
 
 	/*
 	 * Validates a material id
@@ -4190,6 +4210,31 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
+	}
+
+	@Override
+	public GroupId addGroup(GroupConstructionInfo groupConstructionInfo) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validateGroupConstructionInfo(groupConstructionInfo);
+			GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
+			validateFocalComponent(true, true, true, false, null, null, null);
+						
+			
+			
+			Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
+			for(GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+				validateGroupPropertyId(groupTypeId, groupPropertyId);
+				final PropertyDefinition propertyDefinition = propertyDefinitionManager
+						.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+				Object groupPropertyValue =  propertyValues.get(groupPropertyId);
+				validateGroupPropertyValueNotNull(groupPropertyValue);
+				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
+			}
+			return mutationResolver.addGroup(groupConstructionInfo);
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}		
 	}
 
 

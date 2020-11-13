@@ -568,6 +568,27 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		reportsManager.handleGroupAddition(groupId);
 		return groupId;
 	}
+	
+	@Override
+	public GroupId addGroup(GroupConstructionInfo groupConstructionInfo) {
+		GroupId groupId;
+		externalAccessManager.acquireGlobalReadAccessLock();
+		try {
+			GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
+			groupId = personGroupManger.addGroup(groupTypeId);
+
+			Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
+			for(GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+				Object groupPropertyValue = propertyValues.get(groupPropertyId);
+				propertyManager.setGroupPropertyValue(groupId, groupPropertyId, groupPropertyValue);
+			}
+			observationManager.handleGroupAddition(groupId);
+		} finally {
+			externalAccessManager.releaseGlobalReadAccessLock();
+		}
+		reportsManager.handleGroupAddition(groupId);
+		return groupId;
+	}
 
 	private void loadGroupMembership(final Scenario scenario, Map<PersonId, PersonId> scenarioToSimPeopleMap,
 			Map<GroupId, GroupId> scenarioToSimGroupMap) {

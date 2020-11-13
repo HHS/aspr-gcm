@@ -189,6 +189,26 @@ public interface Environment extends Element {
 	public GroupId addGroup(final GroupTypeId groupTypeId);
 
 	/**
+	 * Returns the group identifier for a newly created group
+	 *
+	 * @throws ModelException
+	 * 
+	 *                        <li>{@link SimulationErrorType#NULL_GROUP_CONSTRUCTION_INFO}
+	 *                        if the group construction info is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_TYPE_ID}
+	 *                        if the group type id is unknown
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_GROUP_PROPERTY_ID}
+	 *                        if any group property type id is unknown
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_VALUE} if
+	 *                        any group property value is incompatible with the
+	 *                        group property definition *
+	 *                        <li>{@link SimulationErrorType#COMPONENT_LACKS_PERMISSION}
+	 *                        if the invoking component is not a global component, a
+	 *                        region component or a compartment component
+	 */
+	public GroupId addGroup(final GroupConstructionInfo groupConstructionInfo);
+
+	/**
 	 * Returns the PersonId for a new person who is placed into the given
 	 * compartment and assigned default person property values. Person identifier
 	 * values are unique to the people in the simulation at any given time, but may
@@ -231,7 +251,7 @@ public interface Environment extends Element {
 	 *                        the value is incompatible with the defined type for
 	 *                        the property
 	 *                        <li>{@link SimulationErrorType#IMMUTABLE_VALUE} if the
-	 *                        property has been defined as immutable                        
+	 *                        property has been defined as immutable
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_RESOURCE_ID} if
 	 *                        the resource id is unknown
 	 *                        <li>{@link SimulationErrorType#NEGATIVE_RESOURCE_AMOUNT}
@@ -3825,7 +3845,5 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public Optional<PersonId> samplePartition(final Object key, PartitionSampler partitionSampler);
-	
-	
 
 }

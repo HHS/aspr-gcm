@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import gcm.output.reports.Report;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
@@ -15,10 +14,7 @@ import net.jcip.annotations.Immutable;
 import net.jcip.annotations.NotThreadSafe;
 
 /**
- * Represents the primary information that was associated with a person just
- * prior to their removal from the simulation. It is designed to be used by
- * {@link Report} classes that need insight into a person after the person has
- * been removed. Construction is conducted via the contained Builder class.
+ * Represents the information used to fully specify a person.
  * 
  * @author Shawn Hatch
  *
@@ -28,11 +24,11 @@ import net.jcip.annotations.NotThreadSafe;
 public final class PersonConstructionInfo {
 
 	/*
-	 * Container class for the person's information just prior to removal from
-	 * the simulation
+	 * Container class for the person's information just prior to removal from the
+	 * simulation
 	 *
 	 */
-	private static class Scaffold {	
+	private static class Scaffold {
 		private RegionId regionId;
 		private CompartmentId compartmentId;
 		private Map<PersonPropertyId, Object> propertyValues = new LinkedHashMap<>();
@@ -41,10 +37,8 @@ public final class PersonConstructionInfo {
 
 	private final Scaffold scaffold;
 
-
 	/**
-	 * Returns the region of the person when they were removed from the
-	 * simulation
+	 * Returns the region of the person when they were removed from the simulation
 	 * 
 	 */
 	public RegionId getRegionId() {
@@ -85,22 +79,23 @@ public final class PersonConstructionInfo {
 	private PersonConstructionInfo(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	@Source(proxy = PersonConstructionInfo.class)
 	@NotThreadSafe
 	public static class Builder {
-		
+
 		private Builder() {
-			
+
 		}
-		
+
 		Scaffold scaffold = new Scaffold();
 
 		private void validate() {
-			
+
 			if (scaffold.regionId == null) {
 				throw new RuntimeException("null region id");
 			}
@@ -113,8 +108,8 @@ public final class PersonConstructionInfo {
 		 * Builds the {@link PersonConstructionInfo} from the collected data
 		 * 
 		 * @throws RuntimeException
-		 *             <li>if no region id was collected
-		 *             <li>if no compartment id was collected
+		 *                          <li>if no region id was collected
+		 *                          <li>if no compartment id was collected
 		 * 
 		 */
 		public PersonConstructionInfo build() {
@@ -129,8 +124,7 @@ public final class PersonConstructionInfo {
 		/**
 		 * Sets the region id
 		 * 
-		 * @throws RuntimeException
-		 *             if the region id is null
+		 * @throws RuntimeException if the region id is null
 		 */
 		public Builder setPersonRegionId(RegionId regionId) {
 			if (regionId == null) {
@@ -143,8 +137,7 @@ public final class PersonConstructionInfo {
 		/**
 		 * Sets the compartment id
 		 * 
-		 * @throws RuntimeException
-		 *             if the compartment id is null
+		 * @throws RuntimeException if the compartment id is null
 		 */
 		public Builder setPersonCompartmentId(CompartmentId compartmentId) {
 			if (compartmentId == null) {
@@ -158,8 +151,8 @@ public final class PersonConstructionInfo {
 		 * Sets the person property value
 		 * 
 		 * @throws RuntimeException
-		 *             <li>if the person property id is null
-		 *             <li>if the person property value is null
+		 *                          <li>if the person property id is null
+		 *                          <li>if the person property value is null
 		 */
 		public Builder setPersonPropertyValue(PersonPropertyId personPropertyId, Object personPropertyValue) {
 			if (personPropertyId == null) {
@@ -178,8 +171,8 @@ public final class PersonConstructionInfo {
 		 * Sets the resource level
 		 * 
 		 * @throws RuntimeException
-		 *             <li>if the resource id is null
-		 *             <li>if the resource value is negative
+		 *                          <li>if the resource id is null
+		 *                          <li>if the resource value is negative
 		 */
 		public Builder setPersonResourceValue(ResourceId resourceId, Long resourceValue) {
 			if (resourceId == null) {

@@ -182,8 +182,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			throw new RuntimeException("duplicated key" + key);
 		}
 
-		PartitionInfo partitionInfo = PartitionInfo.build(partition);
-		FilterInfo filterInfo = partitionInfo.getFilterInfo();
+		
+		FilterInfo filterInfo = FilterInfo.build(partition.getFilter().orElse(Filter.allPeople()));
 
 		/*
 		 * Review the filter, looking for map option setting that might improve the
@@ -206,11 +206,11 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		PopulationPartition populationPartition;
-		if (partitionInfo.isDegenerate()) {
-			populationPartition = new DegeneratePopulationPartitionImpl(key, context, partitionInfo,
+		if (partition.isDegenerate()) {
+			populationPartition = new DegeneratePopulationPartitionImpl(key, context, partition,
 					componentId);
 		} else {
-			populationPartition = new PopulationPartitionImpl(key, context, partitionInfo,
+			populationPartition = new PopulationPartitionImpl(key, context, partition,
 					componentId);
 		}
 		
@@ -223,7 +223,8 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		Trigger trigger = new Trigger(filterInfo, context);
 
 		final Set<CompartmentId> compartmentIds;
-		if (partitionInfo.getCompartmentPartitionFunction() != null) {
+		 
+		if (partition.getCompartmentPartitionFunction().isPresent()) {
 			compartmentIds = context.getScenario().getCompartmentIds();
 		} else {
 			compartmentIds = trigger.getCompartmentIdentifiers();
@@ -240,7 +241,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		final Set<RegionId> regionIds;
-		if (partitionInfo.getRegionPartitionFunction() != null) {
+		if (partition.getRegionPartitionFunction().isPresent()) {
 			// TODO -- do something faster than this
 			regionIds = context.getScenario().getRegionIds();
 		} else {
@@ -257,7 +258,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			filterCount++;
 		}
 
-		Set<ResourceId> resourceIds = new LinkedHashSet<>(partitionInfo.getPersonResourceIds());
+		Set<ResourceId> resourceIds = new LinkedHashSet<>(partition.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 
@@ -277,7 +278,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		// value-insensitive re-evaluations.
 
 		Set<PersonPropertyId> valueInsensitivePropertyIdentifiers = trigger.getValueInsensitivePropertyIdentifiers();
-		valueInsensitivePropertyIdentifiers.addAll(partitionInfo.getPersonPropertyIds());
+		valueInsensitivePropertyIdentifiers.addAll(partition.getPersonPropertyIds());
 
 		Set<PersonPropertyId> valueSensitivePropertyIdentifiers = trigger.getValueSensitivePropertyIdentifiers();
 		valueSensitivePropertyIdentifiers.removeAll(valueInsensitivePropertyIdentifiers);
@@ -315,7 +316,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 		}
 
-		if (partitionInfo.getGroupPartitionFunction() != null) {
+		if (partition.getGroupPartitionFunction().isPresent()) {
 			groupIndexedPopulationsWhoJustDontCare.add(populationPartition);
 		}
 
@@ -696,12 +697,12 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		 * Remove the indexed population from the various filter-related maps and set.
 		 */
 		FilterInfo filterInfo = populationPartition.getFilterInfo();
-		PartitionInfo partitionInfo = populationPartition.getPartitionInfo();
+		Partition partition = populationPartition.getPartition();
 
 		Trigger trigger = new Trigger(filterInfo, context);
 
 		final Set<CompartmentId> compartmentIds;
-		if (partitionInfo.getCompartmentPartitionFunction() != null) {
+		if (partition.getCompartmentPartitionFunction().isPresent()) {
 			compartmentIds = context.getScenario().getCompartmentIds();
 		} else {
 			compartmentIds = trigger.getCompartmentIdentifiers();
@@ -716,7 +717,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		final Set<RegionId> regionIds;
-		if (partitionInfo.getRegionPartitionFunction() != null) {
+		if (partition.getRegionPartitionFunction().isPresent()) {
 			// TODO -- do something faster than this
 			regionIds = context.getScenario().getRegionIds();
 		} else {
@@ -731,7 +732,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			}
 		}
 
-		Set<ResourceId> resourceIds = new LinkedHashSet<>(partitionInfo.getPersonResourceIds());
+		Set<ResourceId> resourceIds = new LinkedHashSet<>(partition.getPersonResourceIds());
 		resourceIds.addAll(trigger.getResourceIdentifiers());
 		for (final ResourceId resourceId : resourceIds) {
 
@@ -756,7 +757,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		// value-insensitive re-evaluations.
 
 		Set<PersonPropertyId> valueInsensitivePropertyIdentifiers = trigger.getValueInsensitivePropertyIdentifiers();
-		valueInsensitivePropertyIdentifiers.addAll(partitionInfo.getPersonPropertyIds());
+		valueInsensitivePropertyIdentifiers.addAll(partition.getPersonPropertyIds());
 
 		Set<PersonPropertyId> valueSensitivePropertyIdentifiers = trigger.getValueSensitivePropertyIdentifiers();
 		valueSensitivePropertyIdentifiers.removeAll(valueInsensitivePropertyIdentifiers);
@@ -785,7 +786,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			}
 		}
 
-		if (partitionInfo.getGroupPartitionFunction() != null) {
+		if (partition.getGroupPartitionFunction().isPresent()) {
 			groupIndexedPopulationsWhoJustDontCare.remove(populationPartition);
 		}
 

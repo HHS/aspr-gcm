@@ -27,6 +27,7 @@ public class PartitionSampler {
 		return new Builder();
 	}
 	
+	@Source(proxy = PartitionSampler.class)
 	public static class Builder{
 		private Scaffold scaffold = new Scaffold();
 		private Builder() {}

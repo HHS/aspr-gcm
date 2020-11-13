@@ -55,7 +55,6 @@ import gcm.simulation.partition.FilterInfo.RegionFilterInfo;
 import gcm.simulation.partition.FilterInfo.ResourceFilterInfo;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
-import gcm.simulation.partition.PartitionInfo;
 import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.PartitionSampler;
 import gcm.util.StopWatch;
@@ -3982,15 +3981,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 		}
 
-		PartitionInfo partitionInfo = PartitionInfo.build(partition);
+		Filter filter = partition.getFilter().orElse(Filter.allPeople());
+		FilterInfo filterInfo = FilterInfo.build(filter);
+		validateFilterInfo_Deep(filterInfo);
 
-		validateFilterInfo_Deep(partitionInfo.getFilterInfo());
-
-		for (PersonPropertyId personPropertyId : partitionInfo.getPersonPropertyIds()) {
+		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
 			validatePersonPropertyId(personPropertyId);
 		}
 
-		for (ResourceId resourceId : partitionInfo.getPersonResourceIds()) {
+		for (ResourceId resourceId : partition.getPersonResourceIds()) {
 			validateResourceId(resourceId);
 		}
 

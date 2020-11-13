@@ -1,5 +1,10 @@
 package gcm.simulation.partition;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
 import gcm.scenario.CompartmentId;
@@ -9,190 +14,155 @@ import gcm.scenario.ResourceId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.REQUIRED, proxy = PartitionInfo.class)
+@Source(status = TestStatus.REQUIRED)
+
 public class Partition {
 
-	private Partition() {
+	public static Builder builder() {
+		return new Builder();
 	}
 
-	static class CompartmentPartition extends Partition {
-		final Function<CompartmentId, Object> compartmentPartitionFunction;
+	@Source(proxy = Partition.class)
+	public static class Builder {
+		
+		private Scaffold scaffold = new Scaffold();
 
-		private CompartmentPartition(Function<CompartmentId, Object> compartmentPartitionFunction) {
-
-			this.compartmentPartitionFunction = compartmentPartitionFunction;
+		private Builder() {
 		}
-	}
 
-	/**
-	 * Creates a compartment partition function for a partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the compartment partition function is null
-	 */
-	public final  Partition compartment(Function<CompartmentId, Object> compartmentPartitionFunction) {
-		if (compartmentPartitionFunction == null) {
-			throw new RuntimeException("null compartment partition function");
-		}
-		return new WithPartition(this,new CompartmentPartition(compartmentPartitionFunction));
-	}
-
-	static class RegionPartition extends Partition {
-		final Function<RegionId, Object> regionPartitionFunction;
-
-		private RegionPartition(Function<RegionId, Object> regionPartitionFunction) {
-			this.regionPartitionFunction = regionPartitionFunction;
-		}
-	}
-
-	/**
-	 * Creates a region partition function for a partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the region partition function is null
-	 */
-	public final Partition region(Function<RegionId, Object> regionPartitionFunction) {
-		if (regionPartitionFunction == null) {
-			throw new RuntimeException("null region partition function");
+		public Partition build() {
+			try {
+				return new Partition(scaffold);
+			} finally {
+				scaffold = new Scaffold();
+			}
 		}
 		
-		return new WithPartition(this,
-				new RegionPartition(regionPartitionFunction));
-	}
-	
-	
-	static class FilterPartition extends Partition {
-		final Filter filter;
-
-		private FilterPartition(Filter filter) {
-			this.filter = filter;
+		public Builder setGroupFunction(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
+			scaffold.groupPartitionFunction = groupPartitionFunction;
+			return this;
 		}
-	}
-	/**
-	 * Sets a filter on the partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the filter is null
-	 */
-	public final Partition filter(Filter filter) {
-		if (filter == null) {
-			throw new RuntimeException("null fitler");
+		
+		public Builder setCompartmentFunction(Function<CompartmentId, Object> compartmentPartitionFunction) {
+			scaffold.compartmentPartitionFunction = compartmentPartitionFunction;
+			return this;
 		}
-		return new WithPartition(this,
-		new FilterPartition(filter));
-	}
-
-	static class GroupPartition extends Partition {
-		final Function<GroupTypeCountMap, Object> groupPartitionFunction;
-
-		private GroupPartition(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
-			this.groupPartitionFunction = groupPartitionFunction;
+		
+		public Builder setRegionFunction(Function<RegionId, Object> regionPartitionFunction) {
+			scaffold.regionPartitionFunction = regionPartitionFunction;
+			return this;
 		}
-	}
-	
-	
 
-	/**
-	 * Creates a group partition function for a partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the group partition function is null
-	 */
-	public final Partition group(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
-		if (groupPartitionFunction == null) {
-			throw new RuntimeException("null group partition function");
+		public Builder setPersonPropertyFunction(PersonPropertyId personPropertyId, Function<Object, Object> personPropertyFunction) {
+			scaffold.personPropertyPartitionFunctions.put(personPropertyId, personPropertyFunction);
+			return this;
 		}
-		return new WithPartition(this,
-		new GroupPartition(groupPartitionFunction));
+
+		public Builder setPersonResourceFunction(ResourceId resourceId, Function<Long, Object> personResourceFunction) {
+			scaffold.personResourcePartitionFunctions.put(resourceId, personResourceFunction);
+			return this;
+		}
+		
+		public Builder setFilter(Filter filter) {
+			scaffold.filter = filter;
+			return this;
+		}
+		
+		
 	}
 
-	static class PropertyPartition extends Partition {
-		final PersonPropertyId personPropertyId;
-		final Function<Object, Object> personPropertyPartitionFunction;
+	private Partition(Scaffold scaffold) {
 
-		private PropertyPartition(PersonPropertyId personPropertyId,
-				Function<Object, Object> personPropertyPartitionFunction) {
-			this.personPropertyId = personPropertyId;
-			this.personPropertyPartitionFunction = personPropertyPartitionFunction;
-		}
+		this.groupPartitionFunction = scaffold.groupPartitionFunction;
+
+		this.compartmentPartitionFunction = scaffold.compartmentPartitionFunction;
+
+		this.regionPartitionFunction = scaffold.regionPartitionFunction;
+
+		this.personPropertyPartitionFunctions = scaffold.personPropertyPartitionFunctions;
+
+		this.personResourcePartitionFunctions = scaffold.personResourcePartitionFunctions;
+		
+		this.filter = scaffold.filter;
+
+		degenerate = (regionPartitionFunction == null) && (compartmentPartitionFunction == null)
+				&& (groupPartitionFunction == null) && personPropertyPartitionFunctions.isEmpty()
+				&& personResourcePartitionFunctions.isEmpty();
+
 	}
 
-	/**
-	 * Creates a person property partition function for a partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the person property id is null
-	 *                          <li>if the person property partition function is
-	 *                          null
-	 */
-	public final Partition property(PersonPropertyId personPropertyId,
-			Function<Object, Object> personPropertyPartitionFunction) {
-		if (personPropertyId == null) {
-			throw new RuntimeException("null person property id function");
-		}
-		if (personPropertyPartitionFunction == null) {
-			throw new RuntimeException("null person property partition function");
-		}
-		return new WithPartition(this,
-				new PropertyPartition(personPropertyId, personPropertyPartitionFunction));
+	public boolean isDegenerate() {
+		return degenerate;
 	}
 
-	static class ResourcePartition extends Partition {
-		final ResourceId resourceId;
-		final Function<Long, Object> personResourcePartitionFunction;
+	private static class Scaffold {
+		private Function<GroupTypeCountMap, Object> groupPartitionFunction;
 
-		private ResourcePartition(ResourceId resourceId, Function<Long, Object> personResourcePartitionFunction) {
-			this.resourceId = resourceId;
-			this.personResourcePartitionFunction = personResourcePartitionFunction;
-		}
+		private Function<CompartmentId, Object> compartmentPartitionFunction;
+
+		private Function<RegionId, Object> regionPartitionFunction;
+
+		private Map<PersonPropertyId, Function<Object, Object>> personPropertyPartitionFunctions = new LinkedHashMap<>();
+
+		private Map<ResourceId, Function<Long, Object>> personResourcePartitionFunctions = new LinkedHashMap<>();
+
+		private Filter filter;
 	}
 
-	/**
-	 * Creates a resource partition function for a partition
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if the resource id is null
-	 *                          <li>if the person resource partition function is
-	 *                          null
-	 */
-	public final Partition resource(ResourceId resourceId, Function<Long, Object> resourcePartitionFunction) {
-		if (resourceId == null) {
-			throw new RuntimeException("null resource property id function");
-		}
-		if (resourcePartitionFunction == null) {
-			throw new RuntimeException("null resource partition function");
-		}
-		return new WithPartition(this,  
-				new ResourcePartition(resourceId, resourcePartitionFunction));
+	private final boolean degenerate;
+
+	private final Function<GroupTypeCountMap, Object> groupPartitionFunction;
+
+	private final Function<CompartmentId, Object> compartmentPartitionFunction;
+
+	private final Function<RegionId, Object> regionPartitionFunction;
+
+	private final Map<PersonPropertyId, Function<Object, Object>> personPropertyPartitionFunctions;
+
+	private final Map<ResourceId, Function<Long, Object>> personResourcePartitionFunctions;
+
+	private final Filter filter;
+
+	public Optional<Filter> getFilter() {
+		return Optional.ofNullable(filter);
 	}
 
-	static class EmptyPartition extends Partition {
+	public Optional<Function<GroupTypeCountMap, Object>> getGroupPartitionFunction() {
+		return Optional.ofNullable(groupPartitionFunction);		
 	}
 
-	public final static Partition create() {
-		return new EmptyPartition();
+	public Optional<Function<CompartmentId, Object>> getCompartmentPartitionFunction() {
+		return Optional.ofNullable(compartmentPartitionFunction);
 	}
 
-	static class WithPartition extends Partition {
-		final Partition a;
-		final Partition b;
+	public Optional<Function<RegionId, Object>> getRegionPartitionFunction() {
+		return Optional.ofNullable(regionPartitionFunction);
+	}
 
-		public WithPartition(final Partition a, final Partition b) {
-			this.a = a;
-			this.b = b;
-		}
+	public Optional<Function<Object, Object>> getPersonPropertyPartitionFunction(PersonPropertyId personPropertyId) {
+		return Optional.ofNullable(personPropertyPartitionFunctions.get(personPropertyId));
+	}
+
+	public Optional<Function<Long, Object>> getPersonResourcePartitionFunction(ResourceId resourceId) {
+		return Optional.ofNullable(personResourcePartitionFunctions.get(resourceId));
 	}
 
 	/**
-	 * Returns a composed {@link Partition2} that joins partition functions
-	 * 
-	 * @throws RuntimeException
-	 *                          <li>if other is null
+	 * Returns an unmodifiable set of {@link ResourceId} values associated with this
+	 * {@link PartitionInfo}
 	 * 
 	 */
-	public final Partition with(final Partition other) {
-		if (other == null) {
-			throw new RuntimeException("null partition");
-		}
-		return new WithPartition(this, other);
-	}}
+	public Set<ResourceId> getPersonResourceIds() {
+		return Collections.unmodifiableSet(personResourcePartitionFunctions.keySet());
+	}
+
+	/**
+	 * Returns an unmodifiable set of {@link PersonPropertyId} values associated
+	 * with this {@link PartitionInfo}
+	 * 
+	 */
+	public Set<PersonPropertyId> getPersonPropertyIds() {
+		return Collections.unmodifiableSet(personPropertyPartitionFunctions.keySet());
+	}
+
+}

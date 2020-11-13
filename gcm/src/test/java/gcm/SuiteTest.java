@@ -67,7 +67,7 @@ import gcm.automated.AT_MutableStat;
 import gcm.automated.AT_MutableVector2D;
 import gcm.automated.AT_MutableVector3D;
 import gcm.automated.AT_ObjectValueContainer;
-import gcm.automated.AT_PartitionInfo;
+import gcm.automated.AT_Partition;
 import gcm.automated.AT_PartitionSampler;
 import gcm.automated.AT_Path;
 import gcm.automated.AT_Paths;
@@ -184,7 +184,7 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_BaseElement.class,
 	AT_Replication.class,
 	AT_GroupTypeCountMap.class,
-	AT_PartitionInfo.class,
+	AT_Partition.class,
 	AT_LabelSet.class,
 	AT_Tuplator.class,
 	AT_PartitionSampler.class,

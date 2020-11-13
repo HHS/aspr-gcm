@@ -79,7 +79,7 @@ public interface PopulationPartition {
 
 	public FilterInfo getFilterInfo();
 
-	public PartitionInfo getPartitionInfo();
+	public Partition getPartition();
 	
 //	public void report();
 }

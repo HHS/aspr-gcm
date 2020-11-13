@@ -1,8 +1,8 @@
 package gcm.automated;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashSet;
@@ -21,9 +21,9 @@ import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
+import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.Partition;
-import gcm.simulation.partition.PartitionInfo;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -33,8 +33,8 @@ import gcm.util.annotations.UnitTestMethod;
  * @author Shawn Hatch
  *
  */
-@UnitTest(target = PartitionInfo.class)
-public class AT_PartitionInfo {
+@UnitTest(target = Partition.class)
+public class AT_Partition {
 
 	private static int getCompartmentLabel(CompartmentId compartmentId) {
 		return compartmentId.hashCode();
@@ -88,49 +88,47 @@ public class AT_PartitionInfo {
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#build(Partition)
+	 * Tests {@linkplain Partition#builder()
 	 */
 	@Test
-	@UnitTestMethod(name = "build", args = { Partition.class })
+	@UnitTestMethod(name = "builder", args = {})
 	public void testBuilder() {
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.create());
+		Partition partition = Partition.builder().build();
 
-		assertNotNull(partitionInfo);
-		assertNull(partitionInfo.getCompartmentPartitionFunction());
-		assertNull(partitionInfo.getRegionPartitionFunction());
-		assertNull(partitionInfo.getGroupPartitionFunction());
-		assertTrue(partitionInfo.getPersonResourceIds().isEmpty());
-		assertTrue(partitionInfo.getPersonPropertyIds().isEmpty());
+		assertNotNull(partition);
+		assertFalse(partition.getCompartmentPartitionFunction().isPresent());
+		assertFalse(partition.getRegionPartitionFunction().isPresent());
+		assertFalse(partition.getGroupPartitionFunction().isPresent());
+		assertTrue(partition.getPersonResourceIds().isEmpty());
+		assertTrue(partition.getPersonPropertyIds().isEmpty());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#getCompartmentPartitionFunction()
+	 * Tests {@linkplain Partition#getCompartmentPartitionFunction()
 	 */
 	@Test
 	@UnitTestMethod(name = "getCompartmentPartitionFunction", args = {})
 	public void testGetCompartmentPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo
-				.build(Partition.create().compartment(AT_PartitionInfo::getCompartmentLabel));
-		assertNotNull(partitionInfo.getCompartmentPartitionFunction());
+		Partition partition = Partition.builder().setCompartmentFunction(AT_Partition::getCompartmentLabel).build();
+		assertTrue(partition.getCompartmentPartitionFunction().isPresent());
 		for (TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			Integer expectedLabel = getCompartmentLabel(testCompartmentId);
-			Function<CompartmentId, Object> compartmentPartitionFunction = partitionInfo
-					.getCompartmentPartitionFunction();
+			Function<CompartmentId, Object> compartmentPartitionFunction = partition.getCompartmentPartitionFunction()
+					.get();
 			Object actualLabel = compartmentPartitionFunction.apply(testCompartmentId);
 			assertEquals(expectedLabel, actualLabel);
 		}
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#getGroupPartitionFunction()
+	 * Tests {@linkplain Partition#getGroupPartitionFunction()
 	 */
 	@Test
 	@UnitTestMethod(name = "getGroupPartitionFunction", args = {})
 	public void testGetGroupPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo
-				.build(Partition.create().group(AT_PartitionInfo::getGroupTypeCountLabel));
+		Partition partition = Partition.builder().setGroupFunction(AT_Partition::getGroupTypeCountLabel).build();
 
-		assertNotNull(partitionInfo.getGroupPartitionFunction());
+		assertTrue(partition.getGroupPartitionFunction().isPresent());
 
 		GroupTypeCountMap groupTypeCountMap = GroupTypeCountMap.builder()//
 				.setCount(TestGroupTypeId.GROUP_TYPE_1, 5)//
@@ -141,146 +139,175 @@ public class AT_PartitionInfo {
 
 		Integer expectedLabel = getGroupTypeCountLabel(groupTypeCountMap);
 
-		Object actualLabel = partitionInfo.getGroupPartitionFunction().apply(groupTypeCountMap);
+		Object actualLabel = partition.getGroupPartitionFunction().get().apply(groupTypeCountMap);
 
 		assertEquals(expectedLabel, actualLabel);
 
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#getPersonPropertyIds()
+	 * Tests {@linkplain Partition#getPersonPropertyIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyIds", args = {})
 	public void testGetPersonPropertyIds() {
 
-		PartitionInfo partitionInfo = PartitionInfo.build(Partition.create()//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_1, AT_PartitionInfo::getPersonProperty1Label)//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_2, AT_PartitionInfo::getPersonProperty1Label)//
-		);
+		Partition partition = Partition.builder()
+				.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1,
+						AT_Partition::getPersonProperty1Label)//
+				.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_2,
+						AT_Partition::getPersonProperty1Label)//
+				.build();
 
 		Set<PersonPropertyId> expectedPersonPropertyIds = new LinkedHashSet<>();
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_1);
 		expectedPersonPropertyIds.add(TestPersonPropertyId.PERSON_PROPERTY_2);
-		Set<PersonPropertyId> actualPersonPropertyIds = partitionInfo.getPersonPropertyIds();
+		Set<PersonPropertyId> actualPersonPropertyIds = partition.getPersonPropertyIds();
 		assertEquals(expectedPersonPropertyIds, actualPersonPropertyIds);
 
 	}
 
 	/**
 	 * Tests {@linkplain
-	 * PartitionInfo#getPersonPropertyPartitionFunction(PersonPropertyId)
+	 * Partition#getPersonPropertyPartitionFunction(PersonPropertyId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonPropertyPartitionFunction", args = { PersonPropertyId.class })
 	public void testGetPersonPropertyPartitionFunction() {
-		Partition partition = Partition.create()//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_1, AT_PartitionInfo::getPersonProperty1Label)//
-				.property(TestPersonPropertyId.PERSON_PROPERTY_2, AT_PartitionInfo::getPersonProperty2Label);//
+		Partition partition = Partition.builder()//
+				.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1,
+						AT_Partition::getPersonProperty1Label)//
+				.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_2,
+						AT_Partition::getPersonProperty2Label)//
+				.build();//
 
-		PartitionInfo partitionInfo = PartitionInfo.build(partition);
-
-		assertNotNull(partitionInfo.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_1));
+		assertTrue(partition.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_1).isPresent());
 
 		for (int i = 0; i < 10; i++) {
 			int expectedProperty1Label = getPersonProperty1Label(i);
-			Function<Object, Object> personPropertyPartitionFunction = partitionInfo
-					.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_1);
+			Function<Object, Object> personPropertyPartitionFunction = partition
+					.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_1).get();
 			Object actualProperty1Label = personPropertyPartitionFunction.apply(i);
 			assertEquals(expectedProperty1Label, actualProperty1Label);
 		}
 
-		assertNotNull(partitionInfo.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_2));
+		assertTrue(partition.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_2).isPresent());
 		for (int i = 0; i < 10; i++) {
 			int expectedProperty2Label = getPersonProperty2Label(i);
-			Function<Object, Object> personPropertyPartitionFunction = partitionInfo
-					.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_2);
+			Function<Object, Object> personPropertyPartitionFunction = partition
+					.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_2).get();
 			Object actualProperty2Label = personPropertyPartitionFunction.apply(i);
 			assertEquals(expectedProperty2Label, actualProperty2Label);
 		}
 
-		Function<Object, Object> personPropertyPartitionFunction = partitionInfo
-				.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_3);
-
-		assertNull(personPropertyPartitionFunction);
+		assertFalse(partition.getPersonPropertyPartitionFunction(TestPersonPropertyId.PERSON_PROPERTY_3).isPresent());
 
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#getPersonResourceIds()
+	 * Tests {@linkplain Partition#getPersonResourceIds()
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourceIds", args = {})
 	public void testGetPersonResourceIds() {
-		PartitionInfo partitionInfo = PartitionInfo.build(//
-				Partition.create()//
-						.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)//
-						.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)//
-		);//
+
+		Partition partition = Partition.builder()//
+				.setPersonResourceFunction(TestResourceId.RESOURCE1, AT_Partition::getResource1Label)//
+				.setPersonResourceFunction(TestResourceId.RESOURCE2, AT_Partition::getResource2Label)//
+				.build();
 
 		Set<ResourceId> expectedResourceIds = new LinkedHashSet<>();
 		expectedResourceIds.add(TestResourceId.RESOURCE1);
 		expectedResourceIds.add(TestResourceId.RESOURCE2);
-		Set<ResourceId> actualResourceIds = partitionInfo.getPersonResourceIds();
+		Set<ResourceId> actualResourceIds = partition.getPersonResourceIds();
 		assertEquals(expectedResourceIds, actualResourceIds);
 	}
 
 	/**
-	 * Tests
-	 * {@linkplain PartitionInfo#getPersonResourcePartitionFunction(ResourceId)
+	 * Tests {@linkplain Partition#getPersonResourcePartitionFunction(ResourceId)
 	 */
 	@Test
 	@UnitTestMethod(name = "getPersonResourcePartitionFunction", args = { ResourceId.class })
 	public void testGetPersonResourcePartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo.build(//
-				Partition.create()//
-						.resource(TestResourceId.RESOURCE1, AT_PartitionInfo::getResource1Label)//
-						.resource(TestResourceId.RESOURCE2, AT_PartitionInfo::getResource2Label)//
-		);//
 
-		assertNotNull(partitionInfo.getPersonResourcePartitionFunction(TestResourceId.RESOURCE1));
+		Partition partition = Partition.builder()//
+				.setPersonResourceFunction(TestResourceId.RESOURCE1, AT_Partition::getResource1Label)//
+				.setPersonResourceFunction(TestResourceId.RESOURCE2, AT_Partition::getResource2Label)//
+				.build();
+
+		assertTrue(partition.getPersonResourcePartitionFunction(TestResourceId.RESOURCE1).isPresent());
 
 		for (long i = 0; i < 10; i++) {
 			String expectedResource1Label = getResource1Label(i);
-			Function<Long, Object> personResourcePartitionFunction = partitionInfo
-					.getPersonResourcePartitionFunction(TestResourceId.RESOURCE1);
+			Function<Long, Object> personResourcePartitionFunction = partition
+					.getPersonResourcePartitionFunction(TestResourceId.RESOURCE1).get();
 			Object actualResource1Label = personResourcePartitionFunction.apply(i);
 			assertEquals(expectedResource1Label, actualResource1Label);
 		}
 
-		assertNotNull(partitionInfo.getPersonResourcePartitionFunction(TestResourceId.RESOURCE2));
+		assertTrue(partition.getPersonResourcePartitionFunction(TestResourceId.RESOURCE2).isPresent());
 
 		for (long i = 0; i < 10; i++) {
 			String expectedResource2Label = getResource2Label(i);
-			Function<Long, Object> personResourcePartitionFunction = partitionInfo
-					.getPersonResourcePartitionFunction(TestResourceId.RESOURCE2);
+			Function<Long, Object> personResourcePartitionFunction = partition
+					.getPersonResourcePartitionFunction(TestResourceId.RESOURCE2).get();
 			Object actualResource2Label = personResourcePartitionFunction.apply(i);
 			assertEquals(expectedResource2Label, actualResource2Label);
 		}
 
-		Function<Long, Object> personResourcePartitionFunction = partitionInfo
-				.getPersonResourcePartitionFunction(TestResourceId.RESOURCE3);
-
-		assertNull(personResourcePartitionFunction);
+		assertFalse(partition.getPersonResourcePartitionFunction(TestResourceId.RESOURCE3).isPresent());
 	}
 
 	/**
-	 * Tests {@linkplain PartitionInfo#getRegionPartitionFunction()
+	 * Tests {@linkplain Partition#getRegionPartitionFunction()
 	 */
 	@Test
 	@UnitTestMethod(name = "getRegionPartitionFunction", args = {})
 	public void testGetRegionPartitionFunction() {
-		PartitionInfo partitionInfo = PartitionInfo.build(//
-				Partition.create().region(AT_PartitionInfo::getRegionLabel)//
-		);//
+		
+		Partition partition = Partition.builder().setRegionFunction(AT_Partition::getRegionLabel).build();//
+		
 
-		assertNotNull(partitionInfo.getRegionPartitionFunction());
+		assertTrue(partition.getRegionPartitionFunction().isPresent());
 		for (TestRegionId testRegionId : TestRegionId.values()) {
 			Integer expectedLabel = getRegionLabel(testRegionId);
-			Function<RegionId, Object> regionPartitionFunction = partitionInfo.getRegionPartitionFunction();
+			Function<RegionId, Object> regionPartitionFunction = partition.getRegionPartitionFunction().get();
 			Object actualLabel = regionPartitionFunction.apply(testRegionId);
 			assertEquals(expectedLabel, actualLabel);
 		}
 	}
+
+	
+	/**
+	 * Tests {@linkplain Partition#getFilter()
+	 */
+	@Test
+	@UnitTestMethod(name = "getFilter", args = {})
+	public void testGetFilter() {
+
+		Partition partition = Partition.builder().build();//
+		assertFalse(partition.getFilter().isPresent());
+		
+		partition = Partition.builder().setFilter(Filter.allPeople()).build();//
+		assertTrue(partition.getFilter().isPresent());
+		
+	}
+	
+	/**
+	 * Tests {@linkplain Partition#isDegenerate()
+	 */
+	@Test
+	@UnitTestMethod(name = "isDegenerate", args = {})
+	public void testIsDegenerate() {
+
+		Partition partition = Partition.builder().build();//
+		assertTrue(partition.isDegenerate());
+		
+		partition = Partition.builder().setFilter(Filter.allPeople()).build();//
+		assertTrue(partition.getFilter().isPresent());
+		
+	}
+	
+
 
 }

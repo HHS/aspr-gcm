@@ -32,7 +32,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 
 	private final FilterInfo filterInfo;
 
-	private final PartitionInfo partitionInfo;
+	private final Partition partition;
 
 	private final FilterEvaluator filterEvaluator;
 
@@ -161,8 +161,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	}
 
 	@Override
-	public PartitionInfo getPartitionInfo() {
-		return partitionInfo;
+	public Partition getPartition() {
+		return partition;
 	}
 
 	private boolean remove(final PersonId personId) {
@@ -182,13 +182,14 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	 *                          <li>if filter is null
 	 */
 	public DegeneratePopulationPartitionImpl(final Object identifierKey, final Context context,
-			final PartitionInfo partitionInfo, final ComponentId owningComponentId) {
+			final Partition partition, final ComponentId owningComponentId) {
 		this.key = identifierKey;
 		this.componentId = owningComponentId;
 		this.observationManager = context.getObservationManager();
 		this.stochasticsManager = context.getStochasticsManager();
-		this.partitionInfo = partitionInfo;
-		this.filterInfo = partitionInfo.getFilterInfo();
+		this.partition = partition;
+		Filter filter = partition.getFilter().orElse(Filter.allPeople());
+		this.filterInfo = FilterInfo.build(filter);
 		this.filterEvaluator = FilterEvaluator.build(filterInfo);
 		peopleContainer = new BasePeopleContainer(context);
 		environment = context.getEnvironment();

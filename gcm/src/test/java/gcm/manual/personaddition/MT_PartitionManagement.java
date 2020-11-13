@@ -453,13 +453,13 @@ public class MT_PartitionManagement {
 					} else {
 						filter = Filter.allPeople();
 					}
-					Partition partition = Partition.create()//
-							.filter(filter)//
-							.property(LocalPersonPropertyId.AGE, this::getAgeLabel)//
-							.property(LocalPersonPropertyId.SERUM_DENSITY, this::getSerumDensityLabel);//
+					Partition partition = Partition.builder()//
+							.setFilter(filter)//
+							.setPersonPropertyFunction(LocalPersonPropertyId.AGE, this::getAgeLabel)//
+							.setPersonPropertyFunction(LocalPersonPropertyId.SERUM_DENSITY, this::getSerumDensityLabel)//
+							.build();//
 
-					// partition = Partition.create().property(LocalPersonPropertyId.AGE,
-					// (age)->age);
+					
 
 					environment.addPartition(partition, partitionId);
 

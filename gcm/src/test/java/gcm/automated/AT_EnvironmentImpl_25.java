@@ -62,6 +62,7 @@ import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.GroupTypeCountMap;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.Partition.Builder;
 import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
@@ -158,7 +159,6 @@ public class AT_EnvironmentImpl_25 {
 		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.TRUE,
 				randomGenerator);
 		addStandardPeople(scenarioBuilder, 300);
-		
 
 	}
 
@@ -378,38 +378,42 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	private static Partition createPopulationPartitionDefinition(Set<PartitionChoice> partionChoices) {
-
-		Partition result = Partition.create();
-
+		return createPopulationPartitionDefinition(partionChoices,Filter.allPeople());
+	}
+	
+	private static Partition createPopulationPartitionDefinition(Set<PartitionChoice> partionChoices, Filter filter) {
+		Builder builder = Partition.builder();
+		builder.setFilter(filter);
 		for (PartitionChoice partitionChoice : partionChoices) {
 			switch (partitionChoice) {
 			case COMPARTMENT:
-				result = result.compartment(compartmentPartitionFunction);
+				builder.setCompartmentFunction(compartmentPartitionFunction);
 				break;
 			case GROUP:
-				result = result.group(groupPartitionFunction);
+				builder.setGroupFunction(groupPartitionFunction);
 				break;
 			case PROPERTY1:
-				result = result.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+				builder.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
 				break;
 			case PROPERTY2:
-				result = result.property(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function);
+				builder.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_2, property2Function);
 				break;
 			case REGION:
-				result = result.region(regionPartitionFunction);
+				builder.setRegionFunction(regionPartitionFunction);
 				break;
 			case RESOURCE1:
-				result = result.resource(TestResourceId.RESOURCE1, personResource1PartitionFunction);
+				builder.setPersonResourceFunction(TestResourceId.RESOURCE1, personResource1PartitionFunction);
 				break;
 			case RESOURCE2:
-				result = result.resource(TestResourceId.RESOURCE2, personResource2PartitionFunction);
+				builder.setPersonResourceFunction(TestResourceId.RESOURCE2, personResource2PartitionFunction);
 				break;
 			default:
 				throw new RuntimeException("unhandled case");
 			}
-		}
 
-		return result;
+		}
+		return builder.build();
+
 	}
 
 	/**
@@ -481,8 +485,8 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key3 = "key3";
 
-			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			Partition partition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.builder().setCompartmentLabel(0)
@@ -585,8 +589,8 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Object key3 = "key3";
-			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			Partition partition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.builder().setCompartmentLabel(0)
@@ -669,14 +673,14 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key1 = "key1";
 			Object key2 = "key2";
-			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			Partition partition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 
-			Partition badPropertyPartition = Partition.create().compartment(compartmentPartitionFunction)
-					.property(TestPersonPropertyId.getUnknownPersonPropertyId(), property1Function);
+			Partition badPropertyPartition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.getUnknownPersonPropertyId(), property1Function).build();
 
-			Partition badResourcePartition = Partition.create().compartment(compartmentPartitionFunction)
-					.resource(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction);
+			Partition badResourcePartition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonResourceFunction(TestResourceId.getUnknownResourceId(), personResource1PartitionFunction).build();
 
 			environment.addPartition(partition, key1);
 
@@ -842,8 +846,8 @@ public class AT_EnvironmentImpl_25 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object,
-	 * LabelSet)
+	 * Tests
+	 * {@link EnvironmentImpl#personIsInPopulationPartition(PersonId, Object, LabelSet)
 	 */
 	@Test
 	@UnitTestMethod(name = "personIsInPopulationPartition", args = { PersonId.class, Object.class, LabelSet.class })
@@ -916,8 +920,8 @@ public class AT_EnvironmentImpl_25 {
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			Object key3 = "key3";
-			Partition partition = Partition.create().compartment(compartmentPartitionFunction)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			Partition partition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key3);
 
 			LabelSet labelSet = LabelSet.builder().setCompartmentLabel(0)
@@ -1063,8 +1067,8 @@ public class AT_EnvironmentImpl_25 {
 
 			Object key = "key3";
 			Object badKey = "badKey";
-			Partition partition = Partition.create().compartment(AT_EnvironmentImpl_25.compartmentPartitionFunction)
-					.region(AT_EnvironmentImpl_25.regionPartitionFunction);
+			Partition partition = Partition.builder().setCompartmentFunction(AT_EnvironmentImpl_25.compartmentPartitionFunction)
+					.setRegionFunction(AT_EnvironmentImpl_25.regionPartitionFunction).build();
 			environment.addPartition(partition, key);
 
 			// if the key is null
@@ -1215,8 +1219,8 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
-					property1Function);
+			Partition partitionDefinition = Partition.builder().setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1,
+					property1Function).build();
 			environment.addPartition(partitionDefinition, key2);
 			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
 					.build();
@@ -1318,8 +1322,8 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			Partition partitionDefinition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
-					property1Function);
+			Partition partitionDefinition = Partition.builder().setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1,
+					property1Function).build();
 			environment.addPartition(partitionDefinition, key2);
 			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
 					.build();
@@ -1433,7 +1437,7 @@ public class AT_EnvironmentImpl_25 {
 			// randomly selected person
 			PersonId personId = new PersonId(0);
 			Object key2 = "key2";
-			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			partition = Partition.builder().setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key2);
 			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
 					.build();
@@ -1540,7 +1544,7 @@ public class AT_EnvironmentImpl_25 {
 			// show that a population query resulting in an empty partition cannot return a
 			// randomly selected person
 			Object key2 = "key2";
-			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function);
+			partition = Partition.builder().setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key2);
 			LabelSet labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
 					.build();
@@ -1585,8 +1589,11 @@ public class AT_EnvironmentImpl_25 {
 
 			// define the partition
 			String prop2TestValue = "prop2TestValue";
+
 			
-			Partition partition = createPopulationPartitionDefinition(partitionChoices).filter(Filter.property(TestPersonPropertyId.PERSON_PROPERTY_2,Equality.EQUAL,prop2TestValue));
+			Filter filter = Filter.property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, prop2TestValue);
+			Partition partition = createPopulationPartitionDefinition(partitionChoices,filter);
+					
 
 			// add the partition to the simulation
 			environment.addPartition(partition, key);
@@ -1599,28 +1606,26 @@ public class AT_EnvironmentImpl_25 {
 			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
 			Optional<PersonId> optional = environment.samplePartition(key, partitionSampler);
 			assertFalse(optional.isPresent());
-			
-			for(PersonId personId : environment.getPeople()) {
+
+			for (PersonId personId : environment.getPeople()) {
 				environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_2, prop2TestValue);
 			}
-			
+
 			optional = environment.samplePartition(key, partitionSampler);
 			assertTrue(optional.isPresent());
-			
+
 			makeRandomPersonAssignments(environment, randomGenerator);
-			
+
 			optional = environment.samplePartition(key, partitionSampler);
 			assertFalse(optional.isPresent());
-			
-		
-			// show that a population query resulting in a non-existing partition cannot return a
+
+			// show that a population query resulting in a non-existing partition cannot
+			// return a
 			// randomly selected person
 			Object key2 = "key2";
-			partition = Partition.create().property(TestPersonPropertyId.PERSON_PROPERTY_1,
-					property1Function);
+			partition = Partition.builder().setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
 			environment.addPartition(partition, key2);
-			labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000)
-					.build();
+			labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1, 1000).build();
 			partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
 			optional = environment.samplePartition(key2, partitionSampler);
 			assertFalse(optional.isPresent());

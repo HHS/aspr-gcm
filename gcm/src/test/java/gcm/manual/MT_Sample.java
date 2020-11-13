@@ -211,10 +211,11 @@ public class MT_Sample {
 			
 			timeElapser.reset();
 			environment.addPartition(
-					Partition.create()
-					.filter(filter)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_1, MT_Sample::prop1LabelFunction)
-					.property(TestPersonPropertyId.PERSON_PROPERTY_2, MT_Sample::prop2LabelFunction)
+					Partition.builder()
+					.setFilter(filter)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, MT_Sample::prop1LabelFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_2, MT_Sample::prop2LabelFunction)
+					.build()
 					,key);
 			System.out.println("partition addition took "+timeElapser.getElapsedMilliSeconds());
 			System.out.println("I'm Ready!");

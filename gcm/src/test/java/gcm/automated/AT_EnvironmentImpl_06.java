@@ -51,6 +51,7 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -71,8 +72,8 @@ public class AT_EnvironmentImpl_06 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		 System.out.println(AT_EnvironmentImpl_06.class.getSimpleName() + " "
-//		 + SEED_PROVIDER.generateUnusedSeedReport());
+		 System.out.println(AT_EnvironmentImpl_06.class.getSimpleName() + " "
+		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	
@@ -212,6 +213,71 @@ public class AT_EnvironmentImpl_06 {
 			// index
 			assertModelException(() -> environment.getIndexSize("bad key"), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
 
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+	
+	/**
+	 * Tests {@link EnvironmentImpl#getPartitionSize(Object)}
+	 */
+	@Test
+	@UnitTestMethod(name = "getPartitionSize", args= {Object.class})
+	public void testGetPartitionSize() {
+		
+
+		final long seed = SEED_PROVIDER.getSeedValue(12);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
+				int expectedNumberOfPeopleInCompartment = 0;
+				for (final PersonId personId : scenario.getPeopleIds()) {
+					final CompartmentId personCompartment = scenario.getPersonCompartment(personId);
+					if (personCompartment.equals(testCompartmentId)) {
+						expectedNumberOfPeopleInCompartment++;
+					}
+				}
+
+				final Object key = new Object();
+				Partition partition = Partition.builder().setFilter(Filter.compartment(testCompartmentId)).build();
+				environment.addPartition(partition, key);
+
+				final int actualNumberOfPeopleInCompartment = environment.getPartitionSize(key);
+
+				assertEquals(expectedNumberOfPeopleInCompartment, actualNumberOfPeopleInCompartment);
+				environment.removePartition(key);
+			}
+
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+			// if the key is null
+			assertModelException(() -> environment.getPartitionSize(null), SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getPartitionSize("bad key"), SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 		});
 
 		Simulation simulation = new Simulation();

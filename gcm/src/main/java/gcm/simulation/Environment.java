@@ -361,6 +361,7 @@ public interface Environment extends Element {
 	 *                        active component
 	 *
 	 */
+	//marked for removal
 	public void addPopulationIndex(final Filter filter, final Object key);
 
 	/**
@@ -1045,6 +1046,7 @@ public interface Environment extends Element {
 	 *                        population index
 	 *
 	 */
+	//marked for removal
 	public List<PersonId> getIndexedPeople(final Object key);
 
 	/**
@@ -1059,6 +1061,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
+	//marked for removal
 	public int getIndexSize(final Object key);
 
 	/**
@@ -1659,6 +1662,7 @@ public interface Environment extends Element {
 	 *                        an existing random Number Generator Id in the scenario
 	 * 
 	 */
+	//marked for removal
 	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
@@ -1678,6 +1682,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
+	//marked for removal
 	public Optional<PersonId> sampleIndex(final Object key, final PersonId excludedPersonId);
 
 	/**
@@ -1702,6 +1707,7 @@ public interface Environment extends Element {
 	 *                        if the randomNumberGeneratorId does not correspond to
 	 *                        an existing random Number Generator Id in the scenario
 	 */
+	//marked for removal
 	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,
 			final PersonId excludedPersonId);
 
@@ -2614,12 +2620,14 @@ public interface Environment extends Element {
 	 *                        the person is unknown
 	 * 
 	 */
+	//marked for removal
 	public boolean personIsInPopulationIndex(final PersonId personId, final Object key);
 
 	/**
 	 * Returns true if and only if the a population index exists with the given key.
 	 * Tolerates null key.
 	 */
+	//marked for removal
 	public boolean populationIndexExists(final Object key);
 
 	/**
@@ -2713,6 +2721,7 @@ public interface Environment extends Element {
 	 *                        index
 	 *
 	 */
+	//marked for removal
 	public void removePopulationIndex(final Object key);
 
 	/**
@@ -3839,6 +3848,7 @@ public interface Environment extends Element {
 	 *                        if the key does not correspond to an existing
 	 *                        population index
 	 */
+	//marked for removal
 	public Optional<PersonId> sampleIndex(final Object key);
 
 	/**

@@ -72,8 +72,8 @@ public class AT_EnvironmentImpl_06 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		 System.out.println(AT_EnvironmentImpl_06.class.getSimpleName() + " "
-		 + SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_06.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	

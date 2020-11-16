@@ -410,10 +410,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			} else {
 				throw new RuntimeException("Batch property id : " + batchPropertyId + " has a null default property value for its property definition: " + propertyDefinition);
 			}
-
 			map.put(batchPropertyId, propertyValueRecord);
 		}
-
 		batchPropertyMap.put(batchId, map);
 	}
 

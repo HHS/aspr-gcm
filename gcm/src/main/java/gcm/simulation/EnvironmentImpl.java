@@ -3110,7 +3110,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 	}
-	
+
 	/**
 	 * Validates the group type id
 	 *
@@ -4185,7 +4185,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			CompartmentId compartmentId = personConstructionInfo.getCompartmentId();
 			validateCompartmentId(compartmentId);
 			validateRegionId(regionId);
-			
+
 			Map<PersonPropertyId, Object> propertyValues = personConstructionInfo.getPropertyValues();
 			for (PersonPropertyId personPropertyId : propertyValues.keySet()) {
 				Object personPropertyValue = propertyValues.get(personPropertyId);
@@ -4194,8 +4194,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 				final PropertyDefinition propertyDefinition = propertyDefinitionManager
 						.getPersonPropertyDefinition(personPropertyId);
 				validateValueCompatibility(personPropertyId, propertyDefinition, personPropertyValue);
-				//we allow all person properties to be mutable for the person's construction
-				//validatePropertyMutability(propertyDefinition);				
+				// we allow all person properties to be mutable for the person's construction
+				// validatePropertyMutability(propertyDefinition);
 			}
 
 			Map<ResourceId, Long> resourceValues = personConstructionInfo.getResourceValues();
@@ -4219,24 +4219,55 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validateGroupConstructionInfo(groupConstructionInfo);
 			GroupTypeId groupTypeId = groupConstructionInfo.getGroupTypeId();
 			validateFocalComponent(true, true, true, false, null, null, null);
-						
-			
-			
+
 			Map<GroupPropertyId, Object> propertyValues = groupConstructionInfo.getPropertyValues();
-			for(GroupPropertyId groupPropertyId : propertyValues.keySet()) {
+			for (GroupPropertyId groupPropertyId : propertyValues.keySet()) {
 				validateGroupPropertyId(groupTypeId, groupPropertyId);
 				final PropertyDefinition propertyDefinition = propertyDefinitionManager
 						.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
-				Object groupPropertyValue =  propertyValues.get(groupPropertyId);
+				Object groupPropertyValue = propertyValues.get(groupPropertyId);
 				validateGroupPropertyValueNotNull(groupPropertyValue);
 				validateValueCompatibility(groupPropertyId, propertyDefinition, groupPropertyValue);
 			}
 			return mutationResolver.addGroup(groupConstructionInfo);
 		} finally {
 			externalAccessManager.releaseWriteAccess();
-		}		
+		}
 	}
 
+	private void validateBatchConstructionInfoNotNull(final BatchConstructionInfo batchConstructionInfo) {
+		if (batchConstructionInfo == null) {
+			throwModelException(SimulationErrorType.NULL_BATCH_CONSTRUCTION_INFO);
+		}
+	}
+
+	@Override
+	public BatchId createBatch(BatchConstructionInfo batchConstructionInfo) {
+		externalAccessManager.acquireWriteAccess();
+		try {
+			validateFocalComponent(false, false, false, true, null, null, null);
+			validateBatchConstructionInfoNotNull(batchConstructionInfo);
+			validateMaterialId(batchConstructionInfo.getMaterialId());
+			validateNonnegativeFiniteMaterialAmount(batchConstructionInfo.getAmount());
+
+			final MaterialId materialId = batchConstructionInfo.getMaterialId();
+			final MaterialsProducerId materialsProducerId = (MaterialsProducerId) componentManager
+					.getFocalComponentId();
+			Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
+			for (BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+				validateBatchPropertyId(materialId, batchPropertyId);
+				Object batchPropertyValue = propertyValues.get(batchPropertyId);				
+				final PropertyDefinition propertyDefinition = propertyDefinitionManager
+						.getBatchPropertyDefinition(materialId, batchPropertyId);				
+				validateBatchPropertyValueNotNull(batchPropertyValue);
+				validateValueCompatibility(batchPropertyId, propertyDefinition, batchPropertyValue);
+			}
+			return mutationResolver.createBatch(materialsProducerId, batchConstructionInfo);
+		} finally {
+			externalAccessManager.releaseWriteAccess();
+		}
+
+	}
 
 //	public long getMemSizeOfPartition(Object partitionId) {
 //		return ((PartitionManagerImpl)partitionManager).getMemSizeOfPartition(partitionId);

@@ -476,6 +476,26 @@ public interface Environment extends Element {
 	public BatchId createBatch(final MaterialId materialId, final double amount);
 
 	/**
+	 * Returns the batch id of a new created batch that is stored in the inventory
+	 * of the invoking materials producer.
+	 *
+	 * @throws ModelException
+	 *
+	 *                        <li>{@link SimulationErrorType#NULL_BATCH_CONSTRUCTION_INFO}
+	 *                        if the batch construction info is null
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_MATERIAL_ID} if
+	 *                        the material id is unknown
+	 *                        <li>{@link SimulationErrorType#UNKNOWN_BATCH_PROPERTY_ID}
+	 *                        if property id is unknown
+	 *                        <li>{@link SimulationErrorType#INCOMPATIBLE_VALUE} if
+	 *                        the value is incompatible with the defined type for
+	 *                        the property
+	 *                        <li>{@link SimulationErrorType#COMPONENT_LACKS_PERMISSION}
+	 *                        if invoker is not a materials producer component
+	 */
+	public BatchId createBatch(final BatchConstructionInfo batchConstructionInfo);
+
+	/**
 	 * Creates a new stage owned by the invoking materials producer component and
 	 * returns its id .
 	 *

@@ -64,6 +64,8 @@ public interface MutationResolver extends Element {
 	public StageId createStage(MaterialsProducerId materialsProducerId);
 
 	public BatchId createBatch(final MaterialsProducerId materialsProducerId, final MaterialId materialId, final double amount);
+	
+	public BatchId createBatch(final MaterialsProducerId materialsProducerId, final BatchConstructionInfo batchConstructionInfo);
 
 	public void moveBatchToStage(final BatchId batchId, final StageId stageId);
 

@@ -48,6 +48,7 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
+import gcm.simulation.BatchConstructionInfo;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -322,7 +323,7 @@ public class AT_EnvironmentImpl_02 {
 	 */
 	@Test
 	@UnitTestMethod(name = "createBatch", args = {MaterialId.class,double.class})
-	public void testCreateBatch() {
+	public void testCreateBatch_MaterialId_Amount() {
 		/*
 		 * Show that we can add batches and that the environment acknowledges
 		 * that we added the batches
@@ -400,6 +401,97 @@ public class AT_EnvironmentImpl_02 {
 		assertAllPlansExecuted(taskPlanContainer);
 	}
 
+	
+	/**
+	 * Tests {@link EnvironmentImpl#createBatch(BatchConstructionInfo)}
+	 */
+	@Test
+	@UnitTestMethod(name = "createBatch", args = {BatchConstructionInfo.class})
+	public void testCreateBatch_BatchConstructionInfo() {
+		/*
+		 * Show that we can add batches and that the environment acknowledges
+		 * that we added the batches
+		 */
+
+		final long seed = SEED_PROVIDER.getSeedValue(16);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
+		addStandardComponentsAndTypes(scenarioBuilder);
+		addStandardPeople(scenarioBuilder, 10);
+		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.RANDOM, randomGenerator);
+
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+
+		Scenario scenario = scenarioBuilder.build();
+
+		Replication replication = getReplication(randomGenerator);
+
+		int testTime = 1;
+
+		taskPlanContainer.addTaskPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, testTime++, (environment) -> {
+
+			final Set<BatchId> batchIds = new LinkedHashSet<>();
+
+			final BatchId batchId1 = environment.createBatch(TestMaterialId.MATERIAL_1, 1);
+			assertTrue(environment.batchExists(batchId1));
+			batchIds.add(batchId1);
+
+			final BatchId batchId2 = environment.createBatch(TestMaterialId.MATERIAL_2, 2);
+			assertTrue(environment.batchExists(batchId2));
+			batchIds.add(batchId2);
+
+			final BatchId batchId3 = environment.createBatch(TestMaterialId.MATERIAL_3, 3);
+			assertTrue(environment.batchExists(batchId3));
+			batchIds.add(batchId3);
+
+			final BatchId batchId4 = environment.createBatch(TestMaterialId.MATERIAL_4, 4);
+			assertTrue(environment.batchExists(batchId4));
+			batchIds.add(batchId4);
+
+			final BatchId batchId5 = environment.createBatch(TestMaterialId.MATERIAL_5, 5);
+			assertTrue(environment.batchExists(batchId5));
+			batchIds.add(batchId5);
+
+			assertTrue(batchIds.size() == 5);
+
+		});
+
+		// precondition tests
+		taskPlanContainer.addTaskPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, testTime++, (environment) -> {
+
+
+			// if the batch construction info is null
+			assertModelException(() -> environment.createBatch(null), SimulationErrorType.NULL_BATCH_CONSTRUCTION_INFO);
+			// if the material id is unknown
+			BatchConstructionInfo batchConstructionInfo1 = BatchConstructionInfo.builder().setMaterialId(TestMaterialId.getUnknownMaterialId()).setAmount(1L).build();
+			assertModelException(() -> environment.createBatch(batchConstructionInfo1), SimulationErrorType.UNKNOWN_MATERIAL_ID);
+
+			//if a batch property id is unknown
+			BatchConstructionInfo batchConstructionInfo2 = BatchConstructionInfo.builder()
+					.setMaterialId(TestMaterialId.MATERIAL_1)
+					.setAmount(1L)
+					.setPropertyValue(TestMaterialId.getUnknownBatchPropertyId(), 0D)
+					.build();
+			assertModelException(() -> environment.createBatch(batchConstructionInfo2), SimulationErrorType.UNKNOWN_BATCH_PROPERTY_ID);
+
+		});
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_4, testTime++, (environment) -> {
+			// if invoker is not a materials producer component
+			BatchConstructionInfo batchConstructionInfo = BatchConstructionInfo.builder().setMaterialId(TestMaterialId.MATERIAL_1).setAmount(3L).build();
+			assertModelException(() -> environment.createBatch(batchConstructionInfo), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(replication);
+		simulation.setScenario(scenario);
+		simulation.execute();
+
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+	
 	/**
 	 * Tests {@link EnvironmentImpl#createStage()}
 	 */

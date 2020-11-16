@@ -31,7 +31,7 @@ public final class GroupConstructionInfo {
 	
 
 	/**
-	 * Returns the group Type of the group that was removed.
+	 * Returns the group Type of the group
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
@@ -42,8 +42,7 @@ public final class GroupConstructionInfo {
 	
 
 	/**
-	 * Returns a map of the person property values of the person when they were
-	 * removed from the simulation
+	 * Returns a map of the person property values of the person
 	 * 
 	 */
 	public Map<GroupPropertyId, Object> getPropertyValues() {

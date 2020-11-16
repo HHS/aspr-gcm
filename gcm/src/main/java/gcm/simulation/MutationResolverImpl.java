@@ -1774,4 +1774,26 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 		return personId;
 	}
+
+	@Override
+	public BatchId createBatch(MaterialsProducerId materialsProducerId, BatchConstructionInfo batchConstructionInfo) {
+
+		BatchId batchId;
+		externalAccessManager.acquireGlobalReadAccessLock();
+		try {
+			MaterialId materialId = batchConstructionInfo.getMaterialId();
+			double amount = batchConstructionInfo.getAmount();
+			batchId = materialsManager.createBatch(materialsProducerId, materialId, amount);
+			propertyManager.handleBatchAddition(batchId, materialId);
+			Map<BatchPropertyId, Object> propertyValues = batchConstructionInfo.getPropertyValues();
+			for(BatchPropertyId batchPropertyId : propertyValues.keySet()) {
+				Object batchPropertyValue = propertyValues.get(batchPropertyId);
+				propertyManager.setBatchPropertyValue(batchId, batchPropertyId, batchPropertyValue);
+			}
+		} finally {
+			externalAccessManager.releaseGlobalReadAccessLock();
+		}
+		reportsManager.handleBatchCreation(batchId);
+		return batchId;		
+	}
 }

@@ -11,9 +11,12 @@ import gcm.scenario.RandomNumberGeneratorId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Context;
 import gcm.simulation.Environment;
+import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
+import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 import gcm.util.containers.people.BasePeopleContainer;
 import gcm.util.containers.people.PeopleContainer;
 
@@ -22,6 +25,7 @@ import gcm.util.containers.people.PeopleContainer;
  * filter and a single cell in its partition space, i.e. the partition was
  * specified with no labeling functions.
  */
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private Object key;
 

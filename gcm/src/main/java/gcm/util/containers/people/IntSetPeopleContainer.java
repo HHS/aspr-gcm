@@ -7,7 +7,9 @@ import java.util.List;
 import org.apache.commons.math3.random.RandomGenerator;
 
 import gcm.scenario.PersonId;
+import gcm.simulation.EnvironmentImpl;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.TestStatus;
 
 /**
  * PeopleContainer implementor that uses hash-bucketed ArrayLists and an
@@ -15,7 +17,7 @@ import gcm.util.annotations.Source;
  * 
  * @author Shawn Hatch
  */
-@Source
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class IntSetPeopleContainer implements PeopleContainer {
 
 	/**

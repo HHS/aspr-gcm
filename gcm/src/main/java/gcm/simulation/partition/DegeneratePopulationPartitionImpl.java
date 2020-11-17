@@ -56,7 +56,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	@Override
 	public void handleRemovePerson(long transactionId, PersonId personId) {
 		if (acceptTransactionId(transactionId)) {
-			evaluate(personId);
+			peopleContainer.remove(personId);
 		}
 	}
 

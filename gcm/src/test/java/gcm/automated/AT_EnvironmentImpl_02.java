@@ -1,11 +1,12 @@
 package gcm.automated;
 
-import static gcm.automated.support.EnvironmentSupport.*;
+import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
 import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
 import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefinitions;
 import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
 import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
+import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;

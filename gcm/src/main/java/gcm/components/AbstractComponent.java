@@ -362,17 +362,7 @@ public abstract class AbstractComponent implements Component {
 		throwNoConcreteImplementation();
 	}
 	
-	/**
-	 * Placeholder convenience implementation that throws an
-	 * {@link RuntimeException} if invoked.
-	 * 
-	 * @throws RuntimeException
-	 *             if invoked
-	 */
-	@Override
-	public void observePopulationIndexPersonAddition(Environment environment, Object key, PersonId personId) {
-		throwNoConcreteImplementation();
-	}
+
 	
 	
 	/**
@@ -397,16 +387,6 @@ public abstract class AbstractComponent implements Component {
 		throwNoConcreteImplementation();
 	}
 	
-	/**
-	 * Placeholder convenience implementation that throws an
-	 * {@link RuntimeException} if invoked.
-	 * 
-	 * @throws RuntimeException
-	 *             if invoked
-	 */
-	@Override
-	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId){
-		throwNoConcreteImplementation();
-	}
+
 
 }

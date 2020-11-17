@@ -694,7 +694,7 @@ public class AT_EnvironmentImpl_25 {
 
 			// if the key corresponds to an existing population partition
 			assertModelException(() -> environment.addPartition(partition, key1),
-					SimulationErrorType.DUPLICATE_POPULATION_PARTITION);
+					SimulationErrorType.DUPLICATE_PARTITION);
 
 			// if the definition contains an unknown person property id
 			assertModelException(() -> environment.addPartition(badPropertyPartition, key2),

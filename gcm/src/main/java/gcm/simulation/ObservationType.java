@@ -165,18 +165,6 @@ public enum ObservationType {
 	 * {@link Component#observeGroupPersonDeparture(Environment, GroupId, PersonId)}
 	 */
 	GROUP_PERSON_DEPARTURE,
-
-	/**
-	 * Supports
-	 * {@link Component#observePopulationIndexPersonAddition(Environment environment, Object key, PersonId personId)}
-	 */
-	POPULATION_INDEX_PERSON_ADDITION,
-
-	/**
-	 * Supports
-	 * {@link Component#observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId)}
-	 */
-	POPULATION_INDEX_PERSON_REMOVAL,
 	
 	/**
 	 * Supports

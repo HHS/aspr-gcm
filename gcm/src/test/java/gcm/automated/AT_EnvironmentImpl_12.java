@@ -11,7 +11,6 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.allPeople;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -73,7 +72,9 @@ public class AT_EnvironmentImpl_12 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_12.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
+
 	}
 
 	/**
@@ -446,11 +447,7 @@ public class AT_EnvironmentImpl_12 {
 		 * Precondition tests
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			final Object key = new Object();
-			environment.addPopulationIndex(allPeople(), key);
-			final PersonId personId = environment.sampleIndex(key).get();
-			assertNotNull(personId);
-
+			assertTrue(environment.getPopulationCount()>0);
 			// if the resource id is null
 			assertModelException(() -> environment.observeCompartmentalPersonResourceChange(true, TestCompartmentId.COMPARTMENT_1, null), SimulationErrorType.NULL_RESOURCE_ID);
 			// if the resource id is unknown
@@ -461,9 +458,6 @@ public class AT_EnvironmentImpl_12 {
 			// if the compartment id is unknown
 			assertModelException(() -> environment.observeCompartmentalPersonResourceChange(true, TestCompartmentId.getUnknownCompartmentId(), TestResourceId.RESOURCE1),
 					SimulationErrorType.UNKNOWN_COMPARTMENT_ID);
-
-			environment.removePopulationIndex(key);
-
 		});
 
 		Simulation simulation = new Simulation();

@@ -19,7 +19,8 @@ import gcm.util.containers.people.PeopleContainer;
 
 /**
  * Implementation of PopulationPartition for degenerate partitions having only a
- * filter.
+ * filter and a single cell in its partition space, i.e. the partition was
+ * specified with no labeling functions.
  */
 public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	private Object key;
@@ -170,7 +171,7 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/**
-	 * Constructs an IndexedPopulation
+	 * Constructs an DegeneratePopulationPartitionImpl
 	 * 
 	 * @param environment
 	 * @param ownerKey
@@ -256,8 +257,8 @@ public class DegeneratePopulationPartitionImpl implements PopulationPartition {
 					break;
 				}
 			}
-		}		
-		return new StochasticPersonSelection(result,false);		
+		}
+		return new StochasticPersonSelection(result, false);
 	}
 
 //	@Override

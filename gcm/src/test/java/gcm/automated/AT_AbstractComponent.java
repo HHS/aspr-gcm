@@ -112,8 +112,8 @@ public class AT_AbstractComponent {
 			assertUnimplemented(() -> observeGroupPropertyChange(environment, groupId, groupPropertyId));
 			assertUnimplemented(() -> observeGroupPersonArrival(environment, groupId, personId));
 			assertUnimplemented(() -> observeGroupPersonDeparture(environment, groupId, personId));
-			assertUnimplemented(() -> observePopulationIndexPersonAddition(environment, key, personId));
-			assertUnimplemented(() -> observePopulationIndexPersonRemoval(environment, key, personId));
+			assertUnimplemented(() -> observePartitionPersonAddition(environment, key, personId));
+			assertUnimplemented(() -> observePartitionPersonRemoval(environment, key, personId));
 
 			
 			testAcceptance.passed = true;
@@ -384,21 +384,21 @@ public class AT_AbstractComponent {
 
 	/**
 	 * Tests
-	 * {@link AbstractComponent#observePopulationIndexPersonAddition(Environment, Object, PersonId)}
+	 * {@link AbstractComponent#observePartitionPersonAddition(Environment, Object, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observePopulationIndexPersonAddition", args = { Environment.class, Object.class, PersonId.class })
-	public void testObservePopulationIndexPersonAddition() {
+	@UnitTestMethod(name = "observePartitionPersonAddition", args = { Environment.class, Object.class, PersonId.class })
+	public void testObservePartitionPersonAddition() {
 		//covered by testExecutePlan();
 	}
 
 	/**
 	 * Tests
-	 * {@link AbstractComponent#observePopulationIndexPersonRemoval(Environment, Object, PersonId)}
+	 * {@link AbstractComponent#observePartitionPersonRemoval(Environment, Object, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observePopulationIndexPersonRemoval", args = { Environment.class, Object.class, PersonId.class })
-	public void testObservePopulationIndexPersonRemoval() {
+	@UnitTestMethod(name = "observePartitionPersonRemoval", args = { Environment.class, Object.class, PersonId.class })
+	public void testObservePartitionPersonRemoval() {
 		//covered by testExecutePlan();
 	}
 

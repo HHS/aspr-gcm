@@ -11,8 +11,6 @@ import gcm.replication.Replication;
 import gcm.scenario.Scenario;
 import gcm.simulation.group.PersonGroupManger;
 import gcm.simulation.group.PersonGroupMangerImpl;
-import gcm.simulation.index.IndexedPopulationManager;
-import gcm.simulation.index.IndexedPopulationManagerImpl;
 import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.PartitionManagerImpl;
 import gcm.util.MemoryPartition;
@@ -50,8 +48,7 @@ public final class Context implements MemoryReportParticipant {
 	private PropertyManager propertyManager;
 	private PersonLocationManger personLocationManger;
 	private PersonGroupManger personGroupManger;
-	private EventManager eventManager;
-	private IndexedPopulationManager indexedPopulationManager;
+	private EventManager eventManager;	
 	private PartitionManager partitionManager;
 	private ObservableEnvironment observableEnvironment;
 	private PersonIdManager personIdManager;
@@ -89,7 +86,6 @@ public final class Context implements MemoryReportParticipant {
 		personLocationManger = new PersonLocationMangerImpl();
 		personGroupManger = new PersonGroupMangerImpl();
 		eventManager = new EventManagerImpl();
-		indexedPopulationManager = new IndexedPopulationManagerImpl();
 		partitionManager = new PartitionManagerImpl();
 		observableEnvironment = new ObservableEnvironmentImpl();
 		personIdManager = new PersonIdManagerImpl();
@@ -186,7 +182,6 @@ public final class Context implements MemoryReportParticipant {
 			externalAccessManager = profileManager.getProfiledProxy(externalAccessManager);
 			resourceManager = profileManager.getProfiledProxy(resourceManager);
 			materialsManager = profileManager.getProfiledProxy(materialsManager);
-			indexedPopulationManager = profileManager.getProfiledProxy(indexedPopulationManager);
 			partitionManager = profileManager.getProfiledProxy(partitionManager);			
 			personGroupManger = profileManager.getProfiledProxy(personGroupManger);
 			observableEnvironment = profileManager.getProfiledProxy(observableEnvironment);
@@ -221,7 +216,6 @@ public final class Context implements MemoryReportParticipant {
 		personLocationManger.init(this);
 		personGroupManger.init(this);
 		eventManager.init(this);
-		indexedPopulationManager.init(this);
 		partitionManager.init(this);
 		personIdManager.init(this);
 		planningQueueReportItemManager.init(this);
@@ -383,13 +377,6 @@ public final class Context implements MemoryReportParticipant {
 	public EventManager getEventManager() {
 		return eventManager;
 	}
-
-	/**
-	 * Returns the index population manager for the simulation instance
-	 */
-	public IndexedPopulationManager getIndexedPopulationManager() {
-		return indexedPopulationManager;
-	}
 	
 	/**
 	 * Returns the population partition manager for the simulation instance
@@ -537,9 +524,7 @@ public final class Context implements MemoryReportParticipant {
 		memoryPartition.addMemoryLink(this, personLocationManger, "Person Location Manger");
 		memoryPartition.addMemoryLink(this, personGroupManger, "Person Group Manger");
 		memoryPartition.addMemoryLink(this, eventManager, "Event Manager");
-		memoryPartition.addMemoryLink(this, indexedPopulationManager, "Indexed Population Manager");
 		memoryPartition.addMemoryLink(this, partitionManager, "Filtered Partition Manager");		
-		indexedPopulationManager.collectMemoryLinks(memoryPartition);
 		memoryPartition.addMemoryLink(this, observableEnvironment, "Observable Environment");
 		memoryPartition.addMemoryLink(this, personIdManager, "Person Id Manager");
 		memoryPartition.addMemoryLink(this, externalAccessManager, "External Access Manager");
@@ -595,7 +580,6 @@ public final class Context implements MemoryReportParticipant {
 //		result.excludeObject(personLocationManger);
 //		result.excludeObject(personGroupManger);
 //		result.excludeObject(eventManager);
-//		result.excludeObject(indexedPopulationManager);
 //		result.excludeObject(partitionManager);
 //		result.excludeObject(observableEnvironment);
 //		result.excludeObject(personIdManager);

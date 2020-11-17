@@ -18,8 +18,8 @@ import gcm.simulation.BaseElement;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.PersonLocationManger;
-import gcm.simulation.PopulationIndexEfficiencyWarning;
-import gcm.simulation.PopulationIndexEfficiencyWarning.Builder;
+import gcm.simulation.PartitionEfficiencyWarning;
+import gcm.simulation.PartitionEfficiencyWarning.Builder;
 import gcm.simulation.ProfileManager;
 import gcm.simulation.PropertyManager;
 import gcm.simulation.SimulationWarningManager;
@@ -193,16 +193,16 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		List<Object> filterAttributesNeedingReverseMapSupport = FilterMapOptionAnalyzer
 				.getAttributesNeedingReverseMapping(filterInfo, context);
 		if (!filterAttributesNeedingReverseMapSupport.isEmpty()) {
-			Builder builder = PopulationIndexEfficiencyWarning.builder();
+			Builder builder = PartitionEfficiencyWarning.builder();
 			for (Object attribute : filterAttributesNeedingReverseMapSupport) {
 				builder.addAttribute(attribute);
 			}
 
-			PopulationIndexEfficiencyWarning populationIndexEfficiencyWarning = //
+			PartitionEfficiencyWarning partitionEfficiencyWarning = //
 					builder.setFilterInfo(filterInfo)//
-							.setPopulationIndexId(key)//
+							.setPartitionId(key)//
 							.build(); //
-			simulationWarningManager.processPopulationIndexEfficiencyWarning(populationIndexEfficiencyWarning);
+			simulationWarningManager.processPartitionEfficiencyWarning(partitionEfficiencyWarning);
 		}
 
 		PopulationPartition populationPartition;

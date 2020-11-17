@@ -38,7 +38,7 @@ public class SimulationWarningManagerImpl extends BaseElement implements Simulat
 	}
 
 	@Override
-	public void processPopulationIndexEfficiencyWarning(PopulationIndexEfficiencyWarning populationIndexEfficiencyWarning) {
+	public void processPartitionEfficiencyWarning(PartitionEfficiencyWarning partitionEfficiencyWarning) {
 
 		/*
 		 * Review the attributes
@@ -46,7 +46,7 @@ public class SimulationWarningManagerImpl extends BaseElement implements Simulat
 		boolean regionsNeedMapping = false;
 		boolean compartmentsNeedMapping = false;
 		Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
-		for (Object attribute : populationIndexEfficiencyWarning.getAttributes()) {
+		for (Object attribute : partitionEfficiencyWarning.getAttributes()) {
 			if (attribute instanceof PersonPropertyId) {
 				personPropertyIds.add((PersonPropertyId) attribute);
 			} else if (attribute instanceof RegionId) {
@@ -91,10 +91,10 @@ public class SimulationWarningManagerImpl extends BaseElement implements Simulat
 			}
 
 			StringBuilder sb = new StringBuilder();
-			sb.append("Population Index Efficiency for ");
+			sb.append("Partition Efficiency for ");
 			sb.append(componentManager.getFocalComponentId().toString());
 			sb.append(" index id = ");
-			sb.append(populationIndexEfficiencyWarning.getPopulationIndexId());
+			sb.append(partitionEfficiencyWarning.getPartitionId());
 			sb.append(" may benefit from MapOptions being turned on for ");
 			boolean first = true;
 
@@ -112,7 +112,7 @@ public class SimulationWarningManagerImpl extends BaseElement implements Simulat
 			sb.append("The index is using the following filter:");
 			sb.append("\n");
 			
-			sb.append(FilterDisplay.getPrettyPrint(populationIndexEfficiencyWarning.getFilterInfo()));
+			sb.append(FilterDisplay.getPrettyPrint(partitionEfficiencyWarning.getFilterInfo()));
 
 			SimulationWarningItem simulationWarningItem = SimulationWarningItem	.builder()//
 																				.setReplicationId(replicationId)//

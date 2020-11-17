@@ -10,16 +10,12 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.compartment;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.EnumSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -38,7 +34,6 @@ import gcm.automated.support.TestPersonPropertyId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
-import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -70,14 +65,8 @@ public class AT_EnvironmentImpl_08 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
-	}
-
-	/*
-	 * Utility class for getting random people from population indices
-	 */
-	private static class Counter {
-		int count;
+//		 System.out.println(AT_EnvironmentImpl_08.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());		
 	}
 
 	/**
@@ -90,7 +79,7 @@ public class AT_EnvironmentImpl_08 {
 		 * Retrieve each person property definition and assert that it equals
 		 * the one held in the test plan executor.
 		 */
-		final long seed = SEED_PROVIDER.getSeedValue(14);
+		final long seed = SEED_PROVIDER.getSeedValue(11);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -426,7 +415,7 @@ public class AT_EnvironmentImpl_08 {
 		 * of the original default value.
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(13);
+		final long seed = SEED_PROVIDER.getSeedValue(10);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -905,176 +894,6 @@ public class AT_EnvironmentImpl_08 {
 		simulation.setReplication(replication);
 		simulation.setScenario(scenario);
 		simulation.execute();
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#sampleIndex(Object)}
-	 */
-	@Test
-	@UnitTestMethod(name = "sampleIndex", args = {Object.class})
-	public void test_SampleIndex_Object() {
-		/*
-		 * Show that we can retrieve people from a population index.
-		 */
-
-		final long seed = SEED_PROVIDER.getSeedValue(10);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				final Set<PersonId> peopleInCompartment = new LinkedHashSet<>();
-				for (final PersonId personId : scenario.getPeopleIds()) {
-					final CompartmentId personCompartment = scenario.getPersonCompartment(personId);
-					if (personCompartment.equals(testCompartmentId)) {
-						peopleInCompartment.add(personId);
-					}
-				}
-
-				final Object key = new Object();
-				environment.addPopulationIndex(compartment(testCompartmentId), key);
-
-				/*
-				 * We now collect many samples from the index and show that we
-				 * get a reasonable range of hits per person.
-				 */
-				final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
-				for (int i = 0; i < (peopleInCompartment.size() * 100); i++) {
-					final PersonId personId = environment.sampleIndex(key).get();
-					assertTrue(peopleInCompartment.contains(personId));
-					Counter counter = counterMap.get(personId);
-					if (counter == null) {
-						counter = new Counter();
-						counterMap.put(personId, counter);
-					}
-					counter.count++;
-				}
-
-				for (final PersonId personId : peopleInCompartment) {
-
-					final Counter counter = counterMap.get(personId);
-					assertNotNull(counter);
-					assertTrue(counter.count > 50);
-					assertTrue(counter.count < 150);
-
-				}
-
-				environment.removePopulationIndex(key);
-			}
-
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// if the key is null
-			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-			// if the key does not correspond to an existing population
-			// index
-			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#sampleIndex(Object,PersonId)}
-	 */
-	@Test
-	@UnitTestMethod(name = "sampleIndex", args = {Object.class,PersonId.class})
-	public void testSampleIndex_Object_PersonId() {
-		/*
-		 * Show that we can retrieve people from a population index while
-		 * excluding a person who is in the index. We will do this repeatedly to
-		 * show that the person retrieved is always from the index but never the
-		 * excluded person.
-		 */
-
-		final long seed = SEED_PROVIDER.getSeedValue(11);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 1000);
-		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			
-			
-			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-				final Set<PersonId> peopleInCompartment = new LinkedHashSet<>();
-				for (final PersonId personId : scenario.getPeopleIds()) {
-					if (scenario.getPersonCompartment(personId).equals(testCompartmentId)) {
-						peopleInCompartment.add(personId);
-					}
-				}
-
-				final Object key = new Object();
-				environment.addPopulationIndex(compartment(testCompartmentId), key);
-				for (int i = 0; i < 100; i++) {
-					for (final PersonId personId : peopleInCompartment) {
-						final PersonId selectedPersonId = environment.sampleIndex(key,personId).get();
-						assertTrue(peopleInCompartment.contains(selectedPersonId));
-						assertFalse(selectedPersonId.equals(personId));
-					}
-				}
-
-				environment.removePopulationIndex(key);
-			}
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// if the key is null
-			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-			// if the key does not correspond to an existing population
-			// index
-			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-
 	}
 
 	/**

@@ -57,6 +57,8 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
@@ -78,7 +80,9 @@ public class AT_EnvironmentImpl_14 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		//System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_14.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
+
 	}
 	
 	/**
@@ -765,8 +769,9 @@ public class AT_EnvironmentImpl_14 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			final Object key = new Object();
-			environment.addPopulationIndex(allPeople(), key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			Partition partition = Partition.builder().setFilter(allPeople()).build();
+			environment.addPartition(partition, key);			
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			PersonId personId = optional.get();
 
@@ -779,7 +784,7 @@ public class AT_EnvironmentImpl_14 {
 			// if the property is unknown
 			assertModelException(() -> environment.observePersonPropertyChange(true, personId, TestPersonPropertyId.getUnknownPersonPropertyId()), SimulationErrorType.UNKNOWN_PERSON_PROPERTY_ID);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 
 		});
 
@@ -1190,9 +1195,10 @@ public class AT_EnvironmentImpl_14 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			final Object key = new Object();
-			environment.addPopulationIndex(allPeople(), key);
+			Partition partition = Partition.builder().setFilter(allPeople()).build();
+			environment.addPartition(partition, key);
 
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 
@@ -1205,7 +1211,7 @@ public class AT_EnvironmentImpl_14 {
 			// if the resource is unknown
 			assertModelException(() -> environment.observePersonResourceChange(true, personId, TestResourceId.getUnknownResourceId()), SimulationErrorType.UNKNOWN_RESOURCE_ID);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 
 		});
 

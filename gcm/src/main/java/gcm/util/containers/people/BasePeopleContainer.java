@@ -20,7 +20,7 @@ import gcm.util.annotations.TestStatus;
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public class BasePeopleContainer implements PeopleContainer {
 	/*
-	 * Enumeration for the two ways that people are stored in an IndexedPopulation
+	 * Enumeration for the two ways that people are stored in a partition
 	 */
 	private static enum PeopleContainerMode {
 		INTSET, TREE_BIT_SET_SLOW;
@@ -29,10 +29,7 @@ public class BasePeopleContainer implements PeopleContainer {
 	private static final int TREE_BIT_SET_SLOW_THRESHOLD = 28;
 
 	private static final int INT_SET_THRESHOLD = 33;
-
-	/*
-	 * indexed populations start small and so we default to PeopleContainerMode.SET
-	 */
+	
 	private PeopleContainerMode mode;
 
 	private final Context context;

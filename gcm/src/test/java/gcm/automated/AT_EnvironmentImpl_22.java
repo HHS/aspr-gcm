@@ -51,6 +51,8 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -71,7 +73,9 @@ public class AT_EnvironmentImpl_22 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_22.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());		
+
 	}
 
 	/**
@@ -1055,8 +1059,8 @@ public class AT_EnvironmentImpl_22 {
 
 					compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.sampleIndex(key).get();
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			environment.addResourceToRegion(TestResourceId.RESOURCE1, TestRegionId.REGION_1, amount);
 			environment.transferResourceToPerson(TestResourceId.RESOURCE1, personId, amount);
@@ -1093,7 +1097,7 @@ public class AT_EnvironmentImpl_22 {
 			// transfer the large amount back to the region
 			assertModelException(() -> environment.transferResourceFromPerson(TestResourceId.RESOURCE2, personId, Long.MAX_VALUE), SimulationErrorType.RESOURCE_ARITHMETIC_EXCEPTION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		/*
@@ -1118,8 +1122,8 @@ public class AT_EnvironmentImpl_22 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.sampleIndex(key).get();
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			assertTrue(environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1) >= amount);
 
@@ -1127,7 +1131,7 @@ public class AT_EnvironmentImpl_22 {
 			// or the person's compartment
 			assertModelException(() -> environment.transferResourceFromPerson(TestResourceId.RESOURCE1, personId, amount), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_2, testTime++, (environment) -> {
@@ -1137,8 +1141,8 @@ public class AT_EnvironmentImpl_22 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.sampleIndex(key).get();
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			assertTrue(environment.getPersonResourceLevel(personId, TestResourceId.RESOURCE1) >= amount);
 
@@ -1146,7 +1150,7 @@ public class AT_EnvironmentImpl_22 {
 			// or the person's compartment
 			assertModelException(() -> environment.transferResourceFromPerson(TestResourceId.RESOURCE1, personId, amount), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		Simulation simulation = new Simulation();

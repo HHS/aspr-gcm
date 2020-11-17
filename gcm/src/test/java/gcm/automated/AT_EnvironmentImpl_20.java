@@ -12,7 +12,6 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.allPeople;
 import static gcm.simulation.partition.Filter.compartment;
 import static gcm.simulation.partition.Filter.region;
 import static org.junit.Assert.assertEquals;
@@ -64,6 +63,8 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -84,54 +85,9 @@ public class AT_EnvironmentImpl_20 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
-	}
+		 System.out.println(AT_EnvironmentImpl_20.class.getSimpleName() + " "
+		 + SEED_PROVIDER.generateUnusedSeedReport());
 
-	/**
-	 * Tests {@link EnvironmentImpl#populationIndexExists(Object)}
-	 */
-	@Test
-	@UnitTestMethod(name = "populationIndexExists", args = {Object.class})
-	public void testPopulationIndexExists() {
-		/*
-		 * Add an indexed population, show it exists, then remove it and show it
-		 * does not.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(0);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			final Object key = new Object();
-
-			environment.addPopulationIndex(allPeople(), key);
-			assertTrue(environment.populationIndexExists(key));
-
-			environment.removePopulationIndex(key);
-			assertFalse(environment.populationIndexExists(key));
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
 	}
 
 	/**
@@ -254,9 +210,9 @@ public class AT_EnvironmentImpl_20 {
 
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, "people of compartment 1");
+			environment.addPartition(Partition.builder().setFilter(filter).build(), "people of compartment 1");
 
-			Optional<PersonId> optional = environment.sampleIndex("people of compartment 1");
+			Optional<PersonId> optional = environment.samplePartition("people of compartment 1", PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 			assertTrue(environment.personExists(personId));
@@ -434,74 +390,6 @@ public class AT_EnvironmentImpl_20 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#removePopulationIndex(Object)}
-	 */
-	@Test
-	@UnitTestMethod(name = "removePopulationIndex", args = {Object.class})
-	public void testRemovePopulationIndex() {
-		/*
-		 * Add an indexed population, show it exists, then remove it and show it
-		 * does not.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(5);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			final Object key = new Object();
-
-			environment.addPopulationIndex(allPeople(), key);
-			assertTrue(environment.populationIndexExists(key));
-
-			environment.removePopulationIndex(key);
-			assertFalse(environment.populationIndexExists(key));
-
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			// if the key is null
-			assertModelException(() -> environment.removePopulationIndex(null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-
-			// if the key does not correspond to an existing population
-			// index
-			assertModelException(() -> environment.removePopulationIndex("unknown key"), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-
-			// we now create an index to support the next test
-			environment.addPopulationIndex(allPeople(), "index created by global component 1");
-		});
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_2, testTime++, (environment) -> {
-			assertTrue(environment.populationIndexExists("index created by global component 1"));
-
-			// if the invoker is not the component that created the index
-			assertModelException(() -> environment.removePopulationIndex("index created by global component 1"), SimulationErrorType.INDEXED_POPULATION_DELETION_BY_NON_OWNER);
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-	}
-
-	/**
 	 * Tests
 	 * {@link EnvironmentImpl#removeResourceFromPerson(ResourceId, PersonId, long)}
 	 */
@@ -648,14 +536,14 @@ public class AT_EnvironmentImpl_20 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1);
 					
-			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 			// if invoker is not a global component or the person's region
 			// or the person's compartment
 			assertModelException(() -> environment.removeResourceFromPerson(TestResourceId.RESOURCE1, personId, 1), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		/*
@@ -664,15 +552,15 @@ public class AT_EnvironmentImpl_20 {
 		taskPlanContainer.addTaskPlan(TestRegionId.REGION_2, testTime++, (environment) -> {
 			final Object key = new Object();
 			final Filter filter = region(TestRegionId.REGION_1);
-			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			PersonId personId = optional.get();
 
 			// if invoker is not a global component or the person's region
 			// or the person's compartment
 			assertModelException(() -> environment.removeResourceFromPerson(TestResourceId.RESOURCE1, personId, 1), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		Simulation simulation = new Simulation();
@@ -968,7 +856,7 @@ public class AT_EnvironmentImpl_20 {
 		 * the current value is the default value we expect from the property
 		 * definition. Then show that we can change the value.
 		 */
-		long seed = SEED_PROVIDER.getSeedValue(10);
+		long seed = SEED_PROVIDER.getSeedValue(0);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -1080,7 +968,7 @@ public class AT_EnvironmentImpl_20 {
 		 * property values.
 		 */
 
-		seed = SEED_PROVIDER.getSeedValue(11);
+		seed = SEED_PROVIDER.getSeedValue(5);
 		randomGenerator = getRandomGenerator(seed);
 
 		scenarioBuilder = new UnstructuredScenarioBuilder();

@@ -16,9 +16,9 @@ import gcm.simulation.StochasticPersonSelection;
 import gcm.util.annotations.Source;
 
 /**
- * A manager for IndexedPopulations. The Environment uses a single instance of
- * this manager to manage its IndexedPopulations. Components are not exposed to
- * IndexedPopulations or the IndexedPopulationManager but instead work with the
+ * A manager for partitions. The Context uses a single instance of
+ * this manager to manage all partitions. Components are not exposed to
+ * partitions  or the PartitionManager but instead work with the
  * Environment as a proxy.
  *
  * @author Shawn Hatch
@@ -43,7 +43,7 @@ public interface PartitionManager extends Element {
 	 * Returns the list of person identifiers in the index for the given key.
 	 *
 	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
+	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *             if the keys are not associated with a population index
 	 */
 	public List<PersonId> getPeople(final Object key);
@@ -52,7 +52,7 @@ public interface PartitionManager extends Element {
 	 * Returns the list of person identifiers in the index for the given key.
 	 *
 	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
+	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *             if the keys are not associated with a population index
 	 */
 	public List<PersonId> getPeople(final Object key, LabelSet labelSet);
@@ -61,7 +61,7 @@ public interface PartitionManager extends Element {
 	 * Returns the number of people in the index for the given key.
 	 *
 	 * @throws ModelException
-	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
+	 *             <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *             if the keys are not associated with a population index
 	 */
 	public int getPersonCount(final Object key);
@@ -136,9 +136,8 @@ public interface PartitionManager extends Element {
 	public void handlePersonResourceLevelChange(final PersonId personId, final ResourceId resourceId);
 
 	/**
-	 * Returns true if and only if this IndexedPopulationManager contains a
-	 * population index associated with the given key. The key must correspond
-	 * to an existing indexed population.
+	 * Returns true if and only if this PartitionManager contains a
+	 * partition associated with the given key.
 	 * 
 	 */
 	public boolean partitionExists(final Object key);

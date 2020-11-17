@@ -23,7 +23,6 @@ import gcm.scenario.RegionPropertyId;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.StageId;
-import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.Partition;
 import gcm.util.annotations.Source;
 
@@ -90,8 +89,6 @@ public interface MutationResolver extends Element {
 	public void setGroupPropertyValue(GroupId groupId, GroupPropertyId groupPropertyId, Object groupPropertyValue);
 
 	public void addPlan(final Plan plan, final double planTime, final Object key);
-
-	public void addPopulationIndex(ComponentId componentId, final Filter filter, final Object key);
 
 	public BatchId convertStageToBatch(final StageId stageId, final MaterialId materialId, final double amount);
 
@@ -171,8 +168,6 @@ public interface MutationResolver extends Element {
 
 	public <T> Optional<T> removePlan(final Object key);
 
-	public void removePopulationIndex(final Object key);
-
 	public void removeResourceFromPerson(final ResourceId resourceId, final PersonId personId, final long amount);
 
 	public void removeResourceFromRegion(final ResourceId resourceId, final RegionId regionId, final long amount);
@@ -236,8 +231,6 @@ public interface MutationResolver extends Element {
 	public void observeGroupPropertyChangeByType(final boolean observe, final GroupTypeId groupTypeId);
 
 	public void observeGroupPropertyChangeByTypeAndProperty(final boolean observe, final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId);
-	
-	public void observePopulationIndexChange(boolean observe, Object key);
 	
 	public void observePartitionChange(boolean observe, Object key);
 	

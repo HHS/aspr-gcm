@@ -84,7 +84,7 @@ public final class PersonConstructionInfo {
 		return new Builder();
 	}
 
-	@Source(proxy = PersonConstructionInfo.class)
+	@Source(status = TestStatus.UNEXPECTED, proxy = PersonConstructionInfo.class)
 	@NotThreadSafe
 	public static class Builder {
 

@@ -225,12 +225,7 @@ public interface ObservationManager extends Element {
 	 */
 	public void handlePersonRemoval(final PersonId personId);
 
-	/**
-	 * Removes observation of a population index that is being removed from the
-	 * simulation
-	 *
-	 */
-	public void handlePopulationIndexRemoval(final Object key);
+	
 
 	/**
 	 * Removes observation of a partition that is being removed from the
@@ -239,21 +234,7 @@ public interface ObservationManager extends Element {
 	 */
 	public void handlePartitionRemoval(final Object key);
 
-	/**
-	 * Creates observation records for component observers for a person addition
-	 * to a population index.
-	 * 
-	 *
-	 */
-	public void handlePopulationIndexPersonAddition(final Object key, PersonId personId);
-
-	/**
-	 * Creates observation records for component observers for a person removal
-	 * from a population index. 
-	 *
-	 */
-	public void handlePopulationIndexPersonRemoval(final Object key, PersonId personId);
-	
+		
 	/**
 	 * Creates observation records for component observers for a person addition
 	 * to a partition.
@@ -957,16 +938,7 @@ public interface ObservationManager extends Element {
 	 */
 	public void observeStageTransferByStageId(final boolean observe, final StageId stageId);
 
-	/**
-	 * Starts or stops the observation of changes to the membership of the
-	 * associated population index.
-	 *
-	 * @param observe
-	 *            start or stop observation
-	 * @param key
-	 *            cannot be null must correspond to an existing population index
-	 */
-	public void observePopulationIndexChange(boolean observe, Object key);
+	
 
 	/**
 	 * Starts or stops the observation of changes to the membership of the

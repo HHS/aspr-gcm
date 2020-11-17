@@ -42,7 +42,6 @@ import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.group.GroupSampler;
 import gcm.simulation.group.GroupSamplerInfo;
 import gcm.simulation.group.PersonGroupManger;
-import gcm.simulation.index.IndexedPopulationManager;
 import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.FilterInfo;
 import gcm.simulation.partition.FilterInfo.CompartmentFilterInfo;
@@ -57,7 +56,6 @@ import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.PartitionSampler;
-import gcm.util.StopWatch;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
@@ -119,14 +117,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	 */
 	private PartitionManager partitionManager;
 
-	/*
-	 * The IndexedPopulationManager maintains the population indexes. The
-	 * Environment works with the components to create the indices, but once created
-	 * delegates custody to the manager. Then environment informs the manager of
-	 * changes that are relevant to index management without having to know the
-	 * actual indices.
-	 */
-	private IndexedPopulationManager indexedPopulationManager;
 
 	/*
 	 * The ObservableEnvironment is a sub-interface of the Environment interface
@@ -266,19 +256,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	@Override
-	public void addPopulationIndex(final Filter filter, final Object key) {
-		externalAccessManager.acquireWriteAccess();
-		try {
-			validateComponentHasFocus();
-			validateFilter(filter);
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexDoesNotExist(key);
-			mutationResolver.addPopulationIndex(componentManager.getFocalComponentId(), filter, key);
-		} finally {
-			externalAccessManager.releaseWriteAccess();
-		}
-	}
+	
 
 	@Override
 	public void addResourceToRegion(final ResourceId resourceId, final RegionId regionId, final long amount) {
@@ -900,29 +878,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	@Override
-	public List<PersonId> getIndexedPeople(final Object key) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			return indexedPopulationManager.getIndexedPeople(key);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
 
-	@Override
-	public int getIndexSize(final Object key) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			return indexedPopulationManager.getIndexSize(key);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
 
 	@Override
 	public List<BatchId> getInventoryBatches(final MaterialsProducerId materialsProducerId) {
@@ -1388,52 +1344,16 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	@Override
-	public Optional<PersonId> sampleIndex(final Object key) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			PersonId nullPersonId = null;
-			final PersonId personId = indexedPopulationManager.sampleIndex(key, nullPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
+	
 
-	public static StopWatch indexStopWatch = new StopWatch();
-
-	@Override
-	public Optional<PersonId> sampleIndex(final Object key, final PersonId excludedPersonId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			validatePersonExists(excludedPersonId);
-			// indexStopWatch.start();
-			final PersonId personId = indexedPopulationManager.sampleIndex(key, excludedPersonId);
-			// indexStopWatch.stop();
-			return Optional.ofNullable(personId);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	public static StopWatch partitionStopWatch = new StopWatch();
 
 	@Override
 	public Optional<PersonId> samplePartition(Object key, PartitionSampler partitionSampler) {
 		externalAccessManager.acquireReadAccess();
 		try {
-//			partitionStopWatch.start();
 			validatePopulationPartitionKeyNotNull(key);
 			validatePopulationPartitionExists(key);
 			validatePartitionSampler(key, partitionSampler);
-//			partitionStopWatch.stop();
 
 			final StochasticPersonSelection stochasticPersonSelection = partitionManager.samplePartition(key,
 					partitionSampler);
@@ -1445,45 +1365,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseReadAccess();
 		}
 	}
-
-	@Override
-	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			PersonId nullPersonId = null;
-			final PersonId personId = indexedPopulationManager.sampleIndex(key, randomNumberGeneratorId, nullPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
-	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,
-			final PersonId excludedPersonId) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			validatePersonExists(excludedPersonId);
-			validateRandomNumberGeneratorId(randomNumberGeneratorId);
-			final PersonId personId = indexedPopulationManager.sampleIndex(key, randomNumberGeneratorId,
-					excludedPersonId);
-			if (personId == null) {
-				return Optional.empty();
-			}
-			return Optional.of(personId);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
+	
 	@Override
 	public Set<RegionId> getRegionIds() {
 		externalAccessManager.acquireReadAccess();
@@ -1760,8 +1642,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		outputItemManager = context.getOutputItemManager();
 		externalAccessManager = context.getExternalAccessManager();
 		componentManager = context.getComponentManager();
-		eventManager = context.getEventManager();
-		indexedPopulationManager = context.getIndexedPopulationManager();
+		eventManager = context.getEventManager();		
 		partitionManager = context.getPartitionManager();
 
 		observableEnvironment = context.getObservableEnvironment();
@@ -2244,29 +2125,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	}
 
 	@Override
-	public boolean personIsInPopulationIndex(final PersonId personId, final Object key) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			validatePersonExists(personId);
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			return indexedPopulationManager.personInPopulationIndex(personId, key);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
-	public boolean populationIndexExists(final Object key) {
-		externalAccessManager.acquireReadAccess();
-		try {
-			return indexedPopulationManager.populationIndexExists(key);
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
 	public void removeGroup(final GroupId groupId) {
 		externalAccessManager.acquireWriteAccess();
 		try {
@@ -2317,20 +2175,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		} finally {
 			externalAccessManager.releaseWriteAccess();
 		}
-	}
-
-	@Override
-	public void removePopulationIndex(final Object key) {
-		externalAccessManager.acquireWriteAccess();
-		try {
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			validatePopulationIndexIsOwnedByFocalComponent(key);
-			mutationResolver.removePopulationIndex(key);
-		} finally {
-			externalAccessManager.releaseWriteAccess();
-		}
-
 	}
 
 	@Override
@@ -2952,18 +2796,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validateFilter(final Filter filter) {
-		if (filter == null) {
-			throwModelException(SimulationErrorType.NULL_FILTER);
-		}
-
-		/*
-		 * Get a FilterInfo for the filter, decompose it into all its individual
-		 * children and validate each child
-		 */
-		FilterInfo.getHierarchyAsList(FilterInfo.build(filter)).forEach(this::validateFilterInfo);
-	}
-
 	private void validateFocalComponent(final boolean globalAllowed, final boolean allRegionsAllowed,
 			final boolean allCompartmentsAllowed, final boolean allMaterialsProducersAllowed, final RegionId regionId,
 			final CompartmentId compartmentId, final MaterialsProducerId materialsProducerId) {
@@ -3340,30 +3172,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	private void validatePlanTime(final double planTime) {
 		if (planTime < eventManager.getTime()) {
 			throwModelException(SimulationErrorType.PAST_PLANNING_TIME);
-		}
-	}
-
-	private void validatePopulationIndexDoesNotExist(final Object key) {
-		if (indexedPopulationManager.populationIndexExists(key)) {
-			throwModelException(SimulationErrorType.DUPLICATE_INDEXED_POPULATION, key);
-		}
-	}
-
-	private void validatePopulationIndexExists(final Object key) {
-		if (!indexedPopulationManager.populationIndexExists(key)) {
-			throwModelException(SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY, key);
-		}
-	}
-
-	private void validatePopulationIndexIsOwnedByFocalComponent(final Object key) {
-		if (!indexedPopulationManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {
-			throwModelException(SimulationErrorType.INDEXED_POPULATION_DELETION_BY_NON_OWNER, key);
-		}
-	}
-
-	private void validatePopulationIndexKeyNotNull(final Object key) {
-		if (key == null) {
-			throwModelException(SimulationErrorType.NULL_POPULATION_INDEX_KEY);
 		}
 	}
 
@@ -3857,18 +3665,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	@Override
-	public void observePopulationIndexChange(boolean observe, Object key) {
-		externalAccessManager.acquireWriteAccess();
-		try {
-			validateComponentHasFocus();
-			validatePopulationIndexKeyNotNull(key);
-			validatePopulationIndexExists(key);
-			mutationResolver.observePopulationIndexChange(observe, key);
-		} finally {
-			externalAccessManager.releaseWriteAccess();
-		}
-	}
+	
 
 	@Override
 	public void observePartitionChange(boolean observe, Object key) {
@@ -4023,7 +3820,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validatePopulationPartitionDoesNotExist(final Object key) {
 		if (partitionManager.partitionExists(key)) {
-			throwModelException(SimulationErrorType.DUPLICATE_POPULATION_PARTITION, key);
+			throwModelException(SimulationErrorType.DUPLICATE_PARTITION, key);
 		}
 	}
 
@@ -4068,7 +3865,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	private void validatePopulationPartitionIsOwnedByFocalComponent(final Object key) {
 		if (!partitionManager.getOwningComponent(key).equals(componentManager.getFocalComponentId())) {
-			throwModelException(SimulationErrorType.POPULATION_PARTITION_DELETION_BY_NON_OWNER, key);
+			throwModelException(SimulationErrorType.PARTITION_DELETION_BY_NON_OWNER, key);
 		}
 	}
 

@@ -344,17 +344,7 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 				groupId = observationRecord.getArgument(1);
 				groupPropertyId = observationRecord.getArgument(2);
 				component.observeGroupPropertyChange(environment, groupId, groupPropertyId);
-				break;
-			case POPULATION_INDEX_PERSON_ADDITION:
-				key = observationRecord.getArgument(1);
-				personId = observationRecord.getArgument(2);
-				component.observePopulationIndexPersonAddition(environment, key, personId);
-				break;
-			case POPULATION_INDEX_PERSON_REMOVAL:
-				key = observationRecord.getArgument(1);
-				personId = observationRecord.getArgument(2);
-				component.observePopulationIndexPersonRemoval(environment, key, personId);
-				break;
+				break;			
 			case PARTITION_PERSON_ADDITION:
 				key = observationRecord.getArgument(1);
 				personId = observationRecord.getArgument(2);				

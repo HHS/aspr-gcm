@@ -7,12 +7,9 @@ import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefini
 import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
 import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
-import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.compartment;
-import static gcm.simulation.partition.Filter.property;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -34,9 +31,7 @@ import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGroupTypeId;
-import gcm.automated.support.TestPersonPropertyId;
 import gcm.replication.Replication;
-import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
@@ -46,7 +41,6 @@ import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.Equality;
 import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
@@ -71,7 +65,9 @@ public class AT_EnvironmentImpl_19 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_19.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
+
 	}
 
 	/**
@@ -1061,162 +1057,6 @@ public class AT_EnvironmentImpl_19 {
 		simulation.execute();
 
 		assertAllPlansExecuted(taskPlanContainer);
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#personIsInPopulationIndex(PersonId, Object)}
-	 */
-	@Test
-	@UnitTestMethod(name = "personIsInPopulationIndex", args = { PersonId.class, Object.class})
-	public void testPersonIsInPopulationIndex() {
-		/*
-		 * Show that we can verify a person's membership in a population index.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(8);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		final Object key = new Object();
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// Make sure that we have randomized values for person property
-			// 1 for all the people
-			for (final PersonId personId : environment.getPeople()) {
-				final PropertyDefinition propertyDefinition = environment.getPersonPropertyDefinition(TestPersonPropertyId.PERSON_PROPERTY_1);
-				final Object currentValue = environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1);
-				/*
-				 * Derive a new value that is not the same as the current value
-				 * so that when we assert that the new value is now in place we
-				 * are not actually seeing the old value.
-				 */
-				final Object newValue = generatePropertyValue(propertyDefinition, environment.getRandomGenerator());
-
-				/*
-				 * Set the value
-				 */
-				if (!currentValue.equals(newValue)) {
-					environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, newValue);
-				}
-
-			}
-			/*
-			 * Organize all people into a map by compartment id and property
-			 * value.
-			 *
-			 * <CompartmentId,PropertyValue,People>
-			 */
-			final Map<CompartmentId, Map<Comparable<?>, Set<PersonId>>> peopleInCompartmentWithProperty = new LinkedHashMap<>();
-
-			/*
-			 * Make sure there are a few people
-			 */
-			assertTrue(scenario.getPeopleIds().size() > 10);
-
-			final Set<Object> personPropertyValueEncountered = new LinkedHashSet<>();
-
-			for (final PersonId personId : scenario.getPeopleIds()) {
-				final CompartmentId compartmentId = scenario.getPersonCompartment(personId);
-				final Comparable<?> personPropertyValue = environment.getPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1);
-				personPropertyValueEncountered.add(personPropertyValue);
-				Map<Comparable<?>, Set<PersonId>> map = peopleInCompartmentWithProperty.get(compartmentId);
-				if (map == null) {
-					map = new LinkedHashMap<>();
-					peopleInCompartmentWithProperty.put(compartmentId, map);
-				}
-				Set<PersonId> set = map.get(personPropertyValue);
-				if (set == null) {
-					set = new LinkedHashSet<>();
-					map.put(personPropertyValue, set);
-				}
-				set.add(personId);
-			}
-
-			/*
-			 * Make sure that the people have more that one property value
-			 */
-			assertTrue(personPropertyValueEncountered.size() > 1);
-
-			/*
-			 * Add a population index for each <compartment, property value>
-			 * pair
-			 */
-			for (final CompartmentId compartmentId : peopleInCompartmentWithProperty.keySet()) {
-				final Map<Comparable<?>, Set<PersonId>> map = peopleInCompartmentWithProperty.get(compartmentId);
-				for (final Comparable<?> propertyValue : map.keySet()) {
-					MultiKey multiKey = new MultiKey(compartmentId, propertyValue);
-					environment.addPopulationIndex(compartment(compartmentId).and(property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, propertyValue)), multiKey);
-				}
-			}
-
-			/*
-			 * Show that a person's membership in each index is correct
-			 */
-
-			for (final CompartmentId compartmentId : peopleInCompartmentWithProperty.keySet()) {
-				final Map<Comparable<?>, Set<PersonId>> map = peopleInCompartmentWithProperty.get(compartmentId);
-				for (final Comparable<?> propertyValue : map.keySet()) {
-					final Set<PersonId> expectedPeopleInIndex = peopleInCompartmentWithProperty.get(compartmentId).get(propertyValue);
-					for (final PersonId personId : scenario.getPeopleIds()) {
-						MultiKey multiKey = new MultiKey(compartmentId, propertyValue);
-						final boolean personInIndex = environment.personIsInPopulationIndex(personId, multiKey);
-						assertEquals(expectedPeopleInIndex.contains(personId), personInIndex);
-					}
-				}
-			}
-
-			/*
-			 * Remove the population indexes to clear the way for other tests
-			 */
-			for (final CompartmentId compartmentId : peopleInCompartmentWithProperty.keySet()) {
-				final Map<Comparable<?>, Set<PersonId>> map = peopleInCompartmentWithProperty.get(compartmentId);
-				for (final Comparable<?> propertyValue : map.keySet()) {
-					MultiKey multiKey = new MultiKey(compartmentId, propertyValue);
-					environment.removePopulationIndex(multiKey);
-				}
-			}
-
-		});
-
-		/*
-		 * Precondition tests
-		 */
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			// if the key is null
-			assertModelException(() -> environment.personIsInPopulationIndex(new PersonId(1), null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-
-			// if the key does not correspond to an existing population
-			assertModelException(() -> environment.personIsInPopulationIndex(new PersonId(1), new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-
-			// if the person is null
-			assertModelException(() -> environment.personIsInPopulationIndex(null, key), SimulationErrorType.NULL_PERSON_ID);
-
-			// if the person is unknown
-			assertModelException(() -> environment.personIsInPopulationIndex(new PersonId(-1), key), SimulationErrorType.UNKNOWN_PERSON_ID);
-
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-
 	}
 
 }

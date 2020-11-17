@@ -19,6 +19,7 @@ import gcm.simulation.Environment;
 import gcm.simulation.Equality;
 import gcm.simulation.Plan;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
 import gcm.util.TimeElapser;
 
 public class PopulationLoader extends AbstractComponent {
@@ -98,7 +99,8 @@ public class PopulationLoader extends AbstractComponent {
 
 		environment.getRegionIds().stream().forEach(regionId -> {
 			Filter filter = region(regionId).and(groupsForPersonAndGroupType(GroupType.WORK, Equality.GREATER_THAN, 0));
-			environment.addPopulationIndex(filter, regionId);
+			Partition partition = Partition.builder().setFilter(filter).build();
+			environment.addPartition(partition, regionId);
 
 		});
 

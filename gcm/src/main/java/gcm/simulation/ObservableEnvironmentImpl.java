@@ -562,26 +562,6 @@ public final class ObservableEnvironmentImpl extends BaseElement implements Obse
 	}
 
 	@Override
-	public boolean personIsInPopulationIndex(PersonId personId, Object key) {
-		return environment.personIsInPopulationIndex(personId, key);
-	}
-
-	@Override
-	public boolean populationIndexExists(Object key) {
-		return environment.populationIndexExists(key);
-	}
-
-	@Override
-	public int getIndexSize(Object key) {
-		return environment.getIndexSize(key);
-	}
-
-	@Override
-	public List<PersonId> getIndexedPeople(Object key) {
-		return environment.getIndexedPeople(key);
-	}
-
-	@Override
 	public void releaseOutputItem(OutputItem outputItem) {
 		environment.releaseOutputItem(outputItem);
 	}

@@ -11,7 +11,6 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.allPeople;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -463,11 +461,6 @@ public class AT_EnvironmentImpl_15 {
 		 * Precondition tests
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			final Object key = new Object();
-			environment.addPopulationIndex(allPeople(), key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
-			assertTrue(optional.isPresent());
-
 			// if the resource id is null
 			assertModelException(() -> environment.observeRegionPersonResourceChange(true, TestRegionId.REGION_1, null), SimulationErrorType.NULL_RESOURCE_ID);
 			// if the resource id is unknown
@@ -476,9 +469,6 @@ public class AT_EnvironmentImpl_15 {
 			assertModelException(() -> environment.observeRegionPersonResourceChange(true, null, TestResourceId.RESOURCE1), SimulationErrorType.NULL_REGION_ID);
 			// if the region id is unknown
 			assertModelException(() -> environment.observeRegionPersonResourceChange(true, TestRegionId.getUnknownRegionId(), TestResourceId.RESOURCE1), SimulationErrorType.UNKNOWN_REGION_ID);
-
-			environment.removePopulationIndex(key);
-
 		});
 
 		Simulation simulation = new Simulation();

@@ -36,7 +36,6 @@ import gcm.scenario.ScenarioId;
 import gcm.scenario.StageId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.simulation.group.GroupSampler;
-import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.LabelSet;
 import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionSampler;
@@ -333,36 +332,7 @@ public interface Environment extends Element {
 	 */
 	public void addPlan(final Plan plan, final double planTime, final Object key);
 
-	/**
-	 * Adds an indexed population using the supplied filter.
-	 *
-	 * Only the component that creates an index may remove that index, but other
-	 * components may access the index if they know its key. The resulting indexed
-	 * population is actively maintained by the GCM and is accessed by the key
-	 * provided. This index is owned by the component that created it in that only
-	 * that component may remove it from the Environment. However, all components
-	 * have access to the index via its key.
-	 *
-	 * Filters are created using the various static constructors provided in
-	 * {@linkplain Filter}.
-	 * 
-	 * 
-	 *
-	 *
-	 * @throws ModelException *
-	 *                        <li>{@link SimulationErrorType#NULL_FILTER} if the
-	 *                        filter is null
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#DUPLICATE_INDEXED_POPULATION}
-	 *                        if the key corresponds to an existing population index
-	 *                        <li>{@link SimulationErrorType#COMPONENT_LACKS_PERMISSION}
-	 *                        if this method is invoked while the simulation has no
-	 *                        active component
-	 *
-	 */
-	//marked for removal
-	public void addPopulationIndex(final Filter filter, final Object key);
+
 
 	/**
 	 * Adds the amount of resource to the given region.
@@ -1033,36 +1003,8 @@ public interface Environment extends Element {
 	 */
 	public <T extends GroupTypeId> List<T> getGroupTypesForPerson(final PersonId personId);
 
-	/**
-	 * Returns a list of person identifiers associated with the indexed population.
-	 *
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *
-	 */
-	//marked for removal
-	public List<PersonId> getIndexedPeople(final Object key);
+	
 
-	/**
-	 * Returns the size of an indexed population.
-	 *
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 */
-	//marked for removal
-	public int getIndexSize(final Object key);
 
 	/**
 	 * Returns the batches owned by a particular materials producer that are in
@@ -1643,74 +1585,7 @@ public interface Environment extends Element {
 	 */
 	public RandomGenerator getRandomGeneratorFromId(RandomNumberGeneratorId randomNumberGeneratorId);
 
-	/**
-	 * Returns a randomly selected person identifier from an indexed population.
-	 * Returns null if the population index is empty. See the
-	 * createPopulationIndex() method for activating the index from the various
-	 * prepare*() methods.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 * 
-	 */
-	//marked for removal
-	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId);
-
-	/**
-	 * Returns a randomly selected person identifier from an indexed population
-	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population index is empty or contains only the excluded person.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 */
-	//marked for removal
-	public Optional<PersonId> sampleIndex(final Object key, final PersonId excludedPersonId);
-
-	/**
-	 * Returns a randomly selected person identifier from an indexed population
-	 * excluding the given person identifier if that parameter is not null. Returns
-	 * null if the population index is empty or contains only the excluded person.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the excluded person is unknown
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        excluded person is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_RANDOM_NUMBER_GENERATOR_ID}
-	 *                        if the randomNumberGeneratorId does not correspond to
-	 *                        an existing random Number Generator Id in the scenario
-	 */
-	//marked for removal
-	public Optional<PersonId> sampleIndex(final Object key, RandomNumberGeneratorId randomNumberGeneratorId,
-			final PersonId excludedPersonId);
-
+	
 	/**
 	 * Returns the set of region component identifiers as provided during simulation
 	 * construction.
@@ -2603,34 +2478,6 @@ public interface Environment extends Element {
 	public boolean personExists(final PersonId personId);
 
 	/**
-	 *
-	 * Returns true if and only if the person is associated with the index specified
-	 * by the population index keys.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *                        <li>{@link SimulationErrorType#NULL_PERSON_ID} if the
-	 *                        person is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_PERSON_ID} if
-	 *                        the person is unknown
-	 * 
-	 */
-	//marked for removal
-	public boolean personIsInPopulationIndex(final PersonId personId, final Object key);
-
-	/**
-	 * Returns true if and only if the a population index exists with the given key.
-	 * Tolerates null key.
-	 */
-	//marked for removal
-	public boolean populationIndexExists(final Object key);
-
-	/**
 	 * Removes the group associated with the given group type and group identifiers.
 	 * People associated with the group are removed from the group.
 	 *
@@ -2691,38 +2538,6 @@ public interface Environment extends Element {
 	 *
 	 */
 	public <T> Optional<T> removePlan(final Object key);
-
-	/**
-	 * Removes an indexed population.
-	 *
-	 * Population indices are prepared and created in a multi-step process. First,
-	 * filtering conditions are collected on behalf of the invoking component via
-	 * the prepareXXX() methods. Then, the createPopulationIndex() is invoked to
-	 * gather those filters and create a population index that is identified by keys
-	 * supplied by the component. Once created, the filters for the index cannot be
-	 * updated, but the simulation dynamically maintains the people associated with
-	 * the index as conditions on the population change.
-	 *
-	 * Once the index is added via createPopulationIndex() the component may add a
-	 * new set of filters via the prepareXXX() again.
-	 *
-	 * Only the component that creates an index may remove that index, but other
-	 * components may access the index if they know its keys.
-	 *
-	 * @throws ModelException
-	 *
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 *                        <li>{@link SimulationErrorType#INDEXED_POPULATION_DELETION_BY_NON_OWNER}
-	 *                        if the invoker is not the component that created the
-	 *                        index
-	 *
-	 */
-	//marked for removal
-	public void removePopulationIndex(final Object key);
 
 	/**
 	 * Removes the amount of resource to the given person.
@@ -3440,17 +3255,7 @@ public interface Environment extends Element {
 	public void observeGroupDepartureByTypeAndPerson(final boolean observe, final GroupTypeId groupTypeId,
 			final PersonId personId);
 
-	/**
-	 * Starts or stops observation of a change to a population index
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 */
-	public void observePopulationIndexChange(final boolean observe, final Object key);
+	
 
 	/**
 	 * Starts or stops observation of a change to a partition
@@ -3718,7 +3523,7 @@ public interface Environment extends Element {
 	 *                        if the population partition definition is null
 	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_PARTITION_KEY}
 	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#DUPLICATE_POPULATION_PARTITION}
+	 *                        <li>{@link SimulationErrorType#DUPLICATE_PARTITION}
 	 *                        if the key corresponds to an existing population
 	 *                        partition
 	 *                        <li>{@link SimulationErrorType#COMPONENT_LACKS_PERMISSION}
@@ -3776,19 +3581,8 @@ public interface Environment extends Element {
 	/**
 	 * Removes an indexed population.
 	 *
-	 * Population indices are prepared and created in a multi-step process. First,
-	 * filtering conditions are collected on behalf of the invoking component via
-	 * the prepareXXX() methods. Then, the createPopulationIndex() is invoked to
-	 * gather those filters and create a population index that is identified by keys
-	 * supplied by the component. Once created, the filters for the index cannot be
-	 * updated, but the simulation dynamically maintains the people associated with
-	 * the index as conditions on the population change.
 	 *
-	 * Once the index is added via createPopulationIndex() the component may add a
-	 * new set of filters via the prepareXXX() again.
-	 *
-	 * Only the component that creates an index may remove that index, but other
-	 * components may access the index if they know its keys.
+	 * Partitions may only be removed by the components that create them.
 	 *
 	 * @throws ModelException
 	 *
@@ -3797,7 +3591,7 @@ public interface Environment extends Element {
 	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_PARTITION_KEY}
 	 *                        if the key does not correspond to an existing
 	 *                        population index
-	 *                        <li>{@link SimulationErrorType#POPULATION_PARTITION_DELETION_BY_NON_OWNER}
+	 *                        <li>{@link SimulationErrorType#PARTITION_DELETION_BY_NON_OWNER}
 	 *                        if the invoker is not the component that created the
 	 *                        index
 	 *
@@ -3835,21 +3629,7 @@ public interface Environment extends Element {
 	 */
 	public boolean personIsInPopulationPartition(final PersonId personId, final Object key, final LabelSet labelSet);
 
-	/**
-	 * Returns a randomly selected person identifier from an indexed population.
-	 * Returns null if the population index is empty. See the
-	 * createPopulationIndex() method for activating the index from the various
-	 * prepare*() methods.
-	 *
-	 * @throws ModelException
-	 *                        <li>{@link SimulationErrorType#NULL_POPULATION_INDEX_KEY}
-	 *                        if the key is null
-	 *                        <li>{@link SimulationErrorType#UNKNOWN_POPULATION_INDEX_KEY}
-	 *                        if the key does not correspond to an existing
-	 *                        population index
-	 */
-	//marked for removal
-	public Optional<PersonId> sampleIndex(final Object key);
+	
 
 	/**
 	 * Returns a randomly selected person identifier from a population partition.

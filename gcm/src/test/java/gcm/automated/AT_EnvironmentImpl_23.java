@@ -69,6 +69,7 @@ import gcm.simulation.ObservationType;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
 import gcm.util.MultiKey;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
@@ -90,8 +91,8 @@ public class AT_EnvironmentImpl_23 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(AT_EnvironmentImpl_23.class.getSimpleName() + " "
-		// + SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_23.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -154,11 +155,11 @@ public class AT_EnvironmentImpl_23 {
 	}
 
 	/**
-	 * Tests {@link EnvironmentImpl#observePopulationIndexChange(boolean, Object)}
+	 * Tests {@link EnvironmentImpl#observePartitionChange(boolean, Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observePopulationIndexChange", args = { boolean.class, Object.class })
-	public void testObservePopulationIndexChange() {
+	@UnitTestMethod(name = "observePartitionChange", args = { boolean.class, Object.class })
+	public void testObservePartitionChange() {
 		/*
 		 * We test for the post conditions by first having the components execute a
 		 * series time-separated plans and then examining the observations recorded by
@@ -237,12 +238,12 @@ public class AT_EnvironmentImpl_23 {
 
 			Filter filter = region(TestRegionId.REGION_1).and(compartmentsAndProps);
 
-			environment.addPopulationIndex(filter, key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
 		});
 
 		// Time 2 : Global Component 2 starts observing the index
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_2, testTime++, (environment) -> {
-			environment.observePopulationIndexChange(true, key);
+			environment.observePartitionChange(true, key);
 		});
 
 		// Time 3 : Global Component 3 makes changes to the index
@@ -271,7 +272,7 @@ public class AT_EnvironmentImpl_23 {
 				PersonId personId = peopleInCompartmentAndRegion.get(i);
 				environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 5);
 				expectedObservations.add(new MultiKey(environment.getTime(), TestGlobalComponentId.GLOBAL_COMPONENT_2,
-						ObservationType.POPULATION_INDEX_PERSON_REMOVAL, key, personId));
+						ObservationType.PARTITION_PERSON_REMOVAL, key, personId));
 			}
 
 		});
@@ -307,12 +308,12 @@ public class AT_EnvironmentImpl_23 {
 
 		// Time 5 : Global Component 2 stop observation of the index
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_2, testTime++, (environment) -> {
-			environment.observePopulationIndexChange(false, key);
+			environment.observePartitionChange(false, key);
 		});
 
 		// Time 6 : Global Component 1 start observation of the index
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-			environment.observePopulationIndexChange(true, key);
+			environment.observePartitionChange(true, key);
 		});
 
 		// Time 7 : Global Component 3 makes changes to the index
@@ -341,7 +342,7 @@ public class AT_EnvironmentImpl_23 {
 			for (PersonId personId : selectedPeople) {
 				environment.setPersonPropertyValue(personId, TestPersonPropertyId.PERSON_PROPERTY_1, 10);
 				expectedObservations.add(new MultiKey(environment.getTime(), TestGlobalComponentId.GLOBAL_COMPONENT_1,
-						ObservationType.POPULATION_INDEX_PERSON_ADDITION, key, personId));
+						ObservationType.PARTITION_PERSON_ADDITION, key, personId));
 			}
 
 		});
@@ -350,11 +351,11 @@ public class AT_EnvironmentImpl_23 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			Object badKey = "bad key";
 			// if the property id is null
-			assertModelException(() -> environment.observePopulationIndexChange(true, badKey),
-					SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.observePartitionChange(true, badKey),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
 			// if the property is unknown
-			assertModelException(() -> environment.observePopulationIndexChange(true, null),
-					SimulationErrorType.NULL_POPULATION_INDEX_KEY);
+			assertModelException(() -> environment.observePartitionChange(true, null),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
 		});
 
 		Simulation simulation = new Simulation();
@@ -367,7 +368,7 @@ public class AT_EnvironmentImpl_23 {
 		final Set<MultiKey> actualObservations = observationContainer.getObservations();
 
 		if(!expectedObservations.equals(actualObservations)) {
-			System.out.println("AT_EnvironmentImpl_23.testObservePopulationIndexChange()");
+			System.out.println("AT_EnvironmentImpl_23.testObservePartitionChange()");
 			System.out.println("expected");
 			for(MultiKey observation : expectedObservations) {
 				System.out.println(observation);

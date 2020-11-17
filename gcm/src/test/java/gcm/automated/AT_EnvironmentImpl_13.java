@@ -11,7 +11,6 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.allPeople;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -20,7 +19,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
@@ -79,7 +77,8 @@ public class AT_EnvironmentImpl_13 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-//		System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_13.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/**
@@ -760,18 +759,10 @@ public class AT_EnvironmentImpl_13 {
 		 * Precondition tests
 		 */
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			final Object key = new Object();
-			environment.addPopulationIndex(allPeople(), key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
-			assertTrue(optional.isPresent());
-
 			// if the resource id is null
 			assertModelException(() -> environment.observeGlobalPersonResourceChange(true, null), SimulationErrorType.NULL_RESOURCE_ID);
 			// if the resource is unknown
 			assertModelException(() -> environment.observeGlobalPersonResourceChange(true, TestResourceId.getUnknownResourceId()), SimulationErrorType.UNKNOWN_RESOURCE_ID);
-
-			environment.removePopulationIndex(key);
 
 		});
 

@@ -10,17 +10,13 @@ import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
 import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
-import static gcm.simulation.partition.Filter.compartment;
-import static gcm.simulation.partition.Filter.resource;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.AfterClass;
@@ -54,13 +50,11 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
-import gcm.simulation.Equality;
 import gcm.simulation.GroupConstructionInfo;
 import gcm.simulation.GroupConstructionInfo.Builder;
 import gcm.simulation.Plan;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
-import gcm.simulation.partition.Filter;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
@@ -152,7 +146,7 @@ public class AT_EnvironmentImpl_01 {
 		 * Assert that the groups can be added
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(8);
+		final long seed = SEED_PROVIDER.getSeedValue(4);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
@@ -502,105 +496,6 @@ public class AT_EnvironmentImpl_01 {
 			// if the key corresponds to an active plan
 			environment.addPlan(new EmptyTaskPlan(600, "key3"), 25, "key3");
 			assertModelException(() -> environment.addPlan(new EmptyTaskPlan(700, "key3"), 10, "key3"), SimulationErrorType.DUPLICATE_PLAN_KEY);
-		});
-
-		Simulation simulation = new Simulation();
-		simulation.setReplication(replication);
-		simulation.setScenario(scenario);
-		simulation.execute();
-
-		assertAllPlansExecuted(taskPlanContainer);
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#addPopulationIndex(Filter, Object)}
-	 *
-	 */
-	@Test
-	@UnitTestMethod(name = "addPopulationIndex", args = { Filter.class, Object.class })
-	public void testAddPopulationIndex() {
-
-		/*
-		 * Tests the population index by distributing resources to some, but not
-		 * all people and filtering on the amount given. Shows that the index
-		 * reflects the expected people before and after changes that should
-		 * effect the index.
-		 */
-		final long seed = SEED_PROVIDER.getSeedValue(4);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
-		addStandardPeople(scenarioBuilder, 10);
-
-		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-		Scenario scenario = scenarioBuilder.build();
-
-		Replication replication = getReplication(randomGenerator);
-
-		int testTime = 1;
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			/*
-			 * Build a filter that selects people who are in compartment 1 and
-			 * have at least 3 units of resource 3
-			 */
-
-			Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(resource(TestResourceId.RESOURCE3, Equality.GREATER_THAN_EQUAL, 3));
-
-			/*
-			 * add the index to the environment
-			 */
-			final Object indexKey = "key 1";
-			environment.addPopulationIndex(filter, indexKey);
-
-			// show that there are no people in the index
-			assertEquals(0, environment.getIndexedPeople(indexKey).size());
-
-			// now give some people some the of the resource, making sure
-			// that some people get it, but not enough to pass the filter.
-
-			final Set<PersonId> expectedPeople = new LinkedHashSet<>();
-			for (final PersonId personId : environment.getPeople()) {
-				final RegionId regionId = environment.getPersonRegion(personId);
-				final long amount = personId.getValue() % 4;
-				if (amount > 0) {
-					environment.addResourceToRegion(TestResourceId.RESOURCE3, regionId, amount);
-					environment.transferResourceToPerson(TestResourceId.RESOURCE3, personId, amount);
-					if (amount > 2) {
-						final CompartmentId compartmentId = environment.getPersonCompartment(personId);
-						if (compartmentId.equals(TestCompartmentId.COMPARTMENT_1)) {
-							expectedPeople.add(personId);
-						}
-					}
-				}
-
-			}
-			// make sure that we didn't make a mistake and are not about to
-			// compare to empty sets
-			assertTrue(expectedPeople.size() > 0);
-
-			// now show that the people in the index match our expectations
-			final Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(indexKey));
-
-			assertEquals(expectedPeople, actualPeople);
-
-		});
-
-		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-
-			Object key = "key 2";
-			assertModelException(() -> environment.addPopulationIndex(null, key), SimulationErrorType.NULL_FILTER);
-
-			Filter filter = compartment(TestCompartmentId.COMPARTMENT_2);
-			assertModelException(() -> environment.addPopulationIndex(filter, null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-
-			environment.addPopulationIndex(filter, key);
-			assertModelException(() -> environment.addPopulationIndex(filter, key), SimulationErrorType.DUPLICATE_INDEXED_POPULATION);
-
 		});
 
 		Simulation simulation = new Simulation();

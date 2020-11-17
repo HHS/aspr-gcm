@@ -17,6 +17,8 @@ import gcm.simulation.Environment;
 import gcm.simulation.Equality;
 import gcm.simulation.Plan;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 
 public class Immunizer extends AbstractComponent {
 
@@ -43,7 +45,7 @@ public class Immunizer extends AbstractComponent {
 				immunizeFamily(environment, personId);
 			}
 		} else {
-			addPopulationIndexes(environment);
+			addPartitions(environment);
 		}
 		planNextImmunization(environment);
 	}
@@ -53,11 +55,12 @@ public class Immunizer extends AbstractComponent {
 		environment.setPersonPropertyValue(personId, PersonProperty.IMMUNE, true);
 
 		int childCount = environment.getRandomGenerator().nextInt(3) + 1;
-		childCount = Math.min(childCount, environment.getIndexSize(IndexKey.IMMUNIZABLE_CHILDREN));
+		childCount = Math.min(childCount, environment.getPartitionSize(IndexKey.IMMUNIZABLE_CHILDREN));
 		environment.addPersonToGroup(personId, groupId);
 
 		for (int i = 0; i < childCount; i++) {
-			Optional<PersonId> optional = environment.sampleIndex(IndexKey.IMMUNIZABLE_CHILDREN);
+			PartitionSampler partitionSampler = PartitionSampler.builder().build();
+			Optional<PersonId> optional = environment.samplePartition(IndexKey.IMMUNIZABLE_CHILDREN,partitionSampler);
 			if (optional.isPresent()) {
 				PersonId familyMemberId = optional.get();
 				environment.setPersonPropertyValue(familyMemberId, PersonProperty.IMMUNE, true);
@@ -68,9 +71,10 @@ public class Immunizer extends AbstractComponent {
 		}
 
 		int adultCount = environment.getRandomGenerator().nextInt(2) + 1;
-		adultCount = Math.min(adultCount, environment.getIndexSize(IndexKey.IMMUNIZABLE_ADULTS));
+		adultCount = Math.min(adultCount, environment.getPartitionSize(IndexKey.IMMUNIZABLE_ADULTS));
 		for (int i = 0; i < adultCount; i++) {
-			Optional<PersonId> optional = environment.sampleIndex(IndexKey.IMMUNIZABLE_ADULTS);
+			PartitionSampler partitionSampler = PartitionSampler.builder().build();
+			Optional<PersonId> optional = environment.samplePartition(IndexKey.IMMUNIZABLE_ADULTS,partitionSampler);
 			if (optional.isPresent()) {
 				PersonId familyMemberId = optional.get();
 				environment.setPersonPropertyValue(familyMemberId, PersonProperty.IMMUNE, true);
@@ -84,33 +88,36 @@ public class Immunizer extends AbstractComponent {
 
 	private void planNextImmunization(Environment environment) {
 
-		Optional<PersonId> option = environment.sampleIndex(IndexKey.IMMUNIZABLE_CHILDREN);
+		PartitionSampler partitionSampler = PartitionSampler.builder().build();
+		Optional<PersonId> option = environment.samplePartition(IndexKey.IMMUNIZABLE_CHILDREN,partitionSampler);
 		if (option.isPresent()) {
 			environment.addPlan(new ImmunizationPlan(option.get()), environment.getTime() + 0.01);
 		}
 	}
 
-	private void addPopulationIndexes(Environment environment) {
+	private void addPartitions(Environment environment) {
 
 		Filter filter = compartment(Compartment.SUSCEPTIBLE)//
 						.and(property(PersonProperty.IMMUNE, Equality.NOT_EQUAL, true))//
 						.and(property(PersonProperty.AGE, Equality.LESS_THAN, 15));//
 
-		environment.addPopulationIndex(filter, IndexKey.IMMUNIZABLE_CHILDREN);
+		Partition partition = Partition.builder().setFilter(filter).build();
+		environment.addPartition(partition, IndexKey.IMMUNIZABLE_CHILDREN);
 
 		
 		filter = compartment(Compartment.SUSCEPTIBLE)//
 				.and(property(PersonProperty.IMMUNE, Equality.NOT_EQUAL, true))//
 				.and(property(PersonProperty.AGE, Equality.GREATER_THAN, 25));//
 
-		environment.addPopulationIndex(filter, IndexKey.IMMUNIZABLE_ADULTS);
+		partition = Partition.builder().setFilter(filter).build();
+		environment.addPartition(partition, IndexKey.IMMUNIZABLE_ADULTS);
 		
 		 
 		filter = property(PersonProperty.IMMUNE, Equality.NOT_EQUAL, true)
 					.or(property(PersonProperty.AGE, Equality.GREATER_THAN_EQUAL, 18)
 						.and(groupsForPersonAndGroupType(GroupType.WORK, Equality.GREATER_THAN, 0)));
-		
-		environment.addPopulationIndex(filter, IndexKey.NON_IMMUNIZED_WORKING_ADULTS);
+		partition = Partition.builder().setFilter(filter).build();		
+		environment.addPartition(partition, IndexKey.NON_IMMUNIZED_WORKING_ADULTS);
 		
 	}
 

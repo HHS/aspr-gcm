@@ -64,6 +64,7 @@ import gcm.simulation.Equality;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -245,10 +246,10 @@ public class AT_Filter {
 							property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
 
 			Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters meet our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			expectedPeople = new LinkedHashSet<>();
@@ -261,7 +262,7 @@ public class AT_Filter {
 				}
 			}
 			// show that the filters meet our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -343,10 +344,10 @@ public class AT_Filter {
 							property(TestPersonPropertyId.PERSON_PROPERTY_2, Equality.EQUAL, 2));//
 
 			Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters meet our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			expectedPeople = new LinkedHashSet<>();
@@ -359,7 +360,7 @@ public class AT_Filter {
 				}
 			}
 			// show that the filters meet our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -421,10 +422,10 @@ public class AT_Filter {
 			Filter filter1 = property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, 1).negate();
 
 			Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters meet our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			expectedPeople = new LinkedHashSet<>();
@@ -436,7 +437,7 @@ public class AT_Filter {
 				}
 			}
 			// show that the filters meet our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -509,22 +510,26 @@ public class AT_Filter {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 			assertTrue(environment.getPopulationCount() > 0);
+			
+			
 
 			/*
 			 * precondition: if the property id is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(property(null, Equality.EQUAL, 15), "bad filter"), SimulationErrorType.NULL_PERSON_PROPERTY_ID);
+			Filter propertyFilter1 = property(null, Equality.EQUAL, 15);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(propertyFilter1).build(), "bad filter"), SimulationErrorType.NULL_PERSON_PROPERTY_ID);
 
 			/*
 			 * precondition: if the equality is null
 			 */
-
-			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, null, 15), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			Filter propertyFilter2 = property(TestPersonPropertyId.PERSON_PROPERTY_1, null, 15);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(propertyFilter2).build(), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/*
 			 * precondition: if the property value is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, null), "bad filter"),
+			Filter propertyFilter3 = property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.EQUAL, null);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(propertyFilter3).build(), "bad filter"),
 					SimulationErrorType.NULL_PERSON_PROPERTY_VALUE);
 
 			/*
@@ -534,7 +539,8 @@ public class AT_Filter {
 			// person
 
 			Filter undefinedPersonPropertyFilter = property(TestPersonPropertyId.getUnknownPersonPropertyId(), Equality.EQUAL, 15);
-			assertModelException(() -> environment.addPopulationIndex(undefinedPersonPropertyFilter, "undefinedPersonPropertyFilter"), SimulationErrorType.UNKNOWN_PERSON_PROPERTY_ID);
+			
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(undefinedPersonPropertyFilter).build(), "undefinedPersonPropertyFilter"), SimulationErrorType.UNKNOWN_PERSON_PROPERTY_ID);
 
 			/*
 			 * precondition : if the property is not compatible with inequality
@@ -542,7 +548,7 @@ public class AT_Filter {
 			 */
 
 			Filter incomparableFilter = property(TestPersonPropertyId.PERSON_PROPERTY_5, Equality.GREATER_THAN, new ArrayList<>());
-			assertModelException(() -> environment.addPopulationIndex(incomparableFilter, "incomparableFilter"), SimulationErrorType.NON_COMPARABLE_PROPERTY);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(incomparableFilter).build(), "incomparableFilter"), SimulationErrorType.NON_COMPARABLE_PROPERTY);
 
 		});
 
@@ -613,7 +619,7 @@ public class AT_Filter {
 						Object key = "key";
 
 						Filter filter1 = property(personPropertyId, equality, filterPropertyValue);
-						environment.addPopulationIndex(filter1, key);
+						environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 						/*
 						 * test that our expectations match the filters
@@ -659,7 +665,7 @@ public class AT_Filter {
 							}
 						}
 
-						Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+						Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 						assertEquals(expectedPeople, actualPeople);
 
 						/*
@@ -713,13 +719,13 @@ public class AT_Filter {
 							}
 						}
 
-						actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+						actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 						assertEquals(expectedPeople, actualPeople);
 
 						/*
 						 * remove the population indexes
 						 */
-						environment.removePopulationIndex(key);
+						environment.removePartition(key);
 
 					}
 				}
@@ -766,14 +772,14 @@ public class AT_Filter {
 			 */
 			final Object key = "key";
 			final Filter filter1 = allPeople();
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			/*
 			 * Show that every person is in both indexes
 			 */
 			final Set<PersonId> expectedPeople = new LinkedHashSet<>(environment.getPeople());
 
-			final Set<PersonId> actualPeople1 = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			final Set<PersonId> actualPeople1 = new LinkedHashSet<>(environment.getPartitionPeople(key));
 
 			assertEquals(expectedPeople, actualPeople1);
 
@@ -813,14 +819,14 @@ public class AT_Filter {
 
 			/* precondition: if the compartment id is null */
 			Filter nullCompartmentFilter = compartment(null);
-			assertModelException(() -> environment.addPopulationIndex(nullCompartmentFilter, "nullCompartmentFilter"), SimulationErrorType.NULL_COMPARTMENT_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(nullCompartmentFilter).build(), "nullCompartmentFilter"), SimulationErrorType.NULL_COMPARTMENT_ID);
 
 			/* precondition: if the compartment is unknown */
 			// show that the filter will be evaluated against at least one
 			// person
 			assertTrue(environment.getPopulationCount() > 0);
 			Filter unknownCompartmentFilter = compartment(TestCompartmentId.getUnknownCompartmentId());
-			assertModelException(() -> environment.addPopulationIndex(unknownCompartmentFilter, "unknownCompartmentFilter"), SimulationErrorType.UNKNOWN_COMPARTMENT_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(unknownCompartmentFilter).build(), "unknownCompartmentFilter"), SimulationErrorType.UNKNOWN_COMPARTMENT_ID);
 
 		});
 
@@ -840,10 +846,10 @@ public class AT_Filter {
 			// create filter
 			final Filter filter1 = compartment(TestCompartmentId.COMPARTMENT_1);
 			final Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters match our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			// move half of the people in compartment 1 to compartment 3
@@ -867,7 +873,7 @@ public class AT_Filter {
 			expectedPeople = new LinkedHashSet<>(environment.getPeopleInCompartment(TestCompartmentId.COMPARTMENT_1));
 
 			// show that the filters match our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -905,12 +911,12 @@ public class AT_Filter {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
-			/* precondition: if the group id is null */
-			assertModelException(() -> environment.addPopulationIndex(groupMember(null), "bad filter"), SimulationErrorType.NULL_GROUP_ID);
+			/* precondition: if the group id is null */			
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(groupMember(null)).build(), "bad filter"), SimulationErrorType.NULL_GROUP_ID);
 
 			/* precondition: if the group is unknown */
 			GroupId groupId = new GroupId(-1);
-			assertModelException(() -> environment.addPopulationIndex(groupMember(groupId), "bad filter"), SimulationErrorType.UNKNOWN_GROUP_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(groupMember(groupId)).build(), "bad filter"), SimulationErrorType.UNKNOWN_GROUP_ID);
 
 		});
 
@@ -926,7 +932,7 @@ public class AT_Filter {
 			 */
 			final Object key = "key";
 			final Filter filter1 = groupMember(groupId);
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			final RandomGenerator rng = environment.getRandomGenerator();
 			final Set<PersonId> expectedPeopleInGroup = new LinkedHashSet<>();
@@ -942,7 +948,7 @@ public class AT_Filter {
 
 			// show that each person is in each index if and only if we
 			// selected them to be in the group
-			final List<PersonId> indexedPeople1 = environment.getIndexedPeople(key);
+			final List<PersonId> indexedPeople1 = environment.getPartitionPeople(key);
 			for (final PersonId personId : environment.getPeople()) {
 				assertEquals(expectedPeopleInGroup.contains(personId), indexedPeople1.contains(personId));
 			}
@@ -984,7 +990,7 @@ public class AT_Filter {
 			/*
 			 * precondition:if equality is null
 			 */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPerson(null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(groupsForPerson(null, 0)).build(), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 		});
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
@@ -1019,7 +1025,7 @@ public class AT_Filter {
 					// build the filters
 					final Filter filter = groupsForPerson(equality, groupCount);
 
-					environment.addPopulationIndex(filter, key);
+					environment.addPartition(Partition.builder().setFilter(filter).build(), key);
 
 					// test that the filters produced the expected results
 					Set<PersonId> expectedPeople = new LinkedHashSet<>();
@@ -1031,7 +1037,7 @@ public class AT_Filter {
 						}
 					}
 
-					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 
 					assertEquals(expectedPeople, actualPeople);
 
@@ -1062,11 +1068,11 @@ public class AT_Filter {
 						}
 					}
 
-					actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 					assertEquals(expectedPeople, actualPeople);
 
 					// remove the indexed populations
-					environment.removePopulationIndex(key);
+					environment.removePartition(key);
 				}
 			}
 
@@ -1110,14 +1116,14 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: >if equality is null */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_1, null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_1, null, 0)).build(), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/* precondition: if groupTypeId is null */
-			assertModelException(() -> environment.addPopulationIndex(groupsForPersonAndGroupType(null, Equality.EQUAL, 0), "bad filter"), SimulationErrorType.NULL_GROUP_TYPE_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(groupsForPersonAndGroupType(null, Equality.EQUAL, 0)).build(), "bad filter"), SimulationErrorType.NULL_GROUP_TYPE_ID);
 
 			/* precondition: if the group type is not defined */
 			Filter invalidGroupTypeIdFilter = groupsForPersonAndGroupType(TestGroupTypeId.getUnknownGroupTypeId(), Equality.EQUAL, 0);
-			assertModelException(() -> environment.addPopulationIndex(invalidGroupTypeIdFilter, "invalidGroupTypeIdFilter"), SimulationErrorType.UNKNOWN_GROUP_TYPE_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(invalidGroupTypeIdFilter).build(), "invalidGroupTypeIdFilter"), SimulationErrorType.UNKNOWN_GROUP_TYPE_ID);
 
 		});
 
@@ -1180,7 +1186,7 @@ public class AT_Filter {
 																								.and(groupsForPersonAndGroupType(TestGroupTypeId.GROUP_TYPE_2, Equality.LESS_THAN, 2));//
 
 			final String key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			/*
 			 * Assert that the people returned for the filters match our
@@ -1191,7 +1197,7 @@ public class AT_Filter {
 				PersonId personId = new PersonId(personIndex);
 				expectedPeople.add(personId);
 			}
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			/*
@@ -1222,7 +1228,7 @@ public class AT_Filter {
 				PersonId personId = new PersonId(personIndex);
 				expectedPeople.add(personId);
 			}
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -1259,7 +1265,7 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if equality is null */
-			assertModelException(() -> environment.addPopulationIndex(groupTypesForPerson(null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter( groupTypesForPerson(null, 0)).build(), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 		});
 
@@ -1304,7 +1310,7 @@ public class AT_Filter {
 				for (final Equality equality : Equality.values()) {
 					// build the filters
 					final Filter filter1 = groupTypesForPerson(equality, groupTypeCount);
-					environment.addPopulationIndex(filter1, key);
+					environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 					// test that the filters produced the expected results
 					Set<PersonId> expectedPeople = new LinkedHashSet<>();
@@ -1321,7 +1327,7 @@ public class AT_Filter {
 						}
 					}
 
-					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 					assertEquals(expectedPeople, actualPeople);
 
 					// update the population's group memberships
@@ -1357,14 +1363,14 @@ public class AT_Filter {
 						}
 					}
 
-					actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 					if(!expectedPeople.equals(actualPeople)) {
 						System.out.println(groupTypeCount+" "+equality);
 					}
 					assertEquals(expectedPeople, actualPeople);
 
 					// remove the indexed populations
-					environment.removePopulationIndex(key);
+					environment.removePartition(key);
 				}
 			}
 
@@ -1405,7 +1411,7 @@ public class AT_Filter {
 			/* precondition: if the region id is null */
 			Set<RegionId> regionIds = new LinkedHashSet<>();
 			regionIds.add(null);
-			assertModelException(() -> environment.addPopulationIndex(region(regionIds), "bad filter"), SimulationErrorType.NULL_REGION_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(region(regionIds)).build(), "bad filter"), SimulationErrorType.NULL_REGION_ID);
 
 			/* precondition: if the region id is unknown */
 
@@ -1414,7 +1420,7 @@ public class AT_Filter {
 			assertTrue(environment.getPopulationCount() > 0);
 
 			Filter unknownRegionFilter = region(TestRegionId.getUnknownRegionId());
-			assertModelException(() -> environment.addPopulationIndex(unknownRegionFilter, "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(unknownRegionFilter).build(), "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
 
 		});
 
@@ -1434,10 +1440,10 @@ public class AT_Filter {
 			// create filter
 			final Filter filter1 = region(TestRegionId.REGION_1);
 			final Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters match our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			// move half of the people in region 1 to region 3
@@ -1461,7 +1467,7 @@ public class AT_Filter {
 			expectedPeople = new LinkedHashSet<>(environment.getPeopleInRegion(TestRegionId.REGION_1));
 
 			// show that the filters match our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -1500,7 +1506,7 @@ public class AT_Filter {
 			/* precondition: if the region id is null */
 			Set<RegionId> regionIds = new LinkedHashSet<>();
 			regionIds.add(null);
-			assertModelException(() -> environment.addPopulationIndex(region(regionIds), "bad filter"), SimulationErrorType.NULL_REGION_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(region(regionIds)).build(), "bad filter"), SimulationErrorType.NULL_REGION_ID);
 
 			/* precondition: if the region id is unknown */
 
@@ -1511,7 +1517,7 @@ public class AT_Filter {
 			regionIds2.add(TestRegionId.REGION_1);
 			regionIds2.add(TestRegionId.getUnknownRegionId());
 			Filter unknownRegionFilter = region(regionIds2);
-			assertModelException(() -> environment.addPopulationIndex(unknownRegionFilter, "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(unknownRegionFilter).build(), "unknownRegionFilter"), SimulationErrorType.UNKNOWN_REGION_ID);
 
 		});
 
@@ -1538,10 +1544,10 @@ public class AT_Filter {
 			regionIds.add(TestRegionId.REGION_2);
 			final Filter filter1 = region(regionIds);
 			final Object key = "key";
-			environment.addPopulationIndex(filter1, key);
+			environment.addPartition(Partition.builder().setFilter(filter1).build(), key);
 
 			// show that the filters match our expectations
-			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 			// move half of the people in region 1 and 2 to region 3
@@ -1575,7 +1581,7 @@ public class AT_Filter {
 			expectedPeople.addAll(peopleInRegion2);
 
 			// show that the filters match our expectations
-			actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+			actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 			assertEquals(expectedPeople, actualPeople);
 
 		});
@@ -1613,14 +1619,14 @@ public class AT_Filter {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			/* precondition: if the resource id is null */
-			assertModelException(() -> environment.addPopulationIndex(resource(null, Equality.EQUAL, 0), "bad filter"), SimulationErrorType.NULL_RESOURCE_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(resource(null, Equality.EQUAL, 0)).build(), "bad filter"), SimulationErrorType.NULL_RESOURCE_ID);
 
 			/* precondition: if the equality is null */
-			assertModelException(() -> environment.addPopulationIndex(resource(TestResourceId.RESOURCE1, null, 0), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(resource(TestResourceId.RESOURCE1, null, 0)).build(), "bad filter"), SimulationErrorType.NULL_EQUALITY_OPERATOR);
 
 			/* precondition: if the resource is not defined */
 			Filter undefinedResourceFilter = resource(TestResourceId.getUnknownResourceId(), Equality.EQUAL, 15L);
-			assertModelException(() -> environment.addPopulationIndex(undefinedResourceFilter, "undefinedResourceFilter"), SimulationErrorType.UNKNOWN_RESOURCE_ID);
+			assertModelException(() -> environment.addPartition(Partition.builder().setFilter(undefinedResourceFilter).build(), "undefinedResourceFilter"), SimulationErrorType.UNKNOWN_RESOURCE_ID);
 
 		});
 
@@ -1659,7 +1665,7 @@ public class AT_Filter {
 					// add the filter via a population index and refresh
 					// its key
 					key++;
-					environment.addPopulationIndex(filter, key);
+					environment.addPartition(Partition.builder().setFilter(filter).build(), key);
 
 					// show that the people match the filter as expected
 					Set<PersonId> expectedPeople = new LinkedHashSet<>();
@@ -1670,7 +1676,7 @@ public class AT_Filter {
 							expectedPeople.add(personId);
 						}
 					}
-					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					Set<PersonId> actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 					assertEquals(expectedPeople, actualPeople);
 					// change the amounts for each person
 					for (final PersonId personId : environment.getPeople()) {
@@ -1697,10 +1703,10 @@ public class AT_Filter {
 							expectedPeople.add(personId);
 						}
 					}
-					actualPeople = new LinkedHashSet<>(environment.getIndexedPeople(key));
+					actualPeople = new LinkedHashSet<>(environment.getPartitionPeople(key));
 					assertEquals(expectedPeople, actualPeople);
 					// remove the population index
-					environment.removePopulationIndex(key);
+					environment.removePartition(key);
 
 				}
 			}
@@ -1743,10 +1749,10 @@ public class AT_Filter {
 			// create filter
 			final Filter filter = noPeople();
 			final Object key = "key";
-			environment.addPopulationIndex(filter, key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
 
 			// show that the filters match our expectations
-			assertEquals(0, environment.getIndexedPeople(key).size());
+			assertEquals(0, environment.getPartitionPeople(key).size());
 
 		});
 

@@ -39,10 +39,8 @@ import gcm.scenario.ResourcePropertyId;
 import gcm.scenario.Scenario;
 import gcm.scenario.StageId;
 import gcm.simulation.group.PersonGroupManger;
-import gcm.simulation.index.IndexedPopulationManager;
-import gcm.simulation.partition.PartitionManager;
-import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionManager;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
@@ -76,7 +74,6 @@ import gcm.util.annotations.TestStatus;
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class MutationResolverImpl extends BaseElement implements MutationResolver {
 
-	private IndexedPopulationManager indexedPopulationManager;
 	private PartitionManager populationPartitionManager;
 	private ObservationManager observationManager;
 	private MaterialsManager materialsManager;
@@ -103,7 +100,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		reportsManager = context.getReportsManager();
 		materialsManager = context.getMaterialsManager();
 		personLocationManger = context.getPersonLocationManger();
-		indexedPopulationManager = context.getIndexedPopulationManager();
 		populationPartitionManager = context.getPartitionManager();
 		resourceManager = context.getResourceManager();
 		personGroupManger = context.getPersonGroupManger();
@@ -434,7 +430,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonAddition(personId);
 		populationPartitionManager.handlePersonAddition(personId);
 		reportsManager.handlePersonAddition(personId);
 		return personId;
@@ -464,8 +459,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
-				personPropertyValue);
 		populationPartitionManager.handlePersonPropertyValueChange(personId, personPropertyId, oldValue,
 				personPropertyValue);
 		reportsManager.handlePersonPropertyValueAssignment(personId, personPropertyId, oldValue);
@@ -532,7 +525,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	 */
 	private void addResourceToPerson(final PersonId personId, final ResourceId resourceId, final long amount) {
 		resourceManager.incrementPersonResourceLevel(resourceId, personId, amount);
-		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
 		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		observationManager.handlePersonResourceChange(personId, resourceId);
 		reportsManager.handlePersonResourceAddition(personId, resourceId, amount);
@@ -611,7 +603,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonGroupAddition(groupId, personId);
 		populationPartitionManager.handlePersonGroupAddition(groupId, personId);
 		reportsManager.handleGroupMembershipAddition(groupId, personId);
 	}
@@ -652,18 +643,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 	}
-
-	@Override
-	public void addPopulationIndex(ComponentId componentId, final Filter filter, final Object key) {
-		// externalAccessManager.acquireExternalReadAccessLock();
-		// try {
-		//
-		// } finally {
-		// externalAccessManager.releaseExternalReadAccessLock();
-		// }
-		indexedPopulationManager.addIndex(componentId, filter, key);
-		// TODO why do we observe index removal and not addition?
-	}
+	
 	/*
 	 * Creates the information needed to support reports after the stage has been
 	 * removed from the simulation
@@ -1160,8 +1140,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 				groupInfo = groupInfoBuilder.build();
 			}
 
-			for (PersonId personId : peopleForGroup) {
-				indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
+			for (PersonId personId : peopleForGroup) {				
 				populationPartitionManager.handlePersonGroupRemoval(groupId, personId);
 			}
 			personGroupManger.removeGroup(groupId);
@@ -1226,7 +1205,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 				personInfo = personInfoBuilder.build();
 			}
 
-			indexedPopulationManager.handlePersonRemoval(personId);
 			populationPartitionManager.handlePersonRemoval(personId);
 			propertyManager.handlePersonRemoval(personId);
 			if (observationManagerRequiresPersonInfo) {
@@ -1256,7 +1234,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonGroupRemoval(groupId, personId);
 		populationPartitionManager.handlePersonGroupRemoval(groupId, personId);
 		reportsManager.handleGroupMembershipRemoval(groupId, personId);
 	}
@@ -1272,18 +1249,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void removePopulationIndex(final Object key) {
-		// externalAccessManager.acquireExternalReadAccessLock();
-		// try {
-		//
-		// } finally {
-		// externalAccessManager.releaseExternalReadAccessLock();
-		// }
-		indexedPopulationManager.removeIndex(key);
-		observationManager.handlePopulationIndexRemoval(key);
-	}
-
-	@Override
 	public void removeResourceFromPerson(final ResourceId resourceId, final PersonId personId, final long amount) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
@@ -1293,7 +1258,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
 
-		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
 		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handlePersonResourceRemoval(personId, resourceId, amount);
 	}
@@ -1321,7 +1285,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonCompartmentChange(personId, oldCompartmentId, compartmentId);
 		populationPartitionManager.handlePersonCompartmentChange(personId, oldCompartmentId, compartmentId);
 		reportsManager.handleCompartmentAssignment(personId, oldCompartmentId);
 	}
@@ -1337,7 +1300,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonRegionChange(personId, oldRegionId, regionId);
 		populationPartitionManager.handlePersonRegionChange(personId, oldRegionId, regionId);
 		reportsManager.handleRegionAssignment(personId, oldRegionId);
 	}
@@ -1414,7 +1376,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
 		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handlePersonResourceTransferToRegion(personId, resourceId, amount);
 	}
@@ -1431,7 +1392,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonResourceLevelChange(personId, resourceId);
 		populationPartitionManager.handlePersonResourceLevelChange(personId, resourceId);
 		reportsManager.handleRegionResourceTransferToPerson(personId, resourceId, amount);
 	}
@@ -1664,17 +1624,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	}
 
 	@Override
-	public void observePopulationIndexChange(boolean observe, Object key) {
-		externalAccessManager.acquireGlobalReadAccessLock();
-		try {
-			observationManager.observePopulationIndexChange(observe, key);
-		} finally {
-			externalAccessManager.releaseGlobalReadAccessLock();
-		}
-
-	}
-
-	@Override
 	public void observePartitionChange(boolean observe, Object key) {
 		externalAccessManager.acquireGlobalReadAccessLock();
 		try {
@@ -1768,7 +1717,6 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 		} finally {
 			externalAccessManager.releaseGlobalReadAccessLock();
 		}
-		indexedPopulationManager.handlePersonAddition(personId);
 		populationPartitionManager.handlePersonAddition(personId);
 		reportsManager.handlePersonAddition(personId);
 

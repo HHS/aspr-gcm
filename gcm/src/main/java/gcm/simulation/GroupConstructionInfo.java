@@ -71,7 +71,7 @@ public final class GroupConstructionInfo {
 		return new Builder();
 	}
 
-	@Source(proxy = GroupConstructionInfo.class)
+	@Source(status = TestStatus.UNEXPECTED, proxy = GroupConstructionInfo.class)
 	@NotThreadSafe
 	public static class Builder {
 		

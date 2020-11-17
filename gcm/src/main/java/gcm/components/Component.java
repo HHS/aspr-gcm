@@ -300,17 +300,6 @@ public interface Component {
 	 */
 	public void observeGroupPersonDeparture(Environment environment, GroupId groupId, PersonId personId);
 
-	/**
-	 * An alert from the simulation to the component indicating that a person
-	 * has been added to a population index
-	 */
-	public void observePopulationIndexPersonAddition(Environment environment, Object key, PersonId personId);
-
-	/**
-	 * An alert from the simulation to the component indicating that a person
-	 * has been removed from a population index
-	 */
-	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId);
 	
 	/**
 	 * An alert from the simulation to the component indicating that a person

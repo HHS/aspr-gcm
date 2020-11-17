@@ -3,15 +3,15 @@ package gcm.simulation;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import gcm.simulation.index.IndexedPopulationManagerImpl;
 import gcm.simulation.partition.FilterInfo;
+import gcm.simulation.partition.PartitionManagerImpl;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.REQUIRED, proxy = IndexedPopulationManagerImpl.class)
-public final class PopulationIndexEfficiencyWarning {
+@Source(status = TestStatus.REQUIRED, proxy = PartitionManagerImpl.class)
+public final class PartitionEfficiencyWarning {
 
-	private final Object populationIndexId;
+	private final Object partitionId;
 	private final FilterInfo filterInfo;
 	private final Set<Object> attributes;
 
@@ -25,8 +25,8 @@ public final class PopulationIndexEfficiencyWarning {
 		}
 		private Scaffold scaffold = new Scaffold();
 
-		public Builder setPopulationIndexId(Object populationIndexId) {
-			scaffold.populationIndexId = populationIndexId;
+		public Builder setPartitionId(Object partitionId) {
+			scaffold.partitionId = partitionId;
 			return this;
 		}
 
@@ -40,17 +40,17 @@ public final class PopulationIndexEfficiencyWarning {
 			return this;
 		}
 
-		public PopulationIndexEfficiencyWarning build() {
+		public PartitionEfficiencyWarning build() {
 			try {
-				return new PopulationIndexEfficiencyWarning(scaffold);
+				return new PartitionEfficiencyWarning(scaffold);
 			} finally {
 				scaffold = new Scaffold();
 			}
 		}
 	}
 
-	public Object getPopulationIndexId() {
-		return populationIndexId;
+	public Object getPartitionId() {
+		return partitionId;
 	}
 
 	public FilterInfo getFilterInfo() {
@@ -62,14 +62,14 @@ public final class PopulationIndexEfficiencyWarning {
 	}
 
 	private static class Scaffold {
-		private Object populationIndexId;
+		private Object partitionId;
 		private FilterInfo filterInfo;
 		private Set<Object> attributes = new LinkedHashSet<>();
 
 	}
 
-	private PopulationIndexEfficiencyWarning(Scaffold scaffold) {
-		this.populationIndexId = scaffold.populationIndexId;
+	private PartitionEfficiencyWarning(Scaffold scaffold) {
+		this.partitionId = scaffold.partitionId;
 		this.filterInfo = scaffold.filterInfo;
 		this.attributes = new LinkedHashSet<>(scaffold.attributes);
 	}

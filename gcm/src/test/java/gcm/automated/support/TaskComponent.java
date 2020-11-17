@@ -213,15 +213,6 @@ public class TaskComponent implements Component {
 		observationContainer.addObservation(new MultiKey(environment.getTime(), id, ObservationType.GROUP_PERSON_DEPARTURE, groupId, personId));
 	}
 
-	@Override
-	public void observePopulationIndexPersonAddition(Environment environment, Object key, PersonId personId) {
-		observationContainer.addObservation(new MultiKey(environment.getTime(), id, ObservationType.POPULATION_INDEX_PERSON_ADDITION, key, personId));
-	}
-
-	@Override
-	public void observePopulationIndexPersonRemoval(Environment environment, Object key, PersonId personId) {
-		observationContainer.addObservation(new MultiKey(environment.getTime(), id, ObservationType.POPULATION_INDEX_PERSON_REMOVAL, key, personId));
-	}
 
 	@Override
 	public void observePartitionPersonAddition(Environment environment, Object key, PersonId personId) {

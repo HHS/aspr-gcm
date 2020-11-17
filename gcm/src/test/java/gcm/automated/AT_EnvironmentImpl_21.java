@@ -59,6 +59,8 @@ import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
+import gcm.simulation.partition.Partition;
+import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
 
@@ -79,7 +81,8 @@ public class AT_EnvironmentImpl_21 {
 	 */
 	@AfterClass
 	public static void afterClass() {
-		// System.out.println(SEED_PROVIDER.generateUnusedSeedReport());
+//		 System.out.println(AT_EnvironmentImpl_21.class.getSimpleName() + " "
+//		 + SEED_PROVIDER.generateUnusedSeedReport());		
 	}
 
 	/**
@@ -601,8 +604,8 @@ public class AT_EnvironmentImpl_21 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
@@ -618,7 +621,7 @@ public class AT_EnvironmentImpl_21 {
 			// if the compartment is the current compartment for the person
 			assertModelException(() -> environment.setPersonCompartment(personId, TestCompartmentId.COMPARTMENT_1), SimulationErrorType.SAME_COMPARTMENT);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		/*
@@ -630,8 +633,8 @@ public class AT_EnvironmentImpl_21 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 
@@ -639,7 +642,7 @@ public class AT_EnvironmentImpl_21 {
 			// person's current compartment
 			assertModelException(() -> environment.setPersonCompartment(personId, TestCompartmentId.COMPARTMENT_2), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		/*
@@ -649,8 +652,8 @@ public class AT_EnvironmentImpl_21 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			Optional<PersonId> optional = environment.sampleIndex(key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			Optional<PersonId> optional = environment.samplePartition(key,PartitionSampler.builder().build());
 			assertTrue(optional.isPresent());
 			final PersonId personId = optional.get();
 
@@ -658,7 +661,7 @@ public class AT_EnvironmentImpl_21 {
 			// person's current compartment
 			assertModelException(() -> environment.setPersonCompartment(personId, TestCompartmentId.COMPARTMENT_2), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		Simulation simulation = new Simulation();
@@ -867,9 +870,9 @@ public class AT_EnvironmentImpl_21 {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
 
-			final PersonId personId = environment.sampleIndex(key).get();
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			// if the person id is null
 			assertModelException(() -> environment.setPersonRegion(null, TestRegionId.REGION_2), SimulationErrorType.NULL_PERSON_ID);
@@ -882,21 +885,21 @@ public class AT_EnvironmentImpl_21 {
 			// if the region is the current region for the person
 			assertModelException(() -> environment.setPersonRegion(personId, TestRegionId.REGION_1), SimulationErrorType.SAME_REGION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		taskPlanContainer.addTaskPlan(TestRegionId.REGION_3, testTime++, (environment) -> {
 			final Object key = new Object();
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.sampleIndex(key).get();
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			// if the invoker is not a global component or the person's
 			// current region
 			assertModelException(() -> environment.setPersonRegion(personId, TestRegionId.REGION_2), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		taskPlanContainer.addTaskPlan(TestCompartmentId.COMPARTMENT_1, testTime++, (environment) -> {
@@ -904,14 +907,14 @@ public class AT_EnvironmentImpl_21 {
 
 			final Filter filter = compartment(TestCompartmentId.COMPARTMENT_1).and(region(TestRegionId.REGION_1));
 
-			environment.addPopulationIndex(filter, key);
-			final PersonId personId = environment.sampleIndex(key).get();
+			environment.addPartition(Partition.builder().setFilter(filter).build(), key);
+			final PersonId personId = environment.samplePartition(key,PartitionSampler.builder().build()).get();
 
 			// if the invoker is not a global component or the person's
 			// current region
 			assertModelException(() -> environment.setPersonRegion(personId, TestRegionId.REGION_2), SimulationErrorType.COMPONENT_LACKS_PERMISSION);
 
-			environment.removePopulationIndex(key);
+			environment.removePartition(key);
 		});
 
 		Simulation simulation = new Simulation();

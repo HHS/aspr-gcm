@@ -9,7 +9,7 @@ package gcm.simulation;
  */
 public interface SimulationWarningManager extends Element {
 
-	public void processPopulationIndexEfficiencyWarning(PopulationIndexEfficiencyWarning populationIndexEfficiencyWarning);
+	public void processPartitionEfficiencyWarning(PartitionEfficiencyWarning partitionEfficiencyWarning);
 
 
 	

@@ -1,11 +1,11 @@
 package gcm.manual.altpeople;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.EnvironmentSupport;
 import gcm.manual.AltPersonIdManager;

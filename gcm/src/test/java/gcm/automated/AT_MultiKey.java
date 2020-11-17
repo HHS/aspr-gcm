@@ -1,12 +1,12 @@
 package gcm.automated;
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.util.MultiKey;
 import gcm.util.MultiKey.MultiKeyBuilder;
@@ -27,7 +27,7 @@ public class AT_MultiKey {
 	/**
 	 * Tests the equals contract for {@link AT_MultiKey#equals(Object)}
 	 */
-	@Test	
+	@Test
 	@UnitTestMethod(name = "equals", args = {Object.class})
 	public void testEqualsContract() {
 		final MultiKey multiKey1 = new MultiKey(3, "B", false);

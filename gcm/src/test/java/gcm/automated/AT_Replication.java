@@ -1,12 +1,12 @@
 package gcm.automated;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.replication.Replication;
 import gcm.util.annotations.UnitTest;

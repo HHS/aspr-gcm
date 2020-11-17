@@ -1,6 +1,6 @@
 package gcm.automated.support;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -495,7 +495,7 @@ public class EnvironmentSupport {
 	public static void assertAllPlansExecuted(TaskPlanContainer taskPlanContainer) {
 		for (ComponentId componentId : taskPlanContainer.getComponentIds()) {
 			for (TaskPlan taskPlan : taskPlanContainer.getTaskPlans(componentId)) {
-				assertTrue(componentId + ":" + String.valueOf(taskPlan.getKey()) + " was not executed", taskPlan.planExecuted());
+				assertTrue(taskPlan.planExecuted(), componentId + ":" + String.valueOf(taskPlan.getKey()) + " was not executed");
 			}
 		}
 	}

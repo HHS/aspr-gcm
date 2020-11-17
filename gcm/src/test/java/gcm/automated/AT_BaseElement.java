@@ -1,10 +1,10 @@
 package gcm.automated;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.Assume.assumeNotNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.simulation.BaseElement;
 import gcm.simulation.Context;
@@ -58,7 +58,7 @@ public class AT_BaseElement {
 	/**
 	 * Tests {@link BaseElement#isInitialized()}
 	 */
-	@Test	
+	@Test
 	@UnitTestMethod(name = "isInitialized", args = {})
 	public void testIsInitialized() {
 

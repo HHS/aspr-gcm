@@ -1,14 +1,14 @@
 package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;

@@ -1,7 +1,7 @@
 package gcm.manual;
 
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

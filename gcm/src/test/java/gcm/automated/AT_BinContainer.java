@@ -1,13 +1,11 @@
 package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
 
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
@@ -15,6 +13,7 @@ import gcm.util.annotations.UnitTestMethod;
 import gcm.util.stats.BinContainer;
 import gcm.util.stats.BinContainer.Bin;
 import gcm.util.stats.BinContainer.Builder;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link BinContainer}

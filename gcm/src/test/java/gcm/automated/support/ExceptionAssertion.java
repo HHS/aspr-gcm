@@ -1,7 +1,7 @@
 package gcm.automated.support;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import gcm.scenario.ScenarioException;
 import gcm.scenario.ScenarioException.ScenarioErrorType;
@@ -33,7 +33,7 @@ public class ExceptionAssertion {
 
 	/**
 	 * Asserts that the given ExceptionGenerator will generate an exception of
-	 * the given class(or descendant). Invokes org.junit.Assert.fail() if:
+	 * the given class(or descendant). Invokes org.junit.jupiter.api.Assertions.fail() if:
 	 * 
 	 * <li>the exceptionGenerator is null
 	 * <li>the exceptionClass is null
@@ -55,7 +55,7 @@ public class ExceptionAssertion {
 		try {
 			exceptionGenerator.generateException();
 		} catch (final Exception e) {
-			assertTrue("Expected Exception class " + exceptionClass.getName() + " observed Exception class " + e.getClass().getName(), exceptionClass.isAssignableFrom(e.getClass()));
+			assertTrue(exceptionClass.isAssignableFrom(e.getClass()), "Expected Exception class " + exceptionClass.getName() + " observed Exception class " + e.getClass().getName());
 			return;
 		}
 		fail("Failed to throw exception of type " + exceptionClass);

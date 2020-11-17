@@ -1,16 +1,15 @@
 package gcm.automated;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import org.junit.Test;
-
 import gcm.simulation.SimulationErrorType;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link SimulationErrorType}
@@ -36,7 +35,7 @@ public class AT_SimulationErrorType {
 		// show that each description is unique (ignoring case as well)
 		Set<String> descriptions = new LinkedHashSet<>();
 		for (SimulationErrorType simulationErrorType : SimulationErrorType.values()) {
-			assertTrue("Duplicate ErrorType description: " + simulationErrorType.getDescription(), descriptions.add(simulationErrorType.getDescription().toLowerCase()));
+			assertTrue(descriptions.add(simulationErrorType.getDescription().toLowerCase()), "Duplicate ErrorType description: " + simulationErrorType.getDescription());
 		}
 	}
 

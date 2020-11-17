@@ -1,7 +1,7 @@
 package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import gcm.scenario.IntId;
 import gcm.scenario.PersonId;

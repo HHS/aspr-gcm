@@ -1,6 +1,6 @@
 package gcm.automated.support.experimentspace;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -114,7 +114,7 @@ public final class ExperimentTestSpace {
 		 * above) the scenario is actually using a larger space with other
 		 * dimensions.
 		 */
-		assertEquals("Number of scenarios does not match size of space",scenarios.size(), actualMultiKeys.size());
+		assertEquals(scenarios.size(), actualMultiKeys.size(), "Number of scenarios does not match size of space");
 
 	}
 

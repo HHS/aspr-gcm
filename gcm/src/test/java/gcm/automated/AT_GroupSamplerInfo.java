@@ -1,11 +1,9 @@
 package gcm.automated;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import gcm.automated.support.TestRandomGeneratorId;
 import gcm.scenario.GroupId;
@@ -16,6 +14,7 @@ import gcm.simulation.group.GroupSamplerInfo;
 import gcm.simulation.group.GroupWeightingFunction;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link GroupSamplerInfo}

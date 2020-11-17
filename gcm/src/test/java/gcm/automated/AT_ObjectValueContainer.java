@@ -1,16 +1,15 @@
 package gcm.automated;
 
 import static gcm.automated.support.ExceptionAssertion.assertException;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 import gcm.util.containers.ObjectValueContainer;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link ObjectValueContainer}

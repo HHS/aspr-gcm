@@ -1,8 +1,5 @@
 package gcm;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
 import gcm.automated.AT_AbstractComponent;
 import gcm.automated.AT_ActionType;
 import gcm.automated.AT_ArrayIntSet;
@@ -89,6 +86,9 @@ import gcm.automated.AT_UnstructuredScenarioBuilder;
 import gcm.automated.AT_Vector2D;
 import gcm.automated.AT_Vector3D;
 import gcm.automated.AT_VolumetricDimensionTree;
+import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.SelectClasses;
+import org.junit.runner.RunWith;
 
 /**
  * This class executes automated JUnit tests for GCM. Automated tests are noted
@@ -100,8 +100,8 @@ import gcm.automated.AT_VolumetricDimensionTree;
  * @author Shawn Hatch
  */
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ 
+@RunWith(JUnitPlatform.class)
+@SelectClasses({
 	AT_ReplicationImpl.class,
 	AT_Simulation_SetScenario.class,
 	AT_EnvironmentImpl_01.class,
@@ -190,7 +190,6 @@ import gcm.automated.AT_VolumetricDimensionTree;
 	AT_PartitionSampler.class,
 	AT_GroupSamplerInfo.class
 	})
-
 public class SuiteTest {
 
 }

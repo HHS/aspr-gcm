@@ -87,6 +87,7 @@ import gcm.automated.AT_Vector2D;
 import gcm.automated.AT_Vector3D;
 import gcm.automated.AT_VolumetricDimensionTree;
 import org.junit.platform.runner.JUnitPlatform;
+import org.junit.platform.suite.api.IncludeClassNamePatterns;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.runner.RunWith;
 
@@ -101,6 +102,7 @@ import org.junit.runner.RunWith;
  */
 
 @RunWith(JUnitPlatform.class)
+@IncludeClassNamePatterns(".*")
 @SelectClasses({
 	AT_ReplicationImpl.class,
 	AT_Simulation_SetScenario.class,

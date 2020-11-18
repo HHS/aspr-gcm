@@ -1,13 +1,6 @@
 package gcm.automated;
 
 import static gcm.automated.support.EnvironmentSupport.*;
-import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
-import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefinitions;
-import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
-import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
-import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
-import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
-import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -26,7 +19,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.EnvironmentSupport;
-import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlanContainer;

@@ -1,9 +1,5 @@
 package gcm.automated;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.Assume.assumeNotNull;
-
 import org.junit.jupiter.api.Test;
 
 import gcm.simulation.BaseElement;
@@ -14,6 +10,8 @@ import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
 
 import static gcm.automated.support.ExceptionAssertion.*;
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests for {@link BaseElement}
  * @author Shawn Hatch
@@ -53,7 +51,7 @@ public class AT_BaseElement {
 	@UnitTestConstructor(args = {})
 	public void testConstructor() {
 		BaseElement baseElement = new BaseElement();
-		assumeNotNull(baseElement);
+		assertNotNull(baseElement);
 	}
 	/**
 	 * Tests {@link BaseElement#isInitialized()}

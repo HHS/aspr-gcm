@@ -25,7 +25,6 @@ import java.util.Set;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.AfterAll;
 
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
@@ -66,7 +65,6 @@ import gcm.simulation.partition.Filter;
 import gcm.simulation.partition.Partition;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestMethod;
-import org.junit.jupiter.api.BeforeAll;
 
 /**
  * Test unit for {@link Filters}. The AT_Environment covers adding population

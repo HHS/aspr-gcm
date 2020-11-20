@@ -19,7 +19,6 @@ import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
 import gcm.components.AbstractComponent;
 import gcm.output.reports.GroupInfo;
-import gcm.output.reports.GroupInfo.GroupInfoBuilder;
 import gcm.replication.Replication;
 import gcm.replication.ReplicationImpl;
 import gcm.scenario.CompartmentId;
@@ -80,22 +79,25 @@ public class AT_AbstractComponent {
 			ResourcePropertyId resourcePropertyId = TestResourceId.RESOURCE2.getResourcePropertyIds()[0];
 			PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_5;
 			MaterialsProducerPropertyId materialsProducerPropertyId = TestMaterialsProducerPropertyId.MATERIALS_PRODUCER_PROPERTY_3;
-			GroupInfoBuilder groupInfoBuilder = new GroupInfoBuilder();
-			groupInfoBuilder.setGroupId(groupId);
-			groupInfoBuilder.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1);
-			GroupInfo groupInfo = groupInfoBuilder.build();
+			GroupInfo groupInfo = GroupInfo.builder()//
+					.setGroupId(groupId)//
+					.setGroupTypeId(TestGroupTypeId.GROUP_TYPE_1)//
+					.build();//
 			GroupPropertyId groupPropertyId = TestGroupTypeId.GROUP_TYPE_1.getGroupPropertyIds()[0];
 			Object key = new Object();
 
 			assertUnimplemented(() -> executePlan(environment, plan));
 			assertUnimplemented(() -> observeCompartmentPersonArrival(environment, personId));
 			assertUnimplemented(() -> observeCompartmentPersonDeparture(environment, compartmentId, personId));
-			assertUnimplemented(() -> observeCompartmentPropertyChange(environment, compartmentId, compartmentPropertyId));
+			assertUnimplemented(
+					() -> observeCompartmentPropertyChange(environment, compartmentId, compartmentPropertyId));
 			assertUnimplemented(() -> observeGlobalPersonArrival(environment, personId));
 			assertUnimplemented(() -> observeGlobalPersonDeparture(environment, personId));
 			assertUnimplemented(() -> observeGlobalPropertyChange(environment, globalPropertyId));
-			assertUnimplemented(() -> observeMaterialsProducerPropertyChange(environment, materialsProducerId1, materialsProducerPropertyId));
-			assertUnimplemented(() -> observeMaterialsProducerResourceChange(environment, materialsProducerId1, resourceId));
+			assertUnimplemented(() -> observeMaterialsProducerPropertyChange(environment, materialsProducerId1,
+					materialsProducerPropertyId));
+			assertUnimplemented(
+					() -> observeMaterialsProducerResourceChange(environment, materialsProducerId1, resourceId));
 			assertUnimplemented(() -> observePersonCompartmentChange(environment, personId));
 			assertUnimplemented(() -> observePersonPropertyChange(environment, personId, personPropertyId));
 			assertUnimplemented(() -> observePersonRegionChange(environment, personId));
@@ -106,7 +108,8 @@ public class AT_AbstractComponent {
 			assertUnimplemented(() -> observeRegionResourceChange(environment, regionId, resourceId));
 			assertUnimplemented(() -> observeResourcePropertyChange(environment, resourceId, resourcePropertyId));
 			assertUnimplemented(() -> observeStageOfferChange(environment, stageId));
-			assertUnimplemented(() -> observeStageTransfer(environment, stageId, materialsProducerId1, materialsProducerId2));
+			assertUnimplemented(
+					() -> observeStageTransfer(environment, stageId, materialsProducerId1, materialsProducerId2));
 			assertUnimplemented(() -> observeGroupConstruction(environment, groupId));
 			assertUnimplemented(() -> observeGroupDestruction(environment, groupInfo));
 			assertUnimplemented(() -> observeGroupPropertyChange(environment, groupId, groupPropertyId));
@@ -115,7 +118,6 @@ public class AT_AbstractComponent {
 			assertUnimplemented(() -> observePartitionPersonAddition(environment, key, personId));
 			assertUnimplemented(() -> observePartitionPersonRemoval(environment, key, personId));
 
-			
 			testAcceptance.passed = true;
 		}
 
@@ -137,12 +139,10 @@ public class AT_AbstractComponent {
 		ExceptionAssertion.assertException(exceptionGenerator, RuntimeException.class);
 	}
 
-	
 	private void testAbstractComponent() {
 		/*
-		 * Show that each abstract method of the AbstractComponent class will
-		 * throw a RuntimeException if the overriding class does not implement
-		 * the method.
+		 * Show that each abstract method of the AbstractComponent class will throw a
+		 * RuntimeException if the overriding class does not implement the method.
 		 */
 
 		// Create an object that will store the result(pass/fail) for the test.
@@ -155,11 +155,11 @@ public class AT_AbstractComponent {
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		scenarioBuilder.addGlobalComponentId(TestGlobalComponentId.GLOBAL_COMPONENT_1, TestComponent.class);
 		scenarioBuilder.defineGlobalProperty(TEST_ACCEPTANCE_ID, //
-				PropertyDefinition	.builder()//
-									.setType(TestAcceptance.class)//
-									.setDefaultValue(testAcceptance)//
-									.setPropertyValueMutability(false)//
-									.build());
+				PropertyDefinition.builder()//
+						.setType(TestAcceptance.class)//
+						.setDefaultValue(testAcceptance)//
+						.setPropertyValueMutability(false)//
+						.build());
 
 		Scenario scenario = scenarioBuilder.build();
 
@@ -178,22 +178,20 @@ public class AT_AbstractComponent {
 	 * Tests {@link AbstractComponent#AbstractComponent()}
 	 */
 	@Test
-	@UnitTestConstructor(args = { })
+	@UnitTestConstructor(args = {})
 	public void testConstructor() {
 		AbstractComponent abstractComponent = new AbstractComponent() {
-			
+
 			@Override
 			public void init(Environment environment) {
-				
-				
+
 			}
 		};
-		
+
 		assertNotNull(abstractComponent);
-		
-		
+
 	}
-	
+
 	/**
 	 * Tests {@link AbstractComponent#close(Environment)}
 	 */
@@ -219,7 +217,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeCompartmentPersonArrival", args = { Environment.class, PersonId.class })
 	public void testObserveCompartmentPersonArrival() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -227,9 +225,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeCompartmentPersonDeparture(Environment, CompartmentId, PersonId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeCompartmentPersonDeparture", args = { Environment.class, CompartmentId.class, PersonId.class })
+	@UnitTestMethod(name = "observeCompartmentPersonDeparture", args = { Environment.class, CompartmentId.class,
+			PersonId.class })
 	public void testObserveCompartmentPersonDeparture() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -237,9 +236,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeCompartmentPropertyChange(Environment, CompartmentId, CompartmentPropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeCompartmentPropertyChange", args = { Environment.class, CompartmentId.class, CompartmentPropertyId.class })
+	@UnitTestMethod(name = "observeCompartmentPropertyChange", args = { Environment.class, CompartmentId.class,
+			CompartmentPropertyId.class })
 	public void testObserveCompartmentPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGlobalPersonArrival", args = { Environment.class, PersonId.class })
 	public void testObserveGlobalPersonArrival() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -259,7 +259,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGlobalPersonDeparture", args = { Environment.class, PersonId.class })
 	public void testObserveGlobalPersonDeparture() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -269,7 +269,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGlobalPropertyChange", args = { Environment.class, GlobalPropertyId.class })
 	public void testObserveGlobalPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGroupConstruction", args = { Environment.class, GroupId.class })
 	public void testObserveGroupConstruction() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGroupDestruction", args = { Environment.class, GroupInfo.class })
 	public void testObserveGroupDestruction() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGroupPersonArrival", args = { Environment.class, GroupId.class, PersonId.class })
 	public void testObserveGroupPersonArrival() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeGroupPersonDeparture", args = { Environment.class, GroupId.class, PersonId.class })
 	public void testObserveGroupPersonDeparture() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -317,9 +317,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeGroupPropertyChange(Environment, GroupId, GroupPropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeGroupPropertyChange", args = { Environment.class, GroupId.class, GroupPropertyId.class })
+	@UnitTestMethod(name = "observeGroupPropertyChange", args = { Environment.class, GroupId.class,
+			GroupPropertyId.class })
 	public void testObserveGroupPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -327,9 +328,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeMaterialsProducerPropertyChange(Environment, MaterialsProducerId, MaterialsProducerPropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeMaterialsProducerPropertyChange", args = { Environment.class, MaterialsProducerId.class, MaterialsProducerPropertyId.class })
+	@UnitTestMethod(name = "observeMaterialsProducerPropertyChange", args = { Environment.class,
+			MaterialsProducerId.class, MaterialsProducerPropertyId.class })
 	public void testObserveMaterialsProducerPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -337,9 +339,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeMaterialsProducerResourceChange(Environment, MaterialsProducerId, ResourceId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeMaterialsProducerResourceChange", args = { Environment.class, MaterialsProducerId.class, ResourceId.class })
+	@UnitTestMethod(name = "observeMaterialsProducerResourceChange", args = { Environment.class,
+			MaterialsProducerId.class, ResourceId.class })
 	public void testObserveMaterialsProducerResourceChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -349,7 +352,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observePersonCompartmentChange", args = { Environment.class, PersonId.class })
 	public void testObservePersonCompartmentChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -357,9 +360,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observePersonPropertyChange(Environment, PersonId, PersonPropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observePersonPropertyChange", args = { Environment.class, PersonId.class, PersonPropertyId.class })
+	@UnitTestMethod(name = "observePersonPropertyChange", args = { Environment.class, PersonId.class,
+			PersonPropertyId.class })
 	public void testObservePersonPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -369,7 +373,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observePersonRegionChange", args = { Environment.class, PersonId.class })
 	public void testObservePersonRegionChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -377,9 +381,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observePersonResourceChange(Environment, PersonId, ResourceId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observePersonResourceChange", args = { Environment.class, PersonId.class, ResourceId.class })
+	@UnitTestMethod(name = "observePersonResourceChange", args = { Environment.class, PersonId.class,
+			ResourceId.class })
 	public void testObservePersonResourceChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -389,7 +394,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observePartitionPersonAddition", args = { Environment.class, Object.class, PersonId.class })
 	public void testObservePartitionPersonAddition() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -399,7 +404,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observePartitionPersonRemoval", args = { Environment.class, Object.class, PersonId.class })
 	public void testObservePartitionPersonRemoval() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -409,7 +414,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeRegionPersonArrival", args = { Environment.class, PersonId.class })
 	public void testObserveRegionPersonArrival() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -419,7 +424,7 @@ public class AT_AbstractComponent {
 	@Test
 	@UnitTestMethod(name = "observeRegionPersonDeparture", args = { Environment.class, RegionId.class, PersonId.class })
 	public void testObserveRegionPersonDeparture() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -427,9 +432,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeRegionPropertyChange(Environment, RegionId, RegionPropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeRegionPropertyChange", args = { Environment.class, RegionId.class, RegionPropertyId.class })
+	@UnitTestMethod(name = "observeRegionPropertyChange", args = { Environment.class, RegionId.class,
+			RegionPropertyId.class })
 	public void testObserveRegionPropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -437,9 +443,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeRegionResourceChange(Environment, RegionId, ResourceId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeRegionResourceChange", args = { Environment.class, RegionId.class, ResourceId.class })
+	@UnitTestMethod(name = "observeRegionResourceChange", args = { Environment.class, RegionId.class,
+			ResourceId.class })
 	public void testObserveRegionResourceChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -447,19 +454,19 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeResourcePropertyChange(Environment, ResourceId, ResourcePropertyId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeResourcePropertyChange", args = { Environment.class, ResourceId.class, ResourcePropertyId.class })
+	@UnitTestMethod(name = "observeResourcePropertyChange", args = { Environment.class, ResourceId.class,
+			ResourcePropertyId.class })
 	public void testObserveResourcePropertyChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
-	 * Tests
-	 * {@link AbstractComponent#observeStageOfferChange(Environment, StageId)}
+	 * Tests {@link AbstractComponent#observeStageOfferChange(Environment, StageId)}
 	 */
 	@Test
 	@UnitTestMethod(name = "observeStageOfferChange", args = { Environment.class, StageId.class })
 	public void testObserveStageOfferChange() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 	/**
@@ -467,9 +474,10 @@ public class AT_AbstractComponent {
 	 * {@link AbstractComponent#observeStageTransfer(Environment, StageId, MaterialsProducerId, MaterialsProducerId)}
 	 */
 	@Test
-	@UnitTestMethod(name = "observeStageTransfer", args = { Environment.class, StageId.class, MaterialsProducerId.class, MaterialsProducerId.class })
+	@UnitTestMethod(name = "observeStageTransfer", args = { Environment.class, StageId.class, MaterialsProducerId.class,
+			MaterialsProducerId.class })
 	public void testObserveStageTransfer() {
-		//covered by testExecutePlan();
+		// covered by testExecutePlan();
 	}
 
 }

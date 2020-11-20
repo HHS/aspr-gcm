@@ -20,7 +20,7 @@ import gcm.util.annotations.UnitTestMethod;
 import gcm.util.earth.Earth;
 import gcm.util.earth.LatLon;
 import gcm.util.earth.LatLonBox;
-import gcm.util.earth.LatLonBox.LatLonBoxBuilder;
+import gcm.util.earth.LatLonBox.Builder;
 import gcm.util.spherical.SphericalPoint;
 import gcm.util.spherical.SphericalTriangle;
 import gcm.util.vector.Vector3D;
@@ -74,7 +74,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -107,7 +107,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -131,7 +131,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -154,7 +154,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -235,7 +235,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -319,7 +319,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(15, 45, 20_000, 3, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -348,7 +348,7 @@ public class AT_LatLonBox {
 
 		// create a scattered set of LatLon values
 		List<LatLon> points = getScatteredPoints(35, 128, 300_000, 100, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -379,7 +379,7 @@ public class AT_LatLonBox {
 		// create a scattered set of LatLon values
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		List<LatLon> points = getScatteredPoints(35, 128, 3000, 10, randomGenerator);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 		for (LatLon latLon : points) {
 			builder.add(latLon);
 		}
@@ -421,7 +421,7 @@ public class AT_LatLonBox {
 	public void testBuilder() {
 		final long seed = SEED_PROVIDER.getSeedValue(5);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
-		LatLonBoxBuilder builder = LatLonBox.builder();
+		Builder builder = LatLonBox.builder();
 
 		// Show equal objects have equal hash codes
 

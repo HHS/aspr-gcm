@@ -40,6 +40,10 @@ public final class PlanningQueueReportItem implements OutputItem {
 		private long removalCount;
 		private long cancellationCount;
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/*
 	 * 
@@ -53,7 +57,12 @@ public final class PlanningQueueReportItem implements OutputItem {
 	 */
 	@NotThreadSafe
 	@Source(status = TestStatus.REQUIRED, proxy = PlanningQueueReportItem.class)
-	public static class PlanningQueueReportItemBuilder {
+	public static class Builder {
+		
+		private Builder() {
+			
+		}
+		
 		private Scaffold scaffold = new Scaffold();
 
 		private void validateScaffold() {
@@ -133,11 +142,12 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the scenario id is null
 		 */
-		public void setScenarioId(ScenarioId scenarioId) {
+		public Builder setScenarioId(ScenarioId scenarioId) {
 			if (scenarioId == null) {
 				throw new RuntimeException("scenario Id is null");
 			}
 			scaffold.scenarioId = scenarioId;
+			return this;
 		}
 
 		/**
@@ -146,11 +156,12 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the replication id is null
 		 */
-		public void setReplicationId(ReplicationId replicationId) {
+		public Builder setReplicationId(ReplicationId replicationId) {
 			if (replicationId == null) {
 				throw new RuntimeException("replication Id is null");
 			}
 			scaffold.replicationId = replicationId;
+			return this;
 		}
 
 		/**
@@ -159,11 +170,12 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the component id is null
 		 */
-		public void setComponentId(ComponentId componentId) {
+		public Builder setComponentId(ComponentId componentId) {
 			if (componentId == null) {
 				throw new RuntimeException("component Id is null");
 			}
 			scaffold.componentId = componentId;
+			return this;
 		}
 
 		/**
@@ -172,19 +184,21 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the planning class is null
 		 */
-		public void setPlanningClass(Class<? extends Plan> planningClass) {
+		public Builder setPlanningClass(Class<? extends Plan> planningClass) {
 			if (planningClass == null) {
 				throw new RuntimeException("planning class is null");
 			}
 			scaffold.planningClass = planningClass;
+			return this;
 		}
 
 		/**
 		 * Sets the keyed value
 		 * 
 		 */
-		public void setKeyed(boolean keyed) {
+		public Builder setKeyed(boolean keyed) {
 			scaffold.keyed = keyed;
+			return this;
 		}
 
 		/**
@@ -194,7 +208,7 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 *             if the stat is null
 		 * 
 		 */
-		public void setStat(Stat stat) {
+		public Builder setStat(Stat stat) {
 			if (stat == null) {
 				throw new RuntimeException("stat is null");
 			}
@@ -207,18 +221,22 @@ public final class PlanningQueueReportItem implements OutputItem {
 				builder.setSize(stat.size());
 			}
 			scaffold.stat = builder.build();
+			return this;
 		}
 		
-		public void setAdditionCount(long additionCount) {
+		public Builder setAdditionCount(long additionCount) {
 			scaffold.additionCount = additionCount;
+			return this;
 		}
 		
-		public void setRemovalCount(long removalCount) {
+		public Builder setRemovalCount(long removalCount) {
 			scaffold.removalCount = removalCount;
+			return this;
 		}
 
-		public void setCancellationCount(long cancellationCount) {
+		public Builder setCancellationCount(long cancellationCount) {
 			scaffold.cancellationCount = cancellationCount;
+			return this;
 		}		
 
 		/**
@@ -228,12 +246,13 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 *             if the startTime is null
 		 * 
 		 */
-		public void setStartTime(Double startTime) {
+		public Builder setStartTime(Double startTime) {
 			if (startTime == null) {
 				throw new RuntimeException("startTime is null");
 			}
 
 			scaffold.startTime = startTime;
+			return this;
 		}
 
 		/**
@@ -243,11 +262,12 @@ public final class PlanningQueueReportItem implements OutputItem {
 		 *             if the endTime is null
 		 * 
 		 */
-		public void setEndTime(Double endTime) {
+		public Builder setEndTime(Double endTime) {
 			if (endTime == null) {
 				throw new RuntimeException("endTime is null");
 			}
 			scaffold.endTime = endTime;
+			return this;
 		}
 	}
 

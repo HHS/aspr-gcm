@@ -10,8 +10,7 @@ import java.util.Set;
 
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -45,8 +44,8 @@ import gcm.util.annotations.TestStatus;
 public final class PersonPropertyInteractionReport extends PeriodicReport {
 
 	/*
-	 * Represents a count of people in a particular region, particular
-	 * compartment and having a particular tuple of property values.
+	 * Represents a count of people in a particular region, particular compartment
+	 * and having a particular tuple of property values.
 	 */
 	private static class Counter {
 		int count;
@@ -58,8 +57,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	 * Map of <Region, Map<Compartment, Map<Property Value, ... Map<Property
 	 * Value,Counter>...>>>
 	 * 
-	 * A map of map of map... that starts with regions, compartment, each
-	 * property id in order and ends with Counter
+	 * A map of map of map... that starts with regions, compartment, each property
+	 * id in order and ends with Counter
 	 */
 
 	private final Map<Object, Object> regionMap = new LinkedHashMap<>();
@@ -72,11 +71,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	 */
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("Compartment");
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			addTimeFieldHeaders(reportHeaderBuilder).add("Region").add("Compartment");
 			for (final PersonPropertyId personPropertyId : propertyIds) {
 				reportHeaderBuilder.add(personPropertyId.toString());
 			}
@@ -87,19 +83,21 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	/*
-	 * Decrements the Counter for the given region, compartment and person
-	 * property values associated with the person
+	 * Decrements the Counter for the given region, compartment and person property
+	 * values associated with the person
 	 */
-	private void decrement(ObservableEnvironment observableEnvironment, final Object regionId, final CompartmentId compartmentId, final PersonId personId) {
+	private void decrement(ObservableEnvironment observableEnvironment, final Object regionId,
+			final CompartmentId compartmentId, final PersonId personId) {
 		getCounter(observableEnvironment, regionId, compartmentId, personId, null, null).count--;
 	}
 
 	/*
-	 * Decrements the Counter for the given region, compartment and person
-	 * property values associated with the person with the old property value
-	 * being used instead of the current property value.
+	 * Decrements the Counter for the given region, compartment and person property
+	 * values associated with the person with the old property value being used
+	 * instead of the current property value.
 	 */
-	private void decrementOldPropertyValue(ObservableEnvironment observableEnvironment, final Object regionId, final CompartmentId compartmentId, final PersonId personId, final Object oldPropertyId,
+	private void decrementOldPropertyValue(ObservableEnvironment observableEnvironment, final Object regionId,
+			final CompartmentId compartmentId, final PersonId personId, final Object oldPropertyId,
 			final Object oldPropertyValue) {
 		getCounter(observableEnvironment, regionId, compartmentId, personId, oldPropertyId, oldPropertyValue).count--;
 	}
@@ -108,8 +106,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	protected void flush(ObservableEnvironment observableEnvironment) {
 
 		/*
-		 * For each (region,compartment) pair, execute the recursive
-		 * propertyFlush
+		 * For each (region,compartment) pair, execute the recursive propertyFlush
 		 */
 		final Object[] propertyValues = new Object[propertyIds.size()];
 		for (final Object regionId : regionMap.keySet()) {
@@ -125,19 +122,20 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	/*
-	 * Selects the counter that is accounting for the people in the compartment
-	 * and region who have the same tuple of property values that the given
-	 * person currently has. If the selectedPropertyId is not null, then the
-	 * formerPropertyValue is used instead for forming the tuple. This is done
-	 * to select the counter for the previous property value so that the counter
-	 * may decremented.
+	 * Selects the counter that is accounting for the people in the compartment and
+	 * region who have the same tuple of property values that the given person
+	 * currently has. If the selectedPropertyId is not null, then the
+	 * formerPropertyValue is used instead for forming the tuple. This is done to
+	 * select the counter for the previous property value so that the counter may
+	 * decremented.
 	 */
-	private Counter getCounter(ObservableEnvironment observableEnvironment, final Object regionId, final CompartmentId compartmentId, final PersonId personId, final Object selectedPropertyId,
+	private Counter getCounter(ObservableEnvironment observableEnvironment, final Object regionId,
+			final CompartmentId compartmentId, final PersonId personId, final Object selectedPropertyId,
 			final Object formerPropertyValue) {
 
 		/*
-		 * First, push through the region map with the region and compartment to
-		 * arrive at a nested map of maps for the properties
+		 * First, push through the region map with the region and compartment to arrive
+		 * at a nested map of maps for the properties
 		 */
 		@SuppressWarnings("unchecked")
 		Map<Object, Object> compartmentMap = (Map<Object, Object>) regionMap.get(regionId);
@@ -154,17 +152,17 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 
 		/*
-		 * Push downward through the mapping layers until all property values
-		 * have been used. The last layer will have Counters as its values.
+		 * Push downward through the mapping layers until all property values have been
+		 * used. The last layer will have Counters as its values.
 		 */
 		final int n = propertyIds.size();
 		for (int i = 0; i < n; i++) {
 			final PersonPropertyId personPropertyId = propertyIds.get(i);
 			Object personPropertyValue;
 			/*
-			 * When this method is being used to decrement a counter for a
-			 * previous value of a property, we select the former property value
-			 * instead of the current property value.
+			 * When this method is being used to decrement a counter for a previous value of
+			 * a property, we select the former property value instead of the current
+			 * property value.
 			 */
 			if (personPropertyId.equals(selectedPropertyId)) {
 				personPropertyValue = formerPropertyValue;
@@ -173,8 +171,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 			}
 
 			/*
-			 * The last map level has Counters as its values. All other levels
-			 * will have maps as their values.
+			 * The last map level has Counters as its values. All other levels will have
+			 * maps as their values.
 			 */
 			if (i == (n - 1)) {
 				Counter counter = (Counter) propertyValueMap.get(personPropertyValue);
@@ -208,7 +206,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 		setCurrentReportingPeriod(observableEnvironment);
 
 		final Object regionId = observableEnvironment.getPersonRegion(personId);
@@ -227,24 +226,28 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final PersonPropertyId personPropertyId, final Object oldValue) {
+	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final PersonPropertyId personPropertyId, final Object oldValue) {
 		if (propertyIds.contains(personPropertyId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			final Object regionId = observableEnvironment.getPersonRegion(personId);
 			final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
 			increment(observableEnvironment, regionId, compartmentId, personId);
-			decrementOldPropertyValue(observableEnvironment, regionId, compartmentId, personId, personPropertyId, oldValue);
+			decrementOldPropertyValue(observableEnvironment, regionId, compartmentId, personId, personPropertyId,
+					oldValue);
 		}
 	}
 
 	@Override
 	public void handlePersonRemoval(ObservableEnvironment observableEnvironment, PersonInfo personInfo) {
 		setCurrentReportingPeriod(observableEnvironment);
-		decrement(observableEnvironment, personInfo.getRegionId(), personInfo.getCompartmentId(), personInfo.getPersonId());
+		decrement(observableEnvironment, personInfo.getRegionId(), personInfo.getCompartmentId(),
+				personInfo.getPersonId());
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final Object regionId = observableEnvironment.getPersonRegion(personId);
 		final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
@@ -253,10 +256,11 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	}
 
 	/*
-	 * Increments the Counter for the given region, compartment and person
-	 * property values associated with the person
+	 * Increments the Counter for the given region, compartment and person property
+	 * values associated with the person
 	 */
-	private void increment(ObservableEnvironment observableEnvironment, final Object regionId, final CompartmentId compartmentId, final PersonId personId) {
+	private void increment(ObservableEnvironment observableEnvironment, final Object regionId,
+			final CompartmentId compartmentId, final PersonId personId) {
 		getCounter(observableEnvironment, regionId, compartmentId, personId, null, null).count++;
 	}
 
@@ -283,8 +287,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 		}
 
 		/*
-		 * Validate the client's property ids and ignore any that are not known
-		 * to the environment
+		 * Validate the client's property ids and ignore any that are not known to the
+		 * environment
 		 */
 		final Set<PersonPropertyId> validPersonPropertyIds = observableEnvironment.getPersonPropertyIds();
 
@@ -306,7 +310,8 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 	/*
 	 * Flushes the positive counters recursively.
 	 */
-	private void propertyFlush(ObservableEnvironment observableEnvironment, final Object regionId, final Object compartmentId, final Map<Object, Object> map, final Object[] personPropertyValues,
+	private void propertyFlush(ObservableEnvironment observableEnvironment, final Object regionId,
+			final Object compartmentId, final Map<Object, Object> map, final Object[] personPropertyValues,
 			final int level) {
 
 		for (final Object personPropertyValue : map.keySet()) {
@@ -323,7 +328,7 @@ public final class PersonPropertyInteractionReport extends PeriodicReport {
 					for (int i = 0; i < propertyIds.size(); i++) {
 						propertyIdsAndValues.put(propertyIds.get(i).toString(), personPropertyValues[i]);
 					}
-					final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+					final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 					reportItemBuilder.setReportHeader(getReportHeader());
 					reportItemBuilder.setReportType(getClass());
 					reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());

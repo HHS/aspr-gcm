@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -49,8 +48,8 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	/*
-	 * A mapping from a (Compartment, Region, Region) tuple to a count of the
-	 * number of transfers.
+	 * A mapping from a (Compartment, Region, Region) tuple to a count of the number
+	 * of transfers.
 	 */
 	private final Map<CompartmentId, Map<RegionId, Map<RegionId, Counter>>> compartmentMap = new LinkedHashMap<>();
 
@@ -61,13 +60,13 @@ public final class RegionTransferReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("Compartment");
-			reportHeaderBuilder.add("SourceRegion");
-			reportHeaderBuilder.add("DestinationRegion");
-			reportHeaderBuilder.add("Transfers");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("Compartment")//
+					.add("SourceRegion")//
+					.add("DestinationRegion")//
+					.add("Transfers")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -75,7 +74,7 @@ public final class RegionTransferReport extends PeriodicReport {
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
 
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 		for (final CompartmentId compartmentId : compartmentMap.keySet()) {
 			final Map<RegionId, Map<RegionId, Counter>> sourceRegionMap = compartmentMap.get(compartmentId);
@@ -119,7 +118,8 @@ public final class RegionTransferReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final RegionId destinationRegionId = observableEnvironment.getPersonRegion(personId);
 		final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
@@ -129,7 +129,8 @@ public final class RegionTransferReport extends PeriodicReport {
 	/*
 	 * Increments the number of region transfers for the give tuple
 	 */
-	private void increment(final CompartmentId compartmentId, final RegionId sourceRegionId, final RegionId destinationRegionId) {
+	private void increment(final CompartmentId compartmentId, final RegionId sourceRegionId,
+			final RegionId destinationRegionId) {
 		final Counter counter = compartmentMap.get(compartmentId).get(sourceRegionId).get(destinationRegionId);
 		counter.count++;
 	}

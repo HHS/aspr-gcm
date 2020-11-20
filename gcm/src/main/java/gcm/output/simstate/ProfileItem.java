@@ -61,6 +61,10 @@ public final class ProfileItem implements OutputItem {
 
 		private Stat stat;
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/*
 	 * 
@@ -80,7 +84,10 @@ public final class ProfileItem implements OutputItem {
 	 *
 	 */
 	@NotThreadSafe
-	public static class ProfileItemBuilder {
+	public static class Builder {
+		private Builder() {
+			
+		}
 		private void validateScaffold() {
 			if (scaffold.componentId == null) {
 				throw new RuntimeException("component Id is null");
@@ -138,11 +145,12 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the component id is null
 		 */
-		public void setComponentId(ComponentId componentId) {
+		public Builder setComponentId(ComponentId componentId) {
 			if (componentId == null) {
 				throw new RuntimeException("component Id is null");
 			}
 			scaffold.componentId = componentId;
+			return this;
 		}
 
 		/**
@@ -151,11 +159,12 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the class name is null
 		 */
-		public void setClassName(String className) {
+		public Builder setClassName(String className) {
 			if (className == null) {
 				throw new RuntimeException("class name is null");
 			}
 			scaffold.className = className;
+			return this;
 		}
 
 		/**
@@ -164,11 +173,12 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the method name is null
 		 */
-		public void setMethodName(String methodName) {
+		public Builder setMethodName(String methodName) {
 			if (methodName == null) {
 				throw new RuntimeException("method Name  is null");
 			}
 			scaffold.methodName = methodName;
+			return this;
 		}
 
 		/**
@@ -177,11 +187,12 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the scenario id is null
 		 */
-		public void setScenarioId(ScenarioId scenarioId) {
+		public Builder setScenarioId(ScenarioId scenarioId) {
 			if (scenarioId == null) {
 				throw new RuntimeException("scenario Id is null");
 			}
 			scaffold.scenarioId = scenarioId;
+			return this;
 		}
 
 		/**
@@ -190,11 +201,12 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the replication id is null
 		 */
-		public void setReplicationId(ReplicationId replicationId) {
+		public Builder setReplicationId(ReplicationId replicationId) {
 			if (replicationId == null) {
 				throw new RuntimeException("replication Id is null");
 			}
 			scaffold.replicationId = replicationId;
+			return this;
 		}
 
 		/**
@@ -203,7 +215,7 @@ public final class ProfileItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the stat is null
 		 */
-		public void setStat(Stat stat) {
+		public Builder setStat(Stat stat) {
 			ImmutableStat.Builder builder = ImmutableStat.builder();
 			builder.setMin(stat.getMin().get());
 			builder.setMax(stat.getMax().get());
@@ -211,6 +223,7 @@ public final class ProfileItem implements OutputItem {
 			builder.setVariance(stat.getVariance().get());
 			builder.setSize(stat.size());
 			scaffold.stat = builder.build();
+			return this;
 		}
 
 		/**
@@ -220,11 +233,12 @@ public final class ProfileItem implements OutputItem {
 		 *             if the id is negative
 		 * 
 		 */
-		public void setId(int id) {
+		public Builder setId(int id) {
 			if (id < 0) {
 				throw new RuntimeException("negative id");
 			}
 			scaffold.id = id;
+			return this;
 		}
 
 		/**
@@ -235,11 +249,12 @@ public final class ProfileItem implements OutputItem {
 		 *             if the depth is negative
 		 * 
 		 */
-		public void setDepth(int depth) {
+		public Builder setDepth(int depth) {
 			if (depth < 0) {
 				throw new RuntimeException("negative depth");
 			}
 			scaffold.depth = depth;
+			return this;
 		}
 
 		/**
@@ -249,11 +264,12 @@ public final class ProfileItem implements OutputItem {
 		 *             if the parent id is less than -1
 		 * 
 		 */
-		public void setParentId(int parentId) {
+		public Builder setParentId(int parentId) {
 			if (parentId < -1) {
 				throw new RuntimeException("unallowed parent id");
 			}
 			scaffold.parentId = parentId;
+			return this;
 		}
 
 	}

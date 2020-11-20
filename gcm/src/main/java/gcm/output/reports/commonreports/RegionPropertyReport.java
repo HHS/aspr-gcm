@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.RegionId;
 import gcm.scenario.RegionPropertyId;
@@ -37,19 +36,19 @@ public final class RegionPropertyReport extends AbstractReport {
 	private ReportHeader reportHeader;
 
 	/*
-	 * The constrained set of person properties that will be used in this
-	 * report. They are set during init()
+	 * The constrained set of person properties that will be used in this report.
+	 * They are set during init()
 	 */
 	private final Set<RegionPropertyId> regionPropertyIds = new LinkedHashSet<>();
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Region")//
+					.add("Property")//
+					.add("Value")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -62,7 +61,8 @@ public final class RegionPropertyReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleRegionPropertyValueAssignment(ObservableEnvironment observableEnvironment, final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	public void handleRegionPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final RegionId regionId, final RegionPropertyId regionPropertyId) {
 		if (regionPropertyIds.contains(regionPropertyId)) {
 			writeProperty(observableEnvironment, regionId, regionPropertyId);
 		}
@@ -104,10 +104,11 @@ public final class RegionPropertyReport extends AbstractReport {
 
 	}
 
-	private void writeProperty(ObservableEnvironment observableEnvironment, final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	private void writeProperty(ObservableEnvironment observableEnvironment, final RegionId regionId,
+			final RegionPropertyId regionPropertyId) {
 
 		final Object regionPropertyValue = observableEnvironment.getRegionPropertyValue(regionId, regionPropertyId);
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());

@@ -3,10 +3,8 @@ package gcm.simulation;
 import gcm.output.OutputItemHandler;
 import gcm.output.reports.ReportItemHandler;
 import gcm.output.simstate.SimulationStatusItem;
-import gcm.output.simstate.SimulationStatusItem.SimulationStatusItemBuilder;
 import gcm.replication.Replication;
 import gcm.scenario.Scenario;
-import gcm.simulation.Context.ContextBuilder;
 import gcm.util.TimeElapser;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
@@ -91,7 +89,7 @@ public final class Simulation {
 	 * and exists so that no modeler provided class has direct access to the
 	 * internal portions of the simulation.
 	 */
-	private ContextBuilder contextBuilder = new ContextBuilder();
+	private Context.Builder builder = Context.builder();
 
 	/**
 	 * Executes the simulation from the collected data.
@@ -104,7 +102,7 @@ public final class Simulation {
 	 */
 	public void execute() {
 
-		Context context = contextBuilder.build();
+		Context context = builder.build();
 
 		/*
 		 * We manage the production of SimulationStatusItems outside of the
@@ -126,16 +124,16 @@ public final class Simulation {
 		 * context.execute() method in a try finally block.
 		 */
 		if (produceSimulationStatusItems) {
-			SimulationStatusItemBuilder simulationStatusItemBuilder = new SimulationStatusItemBuilder();
-			simulationStatusItemBuilder.setScenarioId(context.getScenario().getScenarioId());
-			simulationStatusItemBuilder.setReplicationId(context.getReplication().getId());
+			SimulationStatusItem.Builder builder = SimulationStatusItem.builder();
+			builder.setScenarioId(context.getScenario().getScenarioId());
+			builder.setReplicationId(context.getReplication().getId());
 			TimeElapser timeElapser = new TimeElapser();
 			try {
 				context.execute();
-				simulationStatusItemBuilder.setSuccessful(true);
+				builder.setSuccessful(true);
 			} finally {
-				simulationStatusItemBuilder.setDurartion(timeElapser.getElapsedMilliSeconds());
-				SimulationStatusItem simulationStatusItem = simulationStatusItemBuilder.build();
+				builder.setDurartion(timeElapser.getElapsedMilliSeconds());
+				SimulationStatusItem simulationStatusItem = builder.build();
 				context.getOutputItemManager().releaseOutputItem(simulationStatusItem);
 			}
 		} else {
@@ -150,7 +148,7 @@ public final class Simulation {
 	 *             if the replication is null
 	 */
 	public void setReplication(final Replication replication) {
-		contextBuilder.setReplication(replication);
+		builder.setReplication(replication);
 	}
 
 	/**
@@ -160,7 +158,7 @@ public final class Simulation {
 	 *             if the outputItemHandler is null
 	 */
 	public void addOutputItemHandler(final OutputItemHandler outputItemHandler) {
-		contextBuilder.addOutputItemHandler(outputItemHandler);
+		builder.addOutputItemHandler(outputItemHandler);
 	}
 
 	/**
@@ -170,7 +168,7 @@ public final class Simulation {
 	 *             if the scenario is null
 	 */
 	public void setScenario(final Scenario scenario) {
-		contextBuilder.setScenario(scenario);
+		builder.setScenario(scenario);
 	}
 
 }

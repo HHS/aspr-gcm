@@ -6,8 +6,7 @@ import java.util.Set;
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
@@ -25,16 +24,16 @@ public class PersonLifeReport extends AbstractReport {
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
 			/*
-			 * Only the columns that this report is adding are put into the
-			 * header. The header portions for the scenario, the replication and
-			 * the experiment columns are automatically generated.
+			 * Only the columns that this report is adding are put into the header. The
+			 * header portions for the scenario, the replication and the experiment columns
+			 * are automatically generated.
 			 */
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Person");
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Activity");
-			reportHeaderBuilder.add("Details");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Person")//
+					.add("Time")//
+					.add("Activity")//
+					.add("Details")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -43,10 +42,10 @@ public class PersonLifeReport extends AbstractReport {
 	public Set<StateChange> getListenedStateChanges() {
 		final Set<StateChange> result = new LinkedHashSet<>();
 		/*
-		 * Add only the state changes that are needed for this report. For each
-		 * such state change there will need to be one corresponding handle()
-		 * method added to this class. Both the StateChange and Report classes
-		 * contain documentation on this relationship.
+		 * Add only the state changes that are needed for this report. For each such
+		 * state change there will need to be one corresponding handle() method added to
+		 * this class. Both the StateChange and Report classes contain documentation on
+		 * this relationship.
 		 */
 		result.add(StateChange.COMPARTMENT_ASSIGNMENT);
 		result.add(StateChange.GROUP_MEMBERSHIP_ADDITION);
@@ -67,8 +66,8 @@ public class PersonLifeReport extends AbstractReport {
 	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
 		super.init(observableEnvironment, initialData);
 		/*
-		 * This report is focused on the activities of a single person. The
-		 * person id should be contained in the initial data.
+		 * This report is focused on the activities of a single person. The person id
+		 * should be contained in the initial data.
 		 */
 		for (Object initialDatum : initialData) {
 			if (initialDatum instanceof PersonId) {
@@ -84,10 +83,10 @@ public class PersonLifeReport extends AbstractReport {
 	}
 
 	private void writeReportItem(ObservableEnvironment observableEnvironment, Object activity, Object details) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		/*
-		 * First add the standard parts of every report item: header, the report
-		 * class reference, the scenario id and the replication id
+		 * First add the standard parts of every report item: header, the report class
+		 * reference, the scenario id and the replication id
 		 */
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
@@ -103,9 +102,8 @@ public class PersonLifeReport extends AbstractReport {
 		reportItemBuilder.addValue(details);
 
 		/*
-		 * Finally, release the report item to the environment. The report item
-		 * will be sent to NIOReportItemHandler and written to the appropriate
-		 * file.
+		 * Finally, release the report item to the environment. The report item will be
+		 * sent to NIOReportItemHandler and written to the appropriate file.
 		 */
 		observableEnvironment.releaseOutputItem(reportItemBuilder.build());
 	}
@@ -115,15 +113,18 @@ public class PersonLifeReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 		if (personIsEligible(personId)) {
 			CompartmentId personCompartmentId = observableEnvironment.getPersonCompartment(personId);
-			writeReportItem(observableEnvironment, "Compart Assignment", sourceCompartmentId + " --> " + personCompartmentId);
+			writeReportItem(observableEnvironment, "Compart Assignment",
+					sourceCompartmentId + " --> " + personCompartmentId);
 		}
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		if (personIsEligible(personId)) {
 			RegionId personRegionId = observableEnvironment.getPersonRegion(personId);
 			writeReportItem(observableEnvironment, "Region Assignment", sourceRegionId + " --> " + personRegionId);
@@ -131,14 +132,16 @@ public class PersonLifeReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleGroupMembershipAddition(ObservableEnvironment observableEnvironment, GroupId groupId, PersonId personId) {
+	public void handleGroupMembershipAddition(ObservableEnvironment observableEnvironment, GroupId groupId,
+			PersonId personId) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Joins Group", groupId);
 		}
 	}
 
 	@Override
-	public void handleGroupMembershipRemoval(ObservableEnvironment observableEnvironment, GroupId groupId, PersonId personId) {
+	public void handleGroupMembershipRemoval(ObservableEnvironment observableEnvironment, GroupId groupId,
+			PersonId personId) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Leaves Group", groupId);
 		}
@@ -159,37 +162,42 @@ public class PersonLifeReport extends AbstractReport {
 	}
 
 	@Override
-	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final PersonPropertyId personPropertyId,
-			final Object oldPersonPropertyValue) {
+	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final PersonPropertyId personPropertyId, final Object oldPersonPropertyValue) {
 		if (personIsEligible(personId)) {
 			Object personPropertyValue = observableEnvironment.getPersonPropertyValue(personId, personPropertyId);
-			writeReportItem(observableEnvironment, "Property Value Update", personPropertyId + ": " + oldPersonPropertyValue + "-->" + personPropertyValue);
+			writeReportItem(observableEnvironment, "Property Value Update",
+					personPropertyId + ": " + oldPersonPropertyValue + "-->" + personPropertyValue);
 		}
 	}
 
 	@Override
-	public void handlePersonResourceAddition(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceAddition(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final ResourceId resourceId, final long amount) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Resource addition", resourceId + ": " + amount);
 		}
 	}
 
 	@Override
-	public void handlePersonResourceRemoval(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceRemoval(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final ResourceId resourceId, final long amount) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Resource removal", resourceId + ": " + amount);
 		}
 	}
 
 	@Override
-	public void handleRegionResourceTransferToPerson(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handleRegionResourceTransferToPerson(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final ResourceId resourceId, final long amount) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Resource transfer to person", resourceId + ": " + amount);
 		}
 	}
 
 	@Override
-	public void handlePersonResourceTransferToRegion(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceTransferToRegion(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final ResourceId resourceId, final long amount) {
 		if (personIsEligible(personId)) {
 			writeReportItem(observableEnvironment, "Resource transfer from person", resourceId + ": " + amount);
 		}

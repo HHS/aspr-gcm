@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StageInfo;
 import gcm.output.reports.StateChange;
 import gcm.scenario.BatchId;
@@ -75,15 +74,15 @@ public final class StageReport extends AbstractReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Stage");
-			reportHeaderBuilder.add("MaterialsProducer");
-			reportHeaderBuilder.add("Action");
-			reportHeaderBuilder.add("Offered");
-			reportHeaderBuilder.add("ResourceMaterial");
-			reportHeaderBuilder.add("Amount");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Stage")//
+					.add("MaterialsProducer")//
+					.add("Action")//
+					.add("Offered")//
+					.add("ResourceMaterial")//
+					.add("Amount")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -101,15 +100,19 @@ public final class StageReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleStageConversionToBatch(ObservableEnvironment observableEnvironment, StageInfo stageInfo, final BatchId batchId) {
+	public void handleStageConversionToBatch(ObservableEnvironment observableEnvironment, StageInfo stageInfo,
+			final BatchId batchId) {
 		final Object resourceOrMaterial = observableEnvironment.getBatchMaterial(batchId);
 		final double amount = observableEnvironment.getBatchAmount(batchId);
-		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(), Action.BATCH_CONVERTED, stageInfo.isStageOffered(), resourceOrMaterial, amount);
+		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(),
+				Action.BATCH_CONVERTED, stageInfo.isStageOffered(), resourceOrMaterial, amount);
 	}
 
 	@Override
-	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo, final ResourceId resourceId, final long amount) {
-		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(), Action.RESOURCE_CONVERTED, stageInfo.isStageOffered(), resourceId, amount);
+	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo,
+			final ResourceId resourceId, final long amount) {
+		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(),
+				Action.RESOURCE_CONVERTED, stageInfo.isStageOffered(), resourceId, amount);
 	}
 
 	@Override
@@ -117,13 +120,15 @@ public final class StageReport extends AbstractReport {
 		final Object resourceOrMaterial = "";
 		final boolean offered = observableEnvironment.isStageOffered(stageId);
 		final MaterialsProducerId materialsProducerId = observableEnvironment.getStageProducer(stageId);
-		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.CREATED, offered, resourceOrMaterial, 0);
+		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.CREATED, offered,
+				resourceOrMaterial, 0);
 	}
 
 	@Override
 	public void handleStageDestruction(ObservableEnvironment observableEnvironment, StageInfo stageInfo) {
 		final Object resourceOrMaterial = "";
-		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(), Action.DESTROYED, stageInfo.isStageOffered(), resourceOrMaterial, 0);
+		writeReportItem(observableEnvironment, stageInfo.getStageId(), stageInfo.getMaterialsProducerId(),
+				Action.DESTROYED, stageInfo.isStageOffered(), resourceOrMaterial, 0);
 	}
 
 	@Override
@@ -131,21 +136,26 @@ public final class StageReport extends AbstractReport {
 		final Object resourceOrMaterial = "";
 		final boolean offered = observableEnvironment.isStageOffered(stageId);
 		final MaterialsProducerId materialsProducerId = observableEnvironment.getStageProducer(stageId);
-		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.OFFERED, offered, resourceOrMaterial, 0);
+		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.OFFERED, offered,
+				resourceOrMaterial, 0);
 	}
 
 	@Override
-	public void handleStageTransfer(ObservableEnvironment observableEnvironment, final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	public void handleStageTransfer(ObservableEnvironment observableEnvironment, final StageId stageId,
+			final MaterialsProducerId materialsProducerId) {
 		final boolean offered = observableEnvironment.isStageOffered(stageId);
 		final Object resourceOrMaterial = "";
-		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.TRANSFERRED, offered, resourceOrMaterial, 0);
+		writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.TRANSFERRED, offered,
+				resourceOrMaterial, 0);
 		final MaterialsProducerId newMaterialsProducerId = observableEnvironment.getStageProducer(stageId);
-		writeReportItem(observableEnvironment, stageId, newMaterialsProducerId, Action.TRANSFERRED, offered, resourceOrMaterial, 0);
+		writeReportItem(observableEnvironment, stageId, newMaterialsProducerId, Action.TRANSFERRED, offered,
+				resourceOrMaterial, 0);
 	}
 
-	private void writeReportItem(ObservableEnvironment observableEnvironment, final StageId stageId, final MaterialsProducerId materialsProducerId, final Action action, final Boolean offered,
+	private void writeReportItem(ObservableEnvironment observableEnvironment, final StageId stageId,
+			final MaterialsProducerId materialsProducerId, final Action action, final Boolean offered,
 			final Object resourceOrMaterial, final double amount) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());
@@ -166,7 +176,8 @@ public final class StageReport extends AbstractReport {
 		for (MaterialsProducerId materialsProducerId : observableEnvironment.getMaterialsProducerIds()) {
 			for (StageId stageId : observableEnvironment.getStages(materialsProducerId)) {
 				final boolean offered = observableEnvironment.isStageOffered(stageId);
-				writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.CREATED, offered, resourceOrMaterial, 0);
+				writeReportItem(observableEnvironment, stageId, materialsProducerId, Action.CREATED, offered,
+						resourceOrMaterial, 0);
 			}
 		}
 	}

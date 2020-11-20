@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.ResourceId;
 import gcm.scenario.ResourcePropertyId;
@@ -38,12 +37,12 @@ public final class ResourcePropertyReport extends AbstractReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Resource");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Resource")//
+					.add("Property")//
+					.add("Value")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -56,7 +55,8 @@ public final class ResourcePropertyReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleResourcePropertyValueAssignment(ObservableEnvironment observableEnvironment, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public void handleResourcePropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		writeProperty(observableEnvironment, resourceId, resourcePropertyId);
 	}
 
@@ -64,16 +64,19 @@ public final class ResourcePropertyReport extends AbstractReport {
 	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
 		super.init(observableEnvironment, initialData);
 		for (final ResourceId resourceId : observableEnvironment.getResourceIds()) {
-			for (final ResourcePropertyId resourcePropertyId : observableEnvironment.getResourcePropertyIds(resourceId)) {
+			for (final ResourcePropertyId resourcePropertyId : observableEnvironment
+					.getResourcePropertyIds(resourceId)) {
 				writeProperty(observableEnvironment, resourceId, resourcePropertyId);
 			}
 		}
 	}
 
-	private void writeProperty(ObservableEnvironment observableEnvironment, final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	private void writeProperty(ObservableEnvironment observableEnvironment, final ResourceId resourceId,
+			final ResourcePropertyId resourcePropertyId) {
 
-		final Object resourcePropertyValue = observableEnvironment.getResourcePropertyValue(resourceId, resourcePropertyId);
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final Object resourcePropertyValue = observableEnvironment.getResourcePropertyValue(resourceId,
+				resourcePropertyId);
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());

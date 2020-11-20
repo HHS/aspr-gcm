@@ -24,14 +24,23 @@ public final class ReportHeader {
 	private ReportHeader(List<String> headerStrings) {
 		this.headerStrings = new ArrayList<>(headerStrings);
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	@NotThreadSafe
-	public final static class ReportHeaderBuilder {
+	public final static class Builder {
+		
+		private Builder() {
+			
+		}
 
 		private List<String> headerStrings = new ArrayList<>();
 
-		public void add(String headerString) {
+		public Builder add(String headerString) {
 			this.headerStrings.add(headerString);
+			return this;
 		}
 
 		public ReportHeader build() {

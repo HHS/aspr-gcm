@@ -9,9 +9,7 @@ import gcm.output.OutputItemHandler;
 import gcm.output.reports.NIOReportItemHandler;
 import gcm.output.reports.NIOReportItemHandler.Builder;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
 import gcm.output.reports.ReportItem;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
 import gcm.output.reports.ReportItemHandler;
 import gcm.output.reports.commonreports.CompartmentPopulationReport;
 import gcm.scenario.ReplicationId;
@@ -30,19 +28,15 @@ public final class MT_NIOReportItemHandlerImpl {
 	}
 
 	public static void main(String[] args) {
-		
-		Path path = Paths.get(args[0]);		
+
+		Path path = Paths.get(args[0]);
 
 		Builder nioReportItemHandlerBuilder = NIOReportItemHandler.builder();
 		Set<Object> initialData = new LinkedHashSet<>();
 		nioReportItemHandlerBuilder.addReport(path, CompartmentPopulationReport.class, initialData);
 		ReportItemHandler nioReportItemHandler = nioReportItemHandlerBuilder.build();
 
-		ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-		reportHeaderBuilder.add("Alpha");
-		reportHeaderBuilder.add("Beta");
-
-		ReportHeader reportHeader = reportHeaderBuilder.build();
+		ReportHeader reportHeader = ReportHeader.builder().add("Alpha").add("Beta").build();
 
 		int jobCount = 10;
 		JobCompletionCounter jobCompletionCounter = new JobCompletionCounter(jobCount, nioReportItemHandler);
@@ -78,7 +72,8 @@ public final class MT_NIOReportItemHandlerImpl {
 		private final ReportItemHandler nioReportItemHandler;
 		private final JobCompletionCounter jobCompletionCounter;
 
-		public Runner(ReportHeader reportHeader, Integer index, ReportItemHandler nioReportItemHandler, JobCompletionCounter jobCompletionCounter) {
+		public Runner(ReportHeader reportHeader, Integer index, ReportItemHandler nioReportItemHandler,
+				JobCompletionCounter jobCompletionCounter) {
 			this.reportHeader = reportHeader;
 			this.index = index;
 			this.nioReportItemHandler = nioReportItemHandler;
@@ -88,7 +83,7 @@ public final class MT_NIOReportItemHandlerImpl {
 		@Override
 		public void run() {
 			for (int j = 0; j < 30; j++) {
-				ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+				final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 				reportItemBuilder.setReplicationId(new ReplicationId(342));
 				reportItemBuilder.setReportHeader(reportHeader);
 				reportItemBuilder.setReportType(CompartmentPopulationReport.class);

@@ -40,9 +40,16 @@ public final class StageInfo {
 	}
 
 	private final Scaffold scaffold;
+	
+	public static Builder builder(){
+		return new Builder();
+	}
 
 	@NotThreadSafe
-	public static class StageInfoBuilder {
+	public static class Builder {
+		
+		private Builder() {}
+		
 		private Scaffold scaffold = new Scaffold();
 
 		private void validate() {
@@ -78,11 +85,12 @@ public final class StageInfo {
 		 * @throws RuntimeException
 		 *             if the stage id is null
 		 */
-		public void setStageId(StageId stageId) {
+		public Builder setStageId(StageId stageId) {
 			if (stageId == null) {
 				throw new RuntimeException("null stage id");
 			}
 			scaffold.stageId = stageId;
+			return this;
 		}
 
 		/**
@@ -91,18 +99,20 @@ public final class StageInfo {
 		 * @throws RuntimeException
 		 *             if the materials producer id is null
 		 */
-		public void setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
+		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			if (materialsProducerId == null) {
 				throw new RuntimeException("null materials producer id");
 			}
 			scaffold.materialsProducerId = materialsProducerId;
+			return this;
 		}
 
 		/**
 		 * Sets the stage offered state
 		 */
-		public void setStageOffered(boolean stageOffered) {
+		public Builder setStageOffered(boolean stageOffered) {
 			scaffold.stageOffered = stageOffered;
+			return this;
 		}
 
 		/**
@@ -110,11 +120,12 @@ public final class StageInfo {
 		 * 
 		 * throws {@link RuntimeException} if the batch info is null
 		 */
-		public void addBatchInfo(BatchInfo batchInfo) {
+		public Builder addBatchInfo(BatchInfo batchInfo) {
 			if (batchInfo == null) {
 				throw new RuntimeException("null batch info");
 			}
 			scaffold.batchInfos.add(batchInfo);
+			return this;
 		}
 	}
 

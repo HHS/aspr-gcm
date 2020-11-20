@@ -7,8 +7,7 @@ import java.util.Set;
 
 import gcm.output.reports.GroupInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
@@ -79,11 +78,15 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * A static class to hold the (GroupTypeId,GroupPropertyId) pairs used to
-	 * limit this report
+	 * A static class to hold the (GroupTypeId,GroupPropertyId) pairs used to limit
+	 * this report
 	 */
 	private final static class Scaffold {
 		private Map<GroupTypeId, Set<GroupPropertyId>> propertyIdMap = new LinkedHashMap<>();
+	}
+	
+	public GroupPropertyReportSettingsBuilder builder() {
+		return new GroupPropertyReportSettingsBuilder();
 	}
 
 	/**
@@ -93,6 +96,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 *
 	 */
 	public static final class GroupPropertyReportSettingsBuilder {
+		private GroupPropertyReportSettingsBuilder() {}
+		
 		private Scaffold scaffold = new Scaffold();
 
 		public GroupPropertyReportSettings build() {
@@ -103,7 +108,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 			}
 		}
 
-		public void addGroupPropertyId(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
+		public GroupPropertyReportSettingsBuilder addGroupPropertyId(GroupTypeId groupTypeId, GroupPropertyId groupPropertyId) {
 
 			if (groupTypeId == null) {
 				throw new RuntimeException("null group type id");
@@ -119,6 +124,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 				scaffold.propertyIdMap.put(groupTypeId, set);
 			}
 			set.add(groupPropertyId);
+			return this;
 		}
 
 	}
@@ -143,13 +149,13 @@ public final class GroupPropertyReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("GroupType");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeaderBuilder.add("GroupCount");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("GroupType")//
+					.add("Property")//
+					.add("Value")//
+					.add("GroupCount")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -158,14 +164,15 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * Decrement the number of groups for the given
 	 * (GroupTypeId,GroupPropertyId,property value) triplet
 	 */
-	private void decrement(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private void decrement(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count--;
 	}
 
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
 
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 		for (final GroupTypeId groupTypeId : groupTypeMap.keySet()) {
 			final Map<GroupPropertyId, Map<Object, Counter>> propertyIdMap = groupTypeMap.get(groupTypeId);
@@ -193,7 +200,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 	}
 
-	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private Counter getCounter(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		final Map<Object, Counter> propertyValueMap = groupTypeMap.get(groupTypeId).get(groupPropertyId);
 		Counter counter = propertyValueMap.get(groupPropertyValue);
 		if (counter == null) {
@@ -216,7 +224,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 	 * Increment the number of groups for the given
 	 * (GroupTypeId,GroupPropertyId,property value) triplet
 	 */
-	private void increment(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	private void increment(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId,
+			final Object groupPropertyValue) {
 		getCounter(groupTypeId, groupPropertyId, groupPropertyValue).count++;
 	}
 
@@ -244,8 +253,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		}
 
 		/*
-		 * Assume that the client wants all properties reported if none were
-		 * specified
+		 * Assume that the client wants all properties reported if none were specified
 		 */
 		if (clientPropertyMap.size() == 0) {
 			for (GroupTypeId groupTypeId : observableEnvironment.getGroupTypeIds()) {
@@ -267,15 +275,16 @@ public final class GroupPropertyReport extends PeriodicReport {
 				Set<GroupPropertyId> groupPropertyIds = clientPropertyMap.get(groupTypeId);
 				for (GroupPropertyId groupPropertyId : groupPropertyIds) {
 					if (!validPropertyIds.contains(groupPropertyId)) {
-						throw new RuntimeException("invalid group property id " + groupTypeId + " for group type " + groupTypeId);
+						throw new RuntimeException(
+								"invalid group property id " + groupTypeId + " for group type " + groupTypeId);
 					}
 				}
 			}
 		}
 
 		/*
-		 * Fill the top layers of the groupTypeMap. We do not yet know the set
-		 * of property values, so we leave that layer empty.
+		 * Fill the top layers of the groupTypeMap. We do not yet know the set of
+		 * property values, so we leave that layer empty.
 		 *
 		 */
 
@@ -296,7 +305,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 			final GroupTypeId groupTypeId = observableEnvironment.getGroupType(groupId);
 			if (clientPropertyMap.containsKey(groupTypeId)) {
 				for (final GroupPropertyId groupPropertyId : clientPropertyMap.get(groupTypeId)) {
-					final Object groupPropertyValue = observableEnvironment.getGroupPropertyValue(groupId, groupPropertyId);
+					final Object groupPropertyValue = observableEnvironment.getGroupPropertyValue(groupId,
+							groupPropertyId);
 					increment(groupTypeId, groupPropertyId, groupPropertyValue);
 				}
 			}
@@ -304,7 +314,8 @@ public final class GroupPropertyReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleGroupPropertyValueAssignment(ObservableEnvironment observableEnvironment, GroupId groupId, GroupPropertyId groupPropertyId, Object oldGroupPropertyValue) {
+	public void handleGroupPropertyValueAssignment(ObservableEnvironment observableEnvironment, GroupId groupId,
+			GroupPropertyId groupPropertyId, Object oldGroupPropertyValue) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final GroupTypeId groupTypeId = observableEnvironment.getGroupType(groupId);
 		if (clientPropertyMap.containsKey(groupTypeId)) {

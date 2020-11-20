@@ -43,6 +43,10 @@ public final class BatchInfo {
 		private double creationTime;
 		private Map<BatchPropertyId, Object> propertyValueMap = new LinkedHashMap<>();
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/**
 	 * A builder class for {@link BatchInfo}
@@ -51,7 +55,9 @@ public final class BatchInfo {
 	 *
 	 */
 	@NotThreadSafe
-	public static class BatchInfoBuilder {
+	public static class Builder {
+		
+		private Builder() {}
 
 		/*
 		 * Validate the collected data for the batch and throws
@@ -105,8 +111,9 @@ public final class BatchInfo {
 		 * @param batchId
 		 *            the batch id for the deleted batch
 		 */
-		public void setBatchId(BatchId batchId) {
+		public Builder setBatchId(BatchId batchId) {
 			scaffold.batchId = batchId;
+			return this;
 		}
 
 		/**
@@ -115,8 +122,9 @@ public final class BatchInfo {
 		 * @param materialsProducerId
 		 *            the materials producer id for the deleted batch
 		 */
-		public void setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
+		public Builder setMaterialsProducerId(MaterialsProducerId materialsProducerId) {
 			scaffold.materialsProducerId = materialsProducerId;
+			return this;
 		}
 
 		/**
@@ -125,8 +133,9 @@ public final class BatchInfo {
 		 * @param stageId
 		 *            the stage id for the deleted batch
 		 */
-		public void setStageId(StageId stageId) {
+		public Builder setStageId(StageId stageId) {
 			scaffold.stageId = stageId;
+			return this;
 		}
 
 		/**
@@ -135,8 +144,9 @@ public final class BatchInfo {
 		 * @param materialId
 		 *            the material id for the deleted batch
 		 */
-		public void setMaterialId(MaterialId materialId) {
+		public Builder setMaterialId(MaterialId materialId) {
 			scaffold.materialId = materialId;
+			return this;
 		}
 
 		/**
@@ -145,8 +155,9 @@ public final class BatchInfo {
 		 * @param amount
 		 *            the amount of material in the deleted batch
 		 */
-		public void setAmount(double amount) {
+		public Builder setAmount(double amount) {
 			scaffold.amount = amount;
+			return this;
 		}
 
 		/**
@@ -155,8 +166,9 @@ public final class BatchInfo {
 		 * @param creationTime
 		 *            the creation time for the deleted batch
 		 */
-		public void setCreationTime(double creationTime) {
+		public Builder setCreationTime(double creationTime) {
 			scaffold.creationTime = creationTime;
+			return this;
 		}
 
 		/**
@@ -171,7 +183,7 @@ public final class BatchInfo {
 		 *             <li>if the batchPropertyId is null
 		 *             <li>if the batchPropertyValue is null
 		 */
-		public void setPropertyValue(BatchPropertyId batchPropertyId, Object batchPropertyValue) {
+		public Builder setPropertyValue(BatchPropertyId batchPropertyId, Object batchPropertyValue) {
 			if (batchPropertyId == null) {
 				throw new RuntimeException("null batch property id");
 			}
@@ -181,6 +193,7 @@ public final class BatchInfo {
 			}
 
 			scaffold.propertyValueMap.put(batchPropertyId, batchPropertyValue);
+			return this;
 		}
 
 	}

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.output.simstate.ProfileItem;
-import gcm.output.simstate.ProfileItem.ProfileItemBuilder;
 import gcm.scenario.ComponentId;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
@@ -49,9 +48,9 @@ public final class ProfileManager extends BaseElement {
 	 */
 	private static class MethodRecord {
 		/*
-		 * Unique identifier used to link parent to child in the report. A
-		 * method will have a stable id in the context of the stack and the
-		 * simulation instance that creates this MethodRecord.
+		 * Unique identifier used to link parent to child in the report. A method will
+		 * have a stable id in the context of the stack and the simulation instance that
+		 * creates this MethodRecord.
 		 */
 		private int id;
 
@@ -77,14 +76,13 @@ public final class ProfileManager extends BaseElement {
 		private Class<?> invocationClass;
 
 		/*
-		 * The MethodRecord for the invoker of this MethodRecord's method. May
-		 * be null.
+		 * The MethodRecord for the invoker of this MethodRecord's method. May be null.
 		 */
 		private MethodRecord parent;
 
 		/*
-		 * The MethodRecords that correspond to methods that are called from
-		 * this MethodRecord's method.
+		 * The MethodRecords that correspond to methods that are called from this
+		 * MethodRecord's method.
 		 */
 
 		private final Map<MethodRecord, MethodRecord> children = new LinkedHashMap<>();
@@ -94,8 +92,8 @@ public final class ProfileManager extends BaseElement {
 		private final MutableStat mutableStat = new MutableStat();
 
 		/*
-		 * Records the nano seconds for each invocation of the method used to
-		 * fill the mutableStat
+		 * Records the nano seconds for each invocation of the method used to fill the
+		 * mutableStat
 		 */
 		private final TimeElapser timeElapser = new TimeElapser();
 
@@ -146,16 +144,16 @@ public final class ProfileManager extends BaseElement {
 		}
 
 		/*
-		 * Starts the recording of the method's duration for a single invocation
-		 * of the method
+		 * Starts the recording of the method's duration for a single invocation of the
+		 * method
 		 */
 		public void start() {
 			timeElapser.reset();
 		}
 
 		/*
-		 * Stops the recording of the method's duration for a single invocation
-		 * of the method
+		 * Stops the recording of the method's duration for a single invocation of the
+		 * method
 		 */
 		public void stop() {
 			mutableStat.add(timeElapser.getElapsedMilliSeconds());
@@ -231,8 +229,8 @@ public final class ProfileManager extends BaseElement {
 	}
 
 	/*
-	 * Returns the set of classes and interfaces that are implemented/extended
-	 * by the given classRef
+	 * Returns the set of classes and interfaces that are implemented/extended by
+	 * the given classRef
 	 */
 	private static Set<Class<?>> getClasses(final Class<?> classRef) {
 		Class<?> c = classRef;
@@ -246,8 +244,7 @@ public final class ProfileManager extends BaseElement {
 	}
 
 	/*
-	 * Returns the interface(recursively determined) for the given class
-	 * reference
+	 * Returns the interface(recursively determined) for the given class reference
 	 */
 	private static void getInterfaces(final Class<?> c, final Set<Class<?>> set) {
 		final Class<?>[] interfaces = c.getInterfaces();
@@ -258,8 +255,8 @@ public final class ProfileManager extends BaseElement {
 	}
 
 	/*
-	 * Returns an array of just the recursively determined interfaces
-	 * implemented by the given object instance.
+	 * Returns an array of just the recursively determined interfaces implemented by
+	 * the given object instance.
 	 */
 	private static Class<?>[] getInterfaces(final Object instance) {
 		final Set<Class<?>> classes = getClasses(instance.getClass());
@@ -298,17 +295,16 @@ public final class ProfileManager extends BaseElement {
 	}
 
 	/**
-	 * Causes this ProfileManager to disgorge its recorded aggregate time data
-	 * into {@link ProfileItem} profile items that are distributed to the output
-	 * item manager {@link OutputItemManager}. This should only be invoked once
-	 * at the end of the simulation run.
+	 * Causes this ProfileManager to disgorge its recorded aggregate time data into
+	 * {@link ProfileItem} profile items that are distributed to the output item
+	 * manager {@link OutputItemManager}. This should only be invoked once at the
+	 * end of the simulation run.
 	 */
 	public void close() {
 		if (!active) {
 			return;
 		}
 		active = false;
-		final ProfileItemBuilder profileItemBuilder = new ProfileItemBuilder();
 
 		for (final MethodRecord methodRecord : methodRecords) {
 			if (methodRecord.id == 0) {
@@ -320,26 +316,25 @@ public final class ProfileManager extends BaseElement {
 			} else {
 				parentId = -1;
 			}
-			profileItemBuilder.setId(methodRecord.id);
-			profileItemBuilder.setDepth(methodRecord.depth);
-			profileItemBuilder.setParentId(parentId);
-			profileItemBuilder.setComponentId(methodRecord.componentId);
-			profileItemBuilder.setClassName(methodRecord.invocationClass.getSimpleName());
-			profileItemBuilder.setMethodName(methodRecord.method.getName());
-			profileItemBuilder.setReplicationId(replicationId);
-			profileItemBuilder.setScenarioId(scenarioId);
-			profileItemBuilder.setStat(methodRecord.mutableStat);
-			final ProfileItem profileItem = profileItemBuilder.build();
-			// System.out.println(profileItem);
+			final ProfileItem profileItem = ProfileItem.builder()//
+					.setId(methodRecord.id)//
+					.setDepth(methodRecord.depth)//
+					.setParentId(parentId)//
+					.setComponentId(methodRecord.componentId)//
+					.setClassName(methodRecord.invocationClass.getSimpleName())//
+					.setMethodName(methodRecord.method.getName())//
+					.setReplicationId(replicationId)//
+					.setScenarioId(scenarioId)//
+					.setStat(methodRecord.mutableStat)//
+					.build();//
 			outputItemManager.releaseOutputItem(profileItem);
 		}
 
 	}
 
 	/**
-	 * Returns the original instance of an object if that object is a proxy
-	 * created by this profile manager. Returns the object given if no such
-	 * mapping exists.
+	 * Returns the original instance of an object if that object is a proxy created
+	 * by this profile manager. Returns the object given if no such mapping exists.
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getOrginalInstance(final Object possibleProxyInstance) {
@@ -351,8 +346,8 @@ public final class ProfileManager extends BaseElement {
 	}
 
 	/**
-	 * If the profile report is active, this method returns a proxy instance of
-	 * the given instance that implements all of that instance's interface
+	 * If the profile report is active, this method returns a proxy instance of the
+	 * given instance that implements all of that instance's interface
 	 * implementations. Otherwise, it returns the given instance. The proxied
 	 * methods will track profiling information for the replaced instance. Any
 	 * non-interface defined methods on the original instance will throw an

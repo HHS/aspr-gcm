@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.CompartmentPropertyId;
@@ -33,22 +32,22 @@ import gcm.util.annotations.TestStatus;
  */
 @Source(status = TestStatus.UNEXPECTED)
 public final class CompartmentPropertyReport extends AbstractReport {
-	
 
 	private ReportHeader reportHeader;
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Compartment");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Compartment")//
+					.add("Property")//
+					.add("Value")//
+					.build();//
 		}
 		return reportHeader;
 
 	}
+
 	@Override
 	public Set<StateChange> getListenedStateChanges() {
 		final Set<StateChange> result = new LinkedHashSet<>();
@@ -57,30 +56,34 @@ public final class CompartmentPropertyReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleCompartmentPropertyValueAssignment(ObservableEnvironment observableEnvironment,final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
-		writeProperty(observableEnvironment,compartmentId, compartmentPropertyId);
+	public void handleCompartmentPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+		writeProperty(observableEnvironment, compartmentId, compartmentPropertyId);
 	}
 
 	@Override
-	public void init(final ObservableEnvironment observableEnvironment,Set<Object> initialData) {
-		super.init(observableEnvironment,initialData);
+	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
+		super.init(observableEnvironment, initialData);
 		for (final CompartmentId compartmentId : observableEnvironment.getCompartmentIds()) {
-			for (final CompartmentPropertyId compartmentPropertyId : observableEnvironment.getCompartmentPropertyIds(compartmentId)) {
-				writeProperty(observableEnvironment,compartmentId, compartmentPropertyId);
+			for (final CompartmentPropertyId compartmentPropertyId : observableEnvironment
+					.getCompartmentPropertyIds(compartmentId)) {
+				writeProperty(observableEnvironment, compartmentId, compartmentPropertyId);
 			}
 		}
-		
-	   observableEnvironment.getCompartmentIds().forEach(compartmentId->{
-		   observableEnvironment.getCompartmentPropertyIds(compartmentId).forEach(compartmentPropertyId->{
-			   writeProperty(observableEnvironment, compartmentId, compartmentPropertyId);
-		   });
-	   });
+
+		observableEnvironment.getCompartmentIds().forEach(compartmentId -> {
+			observableEnvironment.getCompartmentPropertyIds(compartmentId).forEach(compartmentPropertyId -> {
+				writeProperty(observableEnvironment, compartmentId, compartmentPropertyId);
+			});
+		});
 	}
 
-	private void writeProperty(ObservableEnvironment observableEnvironment,final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+	private void writeProperty(ObservableEnvironment observableEnvironment, final CompartmentId compartmentId,
+			final CompartmentPropertyId compartmentPropertyId) {
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
-		final Object compartmentPropertyValue = observableEnvironment.getCompartmentPropertyValue(compartmentId, compartmentPropertyId);
+		final Object compartmentPropertyValue = observableEnvironment.getCompartmentPropertyValue(compartmentId,
+				compartmentPropertyId);
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());
 		reportItemBuilder.setReplicationId(observableEnvironment.getReplicationId());

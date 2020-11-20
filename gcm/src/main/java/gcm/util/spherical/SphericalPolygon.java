@@ -48,16 +48,18 @@ public class SphericalPolygon {
 		 * of addition dictates the order of the vertices of the polygon.
 		 * Winding order may be either left or right handed.
 		 */
-		public void addSphericalPoint(SphericalPoint sphericalPoint) {
+		public Builder addSphericalPoint(SphericalPoint sphericalPoint) {
 			scaffold.sphericalPoints.add(sphericalPoint);
+			return this;
 		}
 
 		/**
 		 * Sets the useSearchTree policy for the {@link SphericalPolygon}.
 		 * Default is true;
 		 */
-		public void setUseSearchTree(boolean useSearchTree) {
+		public Builder setUseSearchTree(boolean useSearchTree) {
 			scaffold.useSearchTree = useSearchTree;
+			return this;
 		}
 
 		private Scaffold scaffold = new Scaffold();

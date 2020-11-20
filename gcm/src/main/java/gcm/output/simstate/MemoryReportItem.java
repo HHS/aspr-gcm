@@ -20,6 +20,10 @@ import net.jcip.annotations.ThreadSafe;
 @Source
 public final class MemoryReportItem implements OutputItem {
 
+	public static Builder builder() {
+		return new Builder();
+	}
+	
 	/**
 	 * Builder class for {@link MemoryReportItem}
 	 * 
@@ -28,7 +32,10 @@ public final class MemoryReportItem implements OutputItem {
 	 */
 	@NotThreadSafe
 	@Source(status = TestStatus.REQUIRED, proxy = MemoryReportItem.class)
-	public static class MemoryReportItemBuilder {
+	public static class Builder {
+		
+		private Builder() {}
+		
 		private Scaffold scaffold = new Scaffold();
 
 		/**
@@ -75,11 +82,12 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if selfByteCount is negative. Default value is zero.
 		 */
-		public void setSelfByteCount(final long selfByteCount) {
+		public Builder setSelfByteCount(final long selfByteCount) {
 			if (selfByteCount < 0) {
 				throw new RuntimeException("negative self byte count");
 			}
 			scaffold.selfByteCount = selfByteCount;
+			return this;
 		}
 
 		/**
@@ -88,12 +96,13 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if childByteCount is negative
 		 */
-		public void setChildByteCount(final long childByteCount) {
+		public Builder setChildByteCount(final long childByteCount) {
 
 			if (childByteCount < 0) {
 				throw new RuntimeException("negative child byte count");
 			}
 			scaffold.childByteCount = childByteCount;
+			return this;
 		}
 
 		/**
@@ -102,11 +111,12 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the descriptor is null
 		 */
-		public void setDescriptor(final String descriptor) {
+		public Builder setDescriptor(final String descriptor) {
 			if (descriptor == null) {
 				throw new RuntimeException("null descriptor");
 			}
 			scaffold.descriptor = descriptor;
+			return this;
 		}
 
 		/**
@@ -115,11 +125,12 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the itemClass is null
 		 */
-		public void setItemClass(Class<?> itemClass) {
+		public Builder setItemClass(Class<?> itemClass) {
 			if (itemClass == null) {
 				throw new RuntimeException("null item class");
 			}
 			scaffold.itemClass = itemClass;
+			return this;
 		}
 
 		/**
@@ -129,11 +140,12 @@ public final class MemoryReportItem implements OutputItem {
 		 *             if the value is negative
 		 * 
 		 */
-		public void setId(final int id) {
+		public Builder setId(final int id) {
 			if (id < 0) {
 				throw new RuntimeException("negative id");
 			}
 			scaffold.id = id;
+			return this;
 		}
 
 		/**
@@ -144,11 +156,12 @@ public final class MemoryReportItem implements OutputItem {
 		 *             if the value less than -1
 		 * 
 		 */
-		public void setParentId(final int parentId) {
+		public Builder setParentId(final int parentId) {
 			if (scaffold.parentId < -1) {
 				throw new RuntimeException("illegal parent id");
 			}
 			scaffold.parentId = parentId;
+			return this;
 		}
 
 		/**
@@ -157,11 +170,12 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the time is negative
 		 */
-		public void setTime(final double time) {
+		public Builder setTime(final double time) {
 			if (time < 0) {
 				throw new RuntimeException("negative time value");
 			}
 			scaffold.time = time;
+			return this;
 		}
 
 		/**
@@ -170,13 +184,14 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the scenario id is null
 		 */
-		public void setScenarioId(ScenarioId scenarioId) {
+		public Builder setScenarioId(ScenarioId scenarioId) {
 
 			if (scenarioId == null) {
 				throw new RuntimeException("null scenarioId");
 			}
 
 			scaffold.scenarioId = scenarioId;
+			return this;
 		}
 
 		/**
@@ -185,12 +200,13 @@ public final class MemoryReportItem implements OutputItem {
 		 * @throws RuntimeException
 		 *             if the replication id is null
 		 */
-		public void setReplicationId(ReplicationId replicationId) {
+		public Builder setReplicationId(ReplicationId replicationId) {
 			if (replicationId == null) {
 				throw new RuntimeException("null replicationId");
 			}
 
 			scaffold.replicationId = replicationId;
+			return this;
 		}
 	}
 

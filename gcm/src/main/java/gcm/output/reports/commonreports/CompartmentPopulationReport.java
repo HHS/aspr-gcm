@@ -7,8 +7,7 @@ import java.util.Set;
 
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -37,8 +36,8 @@ import gcm.util.annotations.TestStatus;
 public final class CompartmentPopulationReport extends PeriodicReport {
 
 	/*
-	 * Static class the represents the number of people in a
-	 * (region,compartment) pair
+	 * Static class the represents the number of people in a (region,compartment)
+	 * pair
 	 */
 	private static class Counter {
 		int count;
@@ -59,12 +58,12 @@ public final class CompartmentPopulationReport extends PeriodicReport {
 	 */
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("Compartment");
-			reportHeaderBuilder.add("PersonCount");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("Region")//
+					.add("Compartment")//
+					.add("PersonCount")//
+					.build();//
 		}
 		return reportHeader;
 
@@ -80,10 +79,10 @@ public final class CompartmentPopulationReport extends PeriodicReport {
 
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		/*
-		 * Report the population count for all region/compartment pairs that are
-		 * not empty
+		 * Report the population count for all region/compartment pairs that are not
+		 * empty
 		 */
 		for (final RegionId regionId : regionMap.keySet()) {
 			final Map<CompartmentId, Counter> compartmentMap = regionMap.get(regionId);
@@ -116,7 +115,8 @@ public final class CompartmentPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
 		final RegionId destinationRegionId = observableEnvironment.getPersonRegion(personId);
@@ -125,7 +125,8 @@ public final class CompartmentPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 
 		setCurrentReportingPeriod(observableEnvironment);
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -175,7 +176,8 @@ public final class CompartmentPopulationReport extends PeriodicReport {
 		}
 		setCurrentReportingPeriod(observableEnvironment);
 		for (PersonId personId : observableEnvironment.getPeople()) {
-			increment(observableEnvironment.getPersonRegion(personId), observableEnvironment.getPersonCompartment(personId));
+			increment(observableEnvironment.getPersonRegion(personId),
+					observableEnvironment.getPersonCompartment(personId));
 		}
 	}
 

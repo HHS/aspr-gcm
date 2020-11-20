@@ -10,13 +10,9 @@ import java.util.Set;
 
 import gcm.components.Component;
 import gcm.output.reports.BatchInfo;
-import gcm.output.reports.BatchInfo.BatchInfoBuilder;
 import gcm.output.reports.GroupInfo;
-import gcm.output.reports.GroupInfo.GroupInfoBuilder;
 import gcm.output.reports.PersonInfo;
-import gcm.output.reports.PersonInfo.PersonInfoBuilder;
 import gcm.output.reports.StageInfo;
-import gcm.output.reports.StageInfo.StageInfoBuilder;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -650,13 +646,13 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	 */
 
 	private StageInfo getStageInfo(StageId stageId, boolean includeBatchInfo) {
-		StageInfoBuilder stageInfoBuilder = new StageInfoBuilder();
+		StageInfo.Builder stageInfoBuilder = StageInfo.builder();
 		stageInfoBuilder.setMaterialsProducerId(materialsManager.getStageProducer(stageId));
 		stageInfoBuilder.setStageId(stageId);
 		stageInfoBuilder.setStageOffered(materialsManager.isStageOffered(stageId));
 		List<BatchId> stageBatches = materialsManager.getStageBatches(stageId);
 		if (includeBatchInfo) {
-			BatchInfoBuilder batchInfoBuilder = new BatchInfoBuilder();
+			BatchInfo.Builder batchInfoBuilder = BatchInfo.builder();
 			for (final BatchId batchId : stageBatches) {
 				batchInfoBuilder.setBatchId(batchId);
 				batchInfoBuilder.setAmount(materialsManager.getBatchAmount(batchId));
@@ -719,7 +715,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 	 * removed from the simulation
 	 */
 	private BatchInfo getBatchInfo(BatchId batchId) {
-		BatchInfoBuilder batchInfoBuilder = new BatchInfoBuilder();
+		BatchInfo.Builder batchInfoBuilder = BatchInfo.builder();
 		batchInfoBuilder.setBatchId(batchId);
 		batchInfoBuilder.setAmount(materialsManager.getBatchAmount(batchId));
 		batchInfoBuilder.setCreationTime(materialsManager.getBatchTime(batchId));
@@ -1125,7 +1121,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 
 			// don't create the groupInfo if it is not needed
 			if (reportsActive || observationManagerRequiresGroupInfo) {
-				GroupInfoBuilder groupInfoBuilder = new GroupInfoBuilder();
+				GroupInfo.Builder groupInfoBuilder = GroupInfo.builder();
 				groupInfoBuilder.setGroupId(groupId);
 				GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
 				groupInfoBuilder.setGroupTypeId(groupTypeId);
@@ -1178,7 +1174,7 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			final RegionId regionId = personLocationManger.getPersonRegion(personId);
 
 			if (reportsActive || observationManagerRequiresPersonInfo) {
-				PersonInfoBuilder personInfoBuilder = new PersonInfoBuilder();
+				PersonInfo.Builder personInfoBuilder = PersonInfo.builder();
 				personInfoBuilder.setPersonRegionId(regionId);
 				personInfoBuilder.setPersonCompartmentId(compartmentId);
 				personInfoBuilder.setPersonId(personId);

@@ -75,9 +75,10 @@ public class GeoLocator<T> {
 		/**
 		 * Adds a location at the given lat and lon degrees.
 		 */
-		public void addLocation(double latDegrees, double lonDegrees, T location) {
+		public Builder<T> addLocation(double latDegrees, double lonDegrees, T location) {
 			LocationRecord<T> locationRecord = new LocationRecord<>(latDegrees, lonDegrees, location);
 			scaffold.locationRecords.add(locationRecord);
+			return this;
 		}
 
 		/**

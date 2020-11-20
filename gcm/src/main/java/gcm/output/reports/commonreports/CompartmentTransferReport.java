@@ -6,8 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -56,25 +55,26 @@ public final class CompartmentTransferReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("SourceCompartment");
-			reportHeaderBuilder.add("DestinationCompartment");
-			reportHeaderBuilder.add("Transfers");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("Region")//
+					.add("SourceCompartment")//
+					.add("DestinationCompartment")//
+					.add("Transfers")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 		for (final RegionId regionId : regionMap.keySet()) {
 			final Map<CompartmentId, Map<CompartmentId, Counter>> sourceCompartmentMap = regionMap.get(regionId);
 			for (final CompartmentId sourceCompartmentId : sourceCompartmentMap.keySet()) {
-				final Map<CompartmentId, Counter> destinationCompartmentMap = sourceCompartmentMap.get(sourceCompartmentId);
+				final Map<CompartmentId, Counter> destinationCompartmentMap = sourceCompartmentMap
+						.get(sourceCompartmentId);
 				for (final CompartmentId destinationCompartmentId : destinationCompartmentMap.keySet()) {
 					final Counter counter = destinationCompartmentMap.get(destinationCompartmentId);
 					if (counter.count > 0) {
@@ -106,7 +106,8 @@ public final class CompartmentTransferReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
 		final CompartmentId destinationCompartmentId = observableEnvironment.getPersonCompartment(personId);
@@ -121,7 +122,8 @@ public final class CompartmentTransferReport extends PeriodicReport {
 		increment(regionId, compartmentId, compartmentId);
 	}
 
-	private void increment(final RegionId regionId, final CompartmentId sourceCompartmentId, final CompartmentId destinationCompartmentId) {
+	private void increment(final RegionId regionId, final CompartmentId sourceCompartmentId,
+			final CompartmentId destinationCompartmentId) {
 		final Counter counter = regionMap.get(regionId).get(sourceCompartmentId).get(destinationCompartmentId);
 		counter.count++;
 	}

@@ -45,6 +45,7 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 @Source
 public final class StructuredScenarioBuilder implements ScenarioBuilder {
+	
 
 	/*
 	 * A container class for holding the data of a scenario.
@@ -1855,7 +1856,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	private ScenarioData scenarioData = new ScenarioData();
 
 	@Override
-	public void addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
+	public ScenarioBuilder addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_BATCH_ID, batchId);
@@ -1870,11 +1871,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addBatchToStage(final StageId stageId, final BatchId batchId) {
+	public ScenarioBuilder addBatchToStage(final StageId stageId, final BatchId batchId) {
 		acquireLock();
 		try {
 			validateStageExists(scenarioData, stageId);
@@ -1893,6 +1894,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	private static void validateComponentClass(Class<? extends Component> componentClass) {
@@ -1906,7 +1908,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	}
 
 	@Override
-	public void addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comppartmentComponentClass) {
+	public ScenarioBuilder addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comppartmentComponentClass) {
 		acquireLock();
 		try {
 			validateUniqueComponentIdentifier(scenarioData, ActionType.COMPARTMENT_COMPONENT_ID_ADDITION, compartmentId);
@@ -1915,10 +1917,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	@Override
-	public void addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
+	public ScenarioBuilder addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
 		acquireLock();
 		try {
 			validateUniqueComponentIdentifier(scenarioData, ActionType.GLOBAL_COMPONENT_ID_ADDITION, globalComponentId);
@@ -1927,10 +1930,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	@Override
-	public void addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
+	public ScenarioBuilder addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_GROUP_ID, groupId);
@@ -1941,11 +1945,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addGroupTypeId(final GroupTypeId groupTypeId) {
+	public ScenarioBuilder addGroupTypeId(final GroupTypeId groupTypeId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_GROUP_TYPE_ID, groupTypeId);
@@ -1954,11 +1958,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addMaterial(final MaterialId materialId) {
+	public ScenarioBuilder addMaterial(final MaterialId materialId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_MATERIAL_ID, materialId);
@@ -1967,10 +1971,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	@Override
-	public void addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass) {
+	public ScenarioBuilder addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass) {
 		acquireLock();
 		try {
 			validateUniqueComponentIdentifier(scenarioData, ActionType.MATERIALS_PRODUCER_COMPONENT_ID_ADDITION, materialsProducerId);
@@ -1979,10 +1984,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	@Override
-	public void addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId) {
+	public ScenarioBuilder addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_PERSON_ID, personId);
@@ -1995,11 +2001,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addPersonToGroup(final GroupId groupId, final PersonId personId) {
+	public ScenarioBuilder addPersonToGroup(final GroupId groupId, final PersonId personId) {
 		acquireLock();
 		try {
 			validateGroupExists(scenarioData, groupId);
@@ -2014,11 +2020,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass) {
+	public ScenarioBuilder addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass) {
 		acquireLock();
 		try {
 			validateUniqueComponentIdentifier(scenarioData, ActionType.REGION_COMPONENT_ID_ADDITION, regionId);
@@ -2027,11 +2033,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addResource(final ResourceId resourceId) {
+	public ScenarioBuilder addResource(final ResourceId resourceId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_RESOURCE_ID, resourceId);
@@ -2040,11 +2046,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addStage(final StageId stageId, final boolean offered, final MaterialsProducerId materialsProducerId) {
+	public ScenarioBuilder addStage(final StageId stageId, final boolean offered, final MaterialsProducerId materialsProducerId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_STAGE_ID, stageId);
@@ -2056,7 +2062,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	private boolean locked;
@@ -2261,7 +2267,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	}
 
 	@Override
-	public void defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_BATCH_PROPERTY_ID, batchPropertyId);
@@ -2277,11 +2283,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateCompartmentExists(scenarioData, compartmentId);
@@ -2297,11 +2303,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_GLOBAL_PROPERTY_ID, globalPropertyId);
@@ -2311,11 +2317,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateGroupTypeExists(scenarioData, groupTypeId);
@@ -2331,11 +2337,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_MATERIALS_PRODUCER_PROPERTY_ID, materialsProducerPropertyId);
@@ -2345,11 +2351,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_PERSON_PROPERTY_ID, personPropertyId);
@@ -2359,11 +2365,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_REGION_PROPERTY_ID, regionPropertyId);
@@ -2373,11 +2379,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
+	public ScenarioBuilder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
 		acquireLock();
 		try {
 
@@ -2394,11 +2400,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
+	public ScenarioBuilder setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
 		acquireLock();
 		try {
 			validateBatchExists(scenarioData, batchId);
@@ -2417,11 +2423,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setCompartmentMapOption(final MapOption mapOption) {
+	public ScenarioBuilder setCompartmentMapOption(final MapOption mapOption) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_COMPARTMENT_MAP_OPTION, mapOption);
@@ -2430,11 +2436,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
+	public ScenarioBuilder setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
 		acquireLock();
 		try {
 			validateCompartmentExists(scenarioData, compartmentId);
@@ -2452,11 +2458,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
+	public ScenarioBuilder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		acquireLock();
 		try {
 			validateGlobalPropertyIsDefined(scenarioData, globalPropertyId);
@@ -2467,11 +2473,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	public ScenarioBuilder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
 		acquireLock();
 		try {
 			validateGroupExists(scenarioData, groupId);
@@ -2490,11 +2496,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	public ScenarioBuilder setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
 			final Object materialsProducerPropertyValue) {
 		acquireLock();
 		try {
@@ -2512,11 +2518,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
+	public ScenarioBuilder setMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
 		acquireLock();
 		try {
 			validateMaterialsProducerExists(scenarioData, materialsProducerId);
@@ -2533,11 +2539,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes) {
+	public ScenarioBuilder setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_COMPARTMENT_TRACKING_POLICY, trackPersonCompartmentArrivalTimes);
@@ -2546,11 +2552,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public ScenarioBuilder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 		acquireLock();
 		try {
 			validatePersonExists(scenarioData, personId);
@@ -2567,10 +2573,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 	@Override
-	public void setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes) {
+	public ScenarioBuilder setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_REGION_TRACKING_POLICY, trackPersonRegionArrivalTimes);
@@ -2579,11 +2586,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
+	public ScenarioBuilder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
 		acquireLock();
 		try {
 			validatePersonExists(scenarioData, personId);
@@ -2599,11 +2606,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setRegionMapOption(final MapOption mapOption) {
+	public ScenarioBuilder setRegionMapOption(final MapOption mapOption) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_REGION_MAP_OPTION, mapOption);
@@ -2612,11 +2619,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	public ScenarioBuilder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 		acquireLock();
 		try {
 			validateRegionExists(scenarioData, regionId);
@@ -2633,11 +2640,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
+	public ScenarioBuilder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 		acquireLock();
 		try {
 			validateRegionExists(scenarioData, regionId);
@@ -2653,11 +2660,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+	public ScenarioBuilder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
 		acquireLock();
 		try {
 			validateResourceExists(scenarioData, resourceId);
@@ -2675,11 +2682,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
+	public ScenarioBuilder setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
 		acquireLock();
 		try {
 			validateResourceExists(scenarioData, resourceId);
@@ -2689,11 +2696,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void setScenarioId(final ScenarioId scenarioId) {
+	public ScenarioBuilder setScenarioId(final ScenarioId scenarioId) {
 		acquireLock();
 		try {
 			validateScenarioId(scenarioId);
@@ -2702,7 +2709,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	private void validatePersonCompartmentArrivalTrackingNotSet(final ScenarioData scenarioData) {
@@ -2733,7 +2740,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 	}
 
 	@Override
-	public void setSuggestedPopulationSize(int suggestedPopulationSize) {
+	public ScenarioBuilder setSuggestedPopulationSize(int suggestedPopulationSize) {
 		acquireLock();
 		try {
 			validateSuggestedPopulationSize(suggestedPopulationSize);
@@ -2742,11 +2749,11 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
-
+		return this;
 	}
 
 	@Override
-	public void addRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
+	public ScenarioBuilder addRandomNumberGeneratorId(RandomNumberGeneratorId randomNumberGeneratorId) {
 		acquireLock();
 		try {
 			validateNotNull(ScenarioErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID, randomNumberGeneratorId);
@@ -2755,6 +2762,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		} finally {
 			releaseLock();
 		}
+		return this;
 	}
 
 }

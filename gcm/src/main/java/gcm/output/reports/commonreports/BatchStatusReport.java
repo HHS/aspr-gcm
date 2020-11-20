@@ -9,8 +9,7 @@ import java.util.Set;
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.BatchInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StageInfo;
 import gcm.output.reports.StateChange;
 import gcm.scenario.BatchId;
@@ -51,7 +50,7 @@ import gcm.util.annotations.TestStatus;
  */
 @Source(status = TestStatus.UNEXPECTED)
 public final class BatchStatusReport extends AbstractReport {
-	
+
 	private Set<BatchId> updatedBatches = new LinkedHashSet<>();
 
 	private double lastFlushTime = -1;
@@ -78,7 +77,7 @@ public final class BatchStatusReport extends AbstractReport {
 			if (observableEnvironment.batchExists(batchId)) {
 				// report the batch - make sure batch exists
 
-				final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+				final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 				reportItemBuilder.setReportHeader(getReportHeader(observableEnvironment));
 				reportItemBuilder.setReportType(getClass());
 				reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());
@@ -100,7 +99,8 @@ public final class BatchStatusReport extends AbstractReport {
 					Set<BatchPropertyId> batchPropertyIds = batchPropertyMap.get(materialId);
 					for (BatchPropertyId batchPropertyId : batchPropertyIds) {
 						if (matchingMaterial) {
-							reportItemBuilder.addValue(observableEnvironment.getBatchPropertyValue(batchId, batchPropertyId));
+							reportItemBuilder
+									.addValue(observableEnvironment.getBatchPropertyValue(batchId, batchPropertyId));
 						} else {
 							reportItemBuilder.addValue("");
 						}
@@ -126,22 +126,22 @@ public final class BatchStatusReport extends AbstractReport {
 	 */
 	private ReportHeader getReportHeader(ObservableEnvironment observableEnvironment) {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Batch");
-			reportHeaderBuilder.add("Stage");
-			reportHeaderBuilder.add("MaterialsProducer");
-			reportHeaderBuilder.add("Offered");
-			reportHeaderBuilder.add("Material");
-			reportHeaderBuilder.add("Amount");
+			ReportHeader.Builder builder = ReportHeader.builder()//
+					.add("Time")//
+					.add("Batch")//
+					.add("Stage")//
+					.add("MaterialsProducer")//
+					.add("Offered")//
+					.add("Material")//
+					.add("Amount");//
 			Set<MaterialId> materialIds = observableEnvironment.getMaterialIds();
 			for (MaterialId materialId : materialIds) {
 				Set<BatchPropertyId> batchPropertyIds = observableEnvironment.getBatchPropertyIds(materialId);
 				for (BatchPropertyId batchPropertyId : batchPropertyIds) {
-					reportHeaderBuilder.add(materialId + "." + batchPropertyId);
+					builder.add(materialId + "." + batchPropertyId);
 				}
 			}
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = builder.build();
 		}
 		return reportHeader;
 
@@ -178,14 +178,16 @@ public final class BatchStatusReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleBatchShift(ObservableEnvironment observableEnvironment, final BatchId sourceBatchId, final BatchId destinationBatchId, final double amount) {
+	public void handleBatchShift(ObservableEnvironment observableEnvironment, final BatchId sourceBatchId,
+			final BatchId destinationBatchId, final double amount) {
 		flushOnTimeChange(observableEnvironment);
 		updatedBatches.add(sourceBatchId);
 		updatedBatches.add(destinationBatchId);
 	}
 
 	@Override
-	public void handleStageConversionToBatch(ObservableEnvironment observableEnvironment, StageInfo stageInfo, final BatchId batchId) {
+	public void handleStageConversionToBatch(ObservableEnvironment observableEnvironment, StageInfo stageInfo,
+			final BatchId batchId) {
 		flushOnTimeChange(observableEnvironment);
 		for (BatchInfo batchInfo : stageInfo.getBatchInfos()) {
 			writeBatchInfo(observableEnvironment, batchInfo, stageInfo);
@@ -194,7 +196,8 @@ public final class BatchStatusReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo, final ResourceId resourceId, final long amount) {
+	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo,
+			final ResourceId resourceId, final long amount) {
 		flushOnTimeChange(observableEnvironment);
 		for (BatchInfo batchInfo : stageInfo.getBatchInfos()) {
 			writeBatchInfo(observableEnvironment, batchInfo, stageInfo);
@@ -217,7 +220,8 @@ public final class BatchStatusReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleUnStagedBatch(ObservableEnvironment observableEnvironment, final BatchId batchId, final StageId stageId) {
+	public void handleUnStagedBatch(ObservableEnvironment observableEnvironment, final BatchId batchId,
+			final StageId stageId) {
 		flushOnTimeChange(observableEnvironment);
 		updatedBatches.add(batchId);
 	}
@@ -226,7 +230,7 @@ public final class BatchStatusReport extends AbstractReport {
 	 * Releases a ReportItem for the batch info
 	 */
 	private void writeBatchInfo(ObservableEnvironment observableEnvironment, BatchInfo batchInfo, StageInfo stageInfo) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader(observableEnvironment));
 
 		reportItemBuilder.setReportType(getClass());
@@ -265,7 +269,8 @@ public final class BatchStatusReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleBatchPropertyValueAssignment(ObservableEnvironment observableEnvironment, final BatchId batchId, final BatchPropertyId batchPropertyId) {
+	public void handleBatchPropertyValueAssignment(ObservableEnvironment observableEnvironment, final BatchId batchId,
+			final BatchPropertyId batchPropertyId) {
 		flushOnTimeChange(observableEnvironment);
 		updatedBatches.add(batchId);
 	}
@@ -277,22 +282,23 @@ public final class BatchStatusReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleStageTransfer(ObservableEnvironment observableEnvironment, final StageId stageId, final MaterialsProducerId materialsProducerId) {
+	public void handleStageTransfer(ObservableEnvironment observableEnvironment, final StageId stageId,
+			final MaterialsProducerId materialsProducerId) {
 		flushOnTimeChange(observableEnvironment);
 		updatedBatches.addAll(observableEnvironment.getStageBatches(stageId));
 	}
-	
+
 	@Override
-	public void init(final ObservableEnvironment observableEnvironment,Set<Object> initialData) {
-		for(MaterialsProducerId materialsProducerId : observableEnvironment.getMaterialsProducerIds()) {
-			for(BatchId inventoryBatchId : observableEnvironment.getInventoryBatches(materialsProducerId)) {
+	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
+		for (MaterialsProducerId materialsProducerId : observableEnvironment.getMaterialsProducerIds()) {
+			for (BatchId inventoryBatchId : observableEnvironment.getInventoryBatches(materialsProducerId)) {
 				updatedBatches.add(inventoryBatchId);
 			}
-			for(StageId stageId : observableEnvironment.getStages(materialsProducerId)) {
-				for(BatchId stageBatchId : observableEnvironment.getStageBatches(stageId)) {
+			for (StageId stageId : observableEnvironment.getStages(materialsProducerId)) {
+				for (BatchId stageBatchId : observableEnvironment.getStageBatches(stageId)) {
 					updatedBatches.add(stageBatchId);
-				}	
-			}						
+				}
+			}
 		}
 	}
 

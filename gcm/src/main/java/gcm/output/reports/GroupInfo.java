@@ -92,9 +92,15 @@ public final class GroupInfo {
 	private GroupInfo(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	@NotThreadSafe
-	public static class GroupInfoBuilder {
+	public static class Builder {
+		private Builder() {}
+		
 		private Scaffold scaffold = new Scaffold();
 
 		private void validate() {
@@ -128,11 +134,12 @@ public final class GroupInfo {
 		 * @throws RuntimeException
 		 *             if the group id is null
 		 */
-		public void setGroupId(GroupId groupId) {
+		public Builder setGroupId(GroupId groupId) {
 			if (groupId == null) {
 				throw new RuntimeException("null group id");
 			}
 			scaffold.groupId = groupId;
+			return this;
 		}
 
 		/**
@@ -141,11 +148,12 @@ public final class GroupInfo {
 		 * @throws RuntimeException
 		 *             if the group type id is null
 		 */
-		public void setGroupTypeId(GroupTypeId groupTypeId) {
+		public Builder setGroupTypeId(GroupTypeId groupTypeId) {
 			if (groupTypeId == null) {
 				throw new RuntimeException("null group type id");
 			}
 			scaffold.groupTypeId = groupTypeId;
+			return this;
 		}
 
 		/**
@@ -155,7 +163,7 @@ public final class GroupInfo {
 		 *             <li>if the group property id is null
 		 *             <li>if the group property value is null
 		 */
-		public void setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
+		public Builder setGroupPropertyValue(GroupPropertyId groupPropertyId, Object groupPropertyValue) {
 			if (groupPropertyId == null) {
 				throw new RuntimeException("null group property id");
 			}
@@ -163,13 +171,15 @@ public final class GroupInfo {
 				throw new RuntimeException("null group property value");
 			}
 			scaffold.propertyValues.put(groupPropertyId, groupPropertyValue);
+			return this;
 		}
 
-		public void addPerson(PersonId personId) {
+		public Builder addPerson(PersonId personId) {
 			if (personId == null) {
 				throw new RuntimeException("null person id");
 			}
 			scaffold.people.add(personId);
+			return this;
 		}
 
 	}

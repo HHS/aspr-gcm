@@ -25,8 +25,8 @@ public final class LatLonBox {
 	/**
 	 * Static method for creating a builder for LatLonBox
 	 */
-	public static LatLonBoxBuilder builder() {
-		return new LatLonBoxBuilder();
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	/**
@@ -36,9 +36,9 @@ public final class LatLonBox {
 	 *
 	 */
 	@Source(status = TestStatus.REQUIRED, proxy = LatLonBox.class)
-	public static class LatLonBoxBuilder {
+	public static class Builder {
 
-		private LatLonBoxBuilder() {
+		private Builder() {
 		}
 
 		private List<LatLon> latLons = new ArrayList<>();
@@ -50,11 +50,12 @@ public final class LatLonBox {
 		 * @throws RuntimeException
 		 *             <li>if the latLon is null
 		 */
-		public void add(LatLon latLon) {
+		public Builder add(LatLon latLon) {
 			if (latLon == null) {
 				throw new RuntimeException("null latLon");
 			}
 			latLons.add(latLon);
+			return this;
 		}
 
 		/**
@@ -65,7 +66,7 @@ public final class LatLonBox {
 		 *             <li>if the latLonBox is null
 		 * 
 		 */
-		public void add(LatLonBox latLonBox) {
+		public Builder add(LatLonBox latLonBox) {
 			if (latLonBox == null) {
 				throw new RuntimeException("null latLonBox");
 			}
@@ -73,6 +74,7 @@ public final class LatLonBox {
 			add(latLonBox.getNorthWestLatLon());
 			add(latLonBox.getSouthEastLatLon());
 			add(latLonBox.getSouthWestLatLon());
+			return this;
 		}
 
 		/**

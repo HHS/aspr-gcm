@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StageInfo;
 import gcm.output.reports.StateChange;
 import gcm.scenario.MaterialsProducerId;
@@ -40,9 +39,8 @@ public final class MaterialsProducerResourceReport extends AbstractReport {
 
 	private static enum Action {
 		/*
-		 * Used when a resource is directly added to a materials producer which
-		 * only happens when the materials producer is being initialized from
-		 * the scenario
+		 * Used when a resource is directly added to a materials producer which only
+		 * happens when the materials producer is being initialized from the scenario
 		 */
 		ADDED("Created"),
 		/*
@@ -56,6 +54,7 @@ public final class MaterialsProducerResourceReport extends AbstractReport {
 		 */
 
 		TRANSFERRED("Transferred");
+
 		private final String displayName;
 
 		private Action(final String displayName) {
@@ -67,13 +66,13 @@ public final class MaterialsProducerResourceReport extends AbstractReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Resource");
-			reportHeaderBuilder.add("MaterialsProducer");
-			reportHeaderBuilder.add("Action");
-			reportHeaderBuilder.add("Amount");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Resource")//
+					.add("MaterialsProducer")//
+					.add("Action")//
+					.add("Amount")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -88,23 +87,28 @@ public final class MaterialsProducerResourceReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleMaterialsProducerResourceAddition(ObservableEnvironment observableEnvironment, final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
+	public void handleMaterialsProducerResourceAddition(ObservableEnvironment observableEnvironment,
+			final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
 		writeReportItem(observableEnvironment, resourceId, materialsProducerId, Action.ADDED, amount);
 	}
 
 	@Override
-	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo, final ResourceId resourceId, final long amount) {
-		writeReportItem(observableEnvironment, resourceId, stageInfo.getMaterialsProducerId(), Action.CONVERTED, amount);
+	public void handleStageConversionToResource(ObservableEnvironment observableEnvironment, StageInfo stageInfo,
+			final ResourceId resourceId, final long amount) {
+		writeReportItem(observableEnvironment, resourceId, stageInfo.getMaterialsProducerId(), Action.CONVERTED,
+				amount);
 	}
 
 	@Override
-	public void handleTransferResourceFromMaterialsProducerToRegion(ObservableEnvironment observableEnvironment, final MaterialsProducerId materialsProducerId, final RegionId regionId,
-			final ResourceId resourceId, final long amount) {
+	public void handleTransferResourceFromMaterialsProducerToRegion(ObservableEnvironment observableEnvironment,
+			final MaterialsProducerId materialsProducerId, final RegionId regionId, final ResourceId resourceId,
+			final long amount) {
 		writeReportItem(observableEnvironment, resourceId, materialsProducerId, Action.TRANSFERRED, amount);
 	}
 
-	private void writeReportItem(ObservableEnvironment observableEnvironment, final ResourceId resourceId, final MaterialsProducerId materialsProducerId, final Action action, final double amount) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+	private void writeReportItem(ObservableEnvironment observableEnvironment, final ResourceId resourceId,
+			final MaterialsProducerId materialsProducerId, final Action action, final double amount) {
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());
@@ -120,10 +124,12 @@ public final class MaterialsProducerResourceReport extends AbstractReport {
 	@Override
 	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
 		for (MaterialsProducerId materialsProducerId : observableEnvironment.getMaterialsProducerIds()) {
-			for(ResourceId resourceId : observableEnvironment.getResourceIds()) {
-				long materialsProducerResourceLevel = observableEnvironment.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
-				writeReportItem(observableEnvironment, resourceId, materialsProducerId, Action.ADDED, materialsProducerResourceLevel);	
-			}			
+			for (ResourceId resourceId : observableEnvironment.getResourceIds()) {
+				long materialsProducerResourceLevel = observableEnvironment
+						.getMaterialsProducerResourceLevel(materialsProducerId, resourceId);
+				writeReportItem(observableEnvironment, resourceId, materialsProducerId, Action.ADDED,
+						materialsProducerResourceLevel);
+			}
 		}
 	}
 

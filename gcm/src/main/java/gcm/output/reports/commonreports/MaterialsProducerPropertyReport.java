@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -38,17 +37,16 @@ public final class MaterialsProducerPropertyReport extends AbstractReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("MaterialsProducer");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("MaterialsProducer")//
+					.add("Property")//
+					.add("Value")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
-	
 	@Override
 	public Set<StateChange> getListenedStateChanges() {
 		final Set<StateChange> result = new LinkedHashSet<>();
@@ -57,24 +55,30 @@ public final class MaterialsProducerPropertyReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleMaterialsProducerPropertyValueAssignment(ObservableEnvironment observableEnvironment,final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
-		writeProperty(observableEnvironment,materialsProducerId, materialsProducerPropertyId);
+	public void handleMaterialsProducerPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
+		writeProperty(observableEnvironment, materialsProducerId, materialsProducerPropertyId);
 	}
 
 	@Override
-	public void init(final ObservableEnvironment observableEnvironment,Set<Object> initialData) {
-		super.init(observableEnvironment,initialData);
+	public void init(final ObservableEnvironment observableEnvironment, Set<Object> initialData) {
+		super.init(observableEnvironment, initialData);
 		for (final MaterialsProducerId materialsProducerId : observableEnvironment.getMaterialsProducerIds()) {
-			for (final MaterialsProducerPropertyId materialsProducerPropertyId : observableEnvironment.getMaterialsProducerPropertyIds()) {
-				writeProperty(observableEnvironment,materialsProducerId, materialsProducerPropertyId);
+			for (final MaterialsProducerPropertyId materialsProducerPropertyId : observableEnvironment
+					.getMaterialsProducerPropertyIds()) {
+				writeProperty(observableEnvironment, materialsProducerId, materialsProducerPropertyId);
 			}
 		}
 	}
 
-	private void writeProperty(ObservableEnvironment observableEnvironment,final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	private void writeProperty(ObservableEnvironment observableEnvironment,
+			final MaterialsProducerId materialsProducerId,
+			final MaterialsProducerPropertyId materialsProducerPropertyId) {
 
-		final Object materialsProducerPropertyValue = observableEnvironment.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final Object materialsProducerPropertyValue = observableEnvironment
+				.getMaterialsProducerPropertyValue(materialsProducerId, materialsProducerPropertyId);
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 		reportItemBuilder.setReportType(getClass());
 		reportItemBuilder.setScenarioId(observableEnvironment.getScenarioId());

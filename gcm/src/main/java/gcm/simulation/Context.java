@@ -261,6 +261,11 @@ public final class Context implements MemoryReportParticipant {
 		 */
 		externalAccessManager.acquireGlobalWriteAccessLock();
 	}
+	
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/**
 	 * A builder class for {@link Context}
@@ -269,7 +274,9 @@ public final class Context implements MemoryReportParticipant {
 	 * 
 	 */
 	@NotThreadSafe
-	public static class ContextBuilder {
+	public static class Builder {
+		
+		private Builder() {}
 
 		private Scaffold scaffold = new Scaffold();
 

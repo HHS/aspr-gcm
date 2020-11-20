@@ -24,16 +24,22 @@ import net.jcip.annotations.ThreadSafe;
 @Source(status = TestStatus.UNEXPECTED)
 public final class ReportItem implements OutputItem {
 
+	public static Builder builder() {
+		return new Builder();
+	}
+	
 	@NotThreadSafe
-	public final static class ReportItemBuilder {
+	public final static class Builder {
+		private Builder() {}
 		private Scaffold scaffold = new Scaffold();
 
 		/**
 		 * Adds a value to the report item. Order should follow the order in the
 		 * {@link ReportHeader}
 		 */
-		public void addValue(final Object value) {
+		public Builder addValue(final Object value) {
 			scaffold.values.add(value.toString());
+			return this;
 		}
 
 		/*
@@ -74,30 +80,34 @@ public final class ReportItem implements OutputItem {
 		 * The report header and the report item should have the same order of
 		 * added fiels values.
 		 */
-		public void setReportHeader(ReportHeader reportHeader) {
+		public Builder setReportHeader(ReportHeader reportHeader) {
 			scaffold.reportHeader = reportHeader;
+			return this;
 		}
 
 		/**
 		 * Sets the {@link ReplicationId}
 		 */
-		public void setReplicationId(final ReplicationId replicationId) {
+		public Builder setReplicationId(final ReplicationId replicationId) {
 			scaffold.replicationId = replicationId;
+			return this;
 		}
 
 		/**
 		 * Sets the report type for this {@link ReportItem}. The report type
 		 * should be the class type of the report that authors the report item.
 		 */
-		public void setReportType(final Class<? extends Report> reportType) {
+		public Builder setReportType(final Class<? extends Report> reportType) {
 			scaffold.reportType = reportType;
+			return this;
 		}
 
 		/**
 		 * Sets the {@link ScenarioId}
 		 */
-		public void setScenarioId(final ScenarioId scenarioId) {
+		public Builder setScenarioId(final ScenarioId scenarioId) {
 			scaffold.scenarioId = scenarioId;
+			return this;
 		}
 	}
 

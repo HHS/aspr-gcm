@@ -9,8 +9,7 @@ import java.util.Set;
 
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.MaterialsProducerId;
@@ -95,15 +94,11 @@ import gcm.util.annotations.TestStatus;
 public final class ResourceReport extends PeriodicReport {
 
 	private static enum Activity {
-		PERSON_ARRIVAL("PersonAddition"),
-		PERSON_DEPARTURE("PersonDeparture"),
-		PERSON_REGION_ARRIVAL("PersonRegionArrival"),
-		PERSON_REGION_DEPARTURE("PersonRegionDeparture"),
+		PERSON_ARRIVAL("PersonAddition"), PERSON_DEPARTURE("PersonDeparture"),
+		PERSON_REGION_ARRIVAL("PersonRegionArrival"), PERSON_REGION_DEPARTURE("PersonRegionDeparture"),
 		PERSON_COMPARTMENT_ARRIVAL("PersonCompartmentArrival"),
-		PERSON_COMPARTMENT_DEPARTURE("PersonCompartmentDeparture"),
-		REGION_RESOURCE_ADDITION("RegionResourceAddition"),
-		PERSON_RESOURCE_ADDITION("PersonResourceAddition"),
-		REGION_RESOURCE_REMOVAL("RegionResourceRemoval"),
+		PERSON_COMPARTMENT_DEPARTURE("PersonCompartmentDeparture"), REGION_RESOURCE_ADDITION("RegionResourceAddition"),
+		PERSON_RESOURCE_ADDITION("PersonResourceAddition"), REGION_RESOURCE_REMOVAL("RegionResourceRemoval"),
 		RESOURCE_TRANSFER_INTO_REGION("ResourceTransferIntoRegion"),
 		RESOURCE_TRANSFER_OUT_OF_REGION("ResourceTransferOutOfRegion"),
 		RESOURCE_TRANSFER_FROM_MATERIALS_PRODUCER("ResourceTransferFromMaterialsProducer"),
@@ -134,9 +129,9 @@ public final class ResourceReport extends PeriodicReport {
 	private final List<ResourceId> resourceIds = new ArrayList<>();
 
 	/*
-	 * The mapping of (Region, Compartment, Resource, Activity) tuples to
-	 * counters that record the number of actions and the number of items
-	 * handled across those actions.
+	 * The mapping of (Region, Compartment, Resource, Activity) tuples to counters
+	 * that record the number of actions and the number of items handled across
+	 * those actions.
 	 */
 	private final Map<RegionId, Map<CompartmentId, Map<ResourceId, Map<Activity, Counter>>>> regionMap = new LinkedHashMap<>();
 
@@ -147,22 +142,21 @@ public final class ResourceReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("Compartment");
-			reportHeaderBuilder.add("Resource");
-			reportHeaderBuilder.add("Activity");
-			reportHeaderBuilder.add("Actions");
-			reportHeaderBuilder.add("Items");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder).add("Region")//
+					.add("Compartment")//
+					.add("Resource")//
+					.add("Activity")//
+					.add("Actions")//
+					.add("Items")//
+					.build();//
 		}
 		return reportHeader;
 	}
 
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		for (final RegionId regionId : regionMap.keySet()) {
 			final Map<CompartmentId, Map<ResourceId, Map<Activity, Counter>>> compartmentMap = regionMap.get(regionId);
 			for (final CompartmentId compartmentId : compartmentMap.keySet()) {
@@ -216,15 +210,18 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
 		final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
 		for (final ResourceId resourceId : resourceIds) {
 			final long personResourceLevel = observableEnvironment.getPersonResourceLevel(personId, resourceId);
 			if (personResourceLevel > 0) {
-				increment(regionId, compartmentId, resourceId, Activity.PERSON_COMPARTMENT_ARRIVAL, personResourceLevel);
-				increment(regionId, sourceCompartmentId, resourceId, Activity.PERSON_COMPARTMENT_DEPARTURE, personResourceLevel);
+				increment(regionId, compartmentId, resourceId, Activity.PERSON_COMPARTMENT_ARRIVAL,
+						personResourceLevel);
+				increment(regionId, sourceCompartmentId, resourceId, Activity.PERSON_COMPARTMENT_DEPARTURE,
+						personResourceLevel);
 			}
 		}
 	}
@@ -257,7 +254,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handlePersonResourceAddition(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceAddition(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -267,7 +265,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handlePersonResourceRemoval(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceRemoval(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -277,7 +276,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handlePersonResourceTransferToRegion(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handlePersonResourceTransferToRegion(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -287,7 +287,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		setCurrentReportingPeriod(observableEnvironment);
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
 		final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
@@ -295,13 +296,15 @@ public final class ResourceReport extends PeriodicReport {
 			final long personResourceLevel = observableEnvironment.getPersonResourceLevel(personId, resourceId);
 			if (personResourceLevel > 0) {
 				increment(regionId, compartmentId, resourceId, Activity.PERSON_REGION_ARRIVAL, personResourceLevel);
-				increment(sourceRegionId, compartmentId, resourceId, Activity.PERSON_REGION_DEPARTURE, personResourceLevel);
+				increment(sourceRegionId, compartmentId, resourceId, Activity.PERSON_REGION_DEPARTURE,
+						personResourceLevel);
 			}
 		}
 	}
 
 	@Override
-	public void handleRegionResourceAddition(ObservableEnvironment observableEnvironment, final RegionId regionId, final ResourceId resourceId, final long amount) {
+	public void handleRegionResourceAddition(ObservableEnvironment observableEnvironment, final RegionId regionId,
+			final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			increment(regionId, null, resourceId, Activity.REGION_RESOURCE_ADDITION, amount);
@@ -309,7 +312,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionResourceRemoval(ObservableEnvironment observableEnvironment, final RegionId regionId, final ResourceId resourceId, final long amount) {
+	public void handleRegionResourceRemoval(ObservableEnvironment observableEnvironment, final RegionId regionId,
+			final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			increment(regionId, null, resourceId, Activity.REGION_RESOURCE_REMOVAL, amount);
@@ -317,7 +321,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionResourceTransferToPerson(ObservableEnvironment observableEnvironment, final PersonId personId, final ResourceId resourceId, final long amount) {
+	public void handleRegionResourceTransferToPerson(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final ResourceId resourceId, final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -327,7 +332,8 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleTransferResourceBetweenRegions(ObservableEnvironment observableEnvironment, final RegionId sourceRegionId, final RegionId destinationRegionId, final ResourceId resourceId,
+	public void handleTransferResourceBetweenRegions(ObservableEnvironment observableEnvironment,
+			final RegionId sourceRegionId, final RegionId destinationRegionId, final ResourceId resourceId,
 			final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
@@ -337,8 +343,9 @@ public final class ResourceReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleTransferResourceFromMaterialsProducerToRegion(ObservableEnvironment observableEnvironment, final MaterialsProducerId materialsProducerId, final RegionId regionId,
-			final ResourceId resourceId, final long amount) {
+	public void handleTransferResourceFromMaterialsProducerToRegion(ObservableEnvironment observableEnvironment,
+			final MaterialsProducerId materialsProducerId, final RegionId regionId, final ResourceId resourceId,
+			final long amount) {
 		if ((amount > 0) && resourceIds.contains(resourceId)) {
 			setCurrentReportingPeriod(observableEnvironment);
 			increment(regionId, null, resourceId, Activity.RESOURCE_TRANSFER_FROM_MATERIALS_PRODUCER, amount);
@@ -348,7 +355,8 @@ public final class ResourceReport extends PeriodicReport {
 	/*
 	 * Increments the counter for the given tuple
 	 */
-	private void increment(final RegionId regionId, final CompartmentId compartmentId, final ResourceId resourceId, final Activity activity, final long count) {
+	private void increment(final RegionId regionId, final CompartmentId compartmentId, final ResourceId resourceId,
+			final Activity activity, final long count) {
 		final Map<CompartmentId, Map<ResourceId, Map<Activity, Counter>>> compartmentMap = regionMap.get(regionId);
 		final Map<ResourceId, Map<Activity, Counter>> resourceMap = compartmentMap.get(compartmentId);
 		final Map<Activity, Counter> activityMap = resourceMap.get(resourceId);
@@ -381,9 +389,9 @@ public final class ResourceReport extends PeriodicReport {
 		}
 
 		/*
-		 * We add the null compartment to the set of compartment ids to provide
-		 * a place in the region map to house counters that do not correspond to
-		 * any compartment.
+		 * We add the null compartment to the set of compartment ids to provide a place
+		 * in the region map to house counters that do not correspond to any
+		 * compartment.
 		 */
 		final Set<CompartmentId> compartmentIds = observableEnvironment.getCompartmentIds();
 		compartmentIds.add(null);
@@ -407,9 +415,9 @@ public final class ResourceReport extends PeriodicReport {
 				}
 			}
 		}
-		
+
 		setCurrentReportingPeriod(observableEnvironment);
-		
+
 		for (PersonId personId : observableEnvironment.getPeople()) {
 			final RegionId regionId = observableEnvironment.getPersonRegion(personId);
 			final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);

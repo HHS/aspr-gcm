@@ -7,8 +7,7 @@ import java.util.Set;
 
 import gcm.output.reports.PersonInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.CompartmentId;
 import gcm.scenario.PersonId;
@@ -44,22 +43,21 @@ import gcm.util.annotations.TestStatus;
 public final class PersonPropertyReport extends PeriodicReport {
 
 	/*
-	 * A counter for people having the tuple (Region, Compartment, Person
-	 * Property, Property Value)
+	 * A counter for people having the tuple (Region, Compartment, Person Property,
+	 * Property Value)
 	 */
 	private final static class Counter {
 		int count;
 	}
 
 	/*
-	 * The constrained set of person properties that will be used in this
-	 * report. They are set during init()
+	 * The constrained set of person properties that will be used in this report.
+	 * They are set during init()
 	 */
 	private final Set<PersonPropertyId> personPropertyIds = new LinkedHashSet<>();
 
 	/*
-	 * The tuple mapping to person counts that is maintained via handling of
-	 * events.
+	 * The tuple mapping to person counts that is maintained via handling of events.
 	 */
 	private final Map<RegionId, Map<CompartmentId, Map<PersonPropertyId, Map<Object, Counter>>>> tupleMap = new LinkedHashMap<>();
 
@@ -67,14 +65,14 @@ public final class PersonPropertyReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("Region");
-			reportHeaderBuilder.add("Compartment");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeaderBuilder.add("PersonCount");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("Region")//
+					.add("Compartment")//
+					.add("Property")//
+					.add("Value")//
+					.add("PersonCount")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -82,20 +80,22 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/*
 	 * Decrements the population for the given tuple
 	 */
-	private void decrement(final RegionId regionId, final CompartmentId compartmentId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private void decrement(final RegionId regionId, final CompartmentId compartmentId,
+			final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 		getCounter(regionId, compartmentId, personPropertyId, personPropertyValue).count--;
 	}
 
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
 
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 		/*
 		 * For each tuple having a positive population, report the tuple
 		 */
 		for (final RegionId regionId : tupleMap.keySet()) {
-			final Map<CompartmentId, Map<PersonPropertyId, Map<Object, Counter>>> compartmentMap = tupleMap.get(regionId);
+			final Map<CompartmentId, Map<PersonPropertyId, Map<Object, Counter>>> compartmentMap = tupleMap
+					.get(regionId);
 			for (final CompartmentId compartmentId : compartmentMap.keySet()) {
 				final Map<PersonPropertyId, Map<Object, Counter>> propertyIdMap = compartmentMap.get(compartmentId);
 				for (final PersonPropertyId personPropertyId : propertyIdMap.keySet()) {
@@ -125,10 +125,11 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	/*
-	 * Returns the counter for the give tuple. Creates the counter if it does
-	 * not already exist.
+	 * Returns the counter for the give tuple. Creates the counter if it does not
+	 * already exist.
 	 */
-	private Counter getCounter(final RegionId regionId, final CompartmentId compartmentId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private Counter getCounter(final RegionId regionId, final CompartmentId compartmentId,
+			final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 		final Map<Object, Counter> propertyValueMap = tupleMap.get(regionId).get(compartmentId).get(personPropertyId);
 		Counter counter = propertyValueMap.get(personPropertyValue);
 		if (counter == null) {
@@ -152,7 +153,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final CompartmentId sourceCompartmentId) {
+	public void handleCompartmentAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final CompartmentId sourceCompartmentId) {
 		setCurrentReportingPeriod(observableEnvironment);
 
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -179,8 +181,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final PersonPropertyId personPropertyId,
-			final Object oldPersonPropertyValue) {
+	public void handlePersonPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final PersonId personId, final PersonPropertyId personPropertyId, final Object oldPersonPropertyValue) {
 
 		if (personPropertyIds.contains(personPropertyId)) {
 
@@ -207,7 +209,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId, final RegionId sourceRegionId) {
+	public void handleRegionAssignment(ObservableEnvironment observableEnvironment, final PersonId personId,
+			final RegionId sourceRegionId) {
 		setCurrentReportingPeriod(observableEnvironment);
 
 		final RegionId regionId = observableEnvironment.getPersonRegion(personId);
@@ -223,7 +226,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 	/*
 	 * Increments the population for the given tuple
 	 */
-	private void increment(final RegionId regionId, final CompartmentId compartmentId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	private void increment(final RegionId regionId, final CompartmentId compartmentId,
+			final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 		getCounter(regionId, compartmentId, personPropertyId, personPropertyValue).count++;
 	}
 
@@ -256,8 +260,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 		}
 
 		/*
-		 * Fill the top layers of the regionMap. We do not yet know the set of
-		 * property values, so we leave that layer empty.
+		 * Fill the top layers of the regionMap. We do not yet know the set of property
+		 * values, so we leave that layer empty.
 		 *
 		 */
 		final Set<CompartmentId> compartmentIds = observableEnvironment.getCompartmentIds();
@@ -281,7 +285,8 @@ public final class PersonPropertyReport extends PeriodicReport {
 			final CompartmentId compartmentId = observableEnvironment.getPersonCompartment(personId);
 
 			for (final PersonPropertyId personPropertyId : personPropertyIds) {
-				final Object personPropertyValue = observableEnvironment.getPersonPropertyValue(personId, personPropertyId);
+				final Object personPropertyValue = observableEnvironment.getPersonPropertyValue(personId,
+						personPropertyId);
 				increment(regionId, compartmentId, personPropertyId, personPropertyValue);
 			}
 		}

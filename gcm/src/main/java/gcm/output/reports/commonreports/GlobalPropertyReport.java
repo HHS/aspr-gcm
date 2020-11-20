@@ -5,8 +5,7 @@ import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.GlobalPropertyId;
 import gcm.simulation.ObservableEnvironment;
@@ -34,18 +33,18 @@ public final class GlobalPropertyReport extends AbstractReport {
 	private ReportHeader reportHeader;
 
 	/*
-	 * The constrained set of person properties that will be used in this
-	 * report. They are set during init()
+	 * The constrained set of person properties that will be used in this report.
+	 * They are set during init()
 	 */
 	private final Set<GlobalPropertyId> globalPropertyIds = new LinkedHashSet<>();
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			reportHeaderBuilder.add("Time");
-			reportHeaderBuilder.add("Property");
-			reportHeaderBuilder.add("Value");
-			reportHeader = reportHeaderBuilder.build();
+			reportHeader = ReportHeader.builder()//
+					.add("Time")//
+					.add("Property")//
+					.add("Value")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -58,7 +57,8 @@ public final class GlobalPropertyReport extends AbstractReport {
 	}
 
 	@Override
-	public void handleGlobalPropertyValueAssignment(ObservableEnvironment observableEnvironment, final GlobalPropertyId globalPropertyId) {
+	public void handleGlobalPropertyValueAssignment(ObservableEnvironment observableEnvironment,
+			final GlobalPropertyId globalPropertyId) {
 		if (globalPropertyIds.contains(globalPropertyId)) {
 			writeProperty(observableEnvironment, globalPropertyId);
 		}
@@ -98,7 +98,7 @@ public final class GlobalPropertyReport extends AbstractReport {
 	}
 
 	private void writeProperty(ObservableEnvironment observableEnvironment, final GlobalPropertyId globalPropertyId) {
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 		reportItemBuilder.setReportHeader(getReportHeader());
 
 		final Object globalPropertyValue = observableEnvironment.getGlobalPropertyValue(globalPropertyId);

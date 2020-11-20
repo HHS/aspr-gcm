@@ -16,7 +16,6 @@ import gcm.scenario.ScenarioException.ScenarioErrorType;
 import gcm.simulation.ModelException;
 import gcm.simulation.SimulationErrorType;
 import gcm.util.MultiKey;
-import gcm.util.MultiKey.MultiKeyBuilder;
 import gcm.util.annotations.Source;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -54,7 +53,7 @@ public final class ExperimentBuilder {
 	 * multikey
 	 */
 	private static MultiKey getVariableId(MultiKey multiKey) {
-		MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+		MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 		for (int i = 0; i < multiKey.size() - 1; i++) {
 			multiKeyBuilder.addKey(multiKey.getKey(i));
 		}
@@ -105,7 +104,7 @@ public final class ExperimentBuilder {
 		 */
 		private final List<MultiKey> experimentDimensionData = new ArrayList<>();
 
-		private final MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+		private final MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 
 		private MultiKey getMultiKey(final Object... objects) {
 			for (final Object object : objects) {
@@ -198,8 +197,9 @@ public final class ExperimentBuilder {
 	 *             the batch id was previously added
 	 * 
 	 */
-	public void addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
+	public ExperimentBuilder addBatch(final BatchId batchId, final MaterialId materialId, final double amount, final MaterialsProducerId materialsProducerId) {
 		scaffold.putScenarioData(ActionType.BATCH_ID_ADDITION, batchId, materialId, amount, materialsProducerId);
+		return this;
 	}
 
 	/**
@@ -207,8 +207,9 @@ public final class ExperimentBuilder {
 	 * builder. For example, setting this value to 0 will cause the scenarios to
 	 * numbered 1, 2,...
 	 */
-	public void setBaseScenarioId(int baseScenarioId) {
+	public ExperimentBuilder setBaseScenarioId(int baseScenarioId) {
 		scaffold.baseScenarioId = baseScenarioId;
+		return this;
 	}
 
 	/**
@@ -233,8 +234,9 @@ public final class ExperimentBuilder {
 	 *             if the batch property value causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
+	public ExperimentBuilder addBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.BATCH_PROPERTY_VALUE_ASSIGNMENT, batchId, batchPropertyId, batchPropertyValue);
+		return this;
 	}
 
 	/**
@@ -249,8 +251,9 @@ public final class ExperimentBuilder {
 	 * 
 	 * 
 	 */
-	public void forceBatchPropertyExperimentColumn(final BatchId batchId, final BatchPropertyId batchPropertyId) {
+	public ExperimentBuilder forceBatchPropertyExperimentColumn(final BatchId batchId, final BatchPropertyId batchPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.BATCH_PROPERTY_VALUE_ASSIGNMENT, batchId, batchPropertyId);
+		return this;
 	}
 
 	/**
@@ -273,8 +276,9 @@ public final class ExperimentBuilder {
 	 *             batch is already associated any stage
 	 * 
 	 */
-	public void addBatchToStage(final StageId stageId, final BatchId batchId) {
+	public ExperimentBuilder addBatchToStage(final StageId stageId, final BatchId batchId) {
 		scaffold.putScenarioData(ActionType.STAGE_MEMBERSHIP_ASSIGNMENT, stageId, batchId);
+		return this;
 	}
 
 	/**
@@ -291,8 +295,9 @@ public final class ExperimentBuilder {
 	 *             the compartment id is equal to another previously added
 	 *             component id
 	 */
-	public void addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comparmentComponentClass) {
+	public ExperimentBuilder addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comparmentComponentClass) {
 		scaffold.putScenarioData(ActionType.COMPARTMENT_COMPONENT_ID_ADDITION, compartmentId, comparmentComponentClass);
+		return this;
 	}
 
 	/**
@@ -318,9 +323,9 @@ public final class ExperimentBuilder {
 	 *             experiment dimension value taking into account covariant
 	 *             tuples.
 	 */
-	public void addCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
+	public ExperimentBuilder addCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.COMPARTMENT_PROPERTY_VALUE_ASSIGNMENT, compartmentId, compartmentPropertyId, compartmentPropertyValue);
-
+		return this;
 	}
 
 	/**
@@ -334,8 +339,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceCompartmentPropertyExperimentColumn(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
+	public ExperimentBuilder forceCompartmentPropertyExperimentColumn(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.COMPARTMENT_PROPERTY_VALUE_ASSIGNMENT, compartmentId, compartmentPropertyId);
+		return this;
 	}
 
 	/**
@@ -352,8 +358,9 @@ public final class ExperimentBuilder {
 	 *             the global component id is equal to another previously added
 	 *             component id
 	 */
-	public void addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
+	public ExperimentBuilder addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
 		scaffold.putScenarioData(ActionType.GLOBAL_COMPONENT_ID_ADDITION, globalComponentId, globalComponentClass);
+		return this;
 	}
 
 	/**
@@ -377,8 +384,9 @@ public final class ExperimentBuilder {
 	 *
 	 */
 
-	public void addGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
+	public ExperimentBuilder addGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.GLOBAL_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId, globalPropertyValue);
+		return this;
 	}
 
 	/**
@@ -392,8 +400,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceGlobalPropertyExperimentColumn(final GlobalPropertyId globalPropertyId) {
+	public ExperimentBuilder forceGlobalPropertyExperimentColumn(final GlobalPropertyId globalPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.GLOBAL_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId);
+		return this;
 	}
 
 	/**
@@ -411,8 +420,9 @@ public final class ExperimentBuilder {
 	 *             group type id is unknown
 	 * 
 	 */
-	public void addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
+	public ExperimentBuilder addGroup(final GroupId groupId, final GroupTypeId groupTypeId) {
 		scaffold.putScenarioData(ActionType.GROUP_ID_ADDITION, groupId, groupTypeId);
+		return this;
 	}
 
 	/**
@@ -431,8 +441,9 @@ public final class ExperimentBuilder {
 	 *             the person was previously added to the group
 	 *
 	 */
-	public void addPersonToGroup(final GroupId groupId, final PersonId personId) {
+	public ExperimentBuilder addPersonToGroup(final GroupId groupId, final PersonId personId) {
 		scaffold.putScenarioData(ActionType.GROUP_MEMBERSHIP_ASSIGNMENT, groupId, personId, personId);
+		return this;
 	}
 
 	/**
@@ -456,8 +467,9 @@ public final class ExperimentBuilder {
 	 *             if the group property value causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
+	public ExperimentBuilder addGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId, groupPropertyId, groupPropertyValue);
+		return this;
 	}
 
 	/**
@@ -470,8 +482,9 @@ public final class ExperimentBuilder {
 	 *             there are no added values to associate with the experiment
 	 *             column
 	 */
-	public void forceGroupPropertyExperimentColumn(final GroupId groupId, final GroupPropertyId groupPropertyId) {
+	public ExperimentBuilder forceGroupPropertyExperimentColumn(final GroupId groupId, final GroupPropertyId groupPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId, groupPropertyId);
+		return this;
 	}
 
 	/**
@@ -484,8 +497,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the group type was previously added
 	 */
-	public void addGroupTypeId(final GroupTypeId groupTypeId) {
+	public ExperimentBuilder addGroupTypeId(final GroupTypeId groupTypeId) {
 		scaffold.putScenarioData(ActionType.GROUP_TYPE_ID_ADDITION, groupTypeId, groupTypeId);
+		return this;
 	}
 
 	/**
@@ -499,8 +513,9 @@ public final class ExperimentBuilder {
 	 *             the material was previously added
 	 *
 	 */
-	public void addMaterial(final MaterialId materialId) {
+	public ExperimentBuilder addMaterial(final MaterialId materialId) {
 		scaffold.putScenarioData(ActionType.MATERIAL_ID_ADDITION, materialId, materialId);
+		return this;
 	}
 
 	/**
@@ -514,8 +529,9 @@ public final class ExperimentBuilder {
 	 *             the material was previously added
 	 *
 	 */
-	public void addRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId) {
+	public ExperimentBuilder addRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId) {
 		scaffold.putScenarioData(ActionType.RANDOM_NUMBER_GENERATOR_ID_ADDITION, randomNumberGeneratorId, randomNumberGeneratorId);
+		return this;
 	}
 
 	/**
@@ -532,8 +548,9 @@ public final class ExperimentBuilder {
 	 *             the materials producer id is equal to another previously
 	 *             added component id
 	 */
-	public void addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass) {
+	public ExperimentBuilder addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass) {
 		scaffold.putScenarioData(ActionType.MATERIALS_PRODUCER_COMPONENT_ID_ADDITION, materialsProducerId, materialProducerComponentClass);
+		return this;
 	}
 
 	/**
@@ -558,9 +575,10 @@ public final class ExperimentBuilder {
 	 *             experiment dimension value taking into account covariant
 	 *             tuples.
 	 */
-	public void addMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	public ExperimentBuilder addMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
 			final Object materialsProducerPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.MATERIALS_PRODUCER_PROPERTY_VALUE_ASSIGNMENT, materialsProducerId, materialsProducerPropertyId, materialsProducerPropertyValue);
+		return this;
 	}
 
 	/**
@@ -573,8 +591,9 @@ public final class ExperimentBuilder {
 	 *             there are no added values to associate with the experiment
 	 *             column
 	 */
-	public void forceMaterialsProducerPropertyExperimentColumn(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public ExperimentBuilder forceMaterialsProducerPropertyExperimentColumn(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.MATERIALS_PRODUCER_PROPERTY_VALUE_ASSIGNMENT, materialsProducerId, materialsProducerPropertyId);
+		return this;
 	}
 
 	/**
@@ -597,8 +616,9 @@ public final class ExperimentBuilder {
 	 *             experiment dimension value taking into account covariant
 	 *             tuples.
 	 */
-	public void addMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
+	public ExperimentBuilder addMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount) {
 		scaffold.putExperimentValueData(ActionType.MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT, materialsProducerId, resourceId, amount);
+		return this;
 	}
 
 	/**
@@ -612,8 +632,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceMaterialsProducerResourceExperimentColumn(final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
+	public ExperimentBuilder forceMaterialsProducerResourceExperimentColumn(final MaterialsProducerId materialsProducerId, final ResourceId resourceId) {
 		scaffold.putExperimentColumnForceData(ActionType.MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT, materialsProducerId, resourceId);
+		return this;
 	}
 
 	/**
@@ -635,8 +656,9 @@ public final class ExperimentBuilder {
 	 *             the person was previously added
 	 *
 	 */
-	public void addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId) {
+	public ExperimentBuilder addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId) {
 		scaffold.putScenarioData(ActionType.PERSON_ID_ADDITION, personId, regionId, compartmentId);
+		return this;
 	}
 
 	/**
@@ -661,8 +683,9 @@ public final class ExperimentBuilder {
 	 *             dimension value taking into account covariant tuples.
 	 *
 	 */
-	public void addPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
+	public ExperimentBuilder addPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.PERSON_PROPERTY_VALUE_ASSIGNMENT, personId, personPropertyId, personPropertyValue);
+		return this;
 	}
 
 	/**
@@ -676,8 +699,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forcePersonPropertyExperimentColumn(final PersonId personId, final PersonPropertyId personPropertyId) {
+	public ExperimentBuilder forcePersonPropertyExperimentColumn(final PersonId personId, final PersonPropertyId personPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.PERSON_PROPERTY_VALUE_ASSIGNMENT, personId, personPropertyId);
+		return this;
 	}
 
 	/**
@@ -699,8 +723,9 @@ public final class ExperimentBuilder {
 	 *             if the person resource level causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
+	public ExperimentBuilder addPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount) {
 		scaffold.putExperimentValueData(ActionType.PERSON_RESOURCE_ASSIGNMENT, personId, resourceId, amount);
+		return this;
 	}
 
 	/**
@@ -714,8 +739,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forcePersonResourceExperimentColumn(final PersonId personId, final ResourceId resourceId) {
+	public ExperimentBuilder forcePersonResourceExperimentColumn(final PersonId personId, final ResourceId resourceId) {
 		scaffold.putExperimentColumnForceData(ActionType.PERSON_RESOURCE_ASSIGNMENT, personId, resourceId);
+		return this;
 	}
 
 	/**
@@ -731,8 +757,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the region was previously added
 	 */
-	public void addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass) {
+	public ExperimentBuilder addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass) {
 		scaffold.putScenarioData(ActionType.REGION_COMPONENT_ID_ADDITION, regionId, regionComponentClass);
+		return this;
 	}
 
 	/**
@@ -756,8 +783,9 @@ public final class ExperimentBuilder {
 	 *             if the region property value causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
+	public ExperimentBuilder addRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 		scaffold.putExperimentValueData(ActionType.REGION_PROPERTY_VALUE_ASSIGNMENT, regionId, regionPropertyId, regionPropertyValue);
+		return this;
 	}
 
 	/**
@@ -771,8 +799,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceRegionPropertyExperimentColumn(final RegionId regionId, final RegionPropertyId regionPropertyId) {
+	public ExperimentBuilder forceRegionPropertyExperimentColumn(final RegionId regionId, final RegionPropertyId regionPropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.REGION_PROPERTY_VALUE_ASSIGNMENT, regionId, regionPropertyId);
+		return this;
 	}
 
 	/**
@@ -794,8 +823,9 @@ public final class ExperimentBuilder {
 	 *             if the region resource level causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
+	public ExperimentBuilder addRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount) {
 		scaffold.putExperimentValueData(ActionType.REGION_RESOURCE_ASSIGNMENT, regionId, resourceId, amount);
+		return this;
 	}
 
 	/**
@@ -809,15 +839,17 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceRegionResourceExperimentColumn(final RegionId regionId, final ResourceId resourceId) {
+	public ExperimentBuilder forceRegionResourceExperimentColumn(final RegionId regionId, final ResourceId resourceId) {
 		scaffold.putExperimentColumnForceData(ActionType.REGION_RESOURCE_ASSIGNMENT, regionId, resourceId);
+		return this;
 	}
 
 	/**
 	 * See {@link ScenarioBuilder#addResource(ResourceId)}
 	 */
-	public void addResource(final ResourceId resourceId) {
+	public ExperimentBuilder addResource(final ResourceId resourceId) {
 		scaffold.putScenarioData(ActionType.RESOURCE_ID_ADDITION, resourceId, resourceId);
+		return this;
 	}
 
 	/**
@@ -842,8 +874,9 @@ public final class ExperimentBuilder {
 	 *             if the resource property value causes a duplicate experiment
 	 *             dimension value taking into account covariant tuples.
 	 */
-	public void addResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
+	public ExperimentBuilder addResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue) {
 		scaffold.putExperimentValueData(ActionType.RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourceId, resourcePropertyId, resourcePropertyValue);
+		return this;
 	}
 
 	/**
@@ -857,15 +890,17 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceResourcePropertyExperimentColumn(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
+	public ExperimentBuilder forceResourcePropertyExperimentColumn(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId) {
 		scaffold.putExperimentColumnForceData(ActionType.RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourceId, resourcePropertyId);
+		return this;
 	}
 
 	/**
 	 * See {@link ScenarioBuilder#addStage(StageId, boolean, Object)}
 	 */
-	public void addStage(final StageId stageId, final boolean offered, final MaterialsProducerId materialsProducerId) {
+	public ExperimentBuilder addStage(final StageId stageId, final boolean offered, final MaterialsProducerId materialsProducerId) {
 		scaffold.putScenarioData(ActionType.STAGE_ID_ADDITION, stageId, offered, materialsProducerId);
+		return this;
 	}
 
 	/**
@@ -884,8 +919,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the batch property was previously defined
 	 */
-	public void defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.BATCH_PROPERTY_DEFINITION, materialId, batchPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -903,8 +939,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the compartment property was previously defined
 	 */
-	public void defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.COMPARTMENT_PROPERTY_DEFINITION, compartmentId, compartmentPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -919,8 +956,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the global property was previously defined
 	 */
-	public void defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.GLOBAL_PROPERTY_DEFINITION, globalPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -939,8 +977,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the group property was previously defined
 	 */
-	public void defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.GROUP_PROPERTY_DEFINITION, groupTypeId, groupPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -955,8 +994,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the materials producer property was previously defined
 	 */
-	public void defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.MATERIALS_PRODUCER_PROPERTY_DEFINITION, materialsProducerPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -971,16 +1011,18 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the person property was previously defined
 	 */
-	public void definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.PERSON_PROPERTY_DEFINITION, personPropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
 	 * See
 	 * {@link ScenarioBuilder#defineRegionProperty(RegionPropertyId, PropertyDefinition)}
 	 */
-	public void defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.REGION_PROPERTY_DEFINITION, regionPropertyId, propertyDefinition);
+		return this;
 
 	}
 
@@ -996,8 +1038,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the resource property was previously defined
 	 */
-	public void defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
+	public ExperimentBuilder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition) {
 		scaffold.putScenarioData(ActionType.RESOURCE_PROPERTY_DEFINITION, resourceId, resourcePropertyId, propertyDefinition);
+		return this;
 	}
 
 	/**
@@ -1047,8 +1090,9 @@ public final class ExperimentBuilder {
 	 * 
 	 * 
 	 */
-	public void covaryCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.COMPARTMENT_PROPERTY_VALUE_ASSIGNMENT, compartmentId, compartmentPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1084,8 +1128,9 @@ public final class ExperimentBuilder {
 	 * 
 	 * 
 	 */
-	public void covaryBatchProperty(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryBatchProperty(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.BATCH_PROPERTY_VALUE_ASSIGNMENT, batchId, batchPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1114,8 +1159,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryGlobalProperty(final GlobalPropertyId globalPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryGlobalProperty(final GlobalPropertyId globalPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.GLOBAL_PROPERTY_VALUE_ASSIGNMENT, globalPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1149,8 +1195,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryGroupProperty(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryGroupProperty(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.GROUP_PROPERTY_VALUE_ASSIGNMENT, groupId, groupPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1184,8 +1231,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryPersonProperty(final PersonId personId, final PersonPropertyId personPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryPersonProperty(final PersonId personId, final PersonPropertyId personPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.PERSON_PROPERTY_VALUE_ASSIGNMENT, personId, personPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1220,8 +1268,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryMaterialsProducerProperty(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryMaterialsProducerProperty(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.MATERIALS_PRODUCER_PROPERTY_VALUE_ASSIGNMENT, materialsProducerId, materialsProducerPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1255,8 +1304,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryPersonResource(final PersonId personId, final ResourceId resourceId, final Object dimensionId) {
+	public ExperimentBuilder covaryPersonResource(final PersonId personId, final ResourceId resourceId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.PERSON_RESOURCE_ASSIGNMENT, personId, resourceId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1290,8 +1340,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryMaterialsProducerResource(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final Object dimensionId) {
+	public ExperimentBuilder covaryMaterialsProducerResource(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT, materialsProducerId, resourceId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1325,8 +1376,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryRegionProperty(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryRegionProperty(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.REGION_PROPERTY_VALUE_ASSIGNMENT, regionId, regionPropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1360,8 +1412,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryRegionResource(final RegionId regionId, final ResourceId resourceId, final Object dimensionId) {
+	public ExperimentBuilder covaryRegionResource(final RegionId regionId, final ResourceId resourceId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.REGION_RESOURCE_ASSIGNMENT, regionId, resourceId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1395,8 +1448,9 @@ public final class ExperimentBuilder {
 	 *             associated data
 	 * 
 	 */
-	public void covaryResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object dimensionId) {
+	public ExperimentBuilder covaryResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.RESOURCE_PROPERTY_VALUE_ASSIGNMENT, resourceId, resourcePropertyId, dimensionId);
+		return this;
 	}
 
 	/**
@@ -1409,8 +1463,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the mapOption was previously set
 	 */
-	public void setCompartmentMapOption(final MapOption mapOption) {
+	public ExperimentBuilder setCompartmentMapOption(final MapOption mapOption) {
 		scaffold.putScenarioData(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT, mapOption);
+		return this;
 	}
 	
 	
@@ -1426,8 +1481,9 @@ public final class ExperimentBuilder {
 	 *             the compartment arrival TimeTrackingPolicy was previously set
 	 *
 	 */
-	public void setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes) {
+	public ExperimentBuilder setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes) {
 		scaffold.putScenarioData(ActionType.PERSON_COMPARTMENT_ARRIVAL_TRACKING_ASSIGNMENT, trackPersonCompartmentArrivalTimes);
+		return this;
 	}
 
 	/**
@@ -1441,8 +1497,9 @@ public final class ExperimentBuilder {
 	 *             the region arrival TimeTrackingPolicy was previously set
 	 *
 	 */
-	public void setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes) {
+	public ExperimentBuilder setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes) {
 		scaffold.putScenarioData(ActionType.PERSON_REGION_ARRIVAL_TRACKING_ASSIGNMENT, trackPersonRegionArrivalTimes);
+		return this;
 	}
 
 	/**
@@ -1455,8 +1512,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the mapOption was previously set
 	 */
-	public void setRegionMapOption(final MapOption mapOption) {
+	public ExperimentBuilder setRegionMapOption(final MapOption mapOption) {
 		scaffold.putScenarioData(ActionType.REGION_MAP_OPTION_ASSIGNMENT, mapOption);
+		return this;
 	}
 
 	/**
@@ -1472,8 +1530,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the resource TimeTrackingPolicy was previously set
 	 */
-	public void setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
+	public ExperimentBuilder setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes) {
 		scaffold.putScenarioData(ActionType.RESOURCE_TIME_TRACKING_ASSIGNMENT, resourceId, trackValueAssignmentTimes);
+		return this;
 	}
 
 	/*
@@ -1658,7 +1717,7 @@ public final class ExperimentBuilder {
 			for (CovariantGroup covariantGroup : covariantGroups) {
 				Set<MultiKey> valueTuples = new LinkedHashSet<>();
 				for (int i = 0; i < covariantGroup.size; i++) {
-					MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+					MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 					for (Variable variable : covariantGroup.variables) {
 						Object value = getValue(variable.multiKeys.get(i));
 						multiKeyBuilder.addKey(value);
@@ -2002,8 +2061,9 @@ public final class ExperimentBuilder {
 	 *             <li>{@link ScenarioErrorType#NEGATIVE_SUGGGESTED_POPULATION}
 	 *             if the suggested population size is negative
 	 */
-	public void addSuggestedPopulationSize(int suggestedPopulationSize) {
+	public ExperimentBuilder addSuggestedPopulationSize(int suggestedPopulationSize) {
 		scaffold.putExperimentValueData(ActionType.SUGGESTED_POPULATION_SIZE, suggestedPopulationSize);
+		return this;
 	}
 
 	/**
@@ -2017,8 +2077,9 @@ public final class ExperimentBuilder {
 	 *             column
 	 */
 
-	public void forceSuggestedPopulationSizeExperimentColumn() {
+	public ExperimentBuilder forceSuggestedPopulationSizeExperimentColumn() {
 		scaffold.putExperimentColumnForceData(ActionType.SUGGESTED_POPULATION_SIZE);
+		return this;
 	}
 
 	/**
@@ -2043,8 +2104,9 @@ public final class ExperimentBuilder {
 	 *             if there are more than one dimensionId values with the same
 	 *             associated data
 	 */
-	public void covarySuggestedPopulationSize(final Object dimensionId) {
+	public ExperimentBuilder covarySuggestedPopulationSize(final Object dimensionId) {
 		scaffold.putExperimentDimensionData(ActionType.SUGGESTED_POPULATION_SIZE, dimensionId);
+		return this;
 	}
 
 //	/**

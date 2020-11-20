@@ -92,9 +92,17 @@ public final class PersonInfo {
 	private PersonInfo(Scaffold scaffold) {
 		this.scaffold = scaffold;
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	@NotThreadSafe
-	public static class PersonInfoBuilder {
+	public static class Builder {
+		
+		private Builder() {
+			
+		}
 		Scaffold scaffold = new Scaffold();
 
 		private void validate() {
@@ -133,11 +141,12 @@ public final class PersonInfo {
 		 * @throws RuntimeException
 		 *             if the person id is null
 		 */
-		public void setPersonId(PersonId personId) {
+		public Builder setPersonId(PersonId personId) {
 			if (personId == null) {
 				throw new RuntimeException("null person id");
 			}
 			scaffold.personId = personId;
+			return this;
 		}
 
 		/**
@@ -146,11 +155,12 @@ public final class PersonInfo {
 		 * @throws RuntimeException
 		 *             if the region id is null
 		 */
-		public void setPersonRegionId(RegionId regionId) {
+		public Builder setPersonRegionId(RegionId regionId) {
 			if (regionId == null) {
 				throw new RuntimeException("null region id");
 			}
 			scaffold.regionId = regionId;
+			return this;
 		}
 
 		/**
@@ -159,11 +169,12 @@ public final class PersonInfo {
 		 * @throws RuntimeException
 		 *             if the compartment id is null
 		 */
-		public void setPersonCompartmentId(CompartmentId compartmentId) {
+		public Builder setPersonCompartmentId(CompartmentId compartmentId) {
 			if (compartmentId == null) {
 				throw new RuntimeException("null compartment id");
 			}
 			scaffold.compartmentId = compartmentId;
+			return this;
 		}
 
 		/**
@@ -173,7 +184,7 @@ public final class PersonInfo {
 		 *             <li>if the person property id is null
 		 *             <li>if the person property value is null
 		 */
-		public void setPersonPropertyValue(PersonPropertyId personPropertyId, Object personPropertyValue) {
+		public Builder setPersonPropertyValue(PersonPropertyId personPropertyId, Object personPropertyValue) {
 			if (personPropertyId == null) {
 				throw new RuntimeException("null person property id");
 			}
@@ -183,6 +194,7 @@ public final class PersonInfo {
 			}
 
 			scaffold.propertyValues.put(personPropertyId, personPropertyValue);
+			return this;
 		}
 
 		/**
@@ -192,7 +204,7 @@ public final class PersonInfo {
 		 *             <li>if the resource id is null
 		 *             <li>if the resource value is negative
 		 */
-		public void setPersonResourceValue(ResourceId resourceId, Long resourceValue) {
+		public Builder setPersonResourceValue(ResourceId resourceId, Long resourceValue) {
 			if (resourceId == null) {
 				throw new RuntimeException("null resource id");
 			}
@@ -201,6 +213,7 @@ public final class PersonInfo {
 				throw new RuntimeException("negative resource value");
 			}
 			scaffold.resourceValues.put(resourceId, resourceValue);
+			return this;
 		}
 	}
 

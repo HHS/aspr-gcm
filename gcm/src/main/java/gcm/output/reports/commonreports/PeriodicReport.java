@@ -3,8 +3,8 @@ package gcm.output.reports.commonreports;
 import java.util.Set;
 
 import gcm.output.reports.AbstractReport;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportHeader;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.ReportPeriod;
 import gcm.simulation.ObservableEnvironment;
 import gcm.util.annotations.Source;
@@ -44,7 +44,7 @@ public abstract class PeriodicReport extends AbstractReport {
 	 * Adds the time field column(s) to the given {@link ReportHeaderBuilder} as
 	 * appropriate to the {@link ReportPeriod} specified during construction.
 	 */
-	protected void addTimeFieldHeaders(ReportHeaderBuilder reportHeaderBuilder) {
+	protected ReportHeader.Builder addTimeFieldHeaders(ReportHeader.Builder reportHeaderBuilder) {
 		switch (reportPeriod) {
 		case DAILY:
 			reportHeaderBuilder.add("Day");
@@ -59,6 +59,7 @@ public abstract class PeriodicReport extends AbstractReport {
 		default:
 			throw new RuntimeException("unknown report period " + reportPeriod);
 		}
+		return reportHeaderBuilder;
 	}
 
 	/**
@@ -66,7 +67,7 @@ public abstract class PeriodicReport extends AbstractReport {
 	 * appropriate to the {@link ReportPeriod} specified during construction.
 	 *
 	 */
-	protected final void buildTimeFields(final ReportItemBuilder reportItemBuilder) {
+	protected final void buildTimeFields(final ReportItem.Builder reportItemBuilder) {
 		switch (reportPeriod) {
 		case DAILY:
 			reportItemBuilder.addValue(reportingDay);

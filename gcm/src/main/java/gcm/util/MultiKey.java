@@ -17,7 +17,9 @@ import net.jcip.annotations.NotThreadSafe;
 @NotThreadSafe
 @Source
 public final class MultiKey {
-	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	/**
 	 * A convenience builder class for MultiKey for situations where it is not
@@ -25,12 +27,15 @@ public final class MultiKey {
 	 *
 	 */
 	@Source(status= TestStatus.REQUIRED)
-	public static class MultiKeyBuilder {
+	public static class Builder {
+		
+		private Builder() {}
 
 		private List<Object> keys = new ArrayList<>();
 
-		public void addKey(final Object key) {
+		public Builder addKey(final Object key) {
 			keys.add(key);
+			return this;
 		}
 
 		public MultiKey build() {

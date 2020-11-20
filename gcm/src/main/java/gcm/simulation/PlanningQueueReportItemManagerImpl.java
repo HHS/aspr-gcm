@@ -4,14 +4,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import gcm.output.simstate.PlanningQueueReportItem;
-import gcm.output.simstate.PlanningQueueReportItem.PlanningQueueReportItemBuilder;
 import gcm.scenario.ComponentId;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.stats.MutableStat;
-@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
+
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PlanningQueueReportItemManagerImpl extends BaseElement implements PlanningQueueReportItemManager {
 
 	private static class Counter {
@@ -36,9 +36,9 @@ public final class PlanningQueueReportItemManagerImpl extends BaseElement implem
 		private final MutableStat mutableStat = new MutableStat();
 
 		public void decrement(boolean fromCancellation) {
-			if(fromCancellation) {
+			if (fromCancellation) {
 				cancellations++;
-			}else {
+			} else {
 				removals++;
 			}
 			if (count <= 0) {
@@ -88,7 +88,7 @@ public final class PlanningQueueReportItemManagerImpl extends BaseElement implem
 	private void flush() {
 		final double reportEndTime = eventManager.getTime();
 
-		final PlanningQueueReportItemBuilder planningQueueReportItemBuilder = new PlanningQueueReportItemBuilder();
+		final PlanningQueueReportItem.Builder planningQueueReportItemBuilder = PlanningQueueReportItem.builder();
 
 		for (final ComponentId componentId : counterMap.keySet()) {
 			final Map<Class<? extends Plan>, Map<Boolean, Counter>> planningMap = counterMap.get(componentId);
@@ -97,19 +97,20 @@ public final class PlanningQueueReportItemManagerImpl extends BaseElement implem
 				for (final Boolean isKeyed : booleanMap.keySet()) {
 					final Counter counter = booleanMap.get(isKeyed);
 					if (counter.mutableStat.size() > 0) {
-						planningQueueReportItemBuilder.setComponentId(componentId);
-						planningQueueReportItemBuilder.setEndTime(reportEndTime);
-						planningQueueReportItemBuilder.setKeyed(isKeyed);
-						planningQueueReportItemBuilder.setPlanningClass(planningClass);
-						planningQueueReportItemBuilder.setReplicationId(replicationId);
-						planningQueueReportItemBuilder.setScenarioId(scenarioId);
-						planningQueueReportItemBuilder.setStartTime(reportStartTime);
-						planningQueueReportItemBuilder.setStat(counter.mutableStat);
-						planningQueueReportItemBuilder.setAdditionCount(counter.getAdditions());
-						planningQueueReportItemBuilder.setRemovalCount(counter.getRemovals());
-						planningQueueReportItemBuilder.setCancellationCount(counter.getCancellations());
+						final PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder//
+								.setComponentId(componentId)//
+								.setEndTime(reportEndTime)//
+								.setKeyed(isKeyed)//
+								.setPlanningClass(planningClass)//
+								.setReplicationId(replicationId)//
+								.setScenarioId(scenarioId)//
+								.setStartTime(reportStartTime)//
+								.setStat(counter.mutableStat)//
+								.setAdditionCount(counter.getAdditions())//
+								.setRemovalCount(counter.getRemovals())//
+								.setCancellationCount(counter.getCancellations())//
+								.build();//
 						counter.clear();
-						final PlanningQueueReportItem planningQueueReportItem = planningQueueReportItemBuilder.build();
 						outputItemManager.releaseOutputItem(planningQueueReportItem);
 					}
 				}
@@ -174,6 +175,7 @@ public final class PlanningQueueReportItemManagerImpl extends BaseElement implem
 			updateActionCount();
 		}
 	}
+
 	@Override
 	public void reportPlanningQueueCancellation(final ComponentId componentId, final Plan plan, final Object key) {
 		if (active) {

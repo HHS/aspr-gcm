@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.output.simstate.MemoryReportItem;
-import gcm.output.simstate.MemoryReportItem.MemoryReportItemBuilder;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 import gcm.util.MemSizer;
@@ -49,10 +48,10 @@ public final class MemoryReportManagerImpl extends BaseElement implements Memory
 		OutputItemManager outputItemManager = context.getOutputItemManager();
 
 		/*
-		 * Collect the memory links that form the memory partition. The context
-		 * will pass the memory partition to its children and they will do the
-		 * same. The memory partition will be used to for a tree of nodes that
-		 * will aide in our calculations.
+		 * Collect the memory links that form the memory partition. The context will
+		 * pass the memory partition to its children and they will do the same. The
+		 * memory partition will be used to for a tree of nodes that will aide in our
+		 * calculations.
 		 */
 
 		MemoryPartition memoryPartition = new MemoryPartition();
@@ -60,8 +59,8 @@ public final class MemoryReportManagerImpl extends BaseElement implements Memory
 		context.collectMemoryLinks(memoryPartition);
 
 		/*
-		 * Validate the links and form them into a tree. Strip off any proxy
-		 * wrappers that appear when profile reporting is on.
+		 * Validate the links and form them into a tree. Strip off any proxy wrappers
+		 * that appear when profile reporting is on.
 		 */
 		List<MemoryLink> memoryLinks = memoryPartition.getMemoryLinks();
 		memoryLinks = getNonProxiedMemoryLinks(memoryLinks);
@@ -90,8 +89,8 @@ public final class MemoryReportManagerImpl extends BaseElement implements Memory
 		}
 
 		/*
-		 * Link the nodes in parent/child linkages, thus forming the tree.
-		 * Enforce Rule 2.
+		 * Link the nodes in parent/child linkages, thus forming the tree. Enforce Rule
+		 * 2.
 		 */
 		for (MemoryLink memoryLink : memoryLinks) {
 			Node childNode = nodeMap.get(memoryLink.getChild());
@@ -137,49 +136,49 @@ public final class MemoryReportManagerImpl extends BaseElement implements Memory
 		}
 
 		/*
-		 * Walk the tree in a top-down fashion, determining the self byte
-		 * counts. We choose a top down approach so that objects not accounted
-		 * for in the design of the tree will tend to be accounted at the root
-		 * of the tree rather than the leaves. Note also that since the memsizer
-		 * was told to exclude the focus object of each of the nodes, the child
-		 * byte counts will not be included.
+		 * Walk the tree in a top-down fashion, determining the self byte counts. We
+		 * choose a top down approach so that objects not accounted for in the design of
+		 * the tree will tend to be accounted at the root of the tree rather than the
+		 * leaves. Note also that since the memsizer was told to exclude the focus
+		 * object of each of the nodes, the child byte counts will not be included.
 		 */
 		for (Node node : rootNodes) {
 			determineSelfByteCounts(node, memSizer);
 		}
 
 		/*
-		 * Walk the tree in a bottom-up fashion to determine the child byte
-		 * counts
+		 * Walk the tree in a bottom-up fashion to determine the child byte counts
 		 */
 		for (Node node : rootNodes) {
 			determineChildByteCounts(node);
 		}
 
 		/*
-		 * Build the MemoryReportItems from the nodes and release the memory
-		 * report items to the output manager.
+		 * Build the MemoryReportItems from the nodes and release the memory report
+		 * items to the output manager.
 		 */
 		ScenarioId scenarioId = context.getScenario().getScenarioId();
 		ReplicationId replicationId = context.getReplication().getId();
 
-		MemoryReportItemBuilder memoryReportItemBuilder = new MemoryReportItemBuilder();
+		MemoryReportItem.Builder memoryReportItemBuilder = MemoryReportItem.builder();
 		for (Node node : nodeMap.values()) {
-			memoryReportItemBuilder.setSelfByteCount(node.selfByteCount);
-			memoryReportItemBuilder.setChildByteCount(node.childByteCount);
-			memoryReportItemBuilder.setDescriptor(node.descriptor);
-			memoryReportItemBuilder.setItemClass(node.focus.getClass());
-			memoryReportItemBuilder.setId(node.id);
+			int parentNodeId = -1;
 			Node parentNode = node.parentNode;
-			if (parentNode == null) {
-				memoryReportItemBuilder.setParentId(-1);
-			} else {
-				memoryReportItemBuilder.setParentId(parentNode.id);
+			if (parentNode != null) {
+				parentNodeId = parentNode.id;
 			}
-			memoryReportItemBuilder.setReplicationId(replicationId);
-			memoryReportItemBuilder.setScenarioId(scenarioId);
-			memoryReportItemBuilder.setTime(time);
-			MemoryReportItem memoryReportItem = memoryReportItemBuilder.build();
+			MemoryReportItem memoryReportItem = memoryReportItemBuilder//
+					.setSelfByteCount(node.selfByteCount)//
+					.setChildByteCount(node.childByteCount)//
+					.setDescriptor(node.descriptor)//
+					.setItemClass(node.focus.getClass())//
+					.setId(node.id)//
+					.setParentId(parentNodeId)//
+					.setReplicationId(replicationId)//
+					.setScenarioId(scenarioId)//
+					.setTime(time)//
+					.build();//
+
 			outputItemManager.releaseOutputItem(memoryReportItem);
 		}
 
@@ -187,8 +186,8 @@ public final class MemoryReportManagerImpl extends BaseElement implements Memory
 
 	/*
 	 * Sets the child byte counts for the node and its children in a depth first
-	 * search of the sub tree associated with the node. Note that nodes that do
-	 * not have children will have child byte counts of zero.
+	 * search of the sub tree associated with the node. Note that nodes that do not
+	 * have children will have child byte counts of zero.
 	 */
 	private long determineChildByteCounts(Node node) {
 		for (Node childNode : node.childNodes) {

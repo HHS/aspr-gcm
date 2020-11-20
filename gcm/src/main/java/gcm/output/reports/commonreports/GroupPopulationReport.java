@@ -7,8 +7,7 @@ import java.util.Set;
 
 import gcm.output.reports.GroupInfo;
 import gcm.output.reports.ReportHeader;
-import gcm.output.reports.ReportHeader.ReportHeaderBuilder;
-import gcm.output.reports.ReportItem.ReportItemBuilder;
+import gcm.output.reports.ReportItem;
 import gcm.output.reports.StateChange;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
@@ -37,7 +36,8 @@ public final class GroupPopulationReport extends PeriodicReport {
 
 	/*
 	 * 
-	 * Count of the number of groups having a particular person count for a particular group type
+	 * Count of the number of groups having a particular person count for a
+	 * particular group type
 	 *
 	 */
 	private static class Counter {
@@ -48,12 +48,12 @@ public final class GroupPopulationReport extends PeriodicReport {
 
 	private ReportHeader getReportHeader() {
 		if (reportHeader == null) {
-			ReportHeaderBuilder reportHeaderBuilder = new ReportHeaderBuilder();
-			addTimeFieldHeaders(reportHeaderBuilder);
-			reportHeaderBuilder.add("GroupType");
-			reportHeaderBuilder.add("PersonCount");
-			reportHeaderBuilder.add("GroupCount");
-			reportHeader = reportHeaderBuilder.build();
+			ReportHeader.Builder reportHeaderBuilder = ReportHeader.builder();
+			reportHeader = addTimeFieldHeaders(reportHeaderBuilder)//
+					.add("GroupType")//
+					.add("PersonCount")//
+					.add("GroupCount")//
+					.build();//
 		}
 		return reportHeader;
 	}
@@ -61,7 +61,7 @@ public final class GroupPopulationReport extends PeriodicReport {
 	@Override
 	protected void flush(ObservableEnvironment observableEnvironment) {
 
-		final ReportItemBuilder reportItemBuilder = new ReportItemBuilder();
+		final ReportItem.Builder reportItemBuilder = ReportItem.builder();
 
 		/*
 		 * Count the number of groups of each size that exist for each group type
@@ -127,12 +127,14 @@ public final class GroupPopulationReport extends PeriodicReport {
 	}
 
 	@Override
-	public void handleGroupMembershipAddition(ObservableEnvironment observableEnvironment, GroupId groupId, PersonId personId) {
+	public void handleGroupMembershipAddition(ObservableEnvironment observableEnvironment, GroupId groupId,
+			PersonId personId) {
 		setCurrentReportingPeriod(observableEnvironment);
 	}
 
 	@Override
-	public void handleGroupMembershipRemoval(ObservableEnvironment observableEnvironment, GroupId groupId, PersonId personId) {
+	public void handleGroupMembershipRemoval(ObservableEnvironment observableEnvironment, GroupId groupId,
+			PersonId personId) {
 		setCurrentReportingPeriod(observableEnvironment);
 	}
 

@@ -5,7 +5,6 @@ import java.util.List;
 
 import gcm.scenario.Scenario;
 import gcm.util.MultiKey;
-import gcm.util.MultiKey.MultiKeyBuilder;
 
 /**
  * 
@@ -69,7 +68,7 @@ public final class ExperimentTestVariable {
 	}
 
 	private static MultiKey getAppendedMultiKey(MultiKey multiKey, Object value) {
-		MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+		MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 		for (Object key : multiKey.getKeys()) {
 			multiKeyBuilder.addKey(key);
 		}
@@ -79,7 +78,7 @@ public final class ExperimentTestVariable {
 	}
 
 	MultiKey getActualMultiKey(MultiKey baseKey, Scenario scenario) {
-		MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+		MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 		for (Object key : baseKey.getKeys()) {
 			multiKeyBuilder.addKey(key);
 		}

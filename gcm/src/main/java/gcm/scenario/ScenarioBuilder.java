@@ -39,7 +39,7 @@ public interface ScenarioBuilder {
 	 *             the batch id was previously added
 	 * 
 	 */
-	public void addBatch(final BatchId batchId, MaterialId materialId, double amount, MaterialsProducerId materialsProducerId);
+	public ScenarioBuilder addBatch(final BatchId batchId, MaterialId materialId, double amount, MaterialsProducerId materialsProducerId);
 
 	/**
 	 * Associates a batch with a stage
@@ -61,7 +61,7 @@ public interface ScenarioBuilder {
 	 *             batch is already associated any stage
 	 * 
 	 */
-	public void addBatchToStage(final StageId stageId, final BatchId batchId);
+	public ScenarioBuilder addBatchToStage(final StageId stageId, final BatchId batchId);
 
 	/**
 	 * Adds a compartment id to the scenario. This identifier informs the
@@ -79,7 +79,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#NULL_COMPONENT_CLASS} if the
 	 *             comparmentComponentClass is null
 	 */
-	public void addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comparmentComponentClass);
+	public ScenarioBuilder addCompartmentId(final CompartmentId compartmentId, Class<? extends Component> comparmentComponentClass);
 
 	/**
 	 * Adds the global component id to the scenario. This identifier informs the
@@ -97,7 +97,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#NULL_COMPONENT_CLASS} if the
 	 *             globalComponentClass is null
 	 */
-	public void addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass);
+	public ScenarioBuilder addGlobalComponentId(final GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass);
 
 	/**
 	 * Adds a group to the scenario with the given group type id.
@@ -114,7 +114,7 @@ public interface ScenarioBuilder {
 	 *             group type id is unknown
 	 * 
 	 */
-	public void addGroup(final GroupId groupId, final GroupTypeId groupTypeId);
+	public ScenarioBuilder addGroup(final GroupId groupId, final GroupTypeId groupTypeId);
 
 	/**
 	 * Adds a group type identifier to the scenario.
@@ -126,7 +126,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ADDED_IDENTIFIER} if
 	 *             the group type was previously added
 	 */
-	public void addGroupTypeId(final GroupTypeId groupTypeId);
+	public ScenarioBuilder addGroupTypeId(final GroupTypeId groupTypeId);
 
 	/**
 	 * Adds a material to the scenario.
@@ -139,7 +139,7 @@ public interface ScenarioBuilder {
 	 *             the material was previously added
 	 *
 	 */
-	public void addMaterial(final MaterialId materialId);
+	public ScenarioBuilder addMaterial(final MaterialId materialId);
 
 	/**
 	 * Adds a random number generator id to the scenario.
@@ -152,7 +152,7 @@ public interface ScenarioBuilder {
 	 *             the random number generator id was previously added
 	 *
 	 */
-	public void addRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId);
+	public ScenarioBuilder addRandomNumberGeneratorId(final RandomNumberGeneratorId randomNumberGeneratorId);
 
 	/**
 	 * Adds a materials producer component id to the scenario. This identifier
@@ -170,7 +170,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#NULL_COMPONENT_CLASS} if the
 	 *             materialProducerComponentClass is null
 	 */
-	public void addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass);
+	public ScenarioBuilder addMaterialsProducerId(final MaterialsProducerId materialsProducerId, Class<? extends Component> materialProducerComponentClass);
 
 	/**
 	 * Adds a person to the simulation in the given region and compartment.
@@ -191,7 +191,7 @@ public interface ScenarioBuilder {
 	 *             the person was previously added
 	 *
 	 */
-	public void addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId);
+	public ScenarioBuilder addPerson(final PersonId personId, final RegionId regionId, final CompartmentId compartmentId);
 
 	/**
 	 * Adds a person to a group in the scenario
@@ -209,7 +209,7 @@ public interface ScenarioBuilder {
 	 *             the person was previously added to the group
 	 *
 	 */
-	public void addPersonToGroup(final GroupId groupId, final PersonId personId);
+	public ScenarioBuilder addPersonToGroup(final GroupId groupId, final PersonId personId);
 
 	/**
 	 * Adds a region component id to the scenario. This identifier informs the
@@ -227,7 +227,7 @@ public interface ScenarioBuilder {
 	 *             regionComponentClass is null
 	 * 
 	 */
-	public void addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass);
+	public ScenarioBuilder addRegionId(final RegionId regionId, Class<? extends Component> regionComponentClass);
 
 	/**
 	 * Adds a resource to the scenario
@@ -239,7 +239,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the resource was previously added
 	 */
-	public void addResource(final ResourceId resourceId);
+	public ScenarioBuilder addResource(final ResourceId resourceId);
 
 	/**
 	 * Adds a stage to the scenario for the given materials producer with the
@@ -256,7 +256,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ADDED_IDENTIFIER} if
 	 *             the stage id was previously added
 	 */
-	public void addStage(final StageId stageId, boolean offered, MaterialsProducerId materialsProducerId);
+	public ScenarioBuilder addStage(final StageId stageId, boolean offered, MaterialsProducerId materialsProducerId);
 
 	/**
 	 * Returns the scenario instance and resets this builder's state.
@@ -285,7 +285,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_BATCH_PROPERTY_DEFINITION}
 	 *             if the batch property was previously defined
 	 */
-	public void defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineBatchProperty(final MaterialId materialId, final BatchPropertyId batchPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a compartment property.
@@ -302,7 +302,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_COMPARTMENT_PROPERTY_DEFINITION}
 	 *             if the compartment property was previously defined
 	 */
-	public void defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineCompartmentProperty(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a global property.
@@ -316,7 +316,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_GLOBAL_PROPERTY_DEFINITION}
 	 *             if the global property was previously defined
 	 */
-	public void defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineGlobalProperty(final GlobalPropertyId globalPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a group property.
@@ -334,7 +334,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_GROUP_PROPERTY_DEFINITION}
 	 *             if the group property was previously defined
 	 */
-	public void defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineGroupProperty(final GroupTypeId groupTypeId, final GroupPropertyId groupPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a materials producer property.
@@ -348,7 +348,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_MATERIALS_PRODUCER_PROPERTY_DEFINITION}
 	 *             if the materials producer property was previously defined
 	 */
-	public void defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineMaterialsProducerProperty(final MaterialsProducerPropertyId materialsProducerPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a person property.
@@ -362,7 +362,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_PERSON_PROPERTY_DEFINITION}
 	 *             if the person property was previously defined
 	 */
-	public void definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder definePersonProperty(final PersonPropertyId personPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a regional property.
@@ -376,7 +376,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE}
 	 *             if the region property was previously defined
 	 */
-	public void defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineRegionProperty(final RegionPropertyId regionPropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Defines a resource property.
@@ -394,7 +394,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#DUPLICATE_RESOURCE_PROPERTY_DEFINITION}
 	 *             if the resource property was previously defined
 	 */
-	public void defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition);
+	public ScenarioBuilder defineResourceProperty(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final PropertyDefinition propertyDefinition);
 
 	/**
 	 * Sets a batch property value for the given batch.
@@ -416,7 +416,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the batch property value was previously set
 	 */
-	public void setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue);
+	public ScenarioBuilder setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue);
 
 	/**
 	 * Sets the mapping option for all compartments. Defaulted to NONE.
@@ -427,7 +427,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the mapOption was previously set
 	 */
-	public void setCompartmentMapOption(final MapOption mapOption);
+	public ScenarioBuilder setCompartmentMapOption(final MapOption mapOption);
 
 	/**
 	 * Sets a compartment property value for the given property.
@@ -449,7 +449,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the compartment property value was previously set
 	 */
-	public void setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue);
+	public ScenarioBuilder setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue);
 
 	/**
 	 * Sets a global property value for the given property.
@@ -469,7 +469,7 @@ public interface ScenarioBuilder {
 	 *
 	 */
 
-	public void setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue);
+	public ScenarioBuilder setGlobalPropertyValue(final GlobalPropertyId globalPropertyId, final Object globalPropertyValue);
 
 	/**
 	 * Sets the group property value for the given group
@@ -490,7 +490,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the group property value was previously set
 	 */
-	public void setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue);
+	public ScenarioBuilder setGroupPropertyValue(final GroupId groupId, final GroupPropertyId groupPropertyId, final Object groupPropertyValue);
 
 	/**
 	 * Sets a materials producer property value for the given property.
@@ -512,7 +512,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the materials producer property value was previously set
 	 */
-	public void setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
+	public ScenarioBuilder setMaterialsProducerPropertyValue(final MaterialsProducerId materialsProducerId, final MaterialsProducerPropertyId materialsProducerPropertyId,
 			final Object materialsProducerPropertyValue);
 
 	/**
@@ -533,7 +533,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the materials producer resource level was previously set
 	 */
-	public void setMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount);
+	public ScenarioBuilder setMaterialsProducerResourceLevel(final MaterialsProducerId materialsProducerId, final ResourceId resourceId, final long amount);
 
 	/**
 	 * Sets the person compartment time arrival tracking policy, which is
@@ -546,7 +546,7 @@ public interface ScenarioBuilder {
 	 *             the compartment arrival TimeTrackingPolicy was previously set
 	 *
 	 */
-	public void setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes);
+	public ScenarioBuilder setPersonCompartmentArrivalTracking(final TimeTrackingPolicy trackPersonCompartmentArrivalTimes);
 
 	/**
 	 * Sets a person property value for the given property.
@@ -569,7 +569,7 @@ public interface ScenarioBuilder {
 	 *             the person property value was previously set
 	 *
 	 */
-	public void setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue);
+	public ScenarioBuilder setPersonPropertyValue(final PersonId personId, final PersonPropertyId personPropertyId, final Object personPropertyValue);
 
 	/**
 	 * Sets the person region time arrival tracking policy, which is defaulted
@@ -582,7 +582,7 @@ public interface ScenarioBuilder {
 	 *             the region arrival TimeTrackingPolicy was previously set
 	 *
 	 */
-	public void setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes);
+	public ScenarioBuilder setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes);
 
 	/**
 	 * Sets a person's initial resource level.
@@ -602,7 +602,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the person resource level was previously set
 	 */
-	public void setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount);
+	public ScenarioBuilder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount);
 
 	/**
 	 * Sets the mapping option for all regions. Defaulted to NONE.
@@ -613,7 +613,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the mapOption was previously set
 	 */
-	public void setRegionMapOption(final MapOption mapOption);
+	public ScenarioBuilder setRegionMapOption(final MapOption mapOption);
 
 	/**
 	 * Sets a region property value for the given property.
@@ -635,7 +635,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the region property value was previously set
 	 */
-	public void setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue);
+	public ScenarioBuilder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue);
 
 	/**
 	 * Sets a region's initial resource level.
@@ -654,7 +654,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the region resource level was previously set
 	 */
-	public void setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount);
+	public ScenarioBuilder setRegionResourceLevel(final RegionId regionId, final ResourceId resourceId, final long amount);
 
 	/**
 	 * Sets a resource property value for the given property.
@@ -676,7 +676,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the resource property value was previously set
 	 */
-	public void setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue);
+	public ScenarioBuilder setResourcePropertyValue(final ResourceId resourceId, final ResourcePropertyId resourcePropertyId, final Object resourcePropertyValue);
 
 	/**
 	 * Sets the resource time tracking policy for resource assignments to people
@@ -691,7 +691,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the resource TimeTrackingPolicy was previously set
 	 */
-	public void setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes);
+	public ScenarioBuilder setResourceTimeTracking(final ResourceId resourceId, final TimeTrackingPolicy trackValueAssignmentTimes);
 
 	/**
 	 * Sets the scenario's id
@@ -704,7 +704,7 @@ public interface ScenarioBuilder {
 	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
 	 *             the scenario id was previously set
 	 */
-	public void setScenarioId(final ScenarioId scenarioId);
+	public ScenarioBuilder setScenarioId(final ScenarioId scenarioId);
 
 	/**
 	 * Sets the suggested population size size
@@ -715,6 +715,6 @@ public interface ScenarioBuilder {
 	 *             is zero.
 	 * 
 	 */
-	public void setSuggestedPopulationSize(int suggestedPopulationSize);
+	public ScenarioBuilder setSuggestedPopulationSize(int suggestedPopulationSize);
 
 }

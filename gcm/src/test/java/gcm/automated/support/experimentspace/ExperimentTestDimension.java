@@ -7,7 +7,6 @@ import java.util.Set;
 
 import gcm.scenario.Scenario;
 import gcm.util.MultiKey;
-import gcm.util.MultiKey.MultiKeyBuilder;
 
 /**
  * 
@@ -77,7 +76,7 @@ public final class ExperimentTestDimension {
 				Object value = experimentTestVariable.getValue(i);
 				values.add(value);
 			}
-			MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
+			MultiKey.Builder multiKeyBuilder = MultiKey.builder();
 			for (MultiKey baseKey : baseKeys) {
 				for (Object key : baseKey.getKeys()) {
 					multiKeyBuilder.addKey(key);

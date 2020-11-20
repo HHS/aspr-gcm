@@ -34,9 +34,15 @@ public final class SimulationStatusItem implements SimulationOutputItem {
 
 		private boolean successful;
 	}
+	
+	public static Builder builder() {
+		return new Builder();
+	}
 
 	@NotThreadSafe
-	public static class SimulationStatusItemBuilder {
+	public static class Builder {
+		
+		private Builder() {}
 
 		private Scaffold scaffold = new Scaffold();
 
@@ -79,12 +85,13 @@ public final class SimulationStatusItem implements SimulationOutputItem {
 		 * @throws RuntimeException
 		 *             if the scenario id is null
 		 */
-		public void setScenarioId(ScenarioId scenarioId) {
+		public Builder setScenarioId(ScenarioId scenarioId) {
 			if (scenarioId == null) {
 				throw new RuntimeException("null scenario id");
 			}
 
 			scaffold.scenarioId = scenarioId;
+			return this;
 		}
 
 		/**
@@ -93,11 +100,12 @@ public final class SimulationStatusItem implements SimulationOutputItem {
 		 * @throws RuntimeException
 		 *             if the replication id is null
 		 */
-		public void setReplicationId(ReplicationId replicationId) {
+		public Builder setReplicationId(ReplicationId replicationId) {
 			if (replicationId == null) {
 				throw new RuntimeException("null replication id");
 			}
 			scaffold.replicationId = replicationId;
+			return this;
 		}
 
 		/**
@@ -106,18 +114,20 @@ public final class SimulationStatusItem implements SimulationOutputItem {
 		 * @throws RuntimeException
 		 *             if the duration is negative
 		 */
-		public void setDurartion(double duration) {
+		public Builder setDurartion(double duration) {
 			if (duration < 0) {
 				throw new RuntimeException("negative duration");
 			}
 			scaffold.duration = duration;
+			return this;
 		}
 
 		/**
 		 * Sets the success state
 		 */
-		public void setSuccessful(boolean successful) {
+		public Builder setSuccessful(boolean successful) {
 			scaffold.successful = successful;
+			return this;
 		}
 	}
 

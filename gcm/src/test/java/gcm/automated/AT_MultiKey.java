@@ -1,4 +1,5 @@
 package gcm.automated;
+
 import static gcm.automated.support.ExceptionAssertion.assertException;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import org.junit.jupiter.api.Test;
 
 import gcm.util.MultiKey;
-import gcm.util.MultiKey.MultiKeyBuilder;
 import gcm.util.annotations.UnitTest;
 import gcm.util.annotations.UnitTestConstructor;
 import gcm.util.annotations.UnitTestMethod;
@@ -22,13 +22,12 @@ import gcm.util.annotations.UnitTestMethod;
  */
 @UnitTest(target = MultiKey.class)
 public class AT_MultiKey {
-	
-	
+
 	/**
 	 * Tests the equals contract for {@link AT_MultiKey#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = {Object.class})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEqualsContract() {
 		final MultiKey multiKey1 = new MultiKey(3, "B", false);
 		final MultiKey multiKey2 = new MultiKey(3, "B", false);
@@ -87,7 +86,7 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#getKey(int)}
 	 */
 	@Test
-	@UnitTestMethod(name = "getKey", args = {int.class})
+	@UnitTestMethod(name = "getKey", args = { int.class })
 	public void testGetKey() {
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
@@ -110,10 +109,9 @@ public class AT_MultiKey {
 		assertEquals(3, multiKey.size());
 
 		// precondition tests
-		assertException(() -> new MultiKey(1, 2, 3).getKey(3),ArrayIndexOutOfBoundsException.class);
-		
-	}
+		assertException(() -> new MultiKey(1, 2, 3).getKey(3), ArrayIndexOutOfBoundsException.class);
 
+	}
 
 	/**
 	 * Tests {@link MultiKey#getKeys()}
@@ -138,18 +136,19 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey.MultiKeyBuilder#MultiKeyBuilder()}
 	 */
 	@Test
-	@UnitTestConstructor(target = MultiKeyBuilder.class, args= {})
+	@UnitTestConstructor(target = MultiKey.Builder.class, args = {})
 	public void testMultiKeyBuilder_Constructor() {
 		/*
-		 * We will show that the MultiKeyBuilder produces the expected MultiKey
-		 * values and is reusable.
+		 * We will show that the MultiKeyBuilder produces the expected MultiKey values
+		 * and is reusable.
 		 */
 
-		final MultiKeyBuilder multiKeyBuilder = new MultiKeyBuilder();
-		multiKeyBuilder.addKey(3);
-		multiKeyBuilder.addKey("B");
-		multiKeyBuilder.addKey(false);
-		MultiKey builderMultiKey = multiKeyBuilder.build();
+		MultiKey builderMultiKey = MultiKey.builder()//
+				.addKey(3)//
+				.addKey("B")//
+				.addKey(false)//
+				.build();//
+
 		assertEquals(builderMultiKey.getKey(0), new Integer(3));
 		assertEquals(builderMultiKey.getKey(1), "B");
 		assertEquals(builderMultiKey.getKey(2), false);
@@ -157,11 +156,11 @@ public class AT_MultiKey {
 		MultiKey constructorMultiKey = new MultiKey(3, "B", false);
 		assertEquals(constructorMultiKey, builderMultiKey);
 
-		multiKeyBuilder.addKey("X");
-		multiKeyBuilder.addKey("X");
-		multiKeyBuilder.addKey(17);
-		multiKeyBuilder.addKey(44);
-		builderMultiKey = multiKeyBuilder.build();
+		builderMultiKey = MultiKey.builder().addKey("X")//
+				.addKey("X")//
+				.addKey(17)//
+				.addKey(44)//
+				.build();//
 		assertEquals(builderMultiKey.getKey(0), "X");
 		assertEquals(builderMultiKey.getKey(1), "X");
 		assertEquals(builderMultiKey.getKey(2), new Integer(17));
@@ -170,10 +169,12 @@ public class AT_MultiKey {
 		constructorMultiKey = new MultiKey("X", "X", 17, 44);
 		assertEquals(constructorMultiKey, builderMultiKey);
 
-		multiKeyBuilder.addKey("A");
-		multiKeyBuilder.addKey(2.75);
-		multiKeyBuilder.addKey(true);
-		builderMultiKey = multiKeyBuilder.build();
+		builderMultiKey = MultiKey.builder()//
+				.addKey("A")//
+				.addKey(2.75)//
+				.addKey(true)//
+				.build();//
+		
 		assertEquals(builderMultiKey.getKey(0), "A");
 		assertEquals(builderMultiKey.getKey(1), new Double(2.75));
 		assertEquals(builderMultiKey.getKey(2), true);
@@ -182,34 +183,33 @@ public class AT_MultiKey {
 		assertEquals(constructorMultiKey, builderMultiKey);
 
 	}
-	
+
 	/**
 	 * Tests {@link MultiKey.MultiKeyBuilder#addKey(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "addKey", target = MultiKeyBuilder.class, args= {Object.class})
+	@UnitTestMethod(name = "addKey", target = MultiKey.Builder.class, args = { Object.class })
 	public void testMultiKeyBuilder_AddKey() {
-		//covered by testMultiKeyBuilder_Constructor
+		// covered by testMultiKeyBuilder_Constructor
 	}
 
 	/**
 	 * Tests {@link MultiKey.MultiKeyBuilder#build()}
 	 */
 	@Test
-	@UnitTestMethod(name = "build", target = MultiKeyBuilder.class, args= {})
+	@UnitTestMethod(name = "build", target = MultiKey.Builder.class, args = {})
 	public void testMultiKeyBuilder_Build() {
-		//covered by testMultiKeyBuilder_Constructor
+		// covered by testMultiKeyBuilder_Constructor
 	}
 
 	/**
 	 * Tests {@link MultiKey#MultiKey(Object...)}
 	 */
 	@Test
-	@UnitTestConstructor(args = {Object[].class})
+	@UnitTestConstructor(args = { Object[].class })
 	public void testConstructor() {
 		/*
-		 * We will show that the MultiKey constructor produces the expected
-		 * MultiKey
+		 * We will show that the MultiKey constructor produces the expected MultiKey
 		 */
 
 		MultiKey multiKey = new MultiKey(3, "B", false);
@@ -257,7 +257,7 @@ public class AT_MultiKey {
 
 	/**
 	 * Tests {@link MultiKey#toKeyString()}
-	 */	
+	 */
 	@Test
 	@UnitTestMethod(name = "toKeyString", args = {})
 	public void testToKeyString() {
@@ -290,7 +290,7 @@ public class AT_MultiKey {
 		assertEquals("D", multiKey.toTabString());
 
 		multiKey = new MultiKey(4.5, 12);
-		
+
 		assertEquals("4.5\t12", multiKey.toTabString());
 
 		multiKey = new MultiKey(3, "B", false);
@@ -302,7 +302,7 @@ public class AT_MultiKey {
 
 	/**
 	 * Tests {@link MultiKey#toString()}
-	 */	
+	 */
 	@Test
 	@UnitTestMethod(name = "toString", args = {})
 	public void testToString() {
@@ -326,32 +326,32 @@ public class AT_MultiKey {
 	 * Tests {@link MultiKey#equals(Object)}
 	 */
 	@Test
-	@UnitTestMethod(name = "equals", args = {Object.class})
+	@UnitTestMethod(name = "equals", args = { Object.class })
 	public void testEquals() {
 		MultiKey multiKey1 = new MultiKey(3, "B", false);
 		MultiKey multiKey2 = new MultiKey(3, "B", false);
 		MultiKey multiKey3 = new MultiKey(3, "A", false);
 		MultiKey multiKey4 = new MultiKey(3, "b", false);
-		
-		//reflexive
+
+		// reflexive
 		assertEquals(multiKey1, multiKey1);
 		assertEquals(multiKey2, multiKey2);
 		assertEquals(multiKey3, multiKey3);
 		assertEquals(multiKey4, multiKey4);
-		
-		//symmetric
+
+		// symmetric
 		assertEquals(multiKey1, multiKey2);
 		assertEquals(multiKey2, multiKey1);
-		
-		//transitive -- no need
-		
-		//unequal 
+
+		// transitive -- no need
+
+		// unequal
 		assertNotEquals(multiKey1, multiKey3);
 		assertNotEquals(multiKey1, multiKey4);
 		assertNotEquals(multiKey2, multiKey3);
 		assertNotEquals(multiKey2, multiKey4);
 		assertNotEquals(multiKey3, multiKey4);
-		
+
 	}
 
 	/**

@@ -39,7 +39,8 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 		private final Experiment regularExperiment;
 		private final boolean displayExperimentColumnsInReports;
 
-		public LineWriter(final Path path, final Experiment regularExperiment, final boolean displayExperimentColumnsInReports, final ExperimentProgressLog experimentProgressLog) {
+		public LineWriter(final Path path, final Experiment regularExperiment,
+				final boolean displayExperimentColumnsInReports, final ExperimentProgressLog experimentProgressLog) {
 			super(path);
 
 			this.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
@@ -96,7 +97,8 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 			if (displayExperimentColumnsInReports) {
 				for (int i = 0; i < regularExperiment.getExperimentFieldCount(); i++) {
 					sb.append("\t");
-					final Object experimentFieldValue = regularExperiment.getExperimentFieldValue(reportItem.getScenarioId(), i);
+					final Object experimentFieldValue = regularExperiment
+							.getExperimentFieldValue(reportItem.getScenarioId(), i);
 					sb.append(experimentFieldValue);
 				}
 			}
@@ -108,7 +110,7 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 			return sb.toString();
 		}
 	}
-	
+
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -120,23 +122,24 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 	 *
 	 */
 	public static class Builder {
-		
-		private Builder() {}
+
+		private Builder() {
+		}
 
 		private Scaffold scaffold = new Scaffold();
 
 		/**
-		 * Sets the path for the Experiment Column Report. Setting this path to
-		 * null turns off the report. Default value is null.
+		 * Sets the path for the Experiment Column Report. Setting this path to null
+		 * turns off the report. Default value is null.
 		 */
-		public Builder setExperimentColumnReport(final Path path) {			
+		public Builder setExperimentColumnReport(final Path path) {
 			scaffold.experimentColumnReportPath = path;
 			return this;
 		}
 
 		/**
-		 * Adds the experiment reference to the NIOReportItemHandler. Required
-		 * if the Experiment Column Report is turned on. Default value is null.
+		 * Adds the experiment reference to the NIOReportItemHandler. Required if the
+		 * Experiment Column Report is turned on. Default value is null.
 		 */
 		public Builder setRegularExperiment(final Experiment experiment) {
 			scaffold.experiment = experiment;
@@ -147,12 +150,13 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 		 * Add a report by class reference to the NIOReportItemHandler
 		 * 
 		 * @throws RuntimeException
-		 *             <li>if the path is null
-		 *             <li>if the report class is null
-		 *             <li>if the initialization data is null
-		 *             <li>if the initialization contains a null
+		 *                          <li>if the path is null
+		 *                          <li>if the report class is null
+		 *                          <li>if the initialization data is null
+		 *                          <li>if the initialization contains a null
 		 */
-		public Builder addReport(final Path path, final Class<? extends Report> reportClass, final Set<Object> initializationData) {
+		public Builder addReport(final Path path, final Class<? extends Report> reportClass,
+				final Set<Object> initializationData) {
 			if (path == null) {
 				throw new RuntimeException("null path");
 			}
@@ -175,8 +179,8 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 		}
 
 		/**
-		 * Builds the NIOReportItemHandlerImpl from the information gathered and
-		 * resets the internal state of this builder.
+		 * Builds the NIOReportItemHandlerImpl from the information gathered and resets
+		 * the internal state of this builder.
 		 */
 		public NIOReportItemHandler build() {
 			try {
@@ -187,8 +191,7 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 		}
 
 		/**
-		 * Sets the display of experiment columns in all reports. Default value
-		 * is true.
+		 * Sets the display of experiment columns in all reports. Default value is true.
 		 */
 		public Builder setDisplayExperimentColumnsInReports(final boolean displayExperimentColumnsInReports) {
 			scaffold.displayExperimentColumnsInReports = displayExperimentColumnsInReports;
@@ -325,7 +328,9 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 	public void handle(final OutputItem outputItem) {
 		final ReportItem reportItem = (ReportItem) outputItem;
 		final LineWriter lineWriter = lineWriterMap.get(reportItem.getReportType());
-		lineWriter.handle(reportItem);
+		if (lineWriter != null) {
+			lineWriter.handle(reportItem);
+		}
 	}
 
 	@Override
@@ -350,7 +355,8 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 			for (final Class<? extends Report> reportClass : reportMap.keySet()) {
 				final ReportRec reportRec = reportMap.get(reportClass);
 				final Path path = reportRec.path;
-				final LineWriter lineWriter = new LineWriter(path, experiment, displayExperimentColumnsInReports, experimentProgressLog);
+				final LineWriter lineWriter = new LineWriter(path, experiment, displayExperimentColumnsInReports,
+						experimentProgressLog);
 				lineWriter.openExperiment(experimentProgressLog);
 				lineWriterMap.put(reportClass, lineWriter);
 			}
@@ -369,7 +375,8 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 
 	private void writeLines(final List<String> lines) {
 		try {
-			Files.write(experimentColumnReportPath, lines, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+			Files.write(experimentColumnReportPath, lines, StandardOpenOption.CREATE,
+					StandardOpenOption.TRUNCATE_EXISTING);
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}

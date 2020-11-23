@@ -42,7 +42,7 @@ import gcm.util.annotations.TestStatus;
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class ReportsManagerImpl extends BaseElement implements ReportsManager {
-
+	private final Set<Class<? extends Report>> reportClasses = new LinkedHashSet<>();
 	private final Map<Report, Set<Object>> reports = new LinkedHashMap<>();
 
 	private ObservableEnvironment observableEnvironment;
@@ -72,6 +72,8 @@ public final class ReportsManagerImpl extends BaseElement implements ReportsMana
 		 * proxy-wrapped instance of each report so that profile reporting will
 		 * cover the details of the reports.
 		 */
+		reportClasses.addAll(reportItemHandler.getReportClasses());
+		
 		if (context.produceProfileItems()) {
 			ProfileManager profileManager = context.getProfileManager();
 			for (Report report : reportItemHandler.getReports()) {
@@ -504,6 +506,11 @@ public final class ReportsManagerImpl extends BaseElement implements ReportsMana
 				report.handleUnStagedBatch(observableEnvironment, batchId, stageId);
 			}
 		}
+	}
+
+	@Override
+	public boolean isActiveReport(Class<? extends Report> reportClass) {
+		return reportClasses.contains(reportClass);
 	}
 
 }

@@ -34,5 +34,10 @@ public interface ReportItemHandler extends OutputItemHandler {
 	 * to be in a thread-contained life cycle.
 	 */
 	public Set<Report> getReports();
+	
+	/**
+	 * Returns the set of classes that form the reports
+	 */
+	public Set<Class<? extends Report>> getReportClasses();
 
 }

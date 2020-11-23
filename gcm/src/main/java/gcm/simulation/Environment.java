@@ -9,6 +9,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import gcm.components.Component;
 import gcm.output.OutputItem;
+import gcm.output.reports.Report;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -3655,5 +3656,10 @@ public interface Environment extends Element {
 	 * 
 	 */
 	public Optional<PersonId> samplePartition(final Object key, PartitionSampler partitionSampler);
+	
+	/**
+	 * Returns true if and only if the report associated with the given report class is active
+	 */
+	public boolean isActiveReport(Class<? extends Report> reportClass);
 
 }

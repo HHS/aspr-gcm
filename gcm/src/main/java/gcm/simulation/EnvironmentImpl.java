@@ -12,6 +12,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 import gcm.components.Component;
 import gcm.output.OutputItem;
+import gcm.output.reports.Report;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
 import gcm.scenario.CompartmentId;
@@ -132,6 +133,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 	private ProfileManager profileManager;
 
 	private MaterialsManager materialsManager;
+	
+	private ReportsManager reportsManager;
 
 	private ResourceManager resourceManager;
 
@@ -1644,6 +1647,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		componentManager = context.getComponentManager();
 		eventManager = context.getEventManager();		
 		partitionManager = context.getPartitionManager();
+		reportsManager = context.getReportsManager();
 
 		observableEnvironment = context.getObservableEnvironment();
 		propertyDefinitionManager = context.getPropertyDefinitionsManager();
@@ -4064,6 +4068,11 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			externalAccessManager.releaseWriteAccess();
 		}
 
+	}
+
+	@Override
+	public boolean isActiveReport(Class<? extends Report> reportClass) {
+		return reportsManager.isActiveReport(reportClass);		
 	}
 
 //	public long getMemSizeOfPartition(Object partitionId) {

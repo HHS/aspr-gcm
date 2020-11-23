@@ -3,6 +3,7 @@ package gcm.simulation;
 import gcm.output.reports.BatchInfo;
 import gcm.output.reports.GroupInfo;
 import gcm.output.reports.PersonInfo;
+import gcm.output.reports.Report;
 import gcm.output.reports.StageInfo;
 import gcm.output.reports.StateChange;
 import gcm.scenario.BatchId;
@@ -481,5 +482,8 @@ public interface ReportsManager extends Element {
 	 *
 	 */
 	public void handleUnStagedBatch(final BatchId batchId, final StageId stageId);
+	
+	
+	public boolean isActiveReport(Class<? extends Report> reportClass);
 
 }

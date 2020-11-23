@@ -382,4 +382,11 @@ public final class NIOReportItemHandler implements ReportItemHandler {
 		}
 	}
 
+	@Override
+	public Set<Class<? extends Report>> getReportClasses() {
+		synchronized (lineWriterMap) {
+			return new LinkedHashSet<>(reportMap.keySet());
+		}
+	}
+
 }

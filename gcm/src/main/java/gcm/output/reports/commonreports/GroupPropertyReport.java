@@ -85,7 +85,7 @@ public final class GroupPropertyReport extends PeriodicReport {
 		private Map<GroupTypeId, Set<GroupPropertyId>> propertyIdMap = new LinkedHashMap<>();
 	}
 	
-	public GroupPropertyReportSettingsBuilder builder() {
+	public static GroupPropertyReportSettingsBuilder settingBuilder() {
 		return new GroupPropertyReportSettingsBuilder();
 	}
 

@@ -10,24 +10,23 @@ import gcm.util.annotations.TestStatus;
  * @author Shawn Hatch
  *
  */
-@Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class ExternalAccessManagerImpl extends BaseElement implements ExternalAccessManager{
+@Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
+public final class ExternalAccessManagerImpl extends BaseElement implements ExternalAccessManager {
 
 	/*
-	 * When true, all writes are blocked. This is used to turn off all writing
-	 * of data from model contributed classes during the early stage of
-	 * initialization and after all event are processed and the simulation is
-	 * complete. Note that this does not represent the blocking due to an
-	 * ongoing write.
+	 * When true, all writes are blocked. This is used to turn off all writing of
+	 * data from model contributed classes during the early stage of initialization
+	 * and after all events are processed and the simulation is complete. Note that
+	 * this does not represent the blocking due to an ongoing write.
 	 */
 	private boolean globalWriteAccessLocked;
 
 	/*
 	 * When true, all reads are blocked. This is used to turn off all reading of
-	 * data from model contributed classes during the early stage of
-	 * initialization and during most mutations. Mutations that require the
-	 * participation of a model contributed class such as a filter may opt to
-	 * not block reads in this way.
+	 * data from model contributed classes during the early stage of initialization
+	 * and during most mutations. Mutations that require the participation of a
+	 * model contributed class such as a weighting function or filter may opt to not
+	 * block reads in this way.
 	 */
 	private boolean globalReadAccessLocked;
 
@@ -43,8 +42,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Releases read access for an environment method.
 	 * 
-	 * @throws RuntimeException
-	 *             if there are no ongoing reads
+	 * @throws RuntimeException if there are no ongoing reads
 	 */
 	@Override
 	public void releaseReadAccess() {
@@ -58,8 +56,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Releases write access for an environment method.
 	 * 
-	 * @throws RuntimeException
-	 *             if there is no ongoing write
+	 * @throws RuntimeException if there is no ongoing write
 	 */
 	@Override
 	public void releaseWriteAccess() {
@@ -73,13 +70,13 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Acquires read access for an environment method.
 	 * 
-	 * @throws RuntimeException
-	 *             if global read access is locked
+	 * @throws RuntimeException if global read access is locked
 	 */
 	@Override
 	public void acquireReadAccess() {
 		if (globalReadAccessLocked) {
-			throw new RuntimeException("A contributed element is attempting to read data while read/write permission is blocked");
+			throw new RuntimeException(
+					"A contributed element is attempting to read data while read/write permission is blocked");
 		}
 		readDepth++;
 	}
@@ -87,9 +84,8 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Acquires write access for an environment method.
 	 * 
-	 * @throws RuntimeException
-	 *             if either global write access is locked, or there is an
-	 *             ongoing write or an ongoing read
+	 * @throws RuntimeException if either global write access is locked, or there is
+	 *                          an ongoing write or an ongoing read
 	 */
 	@Override
 	public void acquireWriteAccess() {
@@ -97,9 +93,11 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 			isWriting = true;
 		} else {
 			if (globalWriteAccessLocked) {
-				throw new RuntimeException("A contributed element is attempting to write data while read/write permission is blocked");
+				throw new RuntimeException(
+						"A contributed element is attempting to write data while read/write permission is blocked");
 			} else {
-				throw new RuntimeException("A contributed element is attempting to write data while write permission is blocked due to an ongoing read or write");
+				throw new RuntimeException(
+						"A contributed element is attempting to write data while write permission is blocked due to an ongoing read or write");
 			}
 		}
 	}
@@ -107,8 +105,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Stops all writes coming through the Environment.
 	 * 
-	 * @throws RuntimeException
-	 *             if global write access is already locked
+	 * @throws RuntimeException if global write access is already locked
 	 */
 	@Override
 	public void acquireGlobalWriteAccessLock() {
@@ -122,8 +119,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	 * Allows all writes coming through the Environment, unless blocked by an
 	 * ongoing write or read.
 	 * 
-	 * @throws RuntimeException
-	 *             if the global write access lock is not locked
+	 * @throws RuntimeException if the global write access lock is not locked
 	 */
 	@Override
 	public void releaseGlobalWriteAccessLock() {
@@ -137,8 +133,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	/**
 	 * Stops all reads coming through the Environment.
 	 * 
-	 * @throws RuntimeException
-	 *             if global read access is locked
+	 * @throws RuntimeException if global read access is locked
 	 */
 	@Override
 	public void acquireGlobalReadAccessLock() {
@@ -149,11 +144,10 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 	}
 
 	/**
-	 * Allows all reads coming through the Environment, unless blocked by an
-	 * ongoing write.
+	 * Allows all reads coming through the Environment, unless blocked by an ongoing
+	 * write.
 	 * 
-	 * @throws RuntimeException
-	 *             if global read access is not locked
+	 * @throws RuntimeException if global read access is not locked
 	 */
 	@Override
 	public void releaseGlobalReadAccessLock() {
@@ -162,6 +156,5 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 		}
 		globalReadAccessLocked = false;
 	}
-
 
 }

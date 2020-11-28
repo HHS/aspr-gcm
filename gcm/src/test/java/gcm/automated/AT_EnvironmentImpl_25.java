@@ -87,59 +87,7 @@ public class AT_EnvironmentImpl_25 {
 //		System.out.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
-	/*
-	 * Utility class for getting random people from population indices
-	 */
-//	private static class Counter {
-//
-//		public Counter(int count) {
-//			this.count = count;
-//		}
-//
-//		int count;
-//	}
-
-//	private static double getWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
-//		if (!labelSetInfo.getCompartmentLabel().isPresent()) {
-//			throw new RuntimeException("no compartment label");
-//		}
-//		if (!labelSetInfo.getRegionLabel().isPresent()) {
-//			throw new RuntimeException("no region label");
-//		}
-//
-//		Integer compartmentLabel = (Integer) labelSetInfo.getCompartmentLabel().get();
-//		Integer regionLabel = (Integer) labelSetInfo.getRegionLabel().get();
-//
-//		double p1;
-//		switch (compartmentLabel) {
-//		case 0:
-//			p1 = 1;
-//			break;
-//		default:
-//			p1 = 0;
-//			break;
-//		}
-//
-//		double p2;
-//		switch (regionLabel) {
-//		case 0:
-//			p2 = 0.1;
-//			break;
-//		case 1:
-//			p2 = 0.3;
-//			break;
-//		default:
-//			p2 = 0.6;
-//			break;
-//		}
-//
-//		return p1 * p2;
-//
-//	}
-
-//	private static double getZeroWeight(ObservableEnvironment observableEnvironment, LabelSetInfo labelSetInfo) {
-//		return 0;
-//	}
+	
 
 	private static enum PartitionChoice {
 		COMPARTMENT, REGION, PROPERTY1, PROPERTY2, RESOURCE1, RESOURCE2, GROUP;

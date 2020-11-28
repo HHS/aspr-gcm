@@ -228,4 +228,13 @@ public class AT_PlanningQueueReportItem {
 
 		assertEquals(isKeyed, planningQueueReportItem.isKeyed());
 	}
+
+	/**
+	 * Tests {@link PlanningQueueReportItem#builder()}
+	 */
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		// the builder method is covered by the other tests in this unit
+	}
 }

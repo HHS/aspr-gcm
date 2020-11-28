@@ -138,4 +138,13 @@ public class AT_MemoryReportItem {
 		String expectedString = "MemoryReportItem [scenarioId=97, replicationId=77, time=5346.0, descriptor=descriptor, parentId=45, id=67, selfByteCount=234, childByteCount=5678]";
 		assertEquals(expectedString, memoryReportItem.toString());
 	}
+	
+	/**
+	 * Tests {@link MemoryReportItem#builder()}
+	 */
+	@Test
+	@UnitTestMethod(name = "builder", args = {})
+	public void testBuilder() {
+		//the builder method is covered by the other tests in this unit
+	}
 }

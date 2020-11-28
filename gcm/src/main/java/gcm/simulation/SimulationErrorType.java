@@ -66,6 +66,7 @@ public enum SimulationErrorType {
 	NULL_REGION_ID("Null region id"),
 	NULL_REGION_PROPERTY_ID("Null region property id"),
 	NULL_REGION_PROPERTY_VALUE("Null region property value"),
+	NULL_REPORT_CLASS("Null report class"),
 	NULL_RESOURCE_ID("Null resource id"),
 	NULL_RESOURCE_PROPERTY_ID("Null resource property id"),
 	NULL_RESOURCE_PROPERTY_VALUE("Null resource property value"),

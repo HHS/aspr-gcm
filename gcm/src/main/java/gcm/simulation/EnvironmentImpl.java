@@ -58,6 +58,7 @@ import gcm.simulation.partition.Partition;
 import gcm.simulation.partition.PartitionManager;
 import gcm.simulation.partition.PartitionSampler;
 import gcm.util.annotations.Source;
+import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.NotThreadSafe;
 
@@ -4041,6 +4042,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			throwModelException(SimulationErrorType.NULL_BATCH_CONSTRUCTION_INFO);
 		}
 	}
+	
 
 	@Override
 	public BatchId createBatch(BatchConstructionInfo batchConstructionInfo) {
@@ -4069,9 +4071,17 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 
 	}
+	
+	private void validateReportClassNotNull(final Class<? extends Report> reportClass) {
+		if (reportClass == null) {
+			throwModelException(SimulationErrorType.NULL_REPORT_CLASS);
+		}
+	}
 
 	@Override
+	@SourceMethod(status = TestStatus.UNEXPECTED)
 	public boolean isActiveReport(Class<? extends Report> reportClass) {
+		validateReportClassNotNull(reportClass);
 		return reportsManager.isActiveReport(reportClass);		
 	}
 

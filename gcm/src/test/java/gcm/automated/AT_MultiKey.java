@@ -133,10 +133,10 @@ public class AT_MultiKey {
 	}
 
 	/**
-	 * Tests {@link MultiKey.MultiKeyBuilder#MultiKeyBuilder()}
+	 * Tests {@link MultiKey#builder()}
 	 */
 	@Test
-	@UnitTestConstructor(target = MultiKey.Builder.class, args = {})
+	@UnitTestMethod(name = "builder",target = MultiKey.class, args = {})
 	public void testMultiKeyBuilder_Constructor() {
 		/*
 		 * We will show that the MultiKeyBuilder produces the expected MultiKey values

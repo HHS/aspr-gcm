@@ -128,7 +128,34 @@ public class AT_LabelSet {
 		assertEquals(expectedGroupLabel, actualGroupLabel);
 	}
 
-	
+	/**
+	 * Tests {@linkplain LabelSet#isEmpty()
+	 */
+	@Test
+	@UnitTestMethod(name = "isEmpty", args = {})
+	public void testIsEmpty() {
+		
+		LabelSet labelSet = LabelSet.builder().build();
+		assertTrue(labelSet.isEmpty());		
+		
+		labelSet = LabelSet.builder().setCompartmentLabel("compartment label").build();
+		assertFalse(labelSet.isEmpty());
+		
+		labelSet = LabelSet.builder().setGroupLabel("group label").build();
+		assertFalse(labelSet.isEmpty());
+
+		labelSet = LabelSet.builder().setRegionLabel("region label").build();
+		assertFalse(labelSet.isEmpty());		
+		
+		
+		labelSet = LabelSet.builder().setResourceLabel(TestResourceId.RESOURCE1,"resource label").build();
+		assertFalse(labelSet.isEmpty());
+		
+		labelSet = LabelSet.builder().setPropertyLabel(TestPersonPropertyId.PERSON_PROPERTY_1,"property label").build();
+		assertFalse(labelSet.isEmpty());		
+
+
+	}
 
 	/**
 	 * Tests {@linkplain LabelSet#getRegionLabel()

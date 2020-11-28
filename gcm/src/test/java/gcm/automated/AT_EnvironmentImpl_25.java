@@ -84,8 +84,7 @@ public class AT_EnvironmentImpl_25 {
 	 */
 	@AfterAll
 	public static void afterClass() {
-//		System.out
-//				.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
+//		System.out.println(AT_EnvironmentImpl_25.class.getSimpleName() + " " + SEED_PROVIDER.generateUnusedSeedReport());
 	}
 
 	/*
@@ -526,7 +525,7 @@ public class AT_EnvironmentImpl_25 {
 		 * the testing of a population partition that exercises all of the partition's
 		 * dimensions.
 		 */
-		final long seed = SEED_PROVIDER.getSeedValue(0);
+		final long seed = SEED_PROVIDER.getSeedValue(6);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -539,7 +538,7 @@ public class AT_EnvironmentImpl_25 {
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
 
 			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
-
+			
 			// define the partition
 			Partition partition = createPopulationPartitionDefinition(partitionChoices);
 
@@ -619,6 +618,86 @@ public class AT_EnvironmentImpl_25 {
 		assertAllPlansExecuted(taskPlanContainer);
 	}
 
+	/**
+	 * Tests {@link EnvironmentImpl#getPartitionPeople(Object)
+	 */
+	@Test
+	@UnitTestMethod(name = "getPartitionPeople", args = { Object.class })
+	public void testGetPartitionPeople_Object() {
+		/*
+		 * Go through the boilerplate steps of generating a scenario that will support
+		 * the testing of a population partition that exercises all of the partition's
+		 * dimensions.
+		 */
+		final long seed = SEED_PROVIDER.getSeedValue(0);
+		RandomGenerator randomGenerator = getRandomGenerator(seed);
+		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
+		buildBaseScenario(scenarioBuilder, randomGenerator);
+		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
+		Scenario scenario = scenarioBuilder.build();
+
+		int testTime = 1;
+		Object key = "key";
+
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Set<PartitionChoice> partitionChoices = EnumSet.allOf(PartitionChoice.class);
+			
+			Filter filter = Filter.compartment(TestCompartmentId.COMPARTMENT_1).or(Filter.compartment(TestCompartmentId.COMPARTMENT_2));
+			
+			// define the partition
+			Partition partition = createPopulationPartitionDefinition(partitionChoices,filter);
+
+			// add the partition to the simulation
+			environment.addPartition(partition, key);
+
+			makeRandomPersonAssignments(environment, randomGenerator);
+
+			// Group the people in the simulation by their labels, giving us the expected
+			// partitioning -- each labelSet will correspond to exactly one
+			// element of the partition
+
+			Set<PersonId> expectedPeople = new LinkedHashSet<>();
+			expectedPeople.addAll(environment.getPeopleInCompartment(TestCompartmentId.COMPARTMENT_1));
+			expectedPeople.addAll(environment.getPeopleInCompartment(TestCompartmentId.COMPARTMENT_2));
+
+			List<PersonId> actualPeople = environment.getPartitionPeople(key);
+			//show that the returned people does not contain duplicates
+			assertEquals(expectedPeople.size(), actualPeople.size());
+			//show that the returned people match the expected people
+			assertEquals(expectedPeople, actualPeople.stream().collect(Collectors.toSet()));
+			
+		});
+
+		/*
+		 * Precondition tests
+		 */
+		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
+
+			Object key3 = "key3";
+			Partition partition = Partition.builder().setCompartmentFunction(compartmentPartitionFunction)
+					.setPersonPropertyFunction(TestPersonPropertyId.PERSON_PROPERTY_1, property1Function).build();
+			environment.addPartition(partition, key3);
+
+			// if the key is null
+			assertModelException(() -> environment.getPartitionPeople(null),
+					SimulationErrorType.NULL_POPULATION_PARTITION_KEY);
+			// if the key does not correspond to an existing partition
+			assertModelException(() -> environment.getPartitionPeople("bad key"),
+					SimulationErrorType.UNKNOWN_POPULATION_PARTITION_KEY);
+			
+			
+
+		});
+
+		Simulation simulation = new Simulation();
+		simulation.setReplication(getReplication(randomGenerator));
+		simulation.setScenario(scenario);
+		simulation.execute();
+		assertAllPlansExecuted(taskPlanContainer);
+	}
+	
+	
 	/**
 	 * Tests {@link EnvironmentImpl#addPartition(Partition, Object)
 	 */
@@ -1129,7 +1208,7 @@ public class AT_EnvironmentImpl_25 {
 		 * dimensions.
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(17);
+		final long seed = SEED_PROVIDER.getSeedValue(8);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -1257,7 +1336,7 @@ public class AT_EnvironmentImpl_25 {
 		 * dimensions.
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(14);
+		final long seed = SEED_PROVIDER.getSeedValue(12);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -1353,7 +1432,7 @@ public class AT_EnvironmentImpl_25 {
 		 * the testing of a population partition that exercises all of the partition's
 		 * dimensions.
 		 */
-		final long seed = SEED_PROVIDER.getSeedValue(15);
+		final long seed = SEED_PROVIDER.getSeedValue(11);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -1476,7 +1555,7 @@ public class AT_EnvironmentImpl_25 {
 		 * dimensions.
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(16);
+		final long seed = SEED_PROVIDER.getSeedValue(9);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -1573,7 +1652,7 @@ public class AT_EnvironmentImpl_25 {
 		 * Sample from a non-degenerate, but empty partition
 		 */
 
-		final long seed = SEED_PROVIDER.getSeedValue(19);
+		final long seed = SEED_PROVIDER.getSeedValue(7);
 		RandomGenerator randomGenerator = getRandomGenerator(seed);
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		buildBaseScenario(scenarioBuilder, randomGenerator);
@@ -1639,405 +1718,5 @@ public class AT_EnvironmentImpl_25 {
 		assertAllPlansExecuted(taskPlanContainer);
 
 	}
-
-//	/**
-//	 * Tests {@link EnvironmentImpl#sampleIndex(Object)}
-//	 */
-//	@Test
-//	@UnitTestMethod(name = "sampleIndex", args = {Object.class})
-//	public void test_SampleIndex_Object() {
-//		/*
-//		 * Show that we can retrieve people from a population index.
-//		 */
-//
-//		final long seed = SEED_PROVIDER.getSeedValue(10);
-//		RandomGenerator randomGenerator = getRandomGenerator(seed);
-//
-//		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-//		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-//		addStandardComponentsAndTypes(scenarioBuilder);
-//		addStandardPeople(scenarioBuilder, 10);
-//
-//		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-//
-//		Scenario scenario = scenarioBuilder.build();
-//
-//		Replication replication = getReplication(randomGenerator);
-//
-//		int testTime = 1;
-//
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-//				final Set<PersonId> peopleInCompartment = new LinkedHashSet<>();
-//				for (final PersonId personId : scenario.getPeopleIds()) {
-//					final CompartmentId personCompartment = scenario.getPersonCompartment(personId);
-//					if (personCompartment.equals(testCompartmentId)) {
-//						peopleInCompartment.add(personId);
-//					}
-//				}
-//
-//				final Object key = new Object();
-//				environment.addPopulationIndex(compartment(testCompartmentId), key);
-//
-//				/*
-//				 * We now collect many samples from the index and show that we
-//				 * get a reasonable range of hits per person.
-//				 */
-//				final Map<PersonId, Counter> counterMap = new LinkedHashMap<>();
-//				for (int i = 0; i < (peopleInCompartment.size() * 100); i++) {
-//					final PersonId personId = environment.sampleIndex(key).get();
-//					assertTrue(peopleInCompartment.contains(personId));
-//					Counter counter = counterMap.get(personId);
-//					if (counter == null) {
-//						counter = new Counter();
-//						counterMap.put(personId, counter);
-//					}
-//					counter.count++;
-//				}
-//
-//				for (final PersonId personId : peopleInCompartment) {
-//
-//					final Counter counter = counterMap.get(personId);
-//					assertNotNull(counter);
-//					assertTrue(counter.count > 50);
-//					assertTrue(counter.count < 150);
-//
-//				}
-//
-//				environment.removePopulationIndex(key);
-//			}
-//
-//		});
-//
-//		/*
-//		 * Precondition tests
-//		 */
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			// if the key is null
-//			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-//			// if the key does not correspond to an existing population
-//			// index
-//			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-//
-//		});
-//
-//		Simulation simulation = new Simulation();
-//		simulation.setReplication(replication);
-//		simulation.setScenario(scenario);
-//		simulation.execute();
-//
-//		assertAllPlansExecuted(taskPlanContainer);
-//
-//	}
-//	/**
-//	 * Tests {@link EnvironmentImpl#sampleIndex(Object,PersonId)}
-//	 */
-//	@Test
-//	@UnitTestMethod(name = "sampleIndex", args = {Object.class,PersonId.class})
-//	public void testSampleIndex_Object_PersonId() {
-//		/*
-//		 * Show that we can retrieve people from a population index while
-//		 * excluding a person who is in the index. We will do this repeatedly to
-//		 * show that the person retrieved is always from the index but never the
-//		 * excluded person.
-//		 */
-//
-//		final long seed = SEED_PROVIDER.getSeedValue(11);
-//		RandomGenerator randomGenerator = getRandomGenerator(seed);
-//
-//		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-//		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-//		addStandardComponentsAndTypes(scenarioBuilder);
-//		addStandardPeople(scenarioBuilder, 1000);
-//		addStandardPropertyDefinitions(scenarioBuilder, PropertyAssignmentPolicy.TRUE, randomGenerator);
-//
-//		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-//
-//		Scenario scenario = scenarioBuilder.build();
-//
-//		Replication replication = getReplication(randomGenerator);
-//
-//		int testTime = 1;
-//
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			
-//			
-//			for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
-//				final Set<PersonId> peopleInCompartment = new LinkedHashSet<>();
-//				for (final PersonId personId : scenario.getPeopleIds()) {
-//					if (scenario.getPersonCompartment(personId).equals(testCompartmentId)) {
-//						peopleInCompartment.add(personId);
-//					}
-//				}
-//
-//				final Object key = new Object();
-//				environment.addPopulationIndex(compartment(testCompartmentId), key);
-//				for (int i = 0; i < 100; i++) {
-//					for (final PersonId personId : peopleInCompartment) {
-//						final PersonId selectedPersonId = environment.sampleIndex(key,personId).get();
-//						assertTrue(peopleInCompartment.contains(selectedPersonId));
-//						assertFalse(selectedPersonId.equals(personId));
-//					}
-//				}
-//
-//				environment.removePopulationIndex(key);
-//			}
-//		});
-//
-//		/*
-//		 * Precondition tests
-//		 */
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			// if the key is null
-//			assertModelException(() -> environment.sampleIndex((Object[]) null), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-//			// if the key does not correspond to an existing population
-//			// index
-//			assertModelException(() -> environment.sampleIndex(new Object()), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-//
-//		});
-//
-//		Simulation simulation = new Simulation();
-//		simulation.setReplication(replication);
-//		simulation.setScenario(scenario);
-//		simulation.execute();
-//
-//		assertAllPlansExecuted(taskPlanContainer);
-//
-//	}
-//	/*
-//	 * Utility class for getting random people from population indices
-//	 */
-//	private static class Counter {
-//		int count;
-//	}		
-//	/**
-//	 * Tests
-//	 * {@link EnvironmentImpl#sampleIndex(Object,RandomNumberGeneratorId)}
-//	 */
-//	@Test
-//	@UnitTestMethod(name = "sampleIndex", args = { Object.class, RandomNumberGeneratorId.class})
-//	public void testSampleIndex_Object_RNG() {
-//
-//		final long seed = SEED_PROVIDER.getSeedValue(8);
-//		RandomGenerator randomGenerator = getRandomGenerator(seed);
-//
-//		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-//		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-//		addStandardComponentsAndTypes(scenarioBuilder);
-//		addStandardPeople(scenarioBuilder, 30);
-//		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1;
-//		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
-//		Map<Object, PropertyDefinition> forcedPropertyDefinitions = new LinkedHashMap<>();
-//		forcedPropertyDefinitions.put(personPropertyId, propertyDefinition);
-//		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.RANDOM, randomGenerator);
-//		scenarioBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
-//
-//		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-//
-//		Scenario scenario = scenarioBuilder.build();
-//
-//		Replication replication = getReplication(randomGenerator);
-//
-//		int testTime = 1;
-//
-//		Object key30 = new Object();
-//		Object key40 = new Object();
-//		Object key50 = new Object();
-//
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//			assert (environment.getPopulationCount() >= 30);
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 30);
-//			}
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i + 10);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 40);
-//			}
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i + 20);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 50);
-//			}
-//
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 30), key30);
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 40), key40);
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 50), key50);
-//
-//			for (int i = 0; i < 100; i++) {
-//				Optional<PersonId> personIdOptional = environment.sampleIndex(key30, TestRandomGeneratorId.BLITZEN);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 0);
-//				assertTrue(personId.getValue() < 10);
-//			}
-//			for (int i = 0; i < 100; i++) {
-//				Optional<PersonId> personIdOptional = environment.sampleIndex(key40, TestRandomGeneratorId.BLITZEN);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 10);
-//				assertTrue(personId.getValue() < 20);
-//			}
-//			for (int i = 0; i < 100; i++) {
-//				Optional<PersonId> personIdOptional = environment.sampleIndex(key50, TestRandomGeneratorId.BLITZEN);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 20);
-//				assertTrue(personId.getValue() < 30);
-//			}
-//		});
-//
-//		// precondition tests
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			// if the key is null
-//			assertModelException(() -> environment.sampleIndex(null, TestRandomGeneratorId.BLITZEN), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-//
-//			// if the key does not correspond to an existing population index
-//			assertModelException(() -> environment.sampleIndex(new Object(), TestRandomGeneratorId.BLITZEN), SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-//
-//			// if the randomNumberGeneratorId is null
-//			RandomNumberGeneratorId nullRandomNumberGeneratorId = null;
-//			assertModelException(() -> environment.sampleIndex(key30, nullRandomNumberGeneratorId), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
-//
-//			// if the randomNumberGeneratorId is unknown
-//			assertModelException(() -> environment.sampleIndex(key30, TestRandomGeneratorId.COMET), SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
-//
-//		});
-//
-//		Simulation simulation = new Simulation();
-//		simulation.setReplication(replication);
-//		simulation.setScenario(scenario);
-//		simulation.execute();
-//
-//		assertAllPlansExecuted(taskPlanContainer);
-//	}
-//
-//	/**
-//	 * Tests
-//	 * {@link EnvironmentImpl#sampleIndex(Object, RandomNumberGeneratorId,PersonId)}
-//	 */
-//	@Test
-//	@UnitTestMethod(name = "sampleIndex", args = {Object.class, RandomNumberGeneratorId.class,PersonId.class})
-//	public void testSampleIndex_Object_RNG_PersonId() {
-//
-//		final long seed = SEED_PROVIDER.getSeedValue(9);
-//		RandomGenerator randomGenerator = getRandomGenerator(seed);
-//
-//		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-//		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-//		addStandardComponentsAndTypes(scenarioBuilder);
-//		addStandardPeople(scenarioBuilder, 30);
-//		PersonPropertyId personPropertyId = TestPersonPropertyId.PERSON_PROPERTY_1;
-//		PropertyDefinition propertyDefinition = PropertyDefinition.builder().setType(Integer.class).setDefaultValue(0).build();
-//		Map<Object, PropertyDefinition> forcedPropertyDefinitions = new LinkedHashMap<>();
-//		forcedPropertyDefinitions.put(personPropertyId, propertyDefinition);
-//		addStandardPropertyDefinitions(scenarioBuilder, forcedPropertyDefinitions, PropertyAssignmentPolicy.RANDOM, randomGenerator);
-//		scenarioBuilder.addRandomNumberGeneratorId(TestRandomGeneratorId.BLITZEN);
-//
-//		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-//
-//		Scenario scenario = scenarioBuilder.build();
-//
-//		Replication replication = getReplication(randomGenerator);
-//
-//		int testTime = 1;
-//
-//		Object key30 = new Object();
-//		Object key40 = new Object();
-//		Object key50 = new Object();
-//
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//			assert (environment.getPopulationCount() >= 30);
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 30);
-//			}
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i + 10);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 40);
-//			}
-//
-//			for (int i = 0; i < 10; i++) {
-//				PersonId personId = new PersonId(i + 20);
-//				environment.setPersonPropertyValue(personId, personPropertyId, 50);
-//			}
-//
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 30), key30);
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 40), key40);
-//			environment.addPopulationIndex(Filter.property(personPropertyId, Equality.EQUAL, 50), key50);
-//
-//			for (int i = 0; i < 100; i++) {
-//				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-//				Optional<PersonId> personIdOptional = environment.sampleIndex(key30, TestRandomGeneratorId.BLITZEN,excludedPersonId);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 0);
-//				assertTrue(personId.getValue() < 10);
-//				assertNotEquals(excludedPersonId, personId);
-//			}
-//			for (int i = 0; i < 100; i++) {
-//				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-//				Optional<PersonId> personIdOptional = environment.sampleIndex(key40, TestRandomGeneratorId.BLITZEN,excludedPersonId);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 10);
-//				assertTrue(personId.getValue() < 20);
-//				assertNotEquals(excludedPersonId, personId);
-//			}
-//			for (int i = 0; i < 100; i++) {
-//				PersonId excludedPersonId = new PersonId(randomGenerator.nextInt(30));
-//				Optional<PersonId> personIdOptional = environment.sampleIndex( key50, TestRandomGeneratorId.BLITZEN,excludedPersonId);
-//				assertTrue(personIdOptional.isPresent());
-//				PersonId personId = personIdOptional.get();
-//				assertTrue(personId.getValue() >= 20);
-//				assertTrue(personId.getValue() < 30);
-//				assertNotEquals(excludedPersonId, personId);
-//			}
-//		});
-//
-//		// precondition tests
-//		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, testTime++, (environment) -> {
-//
-//			// if the excluded person is null
-//			PersonId nullPersonId = null;
-//			assertModelException(() -> environment.sampleIndex(key30, TestRandomGeneratorId.BLITZEN,nullPersonId), SimulationErrorType.NULL_PERSON_ID);
-//
-//			// if the excluded person is unknown
-//			assertModelException(() -> environment.sampleIndex( key30, TestRandomGeneratorId.BLITZEN,new PersonId(100000)), SimulationErrorType.UNKNOWN_PERSON_ID);
-//
-//			// if the key is null
-//			Object nullKey = null;
-//			assertModelException(() -> environment.sampleIndex( nullKey, TestRandomGeneratorId.BLITZEN,new PersonId(0)), SimulationErrorType.NULL_POPULATION_INDEX_KEY);
-//
-//			// if the key does not correspond to an existing population index
-//			assertModelException(() -> environment.sampleIndex(new Object(), TestRandomGeneratorId.BLITZEN,new PersonId(0)),
-//					SimulationErrorType.UNKNOWN_POPULATION_INDEX_KEY);
-//
-//			// if the randomNumberGeneratorId is null
-//			RandomNumberGeneratorId nullRandomNumberGeneratorId = null;
-//			assertModelException(() -> environment.sampleIndex(key30, nullRandomNumberGeneratorId,new PersonId(0)), SimulationErrorType.NULL_RANDOM_NUMBER_GENERATOR_ID);
-//
-//			// if the randomNumberGeneratorId is unknown
-//			assertModelException(() -> environment.sampleIndex(key30, TestRandomGeneratorId.COMET,new PersonId(0)),
-//					SimulationErrorType.UNKNOWN_RANDOM_NUMBER_GENERATOR_ID);
-//
-//		});
-//
-//		Simulation simulation = new Simulation();
-//		simulation.setReplication(replication);
-//		simulation.setScenario(scenario);
-//		simulation.execute();
-//
-//		assertAllPlansExecuted(taskPlanContainer);
-//	}
 	
 }

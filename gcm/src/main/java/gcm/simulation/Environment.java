@@ -3659,6 +3659,10 @@ public interface Environment extends Element {
 	
 	/**
 	 * Returns true if and only if the report associated with the given report class is active
+	 * 
+	 * @throws ModelException
+	 * 	
+	 * 
 	 */
 	public boolean isActiveReport(Class<? extends Report> reportClass);
 

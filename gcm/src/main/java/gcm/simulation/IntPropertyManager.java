@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
@@ -85,20 +84,20 @@ public final class IntPropertyManager extends AbstractPropertyManager {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getPropertyValue(PersonId personId) {
+	public <T> T getPropertyValue(int id) {
 		
 		switch (intValueType) {
 		case BYTE:
-			Byte b = intValueContainer.getValueAsByte(personId.getValue());
+			Byte b = intValueContainer.getValueAsByte(id);
 			return (T) b;
 		case INT:
-			Integer i = intValueContainer.getValueAsInt(personId.getValue());
+			Integer i = intValueContainer.getValueAsInt(id);
 			return (T) i;
 		case LONG:
-			Long l = intValueContainer.getValueAsLong(personId.getValue());
+			Long l = intValueContainer.getValueAsLong(id);
 			return (T) l;
 		case SHORT:
-			Short s = intValueContainer.getValueAsShort(personId.getValue());
+			Short s = intValueContainer.getValueAsShort(id);
 			return (T) s;
 		default:
 			throw new RuntimeException("unhandled type");
@@ -106,25 +105,25 @@ public final class IntPropertyManager extends AbstractPropertyManager {
 	}
 
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {
-		super.setPropertyValue(personId, personPropertyValue);
+	public void setPropertyValue(int id, Object propertyValue) {
+		super.setPropertyValue(id, propertyValue);
 
 		switch (intValueType) {
 		case BYTE:
-			Byte b = (Byte) personPropertyValue;
-			intValueContainer.setByteValue(personId.getValue(), b);
+			Byte b = (Byte) propertyValue;
+			intValueContainer.setByteValue(id, b);
 			break;
 		case INT:
-			Integer i = (Integer) personPropertyValue;
-			intValueContainer.setIntValue(personId.getValue(), i);
+			Integer i = (Integer) propertyValue;
+			intValueContainer.setIntValue(id, i);
 			break;
 		case LONG:
-			Long l = (Long) personPropertyValue;
-			intValueContainer.setLongValue(personId.getValue(), l);
+			Long l = (Long) propertyValue;
+			intValueContainer.setLongValue(id, l);
 			break;
 		case SHORT:
-			Short s = (Short) personPropertyValue;
-			intValueContainer.setShortValue(personId.getValue(), s);
+			Short s = (Short) propertyValue;
+			intValueContainer.setShortValue(id, s);
 			break;
 		default:
 			throw new RuntimeException("unhandled type "+intValueType);

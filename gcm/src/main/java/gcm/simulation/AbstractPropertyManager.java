@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.TimeTrackingPolicy;
@@ -24,12 +23,9 @@ import gcm.util.containers.DoubleValueContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public abstract class AbstractPropertyManager implements PersonPropertyManager {
-
+public abstract class AbstractPropertyManager implements IndexedPropertyManager {
 
 	private EventManager eventManger;
-
-	
 
 	/*
 	 * Contains the assignment times for this property value. Subject to
@@ -66,25 +62,20 @@ public abstract class AbstractPropertyManager implements PersonPropertyManager {
 	}
 
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {
+	public void setPropertyValue(int id, Object propertyValue) {
 		/*
 		 * Record the time value if we are tracking assignment times.
 		 */
 		if (trackTime) {
-			timeTrackingContainer.setValue(personId.getValue(), eventManger.getTime());
-		}
-
-		
+			timeTrackingContainer.setValue(id, eventManger.getTime());
+		}		
 	}
-	
-
-	
 
 	@Override
-	public final double getPropertyTime(PersonId personId) {
+	public final double getPropertyTime(int id) {
 		double result = 0;
 		if (trackTime) {
-			result = timeTrackingContainer.getValue(personId.getValue());
+			result = timeTrackingContainer.getValue(id);
 		} else {
 			throw new RuntimeException("Property time values are not being tracked for this property " + personPropertyId);
 		}

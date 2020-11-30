@@ -31,41 +31,41 @@ import gcm.util.annotations.Source;
 @Source
 public interface PropertyManager extends Element {
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 	public <T> T getPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId);
 
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 
 	public double getPersonPropertyTime(PersonId personId, PersonPropertyId personPropertyId);
 
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 
 	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue);
 
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 
 	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue);
 	
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue);
 	
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 
 	public void handlePersonAddition(final PersonId personId);
 
 	/**
-	 * Pass-through method. See PersonPropertyManager for details.
+	 * Pass-through method. See IndexedPropertyManager for details.
 	 */
 
 	public void handlePersonRemoval(final PersonId personId);

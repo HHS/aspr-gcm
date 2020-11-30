@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
@@ -44,15 +43,15 @@ public final class BooleanPropertyManager extends AbstractPropertyManager {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getPropertyValue(PersonId personId) {
-		Boolean result = boolContainer.get(personId.getValue());
+	public <T> T getPropertyValue(int id) {
+		Boolean result = boolContainer.get(id);
 		return (T) result;
 	}
 
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {
-		super.setPropertyValue(personId, personPropertyValue);
-		Boolean b = (Boolean) personPropertyValue;
-		boolContainer.set(personId.getValue(), b.booleanValue());
+	public void setPropertyValue(int id , Object propertyValue) {
+		super.setPropertyValue(id, propertyValue);
+		Boolean b = (Boolean) propertyValue;
+		boolContainer.set(id, b.booleanValue());
 	}
 }

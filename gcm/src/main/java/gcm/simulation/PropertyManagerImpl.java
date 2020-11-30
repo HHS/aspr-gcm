@@ -89,11 +89,11 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	private Map<GroupId, Map<GroupPropertyId, PropertyValueRecord>> groupPropertyMap = new LinkedHashMap<>();
 
 	/*
-	 * Stores for person property a PersonPropertyManager instance. Each
-	 * PersonPropertyManager instance in turn manages all aspects of the particular
+	 * Stores for person property a IndexedPropertyManager instance. Each
+	 * IndexedPropertyManager instance in turn manages all aspects of the particular
 	 * property.
 	 */
-	private Map<PersonPropertyId, PersonPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
+	private Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
 
 	private Map<PersonPropertyId, PersonPropertyMapper> personPropertyMapperMap = new LinkedHashMap<>();
 
@@ -219,27 +219,27 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 		for (PersonPropertyId personPropertyId : scenario.getPersonPropertyIds()) {
 			PropertyDefinition propertyDefinition = scenario.getPersonPropertyDefinition(personPropertyId);
-			PersonPropertyManager personPropertyManager;
+			IndexedPropertyManager indexedPropertyManager;
 			if (propertyDefinition.getType() == Boolean.class) {
-				personPropertyManager = new BooleanPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new BooleanPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Float.class) {
-				personPropertyManager = new FloatPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new FloatPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Double.class) {
-				personPropertyManager = new DoublePropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new DoublePropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Byte.class) {
-				personPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Short.class) {
-				personPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Integer.class) {
-				personPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (propertyDefinition.getType() == Long.class) {
-				personPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new IntPropertyManager(context, propertyDefinition, personPropertyId);
 			} else if (Enum.class.isAssignableFrom(propertyDefinition.getType())) {
-				personPropertyManager = new EnumPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new EnumPropertyManager(context, propertyDefinition, personPropertyId);
 			} else {
-				personPropertyManager = new ObjectPropertyManager(context, propertyDefinition, personPropertyId);
+				indexedPropertyManager = new ObjectPropertyManager(context, propertyDefinition, personPropertyId);
 			}
-			personPropertyManagerMap.put(personPropertyId, personPropertyManager);
+			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 
 			MapOption mapOption = propertyDefinition.getMapOption();
 			switch (mapOption) {
@@ -259,12 +259,12 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId) {
-		return (T) personPropertyManagerMap.get(personPropertyId).getPropertyValue(personId);
+		return (T) personPropertyManagerMap.get(personPropertyId).getPropertyValue(personId.getValue());
 	}
 
 	@Override
 	public double getPersonPropertyTime(PersonId personId, PersonPropertyId personPropertyId) {
-		return personPropertyManagerMap.get(personPropertyId).getPropertyTime(personId);
+		return personPropertyManagerMap.get(personPropertyId).getPropertyTime(personId.getValue());
 	}
 
 	@Override
@@ -276,7 +276,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			personPropertyMapper.remove(personId, oldValue);
 			personPropertyMapper.add(personId, personPropertyValue);
 		}
-		personPropertyManagerMap.get(personPropertyId).setPropertyValue(personId, personPropertyValue);
+		personPropertyManagerMap.get(personPropertyId).setPropertyValue(personId.getValue(), personPropertyValue);
 	}
 
 	@Override
@@ -287,7 +287,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			return personPropertyMapper.getPeopleWithPropertyValue(personPropertyValue);
 		}
 
-		PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
+		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 
 		/*
 		 * We are not maintaining a map from property values to people. We first
@@ -299,7 +299,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			if (personIdManager.personIndexExists(personIndex)) {
 				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (personPropertyValue.equals(propertyValue)) {
 					count++;
 				}
@@ -314,7 +314,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			if (personIdManager.personIndexExists(personIndex)) {
 				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (personPropertyValue.equals(propertyValue)) {
 					result.add(personId);
 				}
@@ -339,13 +339,13 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		 * resulting ArrayList properly.
 		 */
 
-		PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
+		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 		int n = personIdManager.getPersonIdLimit();
 		int count = 0;
 		for (int personIndex = 0; personIndex < n; personIndex++) {
 			if (personIdManager.personIndexExists(personIndex)) {
 				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				Object propertyValue = indexedPropertyManager.getPropertyValue(personId.getValue());
 				if (personPropertyValue.equals(propertyValue)) {
 					count++;
 				}
@@ -599,11 +599,18 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	public void collectMemoryLinks(MemoryPartition memoryPartition) {
 		memoryPartition.addMemoryLink(this, personPropertyManagerMap, "Person Property Manager Map");
 		for (PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
-			PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			memoryPartition.addMemoryLink(this, personPropertyManager,
+			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
+			memoryPartition.addMemoryLink(this, indexedPropertyManager,
 					"Person Property: " + personPropertyId.toString());
 		}
 
+		memoryPartition.addMemoryLink(this, personPropertyMapperMap, "Person Property Mapper Map");
+		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
+			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+			memoryPartition.addMemoryLink(this, personPropertyMapper,
+					"Person Property Mapper: " + personPropertyId.toString());
+		}
+		
 	}
 
 }

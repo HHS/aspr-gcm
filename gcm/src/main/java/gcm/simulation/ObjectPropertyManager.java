@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
@@ -36,14 +35,14 @@ public final class ObjectPropertyManager extends AbstractPropertyManager {
 	}
 
 	@Override
-	public <T> T getPropertyValue(PersonId personId) {		
-		return objectValueContainer.getValue(personId.getValue());
+	public <T> T getPropertyValue(int id) {		
+		return objectValueContainer.getValue(id);
 	}
 
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {
-		super.setPropertyValue(personId, personPropertyValue);
-		objectValueContainer.setValue(personId.getValue(), personPropertyValue);
+	public void setPropertyValue(int id, Object propertyValue) {
+		super.setPropertyValue(id, propertyValue);
+		objectValueContainer.setValue(id, propertyValue);
 	}
 
 }

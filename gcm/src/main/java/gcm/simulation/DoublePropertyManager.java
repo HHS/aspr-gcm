@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
@@ -50,17 +49,17 @@ public final class DoublePropertyManager extends AbstractPropertyManager {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public <T> T getPropertyValue(PersonId personId) {
-		Double result = doubleValueContainer.getValue(personId.getValue());
+	public <T> T getPropertyValue(int id) {
+		Double result = doubleValueContainer.getValue(id);
 		return (T) result;
 	}
 
 	
 	@Override
-	public void setPropertyValue(PersonId personId, Object personPropertyValue) {		
-		super.setPropertyValue(personId, personPropertyValue);
-		Double d = (Double) personPropertyValue;
-		doubleValueContainer.setValue(personId.getValue(), d);
+	public void setPropertyValue(int id, Object propertyValue) {		
+		super.setPropertyValue(id, propertyValue);
+		Double d = (Double) propertyValue;
+		doubleValueContainer.setValue(id, d);
 	}
 
 }

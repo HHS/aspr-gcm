@@ -1,7 +1,5 @@
 package gcm.simulation;
 
-import java.util.List;
-
 import gcm.scenario.PersonId;
 import gcm.util.annotations.Source;
 

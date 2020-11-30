@@ -1,8 +1,6 @@
 package gcm.simulation;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import gcm.scenario.MapOption;
@@ -35,7 +33,6 @@ import gcm.util.containers.IntSet;
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public abstract class AbstractPropertyManager implements PersonPropertyManager {
 
-	private PersonIdManager personIdManager;
 
 	private EventManager eventManger;
 
@@ -93,7 +90,6 @@ public abstract class AbstractPropertyManager implements PersonPropertyManager {
 	 * @param personPropertyId
 	 */
 	public AbstractPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId personPropertyId) {
-		this.personIdManager = context.getPersonIdManager();
 		this.eventManger = context.getEventManager();
 		this.personPropertyId = personPropertyId;
 		trackTime = propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME;
@@ -139,88 +135,6 @@ public abstract class AbstractPropertyManager implements PersonPropertyManager {
 		}
 	}
 	
-	@Override
-	public int getPersonCountForPropertyValue(final Object propertyValue) {
-		/*
-		 * If we are supporting the mapping of property values to people, then
-		 * we simply return what values are in the IntSet
-		 */
-		if (propertyValuesToPeopleMap != null) {
-			IntSet<PersonId> people = propertyValuesToPeopleMap.get(propertyValue);
-			if (people != null) {
-				return people.size();
-			}
-			return 0;
-		}
-
-		/*
-		 * We are not maintaining a map from property values to people. We first
-		 * determine the number of people who will be returned so that we can
-		 * size the resulting ArrayList properly.
-		 */
-		int n = personIdManager.getPersonIdLimit();
-		int count = 0;
-		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personIdManager.personIndexExists(personIndex)) {
-				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object personPropertyValue = getPropertyValue(personId);
-				if (personPropertyValue.equals(propertyValue)) {
-					count++;
-				}
-			}
-		}
-		return count;
-	}
-	
-	@Override
-	public final List<PersonId> getPeopleWithPropertyValue(final Object propertyValue) {
-
-		/*
-		 * If we are supporting the mapping of property values to people, then
-		 * we simply return what values are in the IntSet
-		 */
-		if (propertyValuesToPeopleMap != null) {
-			IntSet<PersonId> people = propertyValuesToPeopleMap.get(propertyValue);
-			if (people != null) {
-				return people.getValues();
-			}
-			return new ArrayList<>();
-		}
-
-		/*
-		 * We are not maintaining a map from property values to people. We first
-		 * determine the number of people who will be returned so that we can
-		 * size the resulting ArrayList properly.
-		 */
-		int n = personIdManager.getPersonIdLimit();
-		int count = 0;
-		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personIdManager.personIndexExists(personIndex)) {
-				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object personPropertyValue = getPropertyValue(personId);
-				if (personPropertyValue.equals(propertyValue)) {
-					count++;
-				}
-			}
-		}
-
-		/*
-		 * Now we fill the list.
-		 */
-		List<PersonId> result = new ArrayList<>(count);
-
-		for (int personIndex = 0; personIndex < n; personIndex++) {
-			if (personIdManager.personIndexExists(personIndex)) {
-				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-				Object personPropertyValue = getPropertyValue(personId);
-				if (personPropertyValue.equals(propertyValue)) {
-					result.add(personId);
-				}
-			}
-		}
-
-		return result;
-	}
 
 	@Override
 	public final void handlePersonAddition(final PersonId personId) {

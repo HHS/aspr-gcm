@@ -1,5 +1,6 @@
 package gcm.simulation;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
+import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -40,8 +42,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	/*
 	 * Record for holding the value and assignment time for a property. People
-	 * property values, being numerous, are stored in specialized classes. All
-	 * other property values are stored via maps to PropertyValueRecord.
+	 * property values, being numerous, are stored in specialized classes. All other
+	 * property values are stored via maps to PropertyValueRecord.
 	 */
 	private static class PropertyValueRecord {
 
@@ -88,10 +90,14 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	/*
 	 * Stores for person property a PersonPropertyManager instance. Each
-	 * PersonPropertyManager instance in turn manages all aspects of the
-	 * particular property.
+	 * PersonPropertyManager instance in turn manages all aspects of the particular
+	 * property.
 	 */
 	private Map<PersonPropertyId, PersonPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
+
+	private Map<PersonPropertyId, PersonPropertyMapper> personPropertyMapperMap = new LinkedHashMap<>();
+
+	private PersonIdManager personIdManager;
 
 	private EventManager eventManager;
 
@@ -107,15 +113,16 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		eventManager = context.getEventManager();
 		propertyDefinitionManager = context.getPropertyDefinitionsManager();
 		personGroupManger = context.getPersonGroupManger();
+		personIdManager = context.getPersonIdManager();
 		Scenario scenario = context.getScenario();
 
 		/*
-		 * NOTE: For some of the property definitions contained in the scenario,
-		 * there may be a default value of null. A null value will reside in the
-		 * propertyValueRecord after this method executes, but the scenario
-		 * guarantees that a non-null property value exists in the scenario that
-		 * will be loaded before any component is initialized and so no
-		 * component will be able to retrieve a null property value.
+		 * NOTE: For some of the property definitions contained in the scenario, there
+		 * may be a default value of null. A null value will reside in the
+		 * propertyValueRecord after this method executes, but the scenario guarantees
+		 * that a non-null property value exists in the scenario that will be loaded
+		 * before any component is initialized and so no component will be able to
+		 * retrieve a null property value.
 		 */
 
 		for (RegionId regionId : scenario.getRegionIds()) {
@@ -138,7 +145,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<CompartmentPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			compartmentPropertyMap.put(compartmentId, map);
 			for (CompartmentPropertyId compartmentPropertyId : scenario.getCompartmentPropertyIds(compartmentId)) {
-				PropertyDefinition compartmentPropertyDefinition = scenario.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
+				PropertyDefinition compartmentPropertyDefinition = scenario
+						.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (compartmentPropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(compartmentPropertyDefinition.getDefaultValue().get());
@@ -154,7 +162,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<MaterialsProducerPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			materialsProducerPropertyMap.put(materialsProducerId, map);
 			for (MaterialsProducerPropertyId materialsProducerPropertyId : scenario.getMaterialsProducerPropertyIds()) {
-				PropertyDefinition materialsProducerPropertyDefinition = scenario.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+				PropertyDefinition materialsProducerPropertyDefinition = scenario
+						.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (materialsProducerPropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(materialsProducerPropertyDefinition.getDefaultValue().get());
@@ -170,7 +179,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<ResourcePropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
 			for (ResourcePropertyId resourcePropertyId : scenario.getResourcePropertyIds(resourceId)) {
-				PropertyDefinition resourcePropertyDefinition = scenario.getResourcePropertyDefinition(resourceId, resourcePropertyId);
+				PropertyDefinition resourcePropertyDefinition = scenario.getResourcePropertyDefinition(resourceId,
+						resourcePropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (resourcePropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(resourcePropertyDefinition.getDefaultValue().get());
@@ -201,11 +211,10 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		}
 
 		/*
-		 * Using the PropertyDefinition associated with each person property, we
-		 * select an appropriate PropertyManager implementor and place it in the
-		 * propertyManagerMap. The default for anything we don't understand such
-		 * as modeler-defined types and Strings get handled with an
-		 * ObjectPropertyManager.
+		 * Using the PropertyDefinition associated with each person property, we select
+		 * an appropriate PropertyManager implementor and place it in the
+		 * propertyManagerMap. The default for anything we don't understand such as
+		 * modeler-defined types and Strings get handled with an ObjectPropertyManager.
 		 */
 
 		for (PersonPropertyId personPropertyId : scenario.getPersonPropertyIds()) {
@@ -231,6 +240,18 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 				personPropertyManager = new ObjectPropertyManager(context, propertyDefinition, personPropertyId);
 			}
 			personPropertyManagerMap.put(personPropertyId, personPropertyManager);
+
+			MapOption mapOption = propertyDefinition.getMapOption();
+			switch (mapOption) {
+			case ARRAY:
+			case HASH:
+				personPropertyMapperMap.put(personPropertyId, new PersonPropertyMapper(mapOption));
+				break;
+			case NONE:// fall through
+			default:
+				// do nothing
+				break;
+			}
 		}
 
 	}
@@ -247,24 +268,103 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue) {
+	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId,
+			Object personPropertyValue) {
+		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+		if(personPropertyMapper != null) {
+			Object oldValue = getPersonPropertyValue(personId, personPropertyId);
+			personPropertyMapper.remove(personId, oldValue);
+			personPropertyMapper.add(personId, personPropertyValue);
+		}
 		personPropertyManagerMap.get(personPropertyId).setPropertyValue(personId, personPropertyValue);
 	}
 
 	@Override
-	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
-		return personPropertyManagerMap.get(personPropertyId).getPeopleWithPropertyValue(personPropertyValue);
+	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
+		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+		if (personPropertyMapper != null) {
+			return personPropertyMapper.getPeopleWithPropertyValue(personPropertyValue);
+		}
+
+		PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
+
+		/*
+		 * We are not maintaining a map from property values to people. We first
+		 * determine the number of people who will be returned so that we can size the
+		 * resulting ArrayList properly.
+		 */
+		int n = personIdManager.getPersonIdLimit();
+		int count = 0;
+		for (int personIndex = 0; personIndex < n; personIndex++) {
+			if (personIdManager.personIndexExists(personIndex)) {
+				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
+				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				if (personPropertyValue.equals(propertyValue)) {
+					count++;
+				}
+			}
+		}
+
+		/*
+		 * Now we fill the list.
+		 */
+		List<PersonId> result = new ArrayList<>(count);
+
+		for (int personIndex = 0; personIndex < n; personIndex++) {
+			if (personIdManager.personIndexExists(personIndex)) {
+				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
+				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				if (personPropertyValue.equals(propertyValue)) {
+					result.add(personId);
+				}
+			}
+		}
+
+		return result;
+
 	}
-	
+
 	@Override
-	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
-		return personPropertyManagerMap.get(personPropertyId).getPersonCountForPropertyValue(personPropertyValue);
+	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId,
+			final Object personPropertyValue) {
+
+		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+		if (personPropertyMapper != null) {
+			return personPropertyMapper.getPersonCountForPropertyValue(personPropertyValue);
+		}
+		/*
+		 * We are not maintaining a map from property values to people. We first
+		 * determine the number of people who will be returned so that we can size the
+		 * resulting ArrayList properly.
+		 */
+
+		PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
+		int n = personIdManager.getPersonIdLimit();
+		int count = 0;
+		for (int personIndex = 0; personIndex < n; personIndex++) {
+			if (personIdManager.personIndexExists(personIndex)) {
+				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
+				Object propertyValue = personPropertyManager.getPropertyValue(personId);
+				if (personPropertyValue.equals(propertyValue)) {
+					count++;
+				}
+			}
+		}
+		return count;
+
 	}
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
 		for (PersonPropertyManager propertyManager : personPropertyManagerMap.values()) {
 			propertyManager.handlePersonAddition(personId);
+		}
+
+		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
+			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);
+			personPropertyMapper.add(personId, personPropertyValue);
 		}
 	}
 
@@ -273,10 +373,17 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		for (PersonPropertyManager propertyManager : personPropertyManagerMap.values()) {
 			propertyManager.handlePersonRemoval(personId);
 		}
+
+		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
+			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
+			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);
+			personPropertyMapper.remove(personId, personPropertyValue);
+		}
 	}
 
 	@Override
-	public void setRegionPropertyValue(RegionId regionId, RegionPropertyId regionPropertyId, Object regionPropertyValue) {
+	public void setRegionPropertyValue(RegionId regionId, RegionPropertyId regionPropertyId,
+			Object regionPropertyValue) {
 		regionPropertyMap.get(regionId).get(regionPropertyId).setPropertyValue(regionPropertyValue);
 	}
 
@@ -292,7 +399,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setCompartmentPropertyValue(CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId, Object compartmentPropertyValue) {
+	public void setCompartmentPropertyValue(CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId,
+			Object compartmentPropertyValue) {
 		compartmentPropertyMap.get(compartmentId).get(compartmentPropertyId).setPropertyValue(compartmentPropertyValue);
 	}
 
@@ -308,23 +416,29 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
-		materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).setPropertyValue(materialsProducerPropertyValue);
+	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
+		materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId)
+				.setPropertyValue(materialsProducerPropertyValue);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId) {
 		return (T) materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getValue();
 	}
 
 	@Override
-	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
-		return materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getAssignmentTime();
+	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId,
+			MaterialsProducerPropertyId materialsProducerPropertyId) {
+		return materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId)
+				.getAssignmentTime();
 	}
 
 	@Override
-	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object resourcPropertyValue) {
+	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId,
+			Object resourcPropertyValue) {
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcPropertyValue);
 	}
 
@@ -403,12 +517,14 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		Set<BatchPropertyId> batchPropertyIds = batchPropertyIdMap.get(materialId);
 
 		for (BatchPropertyId batchPropertyId : batchPropertyIds) {
-			PropertyDefinition propertyDefinition = propertyDefinitionManager.getBatchPropertyDefinition(materialId, batchPropertyId);
+			PropertyDefinition propertyDefinition = propertyDefinitionManager.getBatchPropertyDefinition(materialId,
+					batchPropertyId);
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 			if (propertyDefinition.getDefaultValue().isPresent()) {
 				propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 			} else {
-				throw new RuntimeException("Batch property id : " + batchPropertyId + " has a null default property value for its property definition: " + propertyDefinition);
+				throw new RuntimeException("Batch property id : " + batchPropertyId
+						+ " has a null default property value for its property definition: " + propertyDefinition);
 			}
 			map.put(batchPropertyId, propertyValueRecord);
 		}
@@ -433,8 +549,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	public <T> T getGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId) {
 		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
 		/*
-		 * If we cannot find a property value record we will use the default
-		 * value associated with the property definition.
+		 * If we cannot find a property value record we will use the default value
+		 * associated with the property definition.
 		 */
 		PropertyValueRecord propertyValueRecord = null;
 		if (propertyMap != null) {
@@ -442,11 +558,13 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		}
 		if (propertyValueRecord == null) {
 			GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
-			PropertyDefinition propertyDefinition = propertyDefinitionManager.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+			PropertyDefinition propertyDefinition = propertyDefinitionManager.getGroupPropertyDefinition(groupTypeId,
+					groupPropertyId);
 			if (propertyDefinition.getDefaultValue().isPresent()) {
 				return (T) propertyDefinition.getDefaultValue().get();
 			} else {
-				throw new RuntimeException("Group property id : " + groupPropertyId + " has a null default property value for its property definition: " + propertyDefinition);
+				throw new RuntimeException("Group property id : " + groupPropertyId
+						+ " has a null default property value for its property definition: " + propertyDefinition);
 			}
 		}
 		return (T) propertyValueRecord.getValue();
@@ -456,8 +574,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	public double getGroupPropertyTime(final GroupId groupId, GroupPropertyId groupPropertyId) {
 		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
 		/*
-		 * If we cannot find a property assignment time, then we assume it is
-		 * time zero.
+		 * If we cannot find a property assignment time, then we assume it is time zero.
 		 */
 		PropertyValueRecord propertyValueRecord = null;
 		if (propertyMap != null) {
@@ -470,7 +587,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId, Object groupPropertyValue) {
+	public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId,
+			Object groupPropertyValue) {
 		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
 		if (propertyMap == null) {
 			propertyMap = new LinkedHashMap<>();
@@ -490,7 +608,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		memoryPartition.addMemoryLink(this, personPropertyManagerMap, "Person Property Manager Map");
 		for (PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			PersonPropertyManager personPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			memoryPartition.addMemoryLink(this, personPropertyManager, "Person Property: " + personPropertyId.toString());
+			memoryPartition.addMemoryLink(this, personPropertyManager,
+					"Person Property: " + personPropertyId.toString());
 		}
 
 	}

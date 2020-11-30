@@ -66,14 +66,14 @@ public interface PersonPropertyManager {
 	 * 
 	 * @param personPropertyValue
 	 */
-	public List<PersonId> getPeopleWithPropertyValue(final Object personPropertyValue);
+	//public List<PersonId> getPeopleWithPropertyValue(final Object personPropertyValue);
 
 	/**
 	 * Returns the number of people who have a particular property value.
 	 * 
 	 * @param personPropertyValue
 	 */
-	public int getPersonCountForPropertyValue(final Object personPropertyValue);
+	//public int getPersonCountForPropertyValue(final Object personPropertyValue);
 
 	/**
 	 * Integrate the person into this PropertyManager with the default value

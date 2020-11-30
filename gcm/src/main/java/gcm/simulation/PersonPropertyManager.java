@@ -55,43 +55,5 @@ public interface PersonPropertyManager {
 	 */
 	public void setPropertyValue(PersonId personId, Object personPropertyValue);
 
-	/**
-	 * Returns the List of people who have a particular property value. The
-	 * returned list will only include people who currently exist in the
-	 * simulation given that handlePersonRemoval() has been executed for each
-	 * person removal from the simulation. The environment must guard against
-	 * access to removed people.
-	 * 
-	 * @param personPropertyValue
-	 */
-	//public List<PersonId> getPeopleWithPropertyValue(final Object personPropertyValue);
-
-	/**
-	 * Returns the number of people who have a particular property value.
-	 * 
-	 * @param personPropertyValue
-	 */
-	//public int getPersonCountForPropertyValue(final Object personPropertyValue);
-
-	/**
-	 * Integrate the person into this PropertyManager with the default value
-	 * associated with property's definition. Note that this does not imply that
-	 * the person exists in the simulation. The environment must guard against
-	 * access to removed people.
-	 * 
-	 * @param personId
-	 */
-	public void handlePersonAddition(final PersonId personId);
-
-	/**
-	 * Removes the person such that the method getPeopleWithPropertyValue()
-	 * functions properly. However, this does not guarantee that the person does
-	 * not have a property value since there is no way to effectively remove
-	 * people from most of the implementors of PropertyManager due to default
-	 * values, array structures and use of primitives. Instead, the environment
-	 * must guard against access to removed people.
-	 * 
-	 * @param personId
-	 */
-	public void handlePersonRemoval(final PersonId personId);
+	
 }

@@ -357,10 +357,6 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
-		for (PersonPropertyManager propertyManager : personPropertyManagerMap.values()) {
-			propertyManager.handlePersonAddition(personId);
-		}
-
 		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
 			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
 			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);
@@ -370,10 +366,6 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	@Override
 	public void handlePersonRemoval(final PersonId personId) {
-		for (PersonPropertyManager propertyManager : personPropertyManagerMap.values()) {
-			propertyManager.handlePersonRemoval(personId);
-		}
-
 		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
 			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
 			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);

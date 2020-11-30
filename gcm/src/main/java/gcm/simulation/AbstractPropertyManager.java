@@ -78,16 +78,7 @@ public abstract class AbstractPropertyManager implements PersonPropertyManager {
 	}
 	
 
-	@Override
-	public final void handlePersonAddition(final PersonId personId) {
-		
-
-	}
-
-	@Override
-	public final void handlePersonRemoval(final PersonId personId) {
-		
-	}
+	
 
 	@Override
 	public final double getPropertyTime(PersonId personId) {

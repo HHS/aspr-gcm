@@ -200,8 +200,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	private StochasticsManager stochasticsManager;
-	
-	
 
 	public PopulationPartitionImpl(final Object identifierKey, final Context context, final Partition partition,
 			final ComponentId owningComponentId) {
@@ -304,21 +302,22 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		int index = 0;
 		Key key = new Key(keySize);
 		if (partition.getRegionPartitionFunction().isPresent()) {
-			key.keys[index++] = partition.getRegionPartitionFunction().get().apply(environment.getPersonRegion(personId));
+			key.keys[index++] = partition.getRegionPartitionFunction().get()
+					.apply(environment.getPersonRegion(personId));
 		}
 		if (partition.getCompartmentPartitionFunction().isPresent()) {
-			key.keys[index++] = partition.getCompartmentPartitionFunction()
-					.get().apply(environment.getPersonCompartment(personId));
+			key.keys[index++] = partition.getCompartmentPartitionFunction().get()
+					.apply(environment.getPersonCompartment(personId));
 		}
 
 		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
-			key.keys[index++] = partition.getPersonPropertyPartitionFunction(personPropertyId)
-					.get().apply(environment.getPersonPropertyValue(personId, personPropertyId));
+			key.keys[index++] = partition.getPersonPropertyPartitionFunction(personPropertyId).get()
+					.apply(environment.getPersonPropertyValue(personId, personPropertyId));
 		}
 
 		for (ResourceId resourceId : partition.getPersonResourceIds()) {
-			key.keys[index++] = partition.getPersonResourcePartitionFunction(resourceId)
-					.get().apply(environment.getPersonResourceLevel(personId, resourceId));
+			key.keys[index++] = partition.getPersonResourcePartitionFunction(resourceId).get()
+					.apply(environment.getPersonResourceLevel(personId, resourceId));
 		}
 
 		if (partition.getGroupPartitionFunction().isPresent()) {
@@ -458,7 +457,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentRegionLabel = currentKey.keys[regionLabelIndex];
 
 		// get the new label
-		Object newRegionLabel = partition.getRegionPartitionFunction().get().apply(environment.getPersonRegion(personId));
+		Object newRegionLabel = partition.getRegionPartitionFunction().get()
+				.apply(environment.getPersonRegion(personId));
 
 		if (newRegionLabel == null) {
 			throw new RuntimeException("change to model exception");
@@ -500,8 +500,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentPropertyLabel = currentKey.keys[personPropertyLabelIndex];
 
 		// get the new label
-		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId)
-				.get().apply(environment.getPersonPropertyValue(personId, personPropertyId));
+		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId).get()
+				.apply(environment.getPersonPropertyValue(personId, personPropertyId));
 
 		if (newPropertyLabel == null) {
 			throw new RuntimeException("change to model exception");
@@ -543,8 +543,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentResourceLabel = currentKey.keys[resourceLabelIndex];
 
 		// get the new label
-		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId)
-				.get().apply(environment.getPersonResourceLevel(personId, resourceId));
+		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId).get()
+				.apply(environment.getPersonResourceLevel(personId, resourceId));
 
 		if (newResourceLabel == null) {
 			throw new RuntimeException("change to model exception");
@@ -1053,7 +1053,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		return new PartialKeyIterator(key);
 	}
 
-//	public static StopWatch partitionStopWatch = new StopWatch();
+	private double getDefaultWeight(ObservableEnvironment observableEnvironment, LabelSet labelSet) {
+		return 1;
+	}
+
 
 	/**
 	 * Returns a randomly chosen person identifier from the partition consistent
@@ -1066,7 +1069,6 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		if (isEmpty()) {
 			return new StochasticPersonSelection(null, false);
 		}
-//		partitionStopWatch.start();
 
 		RandomGenerator randomGenerator;
 		RandomNumberGeneratorId randomNumberGeneratorId = partitionSampler.getRandomNumberGeneratorId().orElse(null);
@@ -1081,108 +1083,75 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		LabelSet labelSet = partitionSampler.getLabelSet().orElse(LabelSet.builder().build());
 
 		LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction()
-				.orElse(null);
+				.orElse(this::getDefaultWeight);
 
 		Key selectedKey = null;
 		Key keyForExcludedPersonId = getKeyForPerson(excludedPersonId);
 		KeyIterator keyIterator;
 
-		if (labelSetWeightingFunction == null) {
-			int candidateCount = 0;
+		aquireWeightsLock();
+		try {
 			keyIterator = getKeyIterator(labelSet);
+			allocateWeights(keyIterator.size());
+			/*
+			 * Initialize the sum of the weights to zero and set the index in the weights
+			 * and weightedKeys to zero.
+			 */
+
+			double sum = 0;
+			int weightsLength = 0;
 			while (keyIterator.hasNext()) {
-				PeopleContainer peopleContainer = keyToPeopleMap.get(keyIterator.next());
-				candidateCount += peopleContainer.size();
-			}
-			if (keyForExcludedPersonId != null) {
-				candidateCount--;
-			}
-			if (candidateCount > 0) {
-				int selectedIndex = randomGenerator.nextInt(candidateCount);
-				keyIterator = getKeyIterator(labelSet);
-				while (keyIterator.hasNext()) {
-					Key fullKey = keyIterator.next();
-					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-					int containerSize = peopleContainer.size();
-					if (fullKey == keyForExcludedPersonId) {
-						containerSize--;
-					}
-					if (containerSize > selectedIndex) {
-						selectedKey = fullKey;
-						break;
-					}
-					selectedIndex -= containerSize;
+				Key fullKey = keyIterator.next();
+				LabelSet fullLableSet = labelSetInfoMap.get(fullKey);
+				PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
+				double weight = labelSetWeightingFunction.getWeight(observableEnvironment, fullLableSet);
+				if (fullKey != keyForExcludedPersonId) {
+					weight *= peopleContainer.size();
+				} else {
+					weight *= (peopleContainer.size() - 1);
 				}
-			}
-		} else {
-			aquireWeightsLock();
-			try {
-				keyIterator = getKeyIterator(labelSet);
-				allocateWeights(keyIterator.size());
+
+				if (!Double.isFinite(weight) || (weight < 0)) {
+					return new StochasticPersonSelection(null, true);
+				}
 				/*
-				 * Initialize the sum of the weights to zero and set the index in the weights
-				 * and weightedKeys to zero.
+				 * Keys having a zero weight are rejected for selection
 				 */
-
-				double sum = 0;
-				int weightsLength = 0;
-				while (keyIterator.hasNext()) {
-					Key fullKey = keyIterator.next();
-					LabelSet fullLableSet = labelSetInfoMap.get(fullKey);
-					PeopleContainer peopleContainer = keyToPeopleMap.get(fullKey);
-					double weight = labelSetWeightingFunction.getWeight(observableEnvironment, fullLableSet);
-					if (fullKey != keyForExcludedPersonId) {
-						weight *= peopleContainer.size();
-					} else {
-						weight *= (peopleContainer.size() - 1);
-					}
-
-					if (!Double.isFinite(weight) || (weight < 0)) {
-//						partitionStopWatch.stop();
-						return new StochasticPersonSelection(null, true);
-					}
-					/*
-					 * Keys having a zero weight are rejected for selection
-					 */
-					if (weight > 0) {
-						sum += weight;
-						weights[weightsLength] = sum;
-						weightedKeys[weightsLength] = fullKey;
-						weightsLength++;
-					}
-
+				if (weight > 0) {
+					sum += weight;
+					weights[weightsLength] = sum;
+					weightedKeys[weightsLength] = fullKey;
+					weightsLength++;
 				}
 
-				/*
-				 * If at least one identifierKey was accepted for selection, then we attempt a
-				 * random selection.
-				 */
-				if (weightsLength > 0) {
-					/*
-					 * Although the individual weights may have been finite, if the sum of those
-					 * weights is not finite no legitimate selection can be made
-					 */
-					if (!Double.isFinite(sum)) {
-//						partitionStopWatch.stop();
-						return new StochasticPersonSelection(null, true);
-					}
-
-					final double targetValue = randomGenerator.nextDouble() * sum;
-					final int targetIndex = findTargetIndex(targetValue, weightsLength);
-					selectedKey = weightedKeys[targetIndex];
-				}
-			} finally {
-				releaseWeightsLock();
 			}
+
+			/*
+			 * If at least one identifierKey was accepted for selection, then we attempt a
+			 * random selection.
+			 */
+			if (weightsLength > 0) {
+				/*
+				 * Although the individual weights may have been finite, if the sum of those
+				 * weights is not finite no legitimate selection can be made
+				 */
+				if (!Double.isFinite(sum)) {
+					return new StochasticPersonSelection(null, true);
+				}
+
+				final double targetValue = randomGenerator.nextDouble() * sum;
+				final int targetIndex = findTargetIndex(targetValue, weightsLength);
+				selectedKey = weightedKeys[targetIndex];
+			}
+		} finally {
+			releaseWeightsLock();
 		}
 
 		if (selectedKey == null) {
-//			partitionStopWatch.stop();
 			return new StochasticPersonSelection(null, false);
 		}
 
 		PersonId selectedPerson = getRandomPersonId(selectedKey, randomGenerator, excludedPersonId);
-//		partitionStopWatch.stop();
 		return new StochasticPersonSelection(selectedPerson, false);
 	}
 
@@ -1203,7 +1172,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 //		System.out.println(label + " = " + result);
 //		return result;
 //	}
-	
+
 //	private long reportObjectVerbose(Object object, String label) {
 //		MemSizer memSizer = context.getContextFreeMemSizer();
 //		memSizer.setVerbose(true);

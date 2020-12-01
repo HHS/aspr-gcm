@@ -184,27 +184,27 @@ public class MT_PartitionManagement {
 
 	}
 
-	@Test
-	public void test2() {
-		final long seed = SEED_PROVIDER.getSeedValue(1);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		int populationSize = 1_000_000;
-		boolean measureMemory = false;
-		boolean loadPopulationFirst = false;
-		boolean useArray = false;
-		boolean useFilter = true;
-		boolean useDefaultPropertyValues = false;
-
-		System.out.println(Report.toHeader());
-
-		for (int i = 0; i < 10; i++) {
-			Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray, useFilter,
-					useDefaultPropertyValues, measureMemory);
-			System.out.println(report.toString());
-		}
-
-	}
+//	@Test
+//	public void test2() {
+//		final long seed = SEED_PROVIDER.getSeedValue(1);
+//		RandomGenerator randomGenerator = getRandomGenerator(seed);
+//
+//		int populationSize = 1_000_000;
+//		boolean measureMemory = false;
+//		boolean loadPopulationFirst = false;
+//		boolean useArray = false;
+//		boolean useFilter = true;
+//		boolean useDefaultPropertyValues = false;
+//
+//		System.out.println(Report.toHeader());
+//
+//		for (int i = 0; i < 10; i++) {
+//			Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray, useFilter,
+//					useDefaultPropertyValues, measureMemory);
+//			System.out.println(report.toString());
+//		}
+//
+//	}
 
 	private static List<Boolean> generateBooleanList() {
 		List<Boolean> result = new ArrayList<>();

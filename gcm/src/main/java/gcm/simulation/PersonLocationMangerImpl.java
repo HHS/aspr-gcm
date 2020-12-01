@@ -326,7 +326,7 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 			return new HashIntSet<>();
 		case NONE:// fall through
 		default:
-			throw new RuntimeException("unhandled map option " + regionMapOption);
+			throw new RuntimeException("unhandled map option " + compartmentMapOption);
 		}
 	}
 

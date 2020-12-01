@@ -42,4 +42,10 @@ public interface IndexedPropertyManager {
 	 */
 	public void setPropertyValue(int id, Object propertyValue);
 
+	/**
+	 * Removes non-primitive property values for the given id -- use only when
+	 * removing the indicated id from the simulation.
+	 */
+	public void removeId(int id);
+
 }

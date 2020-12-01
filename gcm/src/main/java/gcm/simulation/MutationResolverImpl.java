@@ -1139,8 +1139,9 @@ public final class MutationResolverImpl extends BaseElement implements MutationR
 			for (PersonId personId : peopleForGroup) {				
 				populationPartitionManager.handlePersonGroupRemoval(groupId, personId);
 			}
-			personGroupManger.removeGroup(groupId);
 			propertyManager.handleGroupRemoval(groupId);
+			personGroupManger.removeGroup(groupId);
+			
 			if (observationManagerRequiresGroupInfo) {
 				observationManager.handleGroupRemovalByGroupInfo(groupInfo);
 			} else {

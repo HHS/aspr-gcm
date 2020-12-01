@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -14,7 +13,7 @@ import gcm.util.containers.DoubleValueContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class DoublePropertyManager extends AbstractPropertyManager {
+public final class DoublePropertyManager extends AbstractIndexedPropertyManager {
 	
 	/*
 	 * A container, indexed by person id, that stores Double values as an array
@@ -30,8 +29,8 @@ public final class DoublePropertyManager extends AbstractPropertyManager {
 	 * @param propertyDefinition
 	 * @param propertyId
 	 */
-	public DoublePropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId propertyId) {
-		super(context, propertyDefinition, propertyId);
+	public DoublePropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition,  initialSize);
 		
 		if (propertyDefinition.getType() != Double.class) {
 			throw new RuntimeException("Requires a property definition with Double type");
@@ -43,8 +42,7 @@ public final class DoublePropertyManager extends AbstractPropertyManager {
 		
 		Double defaultValue = (Double)propertyDefinition.getDefaultValue().get();
 		
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		doubleValueContainer = new DoubleValueContainer(defaultValue, suggestedPopulationSize);		
+		doubleValueContainer = new DoubleValueContainer(defaultValue, initialSize);		
 	}
 
 	@Override

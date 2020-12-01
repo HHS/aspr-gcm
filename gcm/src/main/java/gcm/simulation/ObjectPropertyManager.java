@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -14,24 +13,23 @@ import gcm.util.containers.ObjectValueContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class ObjectPropertyManager extends AbstractPropertyManager {
+public final class ObjectPropertyManager extends AbstractIndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores Objects as an array.
 	 */
 	private ObjectValueContainer objectValueContainer;
+	private final Object defaultValue;
 
-	public ObjectPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId propertyId) {
-		super(context, propertyDefinition, propertyId);	
+	public ObjectPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition,  initialSize);	
 		
 		if(!propertyDefinition.getDefaultValue().isPresent()) {
 			throw new RuntimeException("default value is not present for "+propertyDefinition);
 		}
-
 		
-		Object defaultValue = propertyDefinition.getDefaultValue().get();		
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		objectValueContainer = new ObjectValueContainer(defaultValue, suggestedPopulationSize);
+		defaultValue = propertyDefinition.getDefaultValue().get();		
+		objectValueContainer = new ObjectValueContainer(defaultValue, initialSize);
 	}
 
 	@Override
@@ -42,7 +40,13 @@ public final class ObjectPropertyManager extends AbstractPropertyManager {
 	@Override
 	public void setPropertyValue(int id, Object propertyValue) {
 		super.setPropertyValue(id, propertyValue);
-		objectValueContainer.setValue(id, propertyValue);
+		objectValueContainer.setValue(id, propertyValue);		
+	}
+	
+	@Override
+	public void removeId(int id) {
+		//dropping reference to the currently stored value for potential garbage collection 
+		objectValueContainer.setValue(id, defaultValue);
 	}
 
 }

@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.util.annotations.Source;
@@ -23,7 +22,7 @@ import gcm.util.containers.DoubleValueContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public abstract class AbstractPropertyManager implements IndexedPropertyManager {
+public abstract class AbstractIndexedPropertyManager implements IndexedPropertyManager {
 
 	private EventManager eventManger;
 
@@ -38,12 +37,6 @@ public abstract class AbstractPropertyManager implements IndexedPropertyManager 
 	 */
 	private final boolean trackTime;
 
-	/*
-	 * The property that this AbstractProperty Manager represents.
-	 */
-	private final PersonPropertyId personPropertyId;
-
-
 	/**
 	 * Constructs an AbstractPropertyManger. Establishes the time tracking and
 	 * map option policies from the environment. Establishes the property value
@@ -51,14 +44,12 @@ public abstract class AbstractPropertyManager implements IndexedPropertyManager 
 	 * 
 	 * @param environment
 	 * @param propertyDefinition
-	 * @param personPropertyId
+	 * @param propertyId
 	 */
-	public AbstractPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId personPropertyId) {
-		this.eventManger = context.getEventManager();
-		this.personPropertyId = personPropertyId;
-		trackTime = propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME;
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		timeTrackingContainer = new DoubleValueContainer(0, suggestedPopulationSize);
+	public AbstractIndexedPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		this.eventManger = context.getEventManager();		
+		trackTime = propertyDefinition.getTimeTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME;		
+		timeTrackingContainer = new DoubleValueContainer(0, initialSize);
 	}
 
 	@Override
@@ -77,8 +68,12 @@ public abstract class AbstractPropertyManager implements IndexedPropertyManager 
 		if (trackTime) {
 			result = timeTrackingContainer.getValue(id);
 		} else {
-			throw new RuntimeException("Property time values are not being tracked for this property " + personPropertyId);
+			throw new RuntimeException("Property time values are not being tracked");
 		}
 		return result;
+	}
+	@Override
+	public void removeId(int id) {
+		//do nothing
 	}
 }

@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -15,7 +14,7 @@ import gcm.util.containers.IntValueContainer.IntValueType;
  *
  */
 @Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class IntPropertyManager extends AbstractPropertyManager {
+public final class IntPropertyManager extends AbstractIndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores the various Boxed integral
@@ -36,8 +35,8 @@ public final class IntPropertyManager extends AbstractPropertyManager {
 	 * @param propertyDefinition
 	 * @param propertyId
 	 */
-	public IntPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId personPropertyId) {
-		super(context, propertyDefinition, personPropertyId);
+	public IntPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition, initialSize);
 		if(!propertyDefinition.getDefaultValue().isPresent()) {
 			throw new RuntimeException("default value is not present for "+propertyDefinition);
 		}
@@ -78,8 +77,7 @@ public final class IntPropertyManager extends AbstractPropertyManager {
 			throw new RuntimeException("unhandled type "+intValueType);
 		}
 		
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		intValueContainer = new IntValueContainer(longDefaultValue, suggestedPopulationSize);
+		intValueContainer = new IntValueContainer(longDefaultValue, initialSize);
 	}
 
 	@Override

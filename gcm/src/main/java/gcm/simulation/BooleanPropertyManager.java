@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -14,7 +13,7 @@ import gcm.util.containers.BooleanContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
-public final class BooleanPropertyManager extends AbstractPropertyManager {
+public final class BooleanPropertyManager extends AbstractIndexedPropertyManager {
 
 	/*
 	 * A container, indexed by person id, that stores boolean values as bits.
@@ -28,8 +27,8 @@ public final class BooleanPropertyManager extends AbstractPropertyManager {
 	 * @param propertyDefinition
 	 * @param propertyId
 	 */
-	public BooleanPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId propertyId) {
-		super(context, propertyDefinition, propertyId);
+	public BooleanPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition, initialSize);
 		if (propertyDefinition.getType() != Boolean.class) {
 			throw new RuntimeException("Requires a property definition with Boolean type ");
 		}
@@ -37,8 +36,8 @@ public final class BooleanPropertyManager extends AbstractPropertyManager {
 			throw new RuntimeException("default value is not present for "+propertyDefinition);
 		}
 		boolean defaultValue = (Boolean) propertyDefinition.getDefaultValue().get();
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		boolContainer = new BooleanContainer(defaultValue, suggestedPopulationSize);
+		
+		boolContainer = new BooleanContainer(defaultValue, initialSize);
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -14,7 +13,7 @@ import gcm.util.containers.EnumContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class EnumPropertyManager extends AbstractPropertyManager {
+public final class EnumPropertyManager extends AbstractIndexedPropertyManager {
 	/*
 	 * The storage container.
 	 */
@@ -27,15 +26,14 @@ public final class EnumPropertyManager extends AbstractPropertyManager {
 	 * @param propertyDefinition
 	 * @param propertyId
 	 */
-	public EnumPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId propertyId) {
-		super(context, propertyDefinition, propertyId);
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
+	public EnumPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition, initialSize);
 		
 		if(!propertyDefinition.getDefaultValue().isPresent()) {
 			throw new RuntimeException("default value is not present for "+propertyDefinition);
 		}
 		
-		enumContainer = new EnumContainer(propertyDefinition.getType(), propertyDefinition.getDefaultValue().get(),suggestedPopulationSize);
+		enumContainer = new EnumContainer(propertyDefinition.getType(), propertyDefinition.getDefaultValue().get(),initialSize);
 	}
 
 	@Override

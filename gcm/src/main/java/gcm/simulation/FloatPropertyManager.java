@@ -1,6 +1,5 @@
 package gcm.simulation;
 
-import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
@@ -14,7 +13,7 @@ import gcm.util.containers.FloatValueContainer;
  *
  */
 @Source(status = TestStatus.REQUIRED,proxy = EnvironmentImpl.class)
-public final class FloatPropertyManager extends AbstractPropertyManager {
+public final class FloatPropertyManager extends AbstractIndexedPropertyManager {
 
 	
 
@@ -31,8 +30,8 @@ public final class FloatPropertyManager extends AbstractPropertyManager {
 	 * @param propertyDefinition
 	 * @param propertyId
 	 */
-	public FloatPropertyManager(Context context, PropertyDefinition propertyDefinition, PersonPropertyId propertyId) {
-		super(context, propertyDefinition, propertyId);		
+	public FloatPropertyManager(Context context, PropertyDefinition propertyDefinition, int initialSize) {
+		super(context, propertyDefinition, initialSize);		
 		if (propertyDefinition.getType() != Float.class) {
 			throw new RuntimeException("Requires a property definition with float type");
 		}
@@ -40,8 +39,7 @@ public final class FloatPropertyManager extends AbstractPropertyManager {
 			throw new RuntimeException("default value is not present for "+propertyDefinition);
 		}
 		Float defaultValue = (Float) propertyDefinition.getDefaultValue().get();
-		int suggestedPopulationSize = context.getScenario().getSuggestedPopulationSize();
-		floatValueContainer = new FloatValueContainer(defaultValue, suggestedPopulationSize);
+		floatValueContainer = new FloatValueContainer(defaultValue, initialSize);
 	}
 
 	

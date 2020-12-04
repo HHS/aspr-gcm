@@ -22,7 +22,7 @@ import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationManager;
-
+import gcm.simulation.PersonIdManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
 import gcm.simulation.partition.LabelSet.Builder;
@@ -980,18 +980,18 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	@Override
 	public void init() {
-		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
-				.forEach(personId -> addPerson(personId));//
+//		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
+//				.forEach(personId -> addPerson(personId));//
+//		
 		
-		
-//		PersonIdManager personIdManager = context.getPersonIdManager();
-//		int personIdLimit = personIdManager.getPersonIdLimit();
-//		for(int i = 0;i<personIdLimit;i++) {
-//			if(personIdManager.personIndexExists(i)) {
-//				PersonId personId = personIdManager.getBoxedPersonId(i);
-//				evaluate(personId);
-//			}
-//		}
+		PersonIdManager personIdManager = context.getPersonIdManager();
+		int personIdLimit = personIdManager.getPersonIdLimit();
+		for(int i = 0;i<personIdLimit;i++) {
+			if(personIdManager.personIndexExists(i)) {
+				PersonId personId = personIdManager.getBoxedPersonId(i);
+				evaluate(personId);
+			}
+		}
 	}
 
 	// Guard for both weights array and weightedKeys array

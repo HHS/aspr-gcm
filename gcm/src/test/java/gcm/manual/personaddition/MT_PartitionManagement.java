@@ -27,7 +27,6 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
-import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -69,34 +68,30 @@ public class MT_PartitionManagement {
 
 		AGE, IMMUNE, VACCINATED, SERUM_DENSITY;
 
-		public PropertyDefinition getPropertyDefinition(MapOption mapOption, TimeTrackingPolicy timeTrackingPolicy) {
+		public PropertyDefinition getPropertyDefinition(TimeTrackingPolicy timeTrackingPolicy) {
 			switch (this) {
 			case AGE:
 
 				return PropertyDefinition.builder()//
 						.setDefaultValue(0)//
-						.setMapOption(mapOption)//
 						.setTimeTrackingPolicy(timeTrackingPolicy)//
 						.setType(Integer.class)//
 						.build();
 			case IMMUNE:
 				return PropertyDefinition.builder()//
 						.setDefaultValue(false)//
-						.setMapOption(mapOption)//
 						.setTimeTrackingPolicy(timeTrackingPolicy)//
 						.setType(Boolean.class)//
 						.build();
 			case SERUM_DENSITY:
 				return PropertyDefinition.builder()//
 						.setDefaultValue(5.5)//
-						.setMapOption(mapOption)//
 						.setTimeTrackingPolicy(timeTrackingPolicy)//
 						.setType(Double.class)//
 						.build();
 			case VACCINATED:
 				return PropertyDefinition.builder()//
 						.setDefaultValue(false)//
-						.setMapOption(mapOption)//
 						.setTimeTrackingPolicy(timeTrackingPolicy)//
 						.setType(Boolean.class)//
 						.build();
@@ -205,7 +200,6 @@ public class MT_PartitionManagement {
 
 		int populationSize;
 		boolean loadPopulationFirst;
-		MapOption mapOption;
 
 		boolean useFilter;
 		double partitionLoadTime;
@@ -225,9 +219,6 @@ public class MT_PartitionManagement {
 			this.loadPopulationFirst = loadPopulationFirst;
 		}
 
-		public void setMapOption(MapOption mapOption) {
-			this.mapOption = mapOption;
-		}
 
 		public void setUseFilter(boolean useFilter) {
 			this.useFilter = useFilter;
@@ -273,8 +264,6 @@ public class MT_PartitionManagement {
 			sb.append("\t");
 			sb.append("useDefaultPropertyValues");
 			sb.append("\t");
-			sb.append("map option");
-			sb.append("\t");
 			sb.append("filtered");
 			sb.append("\t");
 			sb.append("partition load time");
@@ -303,8 +292,6 @@ public class MT_PartitionManagement {
 			sb.append(loadPopulationFirst);
 			sb.append("\t");
 			sb.append(useDefaultPropertyValues);
-			sb.append("\t");
-			sb.append(mapOption);
 			sb.append("\t");
 			sb.append(useFilter);
 			sb.append("\t");
@@ -373,21 +360,12 @@ public class MT_PartitionManagement {
 		phaseTimeMap.put(Phase.SAMPLE_PARTITION, 4.0);
 		phaseTimeMap.put(Phase.MEASURE_MEMORY, 5.0);
 
-		MapOption mapOption;
-		if (useArray) {
-			mapOption = MapOption.HASH;
-		} else {
-			mapOption = MapOption.NONE;
-		}
-		report.setMapOption(mapOption);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
 		
 		scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
 		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
-		scenarioBuilder.setRegionMapOption(mapOption);	
 		
 		for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
 			scenarioBuilder.addCompartmentId(testCompartmentId, TaskComponent.class);
@@ -419,7 +397,7 @@ public class MT_PartitionManagement {
 
 		// load the person properties
 		for (LocalPersonPropertyId localPersonPropertyId : LocalPersonPropertyId.values()) {
-			PropertyDefinition propertyDefinition = localPersonPropertyId.getPropertyDefinition(MapOption.NONE,
+			PropertyDefinition propertyDefinition = localPersonPropertyId.getPropertyDefinition(
 					TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 			scenarioBuilder.definePersonProperty(localPersonPropertyId, propertyDefinition);
 		}

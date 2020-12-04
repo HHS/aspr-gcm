@@ -1,6 +1,14 @@
 package gcm.automated;
 
-import static gcm.automated.support.EnvironmentSupport.*;
+import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
+import static gcm.automated.support.EnvironmentSupport.addStandardPeople;
+import static gcm.automated.support.EnvironmentSupport.addStandardPropertyDefinitions;
+import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
+import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
+import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
+import static gcm.automated.support.EnvironmentSupport.generatePropertyValue;
+import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
+import static gcm.automated.support.EnvironmentSupport.getReplication;
 import static gcm.automated.support.ExceptionAssertion.assertModelException;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,6 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.EnvironmentSupport;
+import gcm.automated.support.EnvironmentSupport.PropertyAssignmentPolicy;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlanContainer;
@@ -30,7 +39,6 @@ import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.BatchId;
 import gcm.scenario.BatchPropertyId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.ResourceId;
@@ -645,80 +653,6 @@ public class AT_EnvironmentImpl_02 {
 
 		assertAllPlansExecuted(taskPlanContainer);
 
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#getCompartmentMapOption()}
-	 */
-	@Test
-	@UnitTestMethod(name = "getCompartmentMapOption", args = {})
-	public void testGetCompartmentMapOption() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(5);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (MapOption mapOption : MapOption.values()) {
-			ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-			scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
-			scenarioBuilder.setCompartmentMapOption(mapOption);
-
-			addStandardComponentsAndTypes(scenarioBuilder);
-			TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-			Scenario scenario = scenarioBuilder.build();
-
-			Replication replication = getReplication(randomGenerator);
-
-			int testTime = 1;
-
-			taskPlanContainer.addTaskPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, testTime++, (environment) -> {
-				assertEquals(mapOption, environment.getCompartmentMapOption());
-			});
-
-			Simulation simulation = new Simulation();
-			simulation.setReplication(replication);
-			simulation.setScenario(scenario);
-			simulation.execute();
-
-			assertAllPlansExecuted(taskPlanContainer);
-		}
-	}
-
-	/**
-	 * Tests {@link EnvironmentImpl#getRegionMapOption()}
-	 */
-	@Test
-	@UnitTestMethod(name = "getRegionMapOption", args = {})
-	public void testGetRegionMapOption() {
-
-		final long seed = SEED_PROVIDER.getSeedValue(6);
-		RandomGenerator randomGenerator = getRandomGenerator(seed);
-
-		for (MapOption mapOption : MapOption.values()) {
-			ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-			scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
-			scenarioBuilder.setRegionMapOption(mapOption);
-
-			addStandardComponentsAndTypes(scenarioBuilder);
-			TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
-
-			Scenario scenario = scenarioBuilder.build();
-
-			Replication replication = getReplication(randomGenerator);
-
-			int testTime = 1;
-
-			taskPlanContainer.addTaskPlan(TestMaterialsProducerId.MATERIALS_PRODUCER_1, testTime++, (environment) -> {
-				assertEquals(mapOption, environment.getRegionMapOption());
-			});
-
-			Simulation simulation = new Simulation();
-			simulation.setReplication(replication);
-			simulation.setScenario(scenario);
-			simulation.execute();
-
-			assertAllPlansExecuted(taskPlanContainer);
-		}
 	}
 
 	/**

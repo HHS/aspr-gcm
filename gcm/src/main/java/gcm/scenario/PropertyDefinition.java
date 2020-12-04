@@ -22,9 +22,7 @@ public final class PropertyDefinition {
 
 	private static class Scaffold {
 		private Class<?> type = null;
-
-		private MapOption mapOption = MapOption.NONE;
-
+		
 		private boolean propertyValuesAreMutable = true;
 
 		private Object defaultValue = null;
@@ -69,15 +67,6 @@ public final class PropertyDefinition {
 		}
 
 		/**
-		 * Sets the {@linkplain MapOption}. Default value is
-		 * {@link MapOption#NONE}
-		 */
-		public Builder setMapOption(final MapOption mapOption) {
-			scaffold.mapOption = mapOption;
-			return this;
-		}
-
-		/**
 		 * Sets property value mutability during simulation run time. Default
 		 * value is true.
 		 */
@@ -107,8 +96,6 @@ public final class PropertyDefinition {
 
 	private final Class<?> type;
 
-	private final MapOption mapOption;
-
 	private final boolean propertyValuesAreMutable;
 
 	private final Object defaultValue;
@@ -120,8 +107,6 @@ public final class PropertyDefinition {
 			throw new RuntimeException("property definition requires a non-null type");
 		}
 		this.type = scaffold.type;
-
-		this.mapOption = scaffold.mapOption;
 
 		this.propertyValuesAreMutable = scaffold.propertyValuesAreMutable;
 
@@ -149,18 +134,6 @@ public final class PropertyDefinition {
 		return Optional.of(defaultValue);
 	}
 	
-	
-
-	/**
-	 * Returns the non-null, default value for the property definition. This
-	 * exists so that modelers do not have to specify values for every property
-	 * instance during scenario construction and so that the simulation can
-	 * reduce memory by using default values.
-	 *
-	 */
-	public MapOption getMapOption() {
-		return mapOption;
-	}
 
 	/**
 	 * Returns that class type of this definition. It is used to ensure that all
@@ -203,8 +176,7 @@ public final class PropertyDefinition {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (propertyValuesAreMutable ? 1231 : 1237);
-		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());
-		result = prime * result + ((mapOption == null) ? 0 : mapOption.hashCode());
+		result = prime * result + ((defaultValue == null) ? 0 : defaultValue.hashCode());		
 		result = prime * result + ((timeTrackingPolicy == null) ? 0 : timeTrackingPolicy.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
@@ -228,9 +200,7 @@ public final class PropertyDefinition {
 			if (other.defaultValue != null)
 				return false;
 		} else if (!defaultValue.equals(other.defaultValue))
-			return false;
-		if (mapOption != other.mapOption)
-			return false;
+			return false;		
 		if (timeTrackingPolicy != other.timeTrackingPolicy)
 			return false;
 		if (type == null) {
@@ -252,8 +222,6 @@ public final class PropertyDefinition {
 		StringBuilder builder = new StringBuilder();
 		builder.append("PropertyDefinition [type=");
 		builder.append(type);
-		builder.append(", mapOption=");
-		builder.append(mapOption);
 		builder.append(", propertyValuesAreMutable=");
 		builder.append(propertyValuesAreMutable);
 		builder.append(", defaultValue=");

@@ -6,7 +6,6 @@ import java.util.Map;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GlobalComponentId;
 import gcm.scenario.GlobalPropertyId;
-import gcm.scenario.MapOption;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.TimeTrackingPolicy;
 import net.jcip.annotations.Immutable;
@@ -24,7 +23,6 @@ public class TriggerContainer {
 	public final static PropertyDefinition getTriggerContainerPropertyDefinition() {
 		return PropertyDefinition.builder()
 		.setDefaultValue(builder().build())
-		.setMapOption(MapOption.NONE)
 		.setPropertyValueMutability(false)
 		.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)
 		.setType(TriggerContainer.class)

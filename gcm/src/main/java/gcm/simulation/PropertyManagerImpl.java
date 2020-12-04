@@ -14,7 +14,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -87,8 +86,6 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	private Map<MaterialId, Set<BatchPropertyId>> batchPropertyIdMap = new LinkedHashMap<>();
 
 	private Map<PersonPropertyId, IndexedPropertyManager> personPropertyManagerMap = new LinkedHashMap<>();
-
-	private Map<PersonPropertyId, PersonPropertyMapper> personPropertyMapperMap = new LinkedHashMap<>();
 
 	private PersonIdManager personIdManager;
 
@@ -215,19 +212,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition,
 					intialSize);
 
-			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
-
-			MapOption mapOption = propertyDefinition.getMapOption();
-			switch (mapOption) {
-			case ARRAY:
-			case HASH:
-				personPropertyMapperMap.put(personPropertyId, new PersonPropertyMapper(mapOption));
-				break;
-			case NONE:// fall through
-			default:
-				// do nothing
-				break;
-			}
+			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);			
 		}
 
 		for (GroupTypeId groupTypeId : scenario.getGroupTypeIds()) {
@@ -282,23 +267,13 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	@Override
 	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId,
-			Object personPropertyValue) {
-		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-		if (personPropertyMapper != null) {
-			Object oldValue = getPersonPropertyValue(personId, personPropertyId);
-			personPropertyMapper.remove(personId, oldValue);
-			personPropertyMapper.add(personId, personPropertyValue);
-		}
+			Object personPropertyValue) {		
 		personPropertyManagerMap.get(personPropertyId).setPropertyValue(personId.getValue(), personPropertyValue);
 	}
 
 	@Override
 	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId,
 			final Object personPropertyValue) {
-		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-		if (personPropertyMapper != null) {
-			return personPropertyMapper.getPeopleWithPropertyValue(personPropertyValue);
-		}
 
 		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 
@@ -342,10 +317,6 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId,
 			final Object personPropertyValue) {
 
-		PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-		if (personPropertyMapper != null) {
-			return personPropertyMapper.getPersonCountForPropertyValue(personPropertyValue);
-		}
 		/*
 		 * We are not maintaining a map from property values to people. We first
 		 * determine the number of people who will be returned so that we can size the
@@ -370,20 +341,12 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
-		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
-			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);
-			personPropertyMapper.add(personId, personPropertyValue);
-		}
+		//TODO -- can this be removed?
 	}
 
 	@Override
 	public void handlePersonRemoval(final PersonId personId) {
-		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
-			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-			Object personPropertyValue = getPersonPropertyValue(personId, personPropertyId);
-			personPropertyMapper.remove(personId, personPropertyValue);
-		}
+		
 		for (PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 			indexedPropertyManager.removeId(personId.getValue());
@@ -551,14 +514,6 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			memoryPartition.addMemoryLink(this, indexedPropertyManager,
 					"Person Property: " + personPropertyId.toString());
 		}
-
-		memoryPartition.addMemoryLink(this, personPropertyMapperMap, "Person Property Mapper Map");
-		for (PersonPropertyId personPropertyId : personPropertyMapperMap.keySet()) {
-			PersonPropertyMapper personPropertyMapper = personPropertyMapperMap.get(personPropertyId);
-			memoryPartition.addMemoryLink(this, personPropertyMapper,
-					"Person Property Mapper: " + personPropertyId.toString());
-		}
-
 	}
 
 	@Override

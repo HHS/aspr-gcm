@@ -123,17 +123,7 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 				final ScenarioId scenarioId = multiKey.getKey(0);
 				structuredScenarioBuilder.setScenarioId(scenarioId);
 			}
-
-			for (final MultiKey multiKey : get(ActionType.REGION_MAP_OPTION_ASSIGNMENT)) {
-				final MapOption mapOption = multiKey.getKey(0);
-				structuredScenarioBuilder.setRegionMapOption(mapOption);
-			}
-
-			for (final MultiKey multiKey : get(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT)) {
-				final MapOption mapOption = multiKey.getKey(0);
-				structuredScenarioBuilder.setCompartmentMapOption(mapOption);
-			}
-
+			
 			for (final MultiKey multiKey : get(ActionType.GLOBAL_COMPONENT_ID_ADDITION)) {
 				final GlobalComponentId globalComponentId = multiKey.getKey(0);
 				Class<? extends Component> globalComponentClass = multiKey.getKey(1);
@@ -434,13 +424,7 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 		}
 		list.add(multiKeyBuilder.build());
 	}
-
-	@Override
-	public ScenarioBuilder setCompartmentMapOption(final MapOption mapOption) {
-		put(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT, mapOption);
-		return this;
-	}
-
+	
 	@Override
 	public ScenarioBuilder setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
 		put(ActionType.COMPARTMENT_PROPERTY_VALUE_ASSIGNMENT, compartmentId, compartmentPropertyId, compartmentPropertyValue);
@@ -496,12 +480,7 @@ public final class UnstructuredScenarioBuilder implements ScenarioBuilder {
 		return this;
 	}
 
-	@Override
-	public ScenarioBuilder setRegionMapOption(final MapOption mapOption) {
-		put(ActionType.REGION_MAP_OPTION_ASSIGNMENT, mapOption);
-		return this;
-	}
-
+	
 	@Override
 	public ScenarioBuilder setRegionPropertyValue(final RegionId regionId, final RegionPropertyId regionPropertyId, final Object regionPropertyValue) {
 		put(ActionType.REGION_PROPERTY_VALUE_ASSIGNMENT, regionId, regionPropertyId, regionPropertyValue);

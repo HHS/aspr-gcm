@@ -24,7 +24,9 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well44497b;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TaskComponent;
@@ -45,7 +47,6 @@ import gcm.scenario.CompartmentId;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -100,8 +101,6 @@ public class AT_Filter {
 		scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
 		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
-		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);
 	}
 
 	private static void addStandardComponentsAndTypes(ScenarioBuilder scenarioBuilder) {
@@ -199,14 +198,12 @@ public class AT_Filter {
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_2, //
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		Scenario scenario = scenarioBuilder.build();
@@ -291,14 +288,12 @@ public class AT_Filter {
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_2, //
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
@@ -388,7 +383,6 @@ public class AT_Filter {
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);
 
@@ -468,34 +462,29 @@ public class AT_Filter {
 				PropertyDefinition	.builder()//
 									.setType(Integer.class)//
 									.setDefaultValue(0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_2, //
 				PropertyDefinition	.builder()//
 									.setType(Boolean.class)//
 									.setDefaultValue(false)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_3, //
 				PropertyDefinition	.builder()//
 									.setType(String.class)//
 									.setDefaultValue("A")//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_4, //
 				PropertyDefinition	.builder()//
 									.setType(Double.class)//
 									.setDefaultValue(0.0)//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		scenarioBuilder.definePersonProperty(TestPersonPropertyId.PERSON_PROPERTY_5, //
 				PropertyDefinition	.builder()//
 									.setType(List.class)//
 									.setDefaultValue(new ArrayList<>())//
-									.setMapOption(MapOption.ARRAY)//
 									.build());
 
 		TaskPlanContainer taskPlanContainer = addTaskPlanContainer(scenarioBuilder);

@@ -33,7 +33,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -714,14 +713,12 @@ public class AT_UnstructuredScenarioBuilder {
 			break;
 		}
 		boolean propertyValuesAreMutability = random.nextBoolean();
-		MapOption mapOption = MapOption.values()[random.nextInt(MapOption.values().length)];
 		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[random.nextInt(TimeTrackingPolicy.values().length)];
 
 		final PropertyDefinition result = PropertyDefinition.builder()//
 															.setType(type)//
 															.setDefaultValue(defaultValue)//
 															.setPropertyValueMutability(propertyValuesAreMutability)//
-															.setMapOption(mapOption)//
 															.setTimeTrackingPolicy(timeTrackingPolicy)//
 															.build();//
 		return result;
@@ -1259,34 +1256,6 @@ public class AT_UnstructuredScenarioBuilder {
 		// postcondition: the batch has the expected property value
 		assertEquals(propertyValue, scenario.getBatchPropertyValue(batchId, batchPropertyId));
 
-	}
-
-	/**
-	 * Tests
-	 * {@link UnstructuredScenarioBuilder#setCompartmentMapOption(MapOption)}
-	 */
-	@Test
-	@UnitTestMethod(name = "setCompartmentMapOption", args = {MapOption.class})
-	public void testSetCompartmentMapOption() {
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-
-		for (MapOption mapOption : MapOption.values()) {
-
-			// precondition: if the mapOption is null
-			scenarioBuilder.setCompartmentMapOption(null);
-			assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.NULL_COMPARTMENT_MAP_OPTION);
-
-			// precondition: if the mapOption was previously set
-			scenarioBuilder.setCompartmentMapOption(mapOption);
-			scenarioBuilder.setCompartmentMapOption(mapOption);
-			assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
-
-			scenarioBuilder.setCompartmentMapOption(mapOption);
-			Scenario scenario = scenarioBuilder.build();
-			// postcondition: the scenario has the expected compartment map
-			// option
-			assertEquals(mapOption, scenario.getCompartmentMapOption());
-		}
 	}
 
 	/**
@@ -1829,31 +1798,6 @@ public class AT_UnstructuredScenarioBuilder {
 		Scenario scenario = scenarioBuilder.build();
 		// postcondition: the person has the expected resource level
 		assertEquals(amount, scenario.getPersonResourceLevel(personId, resourceId).longValue());
-	}
-
-	/**
-	 * Tests {@link UnstructuredScenarioBuilder#setRegionMapOption(MapOption)}
-	 */
-	@Test
-	@UnitTestMethod(name = "setRegionMapOption", args = {MapOption.class})
-	public void testSetRegionMapOption() {
-		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		for (MapOption mapOption : MapOption.values()) {
-
-			// precondition: if the mapOption is null
-			scenarioBuilder.setRegionMapOption(null);
-			assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.NULL_REGION_MAP_OPTION);
-
-			// precondition: if the mapOption was previously set
-			scenarioBuilder.setRegionMapOption(mapOption);
-			scenarioBuilder.setRegionMapOption(mapOption);
-			assertScenarioException(() -> scenarioBuilder.build(), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
-
-			scenarioBuilder.setRegionMapOption(mapOption);
-			Scenario scenario = scenarioBuilder.build();
-			// postcondition: the scenario has the expected region map option
-			assertEquals(mapOption, scenario.getRegionMapOption());
-		}
 	}
 
 	/**

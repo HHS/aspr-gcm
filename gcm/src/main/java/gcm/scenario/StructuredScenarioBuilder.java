@@ -60,10 +60,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 
 		private TimeTrackingPolicy regionArrivalTimeTrackingPolicy;
 
-		private MapOption compartmentMapOption;
-
-		private MapOption regionMapOption;
-
 		private final Map<CompartmentId, Class<? extends Component>> compartmentIds = new LinkedHashMap<>();
 
 		private final Map<RegionId, Class<? extends Component>> regionIds = new LinkedHashMap<>();
@@ -167,7 +163,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 			result = prime * result + ((batchStages == null) ? 0 : batchStages.hashCode());
 			result = prime * result + ((compartmentArrivalTimeTrackingPolicy == null) ? 0 : compartmentArrivalTimeTrackingPolicy.hashCode());
 			result = prime * result + ((compartmentIds == null) ? 0 : compartmentIds.hashCode());
-			result = prime * result + ((compartmentMapOption == null) ? 0 : compartmentMapOption.hashCode());
 			result = prime * result + ((compartmentPropertyDefinitions == null) ? 0 : compartmentPropertyDefinitions.hashCode());
 			result = prime * result + ((compartmentPropertyValues == null) ? 0 : compartmentPropertyValues.hashCode());
 			result = prime * result + ((globalComponentIds == null) ? 0 : globalComponentIds.hashCode());
@@ -192,7 +187,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 			result = prime * result + ((personResourceLevels == null) ? 0 : personResourceLevels.hashCode());
 			result = prime * result + ((regionArrivalTimeTrackingPolicy == null) ? 0 : regionArrivalTimeTrackingPolicy.hashCode());
 			result = prime * result + ((regionIds == null) ? 0 : regionIds.hashCode());
-			result = prime * result + ((regionMapOption == null) ? 0 : regionMapOption.hashCode());
 			result = prime * result + ((regionPropertyDefinitions == null) ? 0 : regionPropertyDefinitions.hashCode());
 			result = prime * result + ((regionPropertyValues == null) ? 0 : regionPropertyValues.hashCode());
 			result = prime * result + ((regionResourceLevels == null) ? 0 : regionResourceLevels.hashCode());
@@ -281,9 +275,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 					return false;
 				}
 			} else if (!compartmentIds.equals(other.compartmentIds)) {
-				return false;
-			}
-			if (compartmentMapOption != other.compartmentMapOption) {
 				return false;
 			}
 			if (compartmentPropertyDefinitions == null) {
@@ -448,9 +439,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 					return false;
 				}
 			} else if (!regionIds.equals(other.regionIds)) {
-				return false;
-			}
-			if (regionMapOption != other.regionMapOption) {
 				return false;
 			}
 			if (regionPropertyDefinitions == null) {
@@ -664,11 +652,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 				result.add((T) compartmentId);
 			}
 			return result;
-		}
-
-		@Override
-		public MapOption getCompartmentMapOption() {
-			return scenarioData.compartmentMapOption;
 		}
 
 		@Override
@@ -1014,11 +997,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@Override
 		public Set<RegionId> getRegionIds() {
 			return new LinkedHashSet<>(scenarioData.regionIds.keySet());
-		}
-
-		@Override
-		public MapOption getRegionMapOption() {
-			return scenarioData.regionMapOption;
 		}
 
 		@Override
@@ -1391,12 +1369,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		}
 	}
 
-	private static void validateCompartmentMapOptionNotSet(final ScenarioData scenarioData) {
-		if (scenarioData.compartmentMapOption != null) {
-			throwPreviouslyAssignedValueException("Compartment Map Option");
-		}
-	}
-
 	private static void validateCompartmentPropertyIsDefined(final ScenarioData scenarioData, final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId) {
 		validateNotNull(ScenarioErrorType.NULL_COMPARTMENT_PROPERTY_ID, compartmentPropertyId);
 		Map<CompartmentPropertyId, PropertyDefinition> map = scenarioData.compartmentPropertyDefinitions.get(compartmentId);
@@ -1664,12 +1636,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		}
 		if (!scenarioData.compartmentIds.containsKey(compartmentId)) {
 			throwUnknownIdentifierException(ScenarioErrorType.UNKNOWN_COMPARTMENT_ID, compartmentId);
-		}
-	}
-
-	private static void validateRegionMapOptionNotSet(final ScenarioData scenarioData) {
-		if (scenarioData.regionMapOption != null) {
-			throwPreviouslyAssignedValueException("Region Map Option");
 		}
 	}
 
@@ -2084,14 +2050,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 				scenarioData.regionArrivalTimeTrackingPolicy = TimeTrackingPolicy.DO_NOT_TRACK_TIME;
 			}
 
-			if (scenarioData.compartmentMapOption == null) {
-				scenarioData.compartmentMapOption = MapOption.NONE;
-			}
-
-			if (scenarioData.regionMapOption == null) {
-				scenarioData.regionMapOption = MapOption.NONE;
-			}
-
 			for (final ResourceId resourceId : scenarioData.resourceIds) {
 				final TimeTrackingPolicy timeTrackingPolicy = scenarioData.resourceTimeTrackingPolicies.get(resourceId);
 				if (timeTrackingPolicy == null) {
@@ -2426,18 +2384,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		return this;
 	}
 
-	@Override
-	public ScenarioBuilder setCompartmentMapOption(final MapOption mapOption) {
-		acquireLock();
-		try {
-			validateNotNull(ScenarioErrorType.NULL_COMPARTMENT_MAP_OPTION, mapOption);
-			validateCompartmentMapOptionNotSet(scenarioData);
-			scenarioData.compartmentMapOption = mapOption;
-		} finally {
-			releaseLock();
-		}
-		return this;
-	}
+	
 
 	@Override
 	public ScenarioBuilder setCompartmentPropertyValue(final CompartmentId compartmentId, final CompartmentPropertyId compartmentPropertyId, final Object compartmentPropertyValue) {
@@ -2603,19 +2550,6 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 				scenarioData.personResourceLevels.put(personId, resourceLevelMap);
 			}
 			resourceLevelMap.put(resourceId, amount);
-		} finally {
-			releaseLock();
-		}
-		return this;
-	}
-
-	@Override
-	public ScenarioBuilder setRegionMapOption(final MapOption mapOption) {
-		acquireLock();
-		try {
-			validateNotNull(ScenarioErrorType.NULL_REGION_MAP_OPTION, mapOption);
-			validateRegionMapOptionNotSet(scenarioData);
-			scenarioData.regionMapOption = mapOption;
 		} finally {
 			releaseLock();
 		}

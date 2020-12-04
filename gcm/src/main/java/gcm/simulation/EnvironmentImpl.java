@@ -23,7 +23,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -528,16 +527,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireReadAccess();
 		try {
 			return context.getScenario().getCompartmentIds();
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
-	public MapOption getCompartmentMapOption() {
-		externalAccessManager.acquireReadAccess();
-		try {
-			return context.getScenario().getCompartmentMapOption();
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}
@@ -1375,16 +1364,6 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		externalAccessManager.acquireReadAccess();
 		try {
 			return context.getScenario().getRegionIds();
-		} finally {
-			externalAccessManager.releaseReadAccess();
-		}
-	}
-
-	@Override
-	public MapOption getRegionMapOption() {
-		externalAccessManager.acquireReadAccess();
-		try {
-			return context.getScenario().getRegionMapOption();
 		} finally {
 			externalAccessManager.releaseReadAccess();
 		}

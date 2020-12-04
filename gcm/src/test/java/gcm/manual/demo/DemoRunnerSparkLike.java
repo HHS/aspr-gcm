@@ -51,7 +51,6 @@ import gcm.output.simstate.LogItem;
 import gcm.output.simstate.SimulationStatusItem;
 import gcm.scenario.ExperimentBuilder;
 import gcm.scenario.GlobalComponentId;
-import gcm.scenario.MapOption;
 import gcm.scenario.ReplicationId;
 import gcm.scenario.ScenarioId;
 
@@ -299,8 +298,6 @@ public class DemoRunnerSparkLike {
 		// build the experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		experimentBuilder.setBaseScenarioId(100);
-		experimentBuilder.setRegionMapOption(MapOption.ARRAY);
-		experimentBuilder.setCompartmentMapOption(MapOption.ARRAY);
 		defineProperties(experimentBuilder);
 		addIdentifiers(experimentBuilder);
 		addPropertyValues(experimentBuilder);

@@ -1454,23 +1454,6 @@ public final class ExperimentBuilder {
 	}
 
 	/**
-	 * Sets the mapping option for all compartments in all scenarios. Defaulted
-	 * to NONE.
-	 *
-	 * @throws ModelException
-	 *             <li>{@link ScenarioErrorType#NULL_COMPARTMENT_MAP_OPTION} if
-	 *             the mapOption is null
-	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
-	 *             the mapOption was previously set
-	 */
-	public ExperimentBuilder setCompartmentMapOption(final MapOption mapOption) {
-		scaffold.putScenarioData(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT, mapOption);
-		return this;
-	}
-	
-	
-
-	/**
 	 * Sets the person compartment time arrival tracking policy, which is
 	 * defaulted to DO_NOT_TRACK_TIME for all scenarios.
 	 *
@@ -1499,21 +1482,6 @@ public final class ExperimentBuilder {
 	 */
 	public ExperimentBuilder setPersonRegionArrivalTracking(final TimeTrackingPolicy trackPersonRegionArrivalTimes) {
 		scaffold.putScenarioData(ActionType.PERSON_REGION_ARRIVAL_TRACKING_ASSIGNMENT, trackPersonRegionArrivalTimes);
-		return this;
-	}
-
-	/**
-	 * Sets the mapping option for all regions in all scenarios. Defaulted to
-	 * NONE.
-	 *
-	 * @throws ModelException
-	 *             <li>{@link ScenarioErrorType#NULL_REGION_MAP_OPTION} if the
-	 *             mapOption is null
-	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
-	 *             the mapOption was previously set
-	 */
-	public ExperimentBuilder setRegionMapOption(final MapOption mapOption) {
-		scaffold.putScenarioData(ActionType.REGION_MAP_OPTION_ASSIGNMENT, mapOption);
 		return this;
 	}
 
@@ -1916,16 +1884,6 @@ public final class ExperimentBuilder {
 			actionMap.put(ActionType.PERSON_REGION_ARRIVAL_TRACKING_ASSIGNMENT, (scenarioBuilder, multiKey) -> {
 				TimeTrackingPolicy timeTrackingPolicy = multiKey.getKey(1);
 				scenarioBuilder.setPersonRegionArrivalTracking(timeTrackingPolicy);
-			});
-
-			actionMap.put(ActionType.COMPARTMENT_MAP_OPTION_ASSIGNMENT, (scenarioBuilder, multiKey) -> {
-				MapOption mapOption = multiKey.getKey(1);
-				scenarioBuilder.setCompartmentMapOption(mapOption);
-			});
-
-			actionMap.put(ActionType.REGION_MAP_OPTION_ASSIGNMENT, (scenarioBuilder, multiKey) -> {
-				MapOption mapOption = multiKey.getKey(1);
-				scenarioBuilder.setRegionMapOption(mapOption);
 			});
 
 			actionMap.put(ActionType.BATCH_ID_ADDITION, (scenarioBuilder, multiKey) -> {

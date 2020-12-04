@@ -41,7 +41,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -552,7 +551,6 @@ public class AT_Simulation_SetScenario {
 															.setType(type)//
 															.setDefaultValue(defaultValue)//
 															.setPropertyValueMutability(propertyValuesMayOverrideDefaultValue)//
-															.setMapOption(MapOption.ARRAY)//
 															.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 															.build();
 		return result;
@@ -768,18 +766,7 @@ public class AT_Simulation_SetScenario {
 		});
 	}
 
-	private void testGetCompartmentMapOption() {
-		for (MapOption mapOption : MapOption.values()) {
-			ScenarioBuilder scenarioBuilder = getScenarioBuilder();
-			scenarioBuilder.setCompartmentMapOption(mapOption);
-			// Show that the compartment map option from the scenario if found
-			// in the environment
-			executeScenarioTest(scenarioBuilder.build(), (scenario, environment) -> {
-				assertTrue(scenario.getCompartmentMapOption() != null);
-				assertEquals(scenario.getCompartmentMapOption(), environment.getCompartmentMapOption());
-			});
-		}
-	}
+	
 
 	private void testGetCompartmentPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(7);
@@ -1885,18 +1872,7 @@ public class AT_Simulation_SetScenario {
 	}
 
 
-	private void testGetRegionMapOption() {
-		for (MapOption mapOption : MapOption.values()) {
-			ScenarioBuilder scenarioBuilder = getScenarioBuilder();
-			scenarioBuilder.setRegionMapOption(mapOption);
-			// Show that the region map option from the scenario if found
-			// in the environment
-			executeScenarioTest(scenarioBuilder.build(), (scenario, environment) -> {
-				assertTrue(scenario.getRegionMapOption() != null);
-				assertEquals(scenario.getRegionMapOption(), environment.getRegionMapOption());
-			});
-		}
-	}
+	
 
 	private void testGetRegionPropertyDefinition() {
 		RandomGenerator randomGenerator = getRandomGenerator(31);
@@ -2370,7 +2346,6 @@ public class AT_Simulation_SetScenario {
 		testGetBatchPropertyValue();
 		testGetCompartmentComponenClass();
 		testGetCompartmentIds();
-		testGetCompartmentMapOption();
 		testGetCompartmentPropertyDefinition();
 		testGetCompartmentPropertyIds();
 		testGetCompartmentPropertyValue();
@@ -2405,7 +2380,6 @@ public class AT_Simulation_SetScenario {
 		testGetPersonResourceTimeTrackingPolicy();
 		testGetRegionComponenClass();
 		testGetRegionIds();
-		testGetRegionMapOption();
 		testGetRegionPropertyDefinition();
 		testGetRegionPropertyIds();
 		testGetRegionPropertyValue();

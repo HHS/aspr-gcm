@@ -16,7 +16,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -109,11 +108,6 @@ public final class ObservableEnvironmentImpl extends BaseElement implements Obse
 	@Override
 	public Set<CompartmentId> getCompartmentIds() {
 		return environment.getCompartmentIds();
-	}
-
-	@Override
-	public MapOption getCompartmentMapOption() {
-		return environment.getCompartmentMapOption();
 	}
 
 	@Override
@@ -429,11 +423,6 @@ public final class ObservableEnvironmentImpl extends BaseElement implements Obse
 	@Override
 	public Set<RegionId> getRegionIds() {
 		return environment.getRegionIds();
-	}
-
-	@Override
-	public MapOption getRegionMapOption() {
-		return environment.getRegionMapOption();
 	}
 
 	@Override

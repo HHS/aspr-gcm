@@ -16,7 +16,6 @@ import gcm.scenario.CompartmentPropertyId;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
-import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.ReplicationId;
@@ -368,8 +367,7 @@ public class EnvironmentSupport {
 		PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
 																	.setType(type)//
 																	.setDefaultValue(defaultValue)//
-																	.setPropertyValueMutability(propertyValuesMayOverrideDefaultValue)//
-																	.setMapOption(MapOption.ARRAY)//
+																	.setPropertyValueMutability(propertyValuesMayOverrideDefaultValue)//																	
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 																	.build();//
 
@@ -385,8 +383,6 @@ public class EnvironmentSupport {
 		scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
 		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
 		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
-		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
-		scenarioBuilder.setRegionMapOption(MapOption.ARRAY);		
 	}
 
 	/*

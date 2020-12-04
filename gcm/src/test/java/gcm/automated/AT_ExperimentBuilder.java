@@ -17,7 +17,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import gcm.automated.AT_Simulation_SetScenario.EmptyComponent;
-import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.SeedProvider;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
@@ -27,6 +26,7 @@ import gcm.automated.support.TestMaterialId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestMaterialsProducerPropertyId;
 import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.automated.support.TestResourceId;
@@ -46,7 +46,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -382,14 +381,12 @@ public class AT_ExperimentBuilder {
 			break;
 		}
 		boolean propertyValuesMayOverrideDefaultValue = RANDOM_GENERATOR.nextBoolean();
-		MapOption mapOption = MapOption.values()[RANDOM_GENERATOR.nextInt(MapOption.values().length)];
 		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[RANDOM_GENERATOR.nextInt(TimeTrackingPolicy.values().length)];
 
 		final PropertyDefinition result = PropertyDefinition.builder()//
 															.setType(type)//
 															.setDefaultValue(defaultValue)//
 															.setPropertyValueMutability(propertyValuesMayOverrideDefaultValue)//
-															.setMapOption(mapOption)//
 															.setTimeTrackingPolicy(timeTrackingPolicy)//
 															.build();
 		return result;
@@ -2549,43 +2546,6 @@ public class AT_ExperimentBuilder {
 	}
 
 	/**
-	 * Tests {@link ExperimentBuilder#setCompartmentMapOption(MapOption)}
-	 */
-	@Test
-	@UnitTestMethod(name = "setCompartmentMapOption", args = {MapOption.class})
-	public void testSetCompartmentMapOption() {
-		refreshRandomGenerator(32);
-		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-
-		for (MapOption mapOption : MapOption.values()) {
-
-			// precondition: if the mapOption is null
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setCompartmentMapOption(null);
-			assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_COMPARTMENT_MAP_OPTION);
-
-			// precondition: if the mapOption was previously set
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setCompartmentMapOption(mapOption);
-			experimentBuilder.setCompartmentMapOption(mapOption);
-			assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
-
-			// postcondition: all scenarios have the expected compartment map
-			// option
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setCompartmentMapOption(mapOption);
-			List<Scenario> scenarios = getScenarios(experimentBuilder.build());
-			assertTrue(scenarios.size() > 0);
-
-			for (Scenario scenario : scenarios) {
-				// postcondition: the scenario has the expected compartment map
-				// option
-				assertEquals(mapOption, scenario.getCompartmentMapOption());
-			}
-		}
-	}
-
-	/**
 	 * Tests
 	 * {@link ExperimentBuilder#setPersonCompartmentArrivalTracking(TimeTrackingPolicy)}
 	 */
@@ -2651,38 +2611,6 @@ public class AT_ExperimentBuilder {
 			assertTrue(scenarios.size() > 0);
 			for (Scenario scenario : scenarios) {
 				assertEquals(timeTrackingPolicy, scenario.getPersonRegionArrivalTrackingPolicy());
-			}
-		}
-	}
-
-	/**
-	 * Tests {@link ExperimentBuilder#setRegionMapOption(MapOption)}
-	 */
-	@Test
-	@UnitTestMethod(name = "setRegionMapOption", args = {MapOption.class})
-	public void testSetRegionMapOption() {
-		refreshRandomGenerator(35);
-		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
-		for (MapOption mapOption : MapOption.values()) {
-
-			// precondition: if the mapOption is null
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setRegionMapOption(null);
-			assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.NULL_REGION_MAP_OPTION);
-
-			// precondition: if the mapOption was previously set
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setRegionMapOption(mapOption);
-			experimentBuilder.setRegionMapOption(mapOption);
-			assertScenarioException(() -> getScenarios(experimentBuilder.build()), ScenarioErrorType.PREVIOUSLY_ASSIGNED_VALUE);
-
-			// postcondition: all the scenarios have the expected region map
-			// option
-			fillWithVariantGlobalProperties(experimentBuilder);
-			experimentBuilder.setRegionMapOption(mapOption);
-			List<Scenario> scenarios = getScenarios(experimentBuilder.build());
-			for (Scenario scenario : scenarios) {
-				assertEquals(mapOption, scenario.getRegionMapOption());
 			}
 		}
 	}

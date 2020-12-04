@@ -529,22 +529,6 @@ public interface Scenario {
 	public TimeTrackingPolicy getPersonRegionArrivalTrackingPolicy();
 
 	/**
-	 * Returns the MapOption associated with compartments
-	 * 
-	 * @return
-	 */
-
-	public MapOption getCompartmentMapOption();
-
-	/**
-	 * Returns the MapOption associated with regions
-	 * 
-	 * @return
-	 */
-
-	public MapOption getRegionMapOption();
-
-	/**
 	 * Returns the group type identifiers for this scenario.
 	 */
 	public <T extends GroupTypeId> Set<T> getGroupTypeIds();

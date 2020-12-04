@@ -418,16 +418,7 @@ public interface ScenarioBuilder {
 	 */
 	public ScenarioBuilder setBatchPropertyValue(final BatchId batchId, final BatchPropertyId batchPropertyId, final Object batchPropertyValue);
 
-	/**
-	 * Sets the mapping option for all compartments. Defaulted to NONE.
-	 *
-	 * @throws ScenarioException
-	 *             <li>{@link ScenarioErrorType#NULL_COMPARTMENT_MAP_OPTION} if
-	 *             the mapOption is null
-	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
-	 *             the mapOption was previously set
-	 */
-	public ScenarioBuilder setCompartmentMapOption(final MapOption mapOption);
+
 
 	/**
 	 * Sets a compartment property value for the given property.
@@ -604,16 +595,6 @@ public interface ScenarioBuilder {
 	 */
 	public ScenarioBuilder setPersonResourceLevel(final PersonId personId, final ResourceId resourceId, final long amount);
 
-	/**
-	 * Sets the mapping option for all regions. Defaulted to NONE.
-	 *
-	 * @throws ScenarioException
-	 *             <li>{@link ScenarioErrorType#NULL_REGION_MAP_OPTION} if the
-	 *             mapOption is null
-	 *             <li>{@link ScenarioErrorType#PREVIOUSLY_ASSIGNED_VALUE} if
-	 *             the mapOption was previously set
-	 */
-	public ScenarioBuilder setRegionMapOption(final MapOption mapOption);
 
 	/**
 	 * Sets a region property value for the given property.

@@ -20,7 +20,6 @@ import gcm.scenario.GlobalPropertyId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupPropertyId;
 import gcm.scenario.GroupTypeId;
-import gcm.scenario.MapOption;
 import gcm.scenario.MaterialId;
 import gcm.scenario.MaterialsProducerId;
 import gcm.scenario.MaterialsProducerPropertyId;
@@ -651,11 +650,6 @@ public interface Environment extends Element {
 	 * construction.
 	 */
 	public <T extends CompartmentId> Set<T> getCompartmentIds();
-
-	/**
-	 * Returns the MapOption for the compartments
-	 */
-	public MapOption getCompartmentMapOption();
 
 	/**
 	 * Returns the number of people in given compartment for the given region
@@ -1594,11 +1588,6 @@ public interface Environment extends Element {
 	 */
 	public Set<RegionId> getRegionIds();
 
-	/**
-	 * Returns the MapOption for the regions
-	 *
-	 */
-	public MapOption getRegionMapOption();
 
 	/**
 	 * Returns the number of people currently in the simulation.

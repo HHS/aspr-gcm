@@ -18,11 +18,8 @@ import gcm.simulation.BaseElement;
 import gcm.simulation.Context;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.PersonLocationManger;
-import gcm.simulation.PartitionEfficiencyWarning;
-import gcm.simulation.PartitionEfficiencyWarning.Builder;
 import gcm.simulation.ProfileManager;
 import gcm.simulation.PropertyManager;
-import gcm.simulation.SimulationWarningManager;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.Trigger;
 import gcm.simulation.group.PersonGroupManger;
@@ -125,8 +122,6 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	private ProfileManager profileManager;
 
-	private SimulationWarningManager simulationWarningManager;
-
 	private long masterTransactionId;
 
 	private long getNextTransactionId() {
@@ -142,7 +137,6 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		this.propertyManager = context.getPropertyManager();
 		this.personGroupManger = context.getPersonGroupManger();
 		this.profileManager = context.getProfileManager();
-		this.simulationWarningManager = context.getSimulationWarningManager();
 	}
 
 	@Override
@@ -184,27 +178,6 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 		
 		FilterInfo filterInfo = FilterInfo.build(partition.getFilter().orElse(Filter.allPeople()));
-
-		/*
-		 * Review the filter, looking for map option setting that might improve the
-		 * performance of the index initialization and warning the user if any of those
-		 * map options are set to NONE
-		 */
-		List<Object> filterAttributesNeedingReverseMapSupport = FilterMapOptionAnalyzer
-				.getAttributesNeedingReverseMapping(filterInfo, context);
-		if (!filterAttributesNeedingReverseMapSupport.isEmpty()) {
-			Builder builder = PartitionEfficiencyWarning.builder();
-			for (Object attribute : filterAttributesNeedingReverseMapSupport) {
-				builder.addAttribute(attribute);
-			}
-
-			PartitionEfficiencyWarning partitionEfficiencyWarning = //
-					builder.setFilterInfo(filterInfo)//
-							.setPartitionId(key)//
-							.build(); //
-			simulationWarningManager.processPartitionEfficiencyWarning(partitionEfficiencyWarning);
-		}
-
 		PopulationPartition populationPartition;
 		if (partition.isDegenerate()) {
 			populationPartition = new DegeneratePopulationPartitionImpl(key, context, partition,

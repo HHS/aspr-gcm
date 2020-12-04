@@ -20,7 +20,6 @@ import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestRegionId;
 import gcm.replication.Replication;
-import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
@@ -74,7 +73,6 @@ public class MT_PersonAddition {
 		for(int i = 0;i<propertyCount;i++) {			
 			PropertyDefinition propertyDefinition = PropertyDefinition.builder()//
 					.setDefaultValue(5.5)//
-					.setMapOption(MapOption.NONE)//
 					.setPropertyValueMutability(true)//
 					//.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 					.setType(Double.class)//

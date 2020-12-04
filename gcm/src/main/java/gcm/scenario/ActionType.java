@@ -37,8 +37,6 @@ public enum ActionType {
 	// assignments of various data control policies
 	PERSON_COMPARTMENT_ARRIVAL_TRACKING_ASSIGNMENT("person_compartment_arrival_tracking_assignment"),
 	PERSON_REGION_ARRIVAL_TRACKING_ASSIGNMENT("person_region_arrival_tracking_assignment"),
-	COMPARTMENT_MAP_OPTION_ASSIGNMENT("compartment_map_option_assignment"),
-	REGION_MAP_OPTION_ASSIGNMENT("region_map_option_assignment"),
 	MATERIALS_PRODUCER_RESOURCE_ASSIGNMENT("materials_producer_resource_assignment"),
 	RESOURCE_TIME_TRACKING_ASSIGNMENT("resource_time_tracking_assignment"),
 

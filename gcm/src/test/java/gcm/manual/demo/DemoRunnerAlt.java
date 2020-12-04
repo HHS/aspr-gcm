@@ -47,7 +47,6 @@ import gcm.manual.demo.trigger.TriggerContainer;
 import gcm.output.reports.ReportPeriod;
 import gcm.scenario.ExperimentBuilder;
 import gcm.scenario.GlobalComponentId;
-import gcm.scenario.MapOption;
 
 public class DemoRunnerAlt {
 
@@ -213,8 +212,6 @@ public class DemoRunnerAlt {
 		// build the experiment
 		ExperimentBuilder experimentBuilder = new ExperimentBuilder();
 		experimentBuilder.setBaseScenarioId(100);
-		experimentBuilder.setRegionMapOption(MapOption.ARRAY);
-		experimentBuilder.setCompartmentMapOption(MapOption.ARRAY);
 		defineProperties(experimentBuilder);
 		addIdentifiers(experimentBuilder);
 		addPropertyValues(experimentBuilder);

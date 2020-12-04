@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.BooleanType;
 import gcm.automated.support.SeedProvider;
-import gcm.scenario.MapOption;
 import gcm.scenario.PropertyDefinition;
 import gcm.scenario.PropertyDefinition.Builder;
 import gcm.scenario.TimeTrackingPolicy;
@@ -81,14 +80,12 @@ public class AT_PropertyDefinition {
 		}
 
 		boolean propertyValuesAreMutability = randomGenerator.nextBoolean();
-		MapOption mapOption = MapOption.values()[randomGenerator.nextInt(MapOption.values().length)];
 		TimeTrackingPolicy timeTrackingPolicy = TimeTrackingPolicy.values()[randomGenerator.nextInt(TimeTrackingPolicy.values().length)];
 
 		return PropertyDefinition	.builder()//
 									.setType(type)//
 									.setDefaultValue(defaultValue)//
 									.setPropertyValueMutability(propertyValuesAreMutability)//
-									.setMapOption(mapOption)//
 									.setTimeTrackingPolicy(timeTrackingPolicy)//
 									.build();//
 
@@ -109,7 +106,7 @@ public class AT_PropertyDefinition {
 				different |= !result.getDefaultValue().get().equals(propertyDefinition.getDefaultValue().get());
 			}
 
-			different |= !result.getMapOption().equals(propertyDefinition.getMapOption());
+			
 			different |= !result.getTimeTrackingPolicy().equals(propertyDefinition.getTimeTrackingPolicy());
 			different |= !result.getType().equals(propertyDefinition.getType());
 			if (different) {
@@ -129,8 +126,7 @@ public class AT_PropertyDefinition {
 		}
 
 		return builder	.setType(propertyDefinition.getType())//
-						.setPropertyValueMutability(propertyDefinition.getPropertyValuesAreMutability())//
-						.setMapOption(propertyDefinition.getMapOption())//
+						.setPropertyValueMutability(propertyDefinition.getPropertyValuesAreMutability())//						
 						.setTimeTrackingPolicy(propertyDefinition.getTimeTrackingPolicy())//
 						.build();//
 	}
@@ -303,28 +299,6 @@ public class AT_PropertyDefinition {
 	}
 
 	/**
-	 * Tests {@link PropertyDefinition#getMapOption()}
-	 */
-	@Test
-	@UnitTestMethod(name = "getMapOption", args = {})
-	public void testGetMapOption() {
-
-		/*
-		 * Show that the map option value used to form the property definition
-		 * is returned by the property definition
-		 */
-		for (MapOption mapOption : MapOption.values()) {
-			PropertyDefinition propertyDefinition = PropertyDefinition	.builder()//
-																		.setType(Integer.class)//
-																		.setDefaultValue(12)//
-																		.setMapOption(mapOption)//
-																		.build();//
-			assertEquals(mapOption, propertyDefinition.getMapOption());
-		}
-
-	}
-
-	/**
 	 * Tests {@link PropertyDefinition#getTimeTrackingPolicy()}
 	 */
 	@Test
@@ -454,7 +428,6 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -462,7 +435,6 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -470,7 +442,6 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("xxx")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -478,31 +449,22 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(false)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
+
+		
 
 		PropertyDefinition propertyDefinition5 = PropertyDefinition	.builder()//
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.HASH)//
-																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
-																	.build();//
-
-		PropertyDefinition propertyDefinition6 = PropertyDefinition	.builder()//
-																	.setType(String.class)//
-																	.setDefaultValue("asdf")//
-																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.TRACK_TIME)//
 																	.build();//
 
-		PropertyDefinition propertyDefinition7 = PropertyDefinition	.builder()//
+		PropertyDefinition propertyDefinition6 = PropertyDefinition	.builder()//
 																	.setType(Integer.class)//
 																	.setDefaultValue(45)//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -514,7 +476,6 @@ public class AT_PropertyDefinition {
 		assertNotEquals(propertyDefinition1, propertyDefinition4);
 		assertNotEquals(propertyDefinition1, propertyDefinition5);
 		assertNotEquals(propertyDefinition1, propertyDefinition6);
-		assertNotEquals(propertyDefinition1, propertyDefinition7);
 
 	}
 
@@ -528,7 +489,6 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -536,7 +496,6 @@ public class AT_PropertyDefinition {
 																	.setType(String.class)//
 																	.setDefaultValue("asdf")//
 																	.setPropertyValueMutability(true)//
-																	.setMapOption(MapOption.ARRAY)//
 																	.setTimeTrackingPolicy(TimeTrackingPolicy.DO_NOT_TRACK_TIME)//
 																	.build();//
 
@@ -559,7 +518,6 @@ public class AT_PropertyDefinition {
 																	.build();//
 
 		assertNotNull(propertyDefinition);
-		assertEquals(MapOption.NONE, propertyDefinition.getMapOption());
 		assertEquals(TimeTrackingPolicy.DO_NOT_TRACK_TIME, propertyDefinition.getTimeTrackingPolicy());
 		assertEquals(true, propertyDefinition.getPropertyValuesAreMutability());
 

@@ -7,17 +7,13 @@ import java.util.Map;
 import java.util.Set;
 
 import gcm.scenario.CompartmentId;
-import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.RegionId;
 import gcm.scenario.Scenario;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
-import gcm.util.containers.ArrayIntSet;
 import gcm.util.containers.DoubleValueContainer;
-import gcm.util.containers.HashIntSet;
-import gcm.util.containers.IntSet;
 import gcm.util.containers.IntValueContainer;
 
 /**
@@ -30,10 +26,10 @@ import gcm.util.containers.IntValueContainer;
 public final class PersonLocationMangerImpl extends BaseElement implements PersonLocationManger {
 
 	/*
-	 * Record for maintaining the number of people either globally, regionally
-	 * or by compartment. Also maintains the time when the population count was
-	 * last changed. PopulationRecords are maintained to eliminate iterations
-	 * over other tracking structures to answer queries about population counts.
+	 * Record for maintaining the number of people either globally, regionally or by
+	 * compartment. Also maintains the time when the population count was last
+	 * changed. PopulationRecords are maintained to eliminate iterations over other
+	 * tracking structures to answer queries about population counts.
 	 */
 	private static class PopulationRecord {
 		private int populationCount;
@@ -41,9 +37,9 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	}
 
 	/*
-	 * Tracking record for the total number of people in the simulation. This
-	 * should not be confused with the number of person identifiers that have
-	 * been issued by the environment.
+	 * Tracking record for the total number of people in the simulation. This should
+	 * not be confused with the number of person identifiers that have been issued
+	 * by the environment.
 	 */
 	private final PopulationRecord globalPopulationRecord = new PopulationRecord();
 
@@ -87,8 +83,8 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	private IntValueContainer compartmentValues;
 
 	/*
-	 * Stores double region arrival values indexed by person id values.
-	 * Maintenance depends upon tracking policy.
+	 * Stores double region arrival values indexed by person id values. Maintenance
+	 * depends upon tracking policy.
 	 */
 	private DoubleValueContainer regionArrivalTimes;
 
@@ -104,28 +100,7 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	 */
 	private PersonIdManager personIdManager;
 
-	/*
-	 * Stores the mapping of compartments to people. Maintenance depends upon
-	 * mapping policy.
-	 */
-	private final Map<CompartmentId, IntSet<PersonId>> compartmentPeople = new LinkedHashMap<>();
-
-	/*
-	 * Stores the mapping of regions to people. Maintenance depends upon mapping
-	 * policy.
-	 */
-	private final Map<RegionId, IntSet<PersonId>> regionPeople = new LinkedHashMap<>();
-
-	/*
-	 * Stores the modeler's choice of mapping option for regions
-	 */
-	private MapOption regionMapOption;
-	/*
-	 * Stores the modeler's choice of mapping option for compartments
-	 */
-
-	private MapOption compartmentMapOption;
-
+	
 	/**
 	 * Constructs the PersonLocationManger.
 	 */
@@ -140,52 +115,47 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 		Scenario scenario = context.getScenario();
 		eventManager = context.getEventManager();
 
-	
 		int suggestedPopulationSize = scenario.getSuggestedPopulationSize();
 		/*
-		 * By setting the default value to 0, we are allowing the container to
-		 * grow without having to set values in its array. HOWEVER, THIS IMPLIES
-		 * THAT REGIONS MUST BE CONVERTED TO INTEGER VALUES STARTING AT ONE, NOT
-		 * ZERO.
+		 * By setting the default value to 0, we are allowing the container to grow
+		 * without having to set values in its array. HOWEVER, THIS IMPLIES THAT REGIONS
+		 * MUST BE CONVERTED TO INTEGER VALUES STARTING AT ONE, NOT ZERO.
 		 * 
 		 * The same holds true for compartments.
 		 */
 		regionValues = new IntValueContainer(0, suggestedPopulationSize);
-		
+
 		compartmentValues = new IntValueContainer(0, suggestedPopulationSize);
 
 		if (scenario.getPersonCompartmentArrivalTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
-			compartmentArrivalTimes = new DoubleValueContainer(0,suggestedPopulationSize);
+			compartmentArrivalTimes = new DoubleValueContainer(0, suggestedPopulationSize);
 		}
 
-		if (scenario.getPersonRegionArrivalTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {		
+		if (scenario.getPersonRegionArrivalTrackingPolicy() == TimeTrackingPolicy.TRACK_TIME) {
 			regionArrivalTimes = new DoubleValueContainer(0, suggestedPopulationSize);
 		}
 
 		for (final RegionId regionId : scenario.getRegionIds()) {
 			regionPopulationRecordMap.put(regionId, new PopulationRecord());
 		}
-		
+
 		for (final CompartmentId compartmentId : scenario.getCompartmentIds()) {
 			compartmentPopulationRecordMap.put(compartmentId, new PopulationRecord());
 		}
-
-		compartmentMapOption = scenario.getCompartmentMapOption();
-		regionMapOption = scenario.getRegionMapOption();
 
 		// Note that regions are numbered starting with one and not zero to take
 		// advantage of using zero as the default value in the regionValues container
 		final Set<RegionId> regionIds = scenario.getRegionIds();
 		int index = 1;
 		for (final RegionId regionId : regionIds) {
-			
+
 			regionToIndexMap.put(regionId, index++);
 		}
-		
+
 		indexToRegionMap = new RegionId[regionIds.size() + 1];
 		index = 1;
 		for (final RegionId regionId : regionIds) {
-		
+
 			indexToRegionMap[index++] = regionId;
 		}
 
@@ -194,7 +164,7 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 		for (final CompartmentId compartmentId : compartmentIds) {
 			compartmentToIndexMap.put(compartmentId, index++);
 		}
-		indexToCompartmentMap = new CompartmentId[compartmentIds.size()+1];
+		indexToCompartmentMap = new CompartmentId[compartmentIds.size() + 1];
 		index = 1;
 		for (final CompartmentId compartmentId : compartmentIds) {
 			indexToCompartmentMap[index++] = compartmentId;
@@ -216,26 +186,16 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	public List<PersonId> getPeopleInCompartment(final CompartmentId compartmentId) {
 		final List<PersonId> result = new ArrayList<>(getCompartmentPopulationCount(compartmentId));
 
-		if (compartmentMapOption != MapOption.NONE) {
-			final IntSet<PersonId> intSet = compartmentPeople.get(compartmentId);
-			if (intSet != null) {
-				for (final PersonId personId : intSet.getValues()) {
-					if (personIdManager.personExists(personId)) {
-						result.add(personId);
-					}
-				}
-			}
-		} else {
-			final int maxPersonIndex = personIdManager.getPersonIdLimit();
-			for (int personIndex = 0; personIndex < maxPersonIndex; personIndex++) {
-				if (personIdManager.personIndexExists(personIndex)) {
-					PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-					if (getPersonCompartment(personId).equals(compartmentId)) {
-						result.add(personId);
-					}
+		final int maxPersonIndex = personIdManager.getPersonIdLimit();
+		for (int personIndex = 0; personIndex < maxPersonIndex; personIndex++) {
+			if (personIdManager.personIndexExists(personIndex)) {
+				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
+				if (getPersonCompartment(personId).equals(compartmentId)) {
+					result.add(personId);
 				}
 			}
 		}
+
 		return result;
 	}
 
@@ -243,26 +203,16 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	public List<PersonId> getPeopleInRegion(final RegionId regionId) {
 		final List<PersonId> result = new ArrayList<>(getRegionPopulationCount(regionId));
 
-		if (regionMapOption != MapOption.NONE) {
-			final IntSet<PersonId> intSet = regionPeople.get(regionId);
-			if (intSet != null) {
-				for (final PersonId personId : intSet.getValues()) {
-					if (personIdManager.personExists(personId)) {
-						result.add(personId);
-					}
-				}
-			}
-		} else {
-			final int maxPersonIndex = personIdManager.getPersonIdLimit();
-			for (int personIndex = 0; personIndex < maxPersonIndex; personIndex++) {
-				if (personIdManager.personIndexExists(personIndex)) {
-					PersonId personId = personIdManager.getBoxedPersonId(personIndex);
-					if (getPersonRegion(personId).equals(regionId)) {
-						result.add(personId);
-					}
+		final int maxPersonIndex = personIdManager.getPersonIdLimit();
+		for (int personIndex = 0; personIndex < maxPersonIndex; personIndex++) {
+			if (personIdManager.personIndexExists(personIndex)) {
+				PersonId personId = personIdManager.getBoxedPersonId(personIndex);
+				if (getPersonRegion(personId).equals(regionId)) {
+					result.add(personId);
 				}
 			}
 		}
+
 		return result;
 	}
 
@@ -313,40 +263,6 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 		return regionPopulationRecordMap.get(regionId).assignmentTime;
 	}
 
-	/*
-	 * Creates a new IntSet instance based on the compartment map option
-	 * obtained from the environment. Should not be invoked when compartments
-	 * are not being mapped to the people.
-	 */
-	private IntSet<PersonId> newIntSetForCompartment() {
-		switch (compartmentMapOption) {
-		case ARRAY:
-			return new ArrayIntSet<>();
-		case HASH:
-			return new HashIntSet<>();
-		case NONE:// fall through
-		default:
-			throw new RuntimeException("unhandled map option " + compartmentMapOption);
-		}
-	}
-
-	/*
-	 * Creates a new IntSet instance based on the region map option obtained
-	 * from the environment. Should not be invoked when regions are not being
-	 * mapped to the people.
-	 */
-	private IntSet<PersonId> newIntSetForRegion() {
-		switch (regionMapOption) {
-		case ARRAY:
-			return new ArrayIntSet<>();
-		case HASH:
-			return new HashIntSet<>();
-		case NONE:// fall through
-		default:
-			throw new RuntimeException("unhandled map option " + regionMapOption);
-		}
-	}
-
 	@Override
 	public void removePerson(final PersonId personId) {
 
@@ -362,37 +278,16 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 
 			compartmentValues.setIntValue(personId.getValue(), -1);
 
-			if (compartmentMapOption != MapOption.NONE) {
-				final IntSet<PersonId> people = compartmentPeople.get(oldCompartmentId);
-				if (people != null) {
-					people.remove(personId);
-					if (people.size() == 0) {
-						compartmentPeople.remove(oldCompartmentId);
-					}
-				}
-			}
 		}
 
-		// pop
 		final int regionIndex = regionValues.getValueAsInt(personId.getValue());
 		if (regionIndex > 0) {
-			// pop
 			final RegionId oldRegionId = indexToRegionMap[regionIndex];
 			final PopulationRecord populationRecord = regionPopulationRecordMap.get(oldRegionId);
 			populationRecord.populationCount--;
 			populationRecord.assignmentTime = eventManager.getTime();
-			// pop
 			regionValues.setIntValue(personId.getValue(), 0);
 
-			if (regionMapOption != MapOption.NONE) {
-				final IntSet<PersonId> people = regionPeople.get(oldRegionId);
-				if (people != null) {
-					people.remove(personId);
-					if (people.size() == 0) {
-						regionPeople.remove(oldRegionId);
-					}
-				}
-			}
 		}
 	}
 
@@ -406,8 +301,7 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 	@Override
 	public void setPersonCompartment(final PersonId personId, final CompartmentId compartmentId) {
 		/*
-		 * Retrieve the int value that represents the current compartment of the
-		 * person
+		 * Retrieve the int value that represents the current compartment of the person
 		 */
 		int compartmentIndex = compartmentValues.getValueAsInt(personId.getValue());
 		CompartmentId oldCompartmentId;
@@ -425,8 +319,8 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 
 		} else {
 			/*
-			 * The person was not known to this manager, so the old compartment
-			 * is null and the global population must be incremented
+			 * The person was not known to this manager, so the old compartment is null and
+			 * the global population must be incremented
 			 */
 			globalPopulationRecord.populationCount++;
 			globalPopulationRecord.assignmentTime = eventManager.getTime();
@@ -456,33 +350,13 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 			compartmentArrivalTimes.setValue(personId.getValue(), eventManager.getTime());
 		}
 
-		/*
-		 * If compartment to people maps are being maintained, do so.
-		 */
-		if (compartmentMapOption != MapOption.NONE) {
-			if (oldCompartmentId != null) {
-				final IntSet<PersonId> people = compartmentPeople.get(oldCompartmentId);
-				if (people != null) {
-					people.remove(personId);
-					if (people.size() == 0) {
-						compartmentPeople.remove(oldCompartmentId);
-					}
-				}
-			}
-			IntSet<PersonId> people = compartmentPeople.get(compartmentId);
-			if (people == null) {
-				people = newIntSetForCompartment();
-				compartmentPeople.put(compartmentId, people);
-			}
-			people.add(personId);
-		}
+		
 	}
 
 	@Override
 	public void setPersonRegion(final PersonId personId, final RegionId regionId) {
 		/*
-		 * Retrieve the int value that represents the current region of the
-		 * person
+		 * Retrieve the int value that represents the current region of the person
 		 */
 		// pop
 		int regionIndex = regionValues.getValueAsInt(personId.getValue());
@@ -501,8 +375,8 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 			populationRecord.assignmentTime = eventManager.getTime();
 		} else {
 			/*
-			 * The person was not known to this manager, but we only update the
-			 * global population on the change to a compartment
+			 * The person was not known to this manager, but we only update the global
+			 * population on the change to a compartment
 			 * 
 			 */
 			oldRegionId = null;
@@ -530,26 +404,6 @@ public final class PersonLocationMangerImpl extends BaseElement implements Perso
 			// pop
 			regionArrivalTimes.setValue(personId.getValue(), eventManager.getTime());
 		}
-		/*
-		 * If region to people maps are being maintained, do so.
-		 */
-		if (regionMapOption != MapOption.NONE) {
-
-			if (oldRegionId != null) {
-				final IntSet<PersonId> people = regionPeople.get(oldRegionId);
-				if (people != null) {
-					people.remove(personId);
-					if (people.size() == 0) {
-						regionPeople.remove(oldRegionId);
-					}
-				}
-			}
-			IntSet<PersonId> people = regionPeople.get(regionId);
-			if (people == null) {
-				people = newIntSetForRegion();
-				regionPeople.put(regionId, people);
-			}
-			people.add(personId);
-		}
+		
 	}
 }

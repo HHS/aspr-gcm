@@ -1,7 +1,5 @@
 package gcm.manual.personaddition;
 
-import static gcm.automated.support.EnvironmentSupport.addStandardComponentsAndTypes;
-import static gcm.automated.support.EnvironmentSupport.addStandardTrackingAndScenarioId;
 import static gcm.automated.support.EnvironmentSupport.addTaskPlanContainer;
 import static gcm.automated.support.EnvironmentSupport.assertAllPlansExecuted;
 import static gcm.automated.support.EnvironmentSupport.getRandomGenerator;
@@ -9,8 +7,10 @@ import static gcm.automated.support.EnvironmentSupport.getReplication;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 import org.junit.jupiter.api.AfterAll;
@@ -18,17 +18,23 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import gcm.automated.support.SeedProvider;
+import gcm.automated.support.TaskComponent;
 import gcm.automated.support.TaskPlanContainer;
 import gcm.automated.support.TestCompartmentId;
 import gcm.automated.support.TestGlobalComponentId;
-import gcm.automated.support.TestRegionId;
+import gcm.automated.support.TestGroupTypeId;
+import gcm.automated.support.TestMaterialId;
+import gcm.automated.support.TestMaterialsProducerId;
+import gcm.automated.support.TestResourceId;
 import gcm.replication.Replication;
 import gcm.scenario.MapOption;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.PropertyDefinition;
+import gcm.scenario.RegionId;
 import gcm.scenario.Scenario;
 import gcm.scenario.ScenarioBuilder;
+import gcm.scenario.ScenarioId;
 import gcm.scenario.TimeTrackingPolicy;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.Equality;
@@ -136,6 +142,10 @@ public class MT_PartitionManagement {
 		}
 		return AgeGroup.SENIOR;
 	}
+	
+	private Object getRegionLabel(RegionId regionId) {
+		return regionId;
+	}
 
 	/**
 	 * 1_000_000 people
@@ -171,40 +181,18 @@ public class MT_PartitionManagement {
 		for (Boolean loadPopulationFirst : populationFirstList) {
 			for (Boolean useDefaultPropertyValues : useDefaultPropertyValuesList) {
 				for (Boolean useArray : useArrayList) {
-
 					for (Boolean useFilter : useFilterList) {
-						Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,
+						Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray,														
 								useFilter, useDefaultPropertyValues, measureMemory);
 						System.out.println(report.toString());
 					}
-
 				}
 			}
 		}
 
 	}
 
-//	@Test
-//	public void test2() {
-//		final long seed = SEED_PROVIDER.getSeedValue(1);
-//		RandomGenerator randomGenerator = getRandomGenerator(seed);
-//
-//		int populationSize = 1_000_000;
-//		boolean measureMemory = false;
-//		boolean loadPopulationFirst = false;
-//		boolean useArray = false;
-//		boolean useFilter = true;
-//		boolean useDefaultPropertyValues = false;
-//
-//		System.out.println(Report.toHeader());
-//
-//		for (int i = 0; i < 10; i++) {
-//			Report report = testInternal(randomGenerator, populationSize, loadPopulationFirst, useArray, useFilter,
-//					useDefaultPropertyValues, measureMemory);
-//			System.out.println(report.toString());
-//		}
-//
-//	}
+
 
 	private static List<Boolean> generateBooleanList() {
 		List<Boolean> result = new ArrayList<>();
@@ -340,6 +328,23 @@ public class MT_PartitionManagement {
 		}
 
 	}
+	
+	private static class LocalRegionId implements RegionId{
+		private final int id;
+		public LocalRegionId(int id){
+			this.id = id;
+		}
+		@Override
+		public String toString() {
+			StringBuilder builder = new StringBuilder();
+			builder.append("LocalRegionId [id=");
+			builder.append(id);
+			builder.append("]");
+			return builder.toString();
+		}
+		
+		
+	}
 
 	private Report testInternal(//
 			RandomGenerator randomGenerator, //
@@ -370,22 +375,55 @@ public class MT_PartitionManagement {
 
 		MapOption mapOption;
 		if (useArray) {
-			mapOption = MapOption.ARRAY;
+			mapOption = MapOption.HASH;
 		} else {
 			mapOption = MapOption.NONE;
 		}
 		report.setMapOption(mapOption);
 
 		ScenarioBuilder scenarioBuilder = new UnstructuredScenarioBuilder();
-		addStandardTrackingAndScenarioId(scenarioBuilder, randomGenerator);
-		addStandardComponentsAndTypes(scenarioBuilder);
+		
+		scenarioBuilder.setScenarioId(new ScenarioId(randomGenerator.nextInt(1000) + 1));
+		scenarioBuilder.setPersonCompartmentArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		scenarioBuilder.setPersonRegionArrivalTracking(TimeTrackingPolicy.TRACK_TIME);
+		scenarioBuilder.setCompartmentMapOption(MapOption.ARRAY);
+		scenarioBuilder.setRegionMapOption(mapOption);	
+		
+		for (final TestCompartmentId testCompartmentId : TestCompartmentId.values()) {
+			scenarioBuilder.addCompartmentId(testCompartmentId, TaskComponent.class);
+		}
+		for (final TestGlobalComponentId testGlobalComponentId : TestGlobalComponentId.values()) {
+			scenarioBuilder.addGlobalComponentId(testGlobalComponentId, TaskComponent.class);
+		}
+		
+		for (final TestMaterialsProducerId testMaterialsProducerId : TestMaterialsProducerId.values()) {
+			scenarioBuilder.addMaterialsProducerId(testMaterialsProducerId, TaskComponent.class);
+		}
+		for (final TestResourceId testResourceId : TestResourceId.values()) {
+			scenarioBuilder.addResource(testResourceId);
+			scenarioBuilder.setResourceTimeTracking(testResourceId, testResourceId.trackValueAssignmentTimes());
+		}
+		for (final TestMaterialId testMaterialId : TestMaterialId.values()) {
+			scenarioBuilder.addMaterial(testMaterialId);
+		}
+		for (final TestGroupTypeId testGroupTypeId : TestGroupTypeId.values()) {
+			scenarioBuilder.addGroupTypeId(testGroupTypeId);
+		}
+		int regionCount = populationSize/5000;
+		List<RegionId> regionIds = new ArrayList<>();
+		for (int i = 0;i<regionCount;i++) {
+			LocalRegionId localRegionId = new LocalRegionId(i);
+			regionIds.add(localRegionId);
+			scenarioBuilder.addRegionId(localRegionId, TaskComponent.class);
+		}
 
 		// load the person properties
 		for (LocalPersonPropertyId localPersonPropertyId : LocalPersonPropertyId.values()) {
-			PropertyDefinition propertyDefinition = localPersonPropertyId.getPropertyDefinition(mapOption,
+			PropertyDefinition propertyDefinition = localPersonPropertyId.getPropertyDefinition(MapOption.NONE,
 					TimeTrackingPolicy.DO_NOT_TRACK_TIME);
 			scenarioBuilder.definePersonProperty(localPersonPropertyId, propertyDefinition);
 		}
+		
 
 		Object partitionId = new Object();
 
@@ -404,7 +442,7 @@ public class MT_PartitionManagement {
 					if (useDefaultPropertyValues) {
 						for (int i = 0; i < populationSize; i++) {
 
-							PersonId personId = environment.addPerson(TestRegionId.getRandomRegionId(randomGenerator),
+							PersonId personId = environment.addPerson(regionIds.get(randomGenerator.nextInt(regionIds.size())),
 									TestCompartmentId.getRandomCompartmentId(randomGenerator));
 
 							environment.setPersonPropertyValue(personId, LocalPersonPropertyId.AGE,
@@ -421,7 +459,7 @@ public class MT_PartitionManagement {
 
 						for (int i = 0; i < populationSize; i++) {
 							Builder builder = PersonConstructionInfo.builder()//
-									.setPersonRegionId(TestRegionId.getRandomRegionId(randomGenerator))//
+									.setPersonRegionId(regionIds.get(randomGenerator.nextInt(regionIds.size())))//
 									.setPersonCompartmentId(TestCompartmentId.getRandomCompartmentId(randomGenerator));//
 
 							builder.setPersonPropertyValue(LocalPersonPropertyId.AGE, randomGenerator.nextInt(60));
@@ -443,13 +481,21 @@ public class MT_PartitionManagement {
 
 		taskPlanContainer.addTaskPlan(TestGlobalComponentId.GLOBAL_COMPONENT_1, phaseTimeMap.get(Phase.LOAD_PARTITION),
 				(environment) -> {
+					
+					Set<RegionId> regionsForFilter = new LinkedHashSet<>();
+					for(RegionId regionId : regionIds) {
+						if(randomGenerator.nextBoolean()) {
+							regionsForFilter.add(regionId);
+						}
+					}
 
 					TimeElapser timeElapser = new TimeElapser();
 					Filter filter;
 					if (useFilter) {
 						filter = Filter.property(LocalPersonPropertyId.AGE, Equality.GREATER_THAN, 15)
 								.and(Filter.property(LocalPersonPropertyId.IMMUNE, Equality.EQUAL, false))
-								.and(Filter.property(LocalPersonPropertyId.VACCINATED, Equality.EQUAL, false));
+								.and(Filter.property(LocalPersonPropertyId.VACCINATED, Equality.EQUAL, false))
+								.and(Filter.region(regionIds.get(environment.getRandomGenerator().nextInt(regionIds.size()))));
 					} else {
 						filter = Filter.allPeople();
 					}
@@ -457,11 +503,18 @@ public class MT_PartitionManagement {
 							.setFilter(filter)//
 							.setPersonPropertyFunction(LocalPersonPropertyId.AGE, this::getAgeLabel)//
 							.setPersonPropertyFunction(LocalPersonPropertyId.SERUM_DENSITY, this::getSerumDensityLabel)//
+							.setRegionFunction(this::getRegionLabel)
 							.build();//
 
 					
 
-					environment.addPartition(partition, partitionId);
+					if(loadPopulationFirst && useArray && useFilter) {
+						environment.addPartition(partition, partitionId);	
+					}else {
+						environment.addPartition(partition, partitionId);
+					}
+					
+					
 
 					report.setPartitionLoadTime(timeElapser.getElapsedMilliSeconds());
 					report.setPartitionSize(environment.getPartitionSize(partitionId));
@@ -510,14 +563,19 @@ public class MT_PartitionManagement {
 						for (AgeGroup ageGroup : AgeGroup.values()) {
 							for (Integer serumDensityLabel : serumDensityLabels.keySet()) {
 
+								RegionId regionId = regionIds.get(randomGenerator.nextInt(regionIds.size()));
+								
 								LabelSet labelSet = LabelSet.builder()//
 										.setPropertyLabel(LocalPersonPropertyId.AGE, ageGroup)//
 										.setPropertyLabel(LocalPersonPropertyId.SERUM_DENSITY, serumDensityLabel)
+										.setRegionLabel(regionId)
 										.build();//
+								
+								
 
 								PartitionSampler partitionSampler = PartitionSampler.builder()//
 										.setLabelSet(labelSet)//
-										.setLabelSetWeightingFunction(this::getWeight)//
+										.setLabelSetWeightingFunction(this::getWeight)//										
 										.build();//
 
 								environment.samplePartition(partitionId, partitionSampler);

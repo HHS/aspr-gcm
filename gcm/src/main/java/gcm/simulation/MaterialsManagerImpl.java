@@ -281,7 +281,7 @@ public final class MaterialsManagerImpl extends BaseElement implements Materials
 	public List<BatchId> getInventoryBatches(final MaterialsProducerId materialsProducerId) {
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
 
-		final List<BatchId> result = new ArrayList<>();
+		final List<BatchId> result = new ArrayList<>(materialsProducerRecord.inventory.size());
 		for (final BatchRecord batchRecord : materialsProducerRecord.inventory) {
 			result.add(batchRecord.batchId);
 		}
@@ -317,7 +317,7 @@ public final class MaterialsManagerImpl extends BaseElement implements Materials
 	@Override
 	public List<BatchId> getStageBatches(final StageId stageId) {
 		final StageRecord stageRecord = stageRecords.get(stageId);
-		final List<BatchId> result = new ArrayList<>();
+		final List<BatchId> result = new ArrayList<>(stageRecord.batchRecords.size());
 		for (final BatchRecord batchRecord : stageRecord.batchRecords) {
 			result.add(batchRecord.batchId);
 		}
@@ -345,9 +345,9 @@ public final class MaterialsManagerImpl extends BaseElement implements Materials
 
 	@Override
 	public List<StageId> getStages(final MaterialsProducerId materialsProducerId) {
-		final List<StageId> result = new ArrayList<>();
+		
 		final MaterialsProducerRecord materialsProducerRecord = materialsProducerMap.get(materialsProducerId);
-
+		final List<StageId> result = new ArrayList<>(materialsProducerRecord.stageRecords.size());
 		for (final StageRecord stageRecord : materialsProducerRecord.stageRecords) {
 			result.add(stageRecord.stageId);
 		}

@@ -647,7 +647,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends CompartmentId> Set<T> getCompartmentIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.compartmentIds.keySet().size());
 			for (CompartmentId compartmentId : scenarioData.compartmentIds.keySet()) {
 				result.add((T) compartmentId);
 			}
@@ -697,7 +697,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends GlobalComponentId> Set<T> getGlobalComponentIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.globalComponentIds.keySet().size());
 			for (GlobalComponentId globalComponentId : scenarioData.globalComponentIds.keySet()) {
 				result.add((T) globalComponentId);
 			}
@@ -800,7 +800,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends GroupTypeId> Set<T> getGroupTypeIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.groupTypeIds.size());
 			for (GroupTypeId groupTypeId : scenarioData.groupTypeIds) {
 				result.add((T) groupTypeId);
 			}
@@ -825,7 +825,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends MaterialId> Set<T> getMaterialIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.materialIds.size());
 			for (MaterialId materialId : scenarioData.materialIds) {
 				result.add((T) materialId);
 			}
@@ -835,7 +835,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends MaterialsProducerId> Set<T> getMaterialsProducerIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.materialsProducerIds.keySet().size());
 			for (MaterialsProducerId materialsProducerId : scenarioData.materialsProducerIds.keySet()) {
 				result.add((T) materialsProducerId);
 			}
@@ -1057,7 +1057,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends ResourceId> Set<T> getResourceIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.resourceIds.size());
 			for (ResourceId resourceId : scenarioData.resourceIds) {
 				result.add((T) resourceId);
 			}
@@ -1175,7 +1175,7 @@ public final class StructuredScenarioBuilder implements ScenarioBuilder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public <T extends RandomNumberGeneratorId> Set<T> getRandomNumberGeneratorIds() {
-			Set<T> result = new LinkedHashSet<>();
+			Set<T> result = new LinkedHashSet<>(scenarioData.randomNumberGeneratorIds.size());
 			for (RandomNumberGeneratorId randomNumberGeneratorId : scenarioData.randomNumberGeneratorIds) {
 				result.add((T) randomNumberGeneratorId);
 			}

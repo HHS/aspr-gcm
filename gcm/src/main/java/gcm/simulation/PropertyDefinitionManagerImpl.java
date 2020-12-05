@@ -77,7 +77,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends GlobalPropertyId> Set<T> getGlobalPropertyIds() {
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(globalPropertyDefinitions.keySet().size());
 		for (GlobalPropertyId globalPropertyId : globalPropertyDefinitions.keySet()) {
 			result.add((T) globalPropertyId);
 		}
@@ -92,7 +92,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends RegionPropertyId> Set<T> getRegionPropertyIds() {
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(regionPropertyDefinitions.keySet().size());
 		for (RegionPropertyId regionPropertyId : regionPropertyDefinitions.keySet()) {
 			result.add((T) regionPropertyId);
 		}
@@ -114,8 +114,8 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends CompartmentPropertyId> Set<T> getCompartmentPropertyIds(CompartmentId compartmentId) {
-		Set<T> result = new LinkedHashSet<>();
 		Map<CompartmentPropertyId, PropertyDefinition> map = compartmentPropertyDefinitions.get(compartmentId);
+		Set<T> result = new LinkedHashSet<>(map.keySet().size());
 		for (CompartmentPropertyId compartmentPropertyId : map.keySet()) {
 			result.add((T) compartmentPropertyId);
 		}
@@ -145,7 +145,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@Override
 	public <T extends ResourcePropertyId> Set<T> getResourcePropertyIds(final ResourceId resourceId) {
 		Map<ResourcePropertyId, PropertyDefinition> defMap = resourcePropertyDefinitions.get(resourceId);
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(defMap.keySet().size());
 		for (ResourcePropertyId resourcePropertyId : defMap.keySet()) {
 			result.add((T) resourcePropertyId);
 		}
@@ -167,7 +167,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@Override
 	public <T extends PersonPropertyId> Set<T> getPersonPropertyIds() {
 
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(personPropertyDefinitions.keySet().size());
 		for (PersonPropertyId personPropertyId : personPropertyDefinitions.keySet()) {
 			result.add((T) personPropertyId);
 		}
@@ -195,7 +195,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends MaterialsProducerPropertyId> Set<T> getMaterialsProducerPropertyIds() {
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(materialsProducerPropertyDefinitions.keySet().size());
 		for (MaterialsProducerPropertyId materialsProducerPropertyId : materialsProducerPropertyDefinitions.keySet()) {
 			result.add((T) materialsProducerPropertyId);
 		}
@@ -219,7 +219,7 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@Override
 	public <T extends BatchPropertyId> Set<T> getBatchPropertyIds(final MaterialId materialId) {
 		Map<BatchPropertyId, PropertyDefinition> map = batchPropertyDefinitions.get(materialId);
-		Set<T> result = new LinkedHashSet<>();
+		Set<T> result = new LinkedHashSet<>(map.keySet().size());
 		for (BatchPropertyId batchPropertyId : map.keySet()) {
 			result.add((T) batchPropertyId);
 		}
@@ -259,8 +259,9 @@ public final class PropertyDefinitionManagerImpl extends BaseElement implements 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends GroupPropertyId> Set<T> getGroupPropertyIds(GroupTypeId groupTypeId) {
-		Set<T> result = new LinkedHashSet<>();
+		
 		Map<GroupPropertyId, PropertyDefinition> map = groupPropertyDefinitions.get(groupTypeId);
+		Set<T> result = new LinkedHashSet<>(map.keySet().size());
 		for (GroupPropertyId groupPropertyId : map.keySet()) {
 			result.add((T) groupPropertyId);
 		}

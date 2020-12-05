@@ -35,23 +35,22 @@ import gcm.util.annotations.TestStatus;
 public final class EventManagerImpl extends BaseElement implements EventManager {
 	/*
 	 * Each plan that is added is given a plan id value, incrementing the
-	 * masterPlanId. The plan id values are used to resolve ties in the priority
-	 * of the planQueue.
+	 * masterPlanId. The plan id values are used to resolve ties in the priority of
+	 * the planQueue.
 	 */
 	private long masterPlanId;
 
 	/*
 	 * A data class for managing the plans submitted by components.
 	 *
-	 * The plan created by the component is not understood by the Environment
-	 * per se. Instead, it records the focalId (the identifier of the component)
-	 * and the key for the plan. This plan key is prepended with the focalId so
-	 * that it is impossible for a component to effect another components plans.
-	 * The planTime is the future time when the plan is sent back to the
-	 * component and is the driver to progress time in GCM. PlanRecords are
-	 * stored in a priority queue based on the plan time. When plans are
-	 * cancelled the plan is set to null.When a cancelled plan pops out of the
-	 * queue, it is ignored.
+	 * The plan created by the component is not understood by the Environment per
+	 * se. Instead, it records the focalId (the identifier of the component) and the
+	 * key for the plan. This plan key is prepended with the focalId so that it is
+	 * impossible for a component to effect another components plans. The planTime
+	 * is the future time when the plan is sent back to the component and is the
+	 * driver to progress time in GCM. PlanRecords are stored in a priority queue
+	 * based on the plan time. When plans are cancelled the plan is set to null.When
+	 * a cancelled plan pops out of the queue, it is ignored.
 	 */
 	private static class PlanRecord {
 		private final ComponentId componentId;
@@ -77,7 +76,8 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			return builder.toString();
 		}
 
-		public PlanRecord(final ComponentId componentId, final Object key, final Plan plan, final double planTime, final long planId) {
+		public PlanRecord(final ComponentId componentId, final Object key, final Plan plan, final double planTime,
+				final long planId) {
 			super();
 			this.key = key;
 			this.componentId = componentId;
@@ -119,10 +119,9 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 		componentManager.clearFocus();
 
 		/*
-		 * We now initialize the global components, regions and compartments in
-		 * the order they were loaded from the component factory. Note that
-		 * there are placeholder Component Ids that have no corresponding
-		 * Component.
+		 * We now initialize the global components, regions and compartments in the
+		 * order they were loaded from the component factory. Note that there are
+		 * placeholder Component Ids that have no corresponding Component.
 		 */
 		for (ComponentId componentId : componentManager.getComponentIds()) {
 			componentManager.setFocus(componentId);
@@ -134,17 +133,16 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 		}
 
 		/*
-		 * Although we generally only expect plans and observations to have been
-		 * created during initialization, it is possible that some components
-		 * may have altered property states that may need to be observed by
-		 * other components.
+		 * Although we generally only expect plans and observations to have been created
+		 * during initialization, it is possible that some components may have altered
+		 * property states that may need to be observed by other components.
 		 */
 		executeInitQueue();
 		executeObservationQueue();
-		
+
 		/*
-		 * The flow of time is determined by the progress of planning. Note that
-		 * plans that are cancelled do not move time forward.
+		 * The flow of time is determined by the progress of planning. Note that plans
+		 * that are cancelled do not move time forward.
 		 */
 
 		while (processEvents && !planQueue.isEmpty()) {
@@ -178,19 +176,18 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	}
 
 	/*
-	 * Clears out the observation queue after a plan has been executed. Time has
-	 * not moved forward since the execution of the plan and we are giving other
-	 * components a chance to react to whatever may have been observed. Note
-	 * that for each observation in the observation queue, we change the focus
-	 * to the component that is observing and that component can in turn act
-	 * immediately or plan for future action. Thus the observation queue can
-	 * grow while we are processing it and we do not leave this method until the
-	 * queue is exhausted.
+	 * Clears out the observation queue after a plan has been executed. Time has not
+	 * moved forward since the execution of the plan and we are giving other
+	 * components a chance to react to whatever may have been observed. Note that
+	 * for each observation in the observation queue, we change the focus to the
+	 * component that is observing and that component can in turn act immediately or
+	 * plan for future action. Thus the observation queue can grow while we are
+	 * processing it and we do not leave this method until the queue is exhausted.
 	 */
 	private void executeObservationQueue() {
 		/*
-		 * Keep stimulating components with observations until there is nothing
-		 * left to observe.
+		 * Keep stimulating components with observations until there is nothing left to
+		 * observe.
 		 */
 
 		while (processEvents) {
@@ -200,8 +197,7 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			}
 
 			/*
-			 * First, switch the focus to the component that will be sent the
-			 * observation
+			 * First, switch the focus to the component that will be sent the observation
 			 */
 			componentManager.setFocus(observationRecord.getComponentId());
 
@@ -228,9 +224,8 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 
 			/*
 			 * Based on the type of event being observed, unpack the
-			 * observationRecord.observedInfoKey and convert its elements into
-			 * the arguments matching the appropriate observation method of the
-			 * component interface.
+			 * observationRecord.observedInfoKey and convert its elements into the arguments
+			 * matching the appropriate observation method of the component interface.
 			 */
 
 			switch (observationType) {
@@ -305,7 +300,8 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			case MATERIALS_PRODUCER_PROPERTY:
 				materialsProducerId = observationRecord.getArgument(1);
 				materialsProducerPropertyId = observationRecord.getArgument(2);
-				component.observeMaterialsProducerPropertyChange(environment, materialsProducerId, materialsProducerPropertyId);
+				component.observeMaterialsProducerPropertyChange(environment, materialsProducerId,
+						materialsProducerPropertyId);
 				break;
 			case STAGE_OFFER:
 				stageId = observationRecord.getArgument(1);
@@ -315,7 +311,7 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 				stageId = observationRecord.getArgument(1);
 				materialsProducerId = observationRecord.getArgument(2);
 				materialsProducerId2 = observationRecord.getArgument(3);
-				component.observeStageTransfer(environment, stageId,materialsProducerId,materialsProducerId2);
+				component.observeStageTransfer(environment, stageId, materialsProducerId, materialsProducerId2);
 				break;
 			case MATERIALS_PRODUCER_RESOURCE:
 				materialsProducerId = observationRecord.getArgument(1);
@@ -344,10 +340,10 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 				groupId = observationRecord.getArgument(1);
 				groupPropertyId = observationRecord.getArgument(2);
 				component.observeGroupPropertyChange(environment, groupId, groupPropertyId);
-				break;			
+				break;
 			case PARTITION_PERSON_ADDITION:
 				key = observationRecord.getArgument(1);
-				personId = observationRecord.getArgument(2);				
+				personId = observationRecord.getArgument(2);
 				component.observePartitionPersonAddition(environment, key, personId);
 				break;
 			case PARTITION_PERSON_REMOVAL:
@@ -366,8 +362,7 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	}
 
 	/*
-	 * Stimulates the current focus component to execute a plan that has come
-	 * due.
+	 * Stimulates the current focus component to execute a plan that has come due.
 	 */
 	private void executePlan(final PlanRecord planRecord) {
 
@@ -377,8 +372,7 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 		componentManager.setFocus(planRecord.componentId);
 
 		/*
-		 * We are releasing custody of the plan, so we remove it from our
-		 * tracking map
+		 * We are releasing custody of the plan, so we remove it from our tracking map
 		 */
 		if (planRecord.key != null) {
 			planMap.get(planRecord.componentId).remove(planRecord.key);
@@ -393,13 +387,14 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 		 *  
 		 */
 		if (planningQueueReportItemManager.isActive()) {
-			planningQueueReportItemManager.reportPlanningQueueRemoval(planRecord.componentId, planRecord.plan, planRecord.key);
+			planningQueueReportItemManager.reportPlanningQueueRemoval(planRecord.componentId, planRecord.plan,
+					planRecord.key);
 		}
 
 		/*
-		 * Instruct the component to execute the plan. Note that the component
-		 * is free to do with the plan anything that it wants and that we cannot
-		 * assume any action on its part.
+		 * Instruct the component to execute the plan. Note that the component is free
+		 * to do with the plan anything that it wants and that we cannot assume any
+		 * action on its part.
 		 */
 
 		component.executePlan(environment, planRecord.plan);
@@ -416,18 +411,18 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	private boolean processEvents = true;
 
 	/*
-	 * The planQueue and the planMap contain an identical set of records and
-	 * those records do not contain past plans.The planQueue sorts the plans by
-	 * ascending planning time and arrival order and thus represent the intended
-	 * order of execution for plans. Plans drive the flow of time and time is
-	 * moved forward by setting it to the scheduled time of the plan at the head
-	 * of the queue. The planQueue is non-performant for retrieving or canceling
-	 * plans, so the planMap is used for these functions.
+	 * The planQueue and the planMap contain an identical set of records and those
+	 * records do not contain past plans.The planQueue sorts the plans by ascending
+	 * planning time and arrival order and thus represent the intended order of
+	 * execution for plans. Plans drive the flow of time and time is moved forward
+	 * by setting it to the scheduled time of the plan at the head of the queue. The
+	 * planQueue is non-performant for retrieving or canceling plans, so the planMap
+	 * is used for these functions.
 	 */
 	private PriorityQueue<PlanRecord> planQueue = new PriorityQueue<>(new Comparator<PlanRecord>() {
 		/*
-		 * We sort by plan time ascending. Ties are broken by the planId, which
-		 * is incremented as plans are added.
+		 * We sort by plan time ascending. Ties are broken by the planId, which is
+		 * incremented as plans are added.
 		 */
 		@Override
 		public int compare(final PlanRecord plan1, final PlanRecord plan2) {
@@ -442,17 +437,16 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	/*
 	 *
 	 * The planQueue and the planMap contain an identical set of identified plan
-	 * records and do not contain past plans. Plan's that are not associated
-	 * with an identifier are not contained in the planMap and are not
-	 * retrievable or removable. The planMap allows for the O(1) retrieval and
-	 * cancellation of plans, but does not contain those records in the order of
-	 * their execution.
+	 * records and do not contain past plans. Plan's that are not associated with an
+	 * identifier are not contained in the planMap and are not retrievable or
+	 * removable. The planMap allows for the O(1) retrieval and cancellation of
+	 * plans, but does not contain those records in the order of their execution.
 	 */
 	private Map<ComponentId, Map<Object, PlanRecord>> planMap = new LinkedHashMap<>();
 
 	/*
-	 * The current time in the simulation. It is measured in days and start at
-	 * zero. It is updated by the progression of plans.
+	 * The current time in the simulation. It is measured in days and start at zero.
+	 * It is updated by the progression of plans.
 	 */
 	private double time;
 
@@ -499,16 +493,15 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	public <T> Optional<T> removePlan(final Object key) {
 
 		/*
-		 * We drop the plan out of the plan map and thus have no way to
-		 * reference the plan directly. However, we do not remove the plan from
-		 * the planQueue and instead simply mark the plan record as cancelled.
-		 * When the cancelled plan record reaches the top of the queue, it is
-		 * popped off and ignored. This avoids the inefficiency of walking the
-		 * queue and removing the plan.
+		 * We drop the plan out of the plan map and thus have no way to reference the
+		 * plan directly. However, we do not remove the plan from the planQueue and
+		 * instead simply mark the plan record as cancelled. When the cancelled plan
+		 * record reaches the top of the queue, it is popped off and ignored. This
+		 * avoids the inefficiency of walking the queue and removing the plan.
 		 *
-		 * Note that we are allowing components to delete plans that do not
-		 * exist. This was done to ease any bookkeeping burdens on the component
-		 * and seems generally harmless.
+		 * Note that we are allowing components to delete plans that do not exist. This
+		 * was done to ease any bookkeeping burdens on the component and seems generally
+		 * harmless.
 		 */
 		ComponentId focalComponentId = componentManager.getFocalComponentId();
 		Map<Object, PlanRecord> map = planMap.get(focalComponentId);
@@ -517,7 +510,8 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			final PlanRecord planRecord = map.remove(key);
 			if (planRecord != null) {
 				if (planningQueueReportItemManager.isActive()) {
-					planningQueueReportItemManager.reportPlanningQueueCancellation(focalComponentId, planRecord.plan, key);
+					planningQueueReportItemManager.reportPlanningQueueCancellation(focalComponentId, planRecord.plan,
+							key);
 				}
 				result = (T) planRecord.plan;
 				planRecord.plan = null;
@@ -536,10 +530,10 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 		PlanRecord planRecord;
 		if (key != null) {
 			/*
-			 * Make sure that the component is not registering a plan on top of
-			 * an existing plan. We have chosen to throw an exception if this
-			 * happens rather than overwrite the plan, forcing the component to
-			 * explicitly remove the existing plan first
+			 * Make sure that the component is not registering a plan on top of an existing
+			 * plan. We have chosen to throw an exception if this happens rather than
+			 * overwrite the plan, forcing the component to explicitly remove the existing
+			 * plan first
 			 */
 			ComponentId focalComponentId = componentManager.getFocalComponentId();
 			Map<Object, PlanRecord> map = planMap.get(focalComponentId);
@@ -550,10 +544,10 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			}
 
 			/*
-			 * Finally, if it all looks good, build the plan record and put it
-			 * in on the planMap and the planQueue. The planMap allows us to
-			 * remove/retrieve plans and the planQueue allows us to return plans
-			 * back to their creators when the scheduled time occurs.
+			 * Finally, if it all looks good, build the plan record and put it in on the
+			 * planMap and the planQueue. The planMap allows us to remove/retrieve plans and
+			 * the planQueue allows us to return plans back to their creators when the
+			 * scheduled time occurs.
 			 */
 
 			planRecord = new PlanRecord(focalComponentId, key, plan, planTime, masterPlanId++);
@@ -572,7 +566,8 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 			 */
 			planRecord = new PlanRecord(componentManager.getFocalComponentId(), null, plan, planTime, masterPlanId++);
 			if (planningQueueReportItemManager.isActive()) {
-				planningQueueReportItemManager.reportPlanningQueueAddition(componentManager.getFocalComponentId(), plan, key);
+				planningQueueReportItemManager.reportPlanningQueueAddition(componentManager.getFocalComponentId(), plan,
+						key);
 			}
 		}
 		planQueue.add(planRecord);
@@ -583,21 +578,23 @@ public final class EventManagerImpl extends BaseElement implements EventManager 
 	public List<Object> getPlanKeys() {
 		ComponentId focalComponentId = componentManager.getFocalComponentId();
 		Map<Object, PlanRecord> map = planMap.get(focalComponentId);
-		return new ArrayList<>(map.keySet());
+		if (map != null) {
+			return new ArrayList<>(map.keySet());
+		}
+		return new ArrayList<>();
 	}
-	
+
 	private void executeInitQueue() {
-		if(globalComponentInitQueue.isEmpty()) {
+		if (globalComponentInitQueue.isEmpty()) {
 			return;
 		}
-		for(GlobalComponentId globalComponentId : globalComponentInitQueue) {
+		for (GlobalComponentId globalComponentId : globalComponentInitQueue) {
 			componentManager.setFocus(globalComponentId);
 			Component focalComponent = componentManager.getFocalComponent();
 			focalComponent.init(environment);
 		}
 		globalComponentInitQueue.clear();
 	}
-	
 
 	private Set<GlobalComponentId> globalComponentInitQueue = new LinkedHashSet<>();
 

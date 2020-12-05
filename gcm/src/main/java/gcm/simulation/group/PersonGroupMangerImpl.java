@@ -212,13 +212,12 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 
 	@Override
 	public List<GroupId> getGroupsForGroupType(final GroupTypeId groupTypeId) {
-		final List<GroupId> result = new ArrayList<>();
 		final Integer typeIndex = typesToIndexesMap.get(groupTypeId);
-		final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);
+		final List<GroupId> groups = typesToGroupsMap.getValue(typeIndex);		
 		if (groups != null) {
-			result.addAll(groups);
+			return new ArrayList<>(groups);			
 		}
-		return result;
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -237,12 +236,11 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 
 	@Override
 	public List<GroupId> getGroupsForPerson(final PersonId personId) {
-		final List<GroupId> result = new ArrayList<>();
 		final List<GroupId> groups = peopleToGroupsMap.getValue(personId.getValue());
 		if (groups != null) {
-			result.addAll(groups);
+			return new ArrayList<>(groups);
 		}
-		return result;
+		return new ArrayList<>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -275,18 +273,13 @@ public final class PersonGroupMangerImpl extends BaseElement implements PersonGr
 		return new ArrayList<>(types);
 	}
 
-
-
-
-
 	@Override
 	public List<PersonId> getPeopleForGroup(final GroupId groupId) {
-		final List<PersonId> result = new ArrayList<>();
 		final List<PersonId> people = groupsToPeopleMap.getValue(groupId.getValue());
 		if (people != null) {
-			result.addAll(people);
+			return new ArrayList<>(people);
 		}
-		return result;
+		return new ArrayList<>();
 	}
 
 	@Override

@@ -851,7 +851,7 @@ public class TestPlan {
 
 		reportWarnings();
 		
-		System.out.println("Test Plan execution time = "+timeElapser.getElapsedMilliSeconds()+" milliseconds");
+		System.out.println("Test plan execution time = "+timeElapser.getElapsedMilliSeconds()+" milliseconds");
 
 	}
 

@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gcm.util.TimeElapser;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceConstructor;
 import gcm.util.annotations.SourceMethod;
@@ -827,6 +828,8 @@ public class TestPlan {
 	}
 
 	private void execute() {
+		
+		TimeElapser timeElapser = new TimeElapser();
 
 		loadSourceClasses();
 
@@ -847,6 +850,8 @@ public class TestPlan {
 		reportSourceInfo();
 
 		reportWarnings();
+		
+		System.out.println("Test Plan execution time = "+timeElapser.getElapsedMilliSeconds()+" milliseconds");
 
 	}
 

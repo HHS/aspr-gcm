@@ -33,8 +33,8 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Returns an unmodifiable set of the {@link GroupTypeId} values contained in
-	 * this {@link GroupTypeCountMap}
+	 * Returns an unmodifiable set of the {@link GroupTypeId} values contained
+	 * in this {@link GroupTypeCountMap}
 	 * 
 	 */
 	public Set<GroupTypeId> getGroupTypeIds() {
@@ -42,8 +42,8 @@ public final class GroupTypeCountMap {
 	}
 
 	/**
-	 * Two {@link GroupTypeCountMap} objects are considered equal if the POSITIVE
-	 * values associated with their group type ids are equal.
+	 * Two {@link GroupTypeCountMap} objects are considered equal if the
+	 * POSITIVE values associated with their group type ids are equal.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -108,8 +108,8 @@ public final class GroupTypeCountMap {
 		 * Sets the count for the given group type id
 		 * 
 		 * @throws IllegalArgumentException
-		 * <li> if groupTypeId is null
-		 * <li> if the count is negative 
+		 *             <li>if groupTypeId is null
+		 *             <li>if the count is negative
 		 * 
 		 */
 		public Builder setCount(GroupTypeId groupTypeId, int count) {
@@ -122,6 +122,25 @@ public final class GroupTypeCountMap {
 			groupTypeCountMap.map.put(groupTypeId, count);
 			return this;
 		}
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("GroupTypeCountMap [");
+		boolean first = true;
+		for(GroupTypeId groupTypeId : map.keySet()) {
+			if(first) {
+				first = false;
+			}else {
+				sb.append(", ");
+			}
+			sb.append(groupTypeId);
+			sb.append("=");
+			sb.append(map.get(groupTypeId));			
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

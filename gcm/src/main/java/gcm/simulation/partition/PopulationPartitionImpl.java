@@ -11,18 +11,22 @@ import java.util.Set;
 
 import org.apache.commons.math3.random.RandomGenerator;
 
+import gcm.scenario.CompartmentId;
 import gcm.scenario.ComponentId;
 import gcm.scenario.GroupTypeId;
 import gcm.scenario.PersonId;
 import gcm.scenario.PersonPropertyId;
 import gcm.scenario.RandomNumberGeneratorId;
+import gcm.scenario.RegionId;
 import gcm.scenario.ResourceId;
 import gcm.simulation.Context;
 import gcm.simulation.Environment;
 import gcm.simulation.EnvironmentImpl;
+import gcm.simulation.ModelException;
 import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.ObservationManager;
 import gcm.simulation.PersonIdManager;
+import gcm.simulation.SimulationErrorType;
 import gcm.simulation.StochasticPersonSelection;
 import gcm.simulation.StochasticsManager;
 import gcm.simulation.partition.LabelSet.Builder;
@@ -94,7 +98,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			keys = new Object[size];
 		}
 
-		// We are using the older Arrays.equals and Arrays.hashCode since it suffices
+		// We are using the older Arrays.equals and Arrays.hashCode since it
+		// suffices
 		// for our use case and uses half the runtime of the newer deep versions
 		@Override
 		public int hashCode() {
@@ -110,9 +115,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 				return false;
 			}
 			// We are guaranteed that obj is a Key
-//			if (getClass() != obj.getClass()) {
-//				return false;
-//			}
+			// if (getClass() != obj.getClass()) {
+			// return false;
+			// }
 			Key other = (Key) obj;
 
 			if (!Arrays.equals(keys, other.keys)) {
@@ -181,8 +186,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	// Returns true if and only if the person is contained in this filtered
-	// population partition after the evaluation of the person against the filter.
-	// This will force the addition or removal of the person from the corresponding
+	// population partition after the evaluation of the person against the
+	// filter.
+	// This will force the addition or removal of the person from the
+	// corresponding
 	// partition cell.
 
 	private boolean evaluate(final PersonId personId) {
@@ -202,8 +209,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	private StochasticsManager stochasticsManager;
 
-	public PopulationPartitionImpl(final Object identifierKey, final Context context, final Partition partition,
-			final ComponentId owningComponentId) {
+	public PopulationPartitionImpl(final Object identifierKey, final Context context, final Partition partition, final ComponentId owningComponentId) {
 		this.context = context;
 		this.identifierKey = identifierKey;
 		this.observableEnvironment = context.getObservableEnvironment();
@@ -216,7 +222,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		this.filterEvaluator = FilterEvaluator.build(filterInfo);
 		this.observationManager = context.getObservationManager();
 		this.stochasticsManager = context.getStochasticsManager();
-		
+
 		int size = 0;
 
 		if (partition.getRegionPartitionFunction().isPresent()) {
@@ -264,10 +270,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private long lastTransactionId = -1;
 
 	/*
-	 * Returns true if and only if the given transaction id is not the most recent
-	 * transaction id. This prevents duplicate updates when a filtered partition
-	 * meets more than one of the trigger conditions maintained by the filtered
-	 * partition manager.
+	 * Returns true if and only if the given transaction id is not the most
+	 * recent transaction id. This prevents duplicate updates when a filtered
+	 * partition meets more than one of the trigger conditions maintained by the
+	 * filtered partition manager.
 	 */
 	private boolean acceptTransactionId(long transactionId) {
 		if (transactionId == lastTransactionId) {
@@ -304,22 +310,39 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		int index = 0;
 		Key key = new Key(keySize);
 		if (partition.getRegionPartitionFunction().isPresent()) {
-			key.keys[index++] = partition.getRegionPartitionFunction().get()
-					.apply(environment.getPersonRegion(personId));
+
+			RegionId regionId = environment.getPersonRegion(personId);
+			Object label = partition.getRegionPartitionFunction().get().apply(regionId);
+			if (label == null) {
+				throwModelException(SimulationErrorType.NULL_REGION_LABEL, regionId);
+			}
+			key.keys[index++] = label;
 		}
 		if (partition.getCompartmentPartitionFunction().isPresent()) {
-			key.keys[index++] = partition.getCompartmentPartitionFunction().get()
-					.apply(environment.getPersonCompartment(personId));
+			CompartmentId compartmentId = environment.getPersonCompartment(personId);
+			Object label = partition.getCompartmentPartitionFunction().get().apply(compartmentId);
+			if (label == null) {
+				throwModelException(SimulationErrorType.NULL_COMPARTMENT_LABEL, compartmentId);
+			}
+			key.keys[index++] = label;
 		}
 
 		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
-			key.keys[index++] = partition.getPersonPropertyPartitionFunction(personPropertyId).get()
-					.apply(environment.getPersonPropertyValue(personId, personPropertyId));
+			Object personPropertyValue = environment.getPersonPropertyValue(personId, personPropertyId);
+			Object label = partition.getPersonPropertyPartitionFunction(personPropertyId).get().apply(personPropertyValue);
+			if (label == null) {
+				throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL, personPropertyId+"="+personPropertyValue);
+			}			
+			key.keys[index++] = label; 
 		}
 
 		for (ResourceId resourceId : partition.getPersonResourceIds()) {
-			key.keys[index++] = partition.getPersonResourcePartitionFunction(resourceId).get()
-					.apply(environment.getPersonResourceLevel(personId, resourceId));
+			long personResourceLevel = environment.getPersonResourceLevel(personId, resourceId);
+			Object label = partition.getPersonResourcePartitionFunction(resourceId).get().apply(personResourceLevel);
+			if (label == null) {
+				throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId+"="+personResourceLevel);
+			}			
+			key.keys[index++] = label; 
 		}
 
 		if (partition.getGroupPartitionFunction().isPresent()) {
@@ -331,7 +354,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			}
 			GroupTypeCountMap groupTypeCountMap = builder.build();
 
-			key.keys[index++] = partition.getGroupPartitionFunction().get().apply(groupTypeCountMap);
+			Object label = partition.getGroupPartitionFunction().get().apply(groupTypeCountMap);
+			if (label == null) {
+				throwModelException(SimulationErrorType.NULL_GROUP_LABEL, groupTypeCountMap);
+			}	
+			key.keys[index++] = label; 
 		}
 
 		Key cleanedKey = keyMap.get(key);
@@ -459,11 +486,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentRegionLabel = currentKey.keys[regionLabelIndex];
 
 		// get the new label
-		Object newRegionLabel = partition.getRegionPartitionFunction().get()
-				.apply(environment.getPersonRegion(personId));
+		Object newRegionLabel = partition.getRegionPartitionFunction().get().apply(environment.getPersonRegion(personId));
 
 		if (newRegionLabel == null) {
-			throw new RuntimeException("change to model exception");
+			throwModelException(SimulationErrorType.NULL_REGION_LABEL,environment.getPersonRegion(personId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -502,11 +528,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentPropertyLabel = currentKey.keys[personPropertyLabelIndex];
 
 		// get the new label
-		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId).get()
-				.apply(environment.getPersonPropertyValue(personId, personPropertyId));
+		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId).get().apply(environment.getPersonPropertyValue(personId, personPropertyId));
 
 		if (newPropertyLabel == null) {
-			throw new RuntimeException("change to model exception");
+			throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL,personPropertyId+"="+environment.getPersonPropertyValue(personId, personPropertyId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -545,11 +570,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentResourceLabel = currentKey.keys[resourceLabelIndex];
 
 		// get the new label
-		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId).get()
-				.apply(environment.getPersonResourceLevel(personId, resourceId));
+		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId).get().apply(environment.getPersonResourceLevel(personId, resourceId));
 
 		if (newResourceLabel == null) {
-			throw new RuntimeException("change to model exception");
+			throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId+"="+environment.getPersonResourceLevel(personId, resourceId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -587,11 +611,10 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object currentCompartmentLabel = currentKey.keys[compartmentLabelIndex];
 
 		// get the new label
-		Object newCompartmentLabel = partition.getCompartmentPartitionFunction().get()
-				.apply(environment.getPersonCompartment(personId));
+		Object newCompartmentLabel = partition.getCompartmentPartitionFunction().get().apply(environment.getPersonCompartment(personId));
 
 		if (newCompartmentLabel == null) {
-			throw new RuntimeException("change to model exception");
+			throwModelException(SimulationErrorType.NULL_COMPARTMENT_LABEL, environment.getPersonCompartment(personId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -639,7 +662,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object newGroupLabel = partition.getGroupPartitionFunction().get().apply(groupTypeCountMap);
 
 		if (newGroupLabel == null) {
-			throw new RuntimeException("change to model exception");
+			throwModelException(SimulationErrorType.NULL_GROUP_LABEL, groupTypeCountMap);
 		}
 
 		// if the label did not change there is nothing to do
@@ -828,9 +851,9 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		/*
-		 * Since we are potentially excluding a person, we need to determine how many
-		 * candidates are available. To avoid an infinite loop, we must not have zero
-		 * candidates.
+		 * Since we are potentially excluding a person, we need to determine how
+		 * many candidates are available. To avoid an infinite loop, we must not
+		 * have zero candidates.
 		 */
 		int candidateCount = peopleContainer.size();
 		if (excludedPersonId != null) {
@@ -854,11 +877,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	@Override
 	public int getPeopleCount() {
 		return personCount;
-//		int result = 0;
-//		for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
-//			result += peopleContainer.size();
-//		}
-//		return result;
+		// int result = 0;
+		// for (PeopleContainer peopleContainer : keyToPeopleMap.values()) {
+		// result += peopleContainer.size();
+		// }
+		// return result;
 	}
 
 	@Override
@@ -980,14 +1003,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 	@Override
 	public void init() {
-//		FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
-//				.forEach(personId -> addPerson(personId));//
-//		
-		
+		// FilterPopulationMatcher.getMatchingPeople(filterInfo, environment)//
+		// .forEach(personId -> addPerson(personId));//
+		//
+
 		PersonIdManager personIdManager = context.getPersonIdManager();
 		int personIdLimit = personIdManager.getPersonIdLimit();
-		for(int i = 0;i<personIdLimit;i++) {
-			if(personIdManager.personIndexExists(i)) {
+		for (int i = 0; i < personIdLimit; i++) {
+			if (personIdManager.personIndexExists(i)) {
 				PersonId personId = personIdManager.getBoxedPersonId(i);
 				evaluate(personId);
 			}
@@ -1016,8 +1039,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Allocates the weights array to the given size or 50% larger than the current
-	 * size, whichever is largest. Size must be non-negative
+	 * Allocates the weights array to the given size or 50% larger than the
+	 * current size, whichever is largest. Size must be non-negative
 	 */
 	private void allocateWeights(final int size) {
 		if (weights == null) {
@@ -1032,11 +1055,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	}
 
 	/*
-	 * Returns the index in the weights array that is the first to meet or exceed
-	 * the target value. Assumes a strictly increasing set of values for indices 0
-	 * through keyCount. Decreasing values are strictly prohibited. Consecutive
-	 * equal values may return an ambiguous result. The target value must not exceed
-	 * weights[peopleCount].
+	 * Returns the index in the weights array that is the first to meet or
+	 * exceed the target value. Assumes a strictly increasing set of values for
+	 * indices 0 through keyCount. Decreasing values are strictly prohibited.
+	 * Consecutive equal values may return an ambiguous result. The target value
+	 * must not exceed weights[peopleCount].
 	 *
 	 */
 	private int findTargetIndex(final double targetValue, final int keyCount) {
@@ -1069,12 +1092,11 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		return 1;
 	}
 
-
 	/**
 	 * Returns a randomly chosen person identifier from the partition consistent
 	 * with the partition sampler info. Note that the sampler must be consistent
-	 * with the partition definition used to create this population partition. No
-	 * precondition tests will be performed.
+	 * with the partition definition used to create this population partition.
+	 * No precondition tests will be performed.
 	 */
 	@Override
 	public StochasticPersonSelection samplePartition(final PartitionSampler partitionSampler) {
@@ -1094,8 +1116,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 
 		LabelSet labelSet = partitionSampler.getLabelSet().orElse(LabelSet.builder().build());
 
-		LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction()
-				.orElse(this::getDefaultWeight);
+		LabelSetWeightingFunction labelSetWeightingFunction = partitionSampler.getLabelSetWeightingFunction().orElse(this::getDefaultWeight);
 
 		Key selectedKey = null;
 		Key keyForExcludedPersonId = getKeyForPerson(excludedPersonId);
@@ -1106,8 +1127,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			keyIterator = getKeyIterator(labelSet);
 			allocateWeights(keyIterator.size());
 			/*
-			 * Initialize the sum of the weights to zero and set the index in the weights
-			 * and weightedKeys to zero.
+			 * Initialize the sum of the weights to zero and set the index in
+			 * the weights and weightedKeys to zero.
 			 */
 
 			double sum = 0;
@@ -1139,13 +1160,14 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			}
 
 			/*
-			 * If at least one identifierKey was accepted for selection, then we attempt a
-			 * random selection.
+			 * If at least one identifierKey was accepted for selection, then we
+			 * attempt a random selection.
 			 */
 			if (weightsLength > 0) {
 				/*
-				 * Although the individual weights may have been finite, if the sum of those
-				 * weights is not finite no legitimate selection can be made
+				 * Although the individual weights may have been finite, if the
+				 * sum of those weights is not finite no legitimate selection
+				 * can be made
 				 */
 				if (!Double.isFinite(sum)) {
 					return new StochasticPersonSelection(null, true);
@@ -1177,38 +1199,58 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		return partition;
 	}
 
-//	private long reportObject(Object object, String label) {
-//		MemSizer memSizer = context.getContextFreeMemSizer();
-//		memSizer.excludeClass(PersonId.class);
-//		long result = memSizer.getByteCount(object);
-//		System.out.println(label + " = " + result);
-//		return result;
-//	}
+	private void throwModelException(final SimulationErrorType simulationErrorType, final Object details) {
+		final StringBuilder sb = new StringBuilder();
 
-//	private long reportObjectVerbose(Object object, String label) {
-//		MemSizer memSizer = context.getContextFreeMemSizer();
-//		memSizer.setVerbose(true);
-//		memSizer.excludeClass(PersonId.class);
-//		long result = memSizer.getByteCount(object);
-//		System.out.println(label + " = " + result);
-//		return result;
-//	}
+		sb.append("Active Component");
+		sb.append("[");
+		sb.append(context.getComponentManager().getFocalComponentType());
+		sb.append(",");
+		sb.append(context.getComponentManager().toString());
+		sb.append("]");
+		sb.append(simulationErrorType.getDescription());
 
-//	@Override
-//	public void report() {
-//		// TODO Auto-generated method stub
-//		reportObject(personPropertyLabelIndexes, "personPropertyLabelIndexes");
-//		reportObject(resourceLabelIndexes, "resourceLabelIndexes");
-//		reportObject(keyToPeopleMap, "keyToPeopleMap");
-//		reportObjectVerbose(personToKeyMap, "personToKeyMap");
-//		reportObject(keyMap, "keyMap");
-//		reportObject(labelSetInfoMap, "labelSetInfoMap");
-//		reportObject(labelManagers, "labelManagers");
-//		reportObject(owningComponentId, "owningComponentId");
-//		reportObject(partitionInfo, "partitionInfo");
-//		reportObject(filterInfo, "filterInfo");
-//		reportObject(filterEvaluator, "filterEvaluator");
-//		reportObject(identifierKey, "identifierKey");
-//	}
+		if (details != null) {
+			sb.append(": ");
+			sb.append(details);
+		}
+		String errorDescription = sb.toString();
+
+		throw new ModelException(simulationErrorType, errorDescription);
+	}
+
+	// private long reportObject(Object object, String label) {
+	// MemSizer memSizer = context.getContextFreeMemSizer();
+	// memSizer.excludeClass(PersonId.class);
+	// long result = memSizer.getByteCount(object);
+	// System.out.println(label + " = " + result);
+	// return result;
+	// }
+
+	// private long reportObjectVerbose(Object object, String label) {
+	// MemSizer memSizer = context.getContextFreeMemSizer();
+	// memSizer.setVerbose(true);
+	// memSizer.excludeClass(PersonId.class);
+	// long result = memSizer.getByteCount(object);
+	// System.out.println(label + " = " + result);
+	// return result;
+	// }
+
+	// @Override
+	// public void report() {
+	// // TODO Auto-generated method stub
+	// reportObject(personPropertyLabelIndexes, "personPropertyLabelIndexes");
+	// reportObject(resourceLabelIndexes, "resourceLabelIndexes");
+	// reportObject(keyToPeopleMap, "keyToPeopleMap");
+	// reportObjectVerbose(personToKeyMap, "personToKeyMap");
+	// reportObject(keyMap, "keyMap");
+	// reportObject(labelSetInfoMap, "labelSetInfoMap");
+	// reportObject(labelManagers, "labelManagers");
+	// reportObject(owningComponentId, "owningComponentId");
+	// reportObject(partitionInfo, "partitionInfo");
+	// reportObject(filterInfo, "filterInfo");
+	// reportObject(filterEvaluator, "filterEvaluator");
+	// reportObject(identifierKey, "identifierKey");
+	// }
 
 }

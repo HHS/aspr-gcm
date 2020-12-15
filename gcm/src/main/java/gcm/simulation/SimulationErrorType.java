@@ -114,7 +114,13 @@ public enum SimulationErrorType {
 	NULL_POPULATION_PARTITION_DEFINITION("Null population definition"),
 	DUPLICATE_PARTITION("Duplicate partition key"),
 	PARTITION_DELETION_BY_NON_OWNER("A population partition can only be deleted by its owner"),	
-	INCOMPATIBLE_LABEL_SET("The label set is incompatible with the selected population partition definition");
+	INCOMPATIBLE_LABEL_SET("The label set is incompatible with the selected population partition definition"),
+	
+	NULL_COMPARTMENT_LABEL("A compartment labeling function returned a null label"),
+	NULL_REGION_LABEL("A region labeling function returned a null label"),
+	NULL_RESOURCE_LABEL("A resource labeling function returned a null label"),
+	NULL_PROPERTY_LABEL("A property labeling function returned a null label"),
+	NULL_GROUP_LABEL("A group labeling function returned a null label");
 	 
 
 	private final String description;

@@ -12,14 +12,48 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.SourceMethod;
 import gcm.util.annotations.TestStatus;
 
-@Source(status = TestStatus.REQUIRED)
-public class LabelSet {
+/**
+ * A {@linkplain LabelSet} is a set of labels that are used to specify a sub-set
+ * of the cell space of a partition during sampling.
+ * 
+ * Partitions are composed of cells that are associated with combinations of
+ * labels associated with the various attributes of people. The label set
+ * specifies a subset of that space by value.
+ * 
+ * For example: Suppose a partition is formed by the regions and two person
+ * properties. The regions are grouped together under state labels. The first
+ * property is the Integer AGE and is grouped by PRESCHOOL, SCHOOL and ADULT.
+ * The second property is the Integer VACCINE_DOSES_RECEIVED and ranges from 0
+ * to 3 inclusive.
+ * 
+ * The {@link LabelSet} [REGION = VIRGINIA, AGE=PRESHOOL,
+ * VACCINE_DOSES_RECEIVED=2] will match the single partition cell that
+ * represents Virginia preschoolers who have received 2 doses of vaccine. The
+ * {@link LabelSet} [REGION = VIRGINIA, AGE=PRESHOOL] will match all partition
+ * cells that represent Virginia preschoolers, without regard to doses of
+ * vaccine received.
+ * 
+ * 
+ * Label Sets are built by the modeler via the supplied Builder class.
+ *
+ * @author Shawn Hatch
+ *
+ */
 
+@Source(status = TestStatus.REQUIRED)
+public final class LabelSet {
+
+	/**
+	 * 
+	 */
 	@Override
 	public int hashCode() {
 		return scaffold.hashCode();
 	}
 
+	/**
+	 * Two {@linkplain LabelSet} object are equal is their labels are equal.
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -35,6 +69,9 @@ public class LabelSet {
 		return scaffold.equals(other.scaffold);
 	}
 
+	/**
+	 * Returns a new Builder instance
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -55,37 +92,59 @@ public class LabelSet {
 			}
 		}
 
+		/**
+		 * Sets the compartment label
+		 */
 		public Builder setCompartmentLabel(Object compartmentLabel) {
 			scaffold.compartmentLabel = compartmentLabel;
 			return this;
 		}
-
+		/**
+		 * Sets the region label for the given {@link ResourceId}
+		 */
 		public Builder setRegionLabel(Object regionLabel) {
 			scaffold.regionLabel = regionLabel;
 			return this;
 		}
 
+		/**
+		 * Sets the group label
+		 */
 		public Builder setGroupLabel(Object groupLabel) {
 			scaffold.groupLabel = groupLabel;
 			return this;
 		}
 
+		/**
+		 * Sets the resource label for the given {@link ResourceId}
+		 */
 		public Builder setResourceLabel(ResourceId resourceId, Object resourceLabel) {
-			scaffold.personResourceLabels.put(resourceId, resourceLabel);
+			if (resourceLabel != null) {
+				scaffold.personResourceLabels.put(resourceId, resourceLabel);
+			} else {
+				scaffold.personResourceLabels.remove(resourceId);
+			}
 			return this;
 		}
 
+		/**
+		 * Sets the property label for the given {@link PersonPropertyId}
+		 */
 		public Builder setPropertyLabel(PersonPropertyId personPropertyId, Object propertyLabel) {
-			scaffold.personPropertyLabels.put(personPropertyId, propertyLabel);
+			if (propertyLabel != null) {
+				scaffold.personPropertyLabels.put(personPropertyId, propertyLabel);
+			} else {
+				scaffold.personPropertyLabels.remove(personPropertyId);
+			}
 			return this;
 		}
 
 	}
 
 	/**
-	 * Returns true if and only if the given {@link LabelSet2} is a subset of this
-	 * {@link LabelSet2}. Only Non-null values in the input are compared to the
-	 * corresponding values in this label set.
+	 * Returns true if and only if the given {@link LabelSet} is a subset of
+	 * this {@link LabelSet}. Only Non-null values in the input are compared to
+	 * the corresponding values in this label set.
 	 */
 	public boolean isSubsetMatch(LabelSet labelSet) {
 		if (labelSet.scaffold.compartmentLabel != null) {
@@ -163,9 +222,8 @@ public class LabelSet {
 
 		@Override
 		public String toString() {
-			return "LabelSet [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel + ", groupLabel="
-					+ groupLabel + ", personPropertyLabels=" + personPropertyLabels + ", personResourceLabels="
-					+ personResourceLabels + "]";
+			return "LabelSet [compartmentLabel=" + compartmentLabel + ", regionLabel=" + regionLabel + ", groupLabel=" + groupLabel + ", personPropertyLabels=" + personPropertyLabels
+					+ ", personResourceLabels=" + personResourceLabels + "]";
 		}
 
 		@Override
@@ -235,18 +293,32 @@ public class LabelSet {
 	private final Scaffold scaffold;
 	private final boolean empty;
 
+	/**
+	 * Returns the compartment label for this {@link LabelSet}
+	 */
 	public Optional<Object> getCompartmentLabel() {
 		return Optional.ofNullable(scaffold.compartmentLabel);
 	}
 
+	/**
+	 * Returns the group label for this {@link LabelSet}
+	 */
 	public Optional<Object> getGroupLabel() {
 		return Optional.ofNullable(scaffold.groupLabel);
 	}
 
+	/**
+	 * Returns the property label associated to the given
+	 * {@link PersonPropertyId} for this {@link LabelSet}
+	 */
 	public Optional<Object> getPersonPropertyLabel(PersonPropertyId personPropertyId) {
 		return Optional.ofNullable(scaffold.personPropertyLabels.get(personPropertyId));
 	}
 
+	/**
+	 * Returns the resource label associated to the given {@link ResourceId} for
+	 * this {@link LabelSet}
+	 */
 	public Optional<Object> getPersonResourceLabel(ResourceId resourceId) {
 		return Optional.ofNullable(scaffold.personResourceLabels.get(resourceId));
 	}
@@ -261,30 +333,33 @@ public class LabelSet {
 	}
 
 	/**
-	 * Returns an unmodifiable set of {@link ResourceId} values associated with this
-	 * {@link LabelSetInfo}
+	 * Returns an unmodifiable set of {@link ResourceId} values associated with
+	 * this {@link LabelSetInfo}
 	 * 
 	 */
 	public Set<ResourceId> getPersonResourceIds() {
 		return Collections.unmodifiableSet(scaffold.personResourceLabels.keySet());
 	}
 
+	/**
+	 * Returns the region label for this {@link LabelSet}
+	 */
 	public Optional<Object> getRegionLabel() {
 		return Optional.ofNullable(scaffold.regionLabel);
 	}
-	
+
+	/**
+	 * Returns true if and only if this {@link LabelSet} has no label values
+	 */
 	public boolean isEmpty() {
 		return empty;
 	}
 
 	private LabelSet(Scaffold scaffold) {
 		this.scaffold = scaffold;
-		
-		empty = (scaffold.compartmentLabel == null)&&
-				(scaffold.regionLabel == null)&&
-				(scaffold.groupLabel == null)&&
-				(scaffold.personPropertyLabels.isEmpty())&&
-				(scaffold.personResourceLabels.isEmpty());
+
+		empty = (scaffold.compartmentLabel == null) && (scaffold.regionLabel == null) && (scaffold.groupLabel == null) && (scaffold.personPropertyLabels.isEmpty())
+				&& (scaffold.personResourceLabels.isEmpty());
 
 	}
 }

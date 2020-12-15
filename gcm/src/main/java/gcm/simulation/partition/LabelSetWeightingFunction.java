@@ -4,8 +4,8 @@ import gcm.simulation.ObservableEnvironment;
 import gcm.util.annotations.Source;
 
 /**
- * A functional interface for selecting people from a partition based on assigning a
- * weighting value to a {@link LabelSet}.
+ * A functional interface for selecting people from a {@link Partition} based on
+ * assigning a weighting value to a {@link LabelSet}.
  * 
  * @author Shawn Hatch
  *
@@ -14,8 +14,9 @@ import gcm.util.annotations.Source;
 public interface LabelSetWeightingFunction {
 	/**
 	 * Returns a non-negative, finite and stable value for the given inputs.
-	 * Repeated invocations with the same arguments should return the same value
-	 * while no mutations to simulation state have taken place.
+	 * This function should be stable: repeated invocations with the same
+	 * arguments should return the same value during the span of a single sample
+	 * of a {@link Partition}.
 	 */
 	public double getWeight(ObservableEnvironment observableEnvironment, LabelSet labelSet);
 }

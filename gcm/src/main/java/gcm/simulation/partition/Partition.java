@@ -78,7 +78,7 @@ import net.jcip.annotations.NotThreadSafe;
  */
 @Source(status = TestStatus.REQUIRED)
 @Immutable
-public class Partition {
+public final class Partition {
 
 	/**
 	 * Returns a new Builder instance
@@ -90,7 +90,7 @@ public class Partition {
 	@Source(proxy = Partition.class)
 	@NotThreadSafe
 	/**
-	 * Standard builder class for partitions.
+	 * Standard builder class for partitions. All inputs are optional.
 	 * 
 	 * @author Shawn Hatch
 	 *
@@ -114,6 +114,12 @@ public class Partition {
 			}
 		}
 
+		/**
+		 * Sets the group partition labeling function. This function receives a
+		 * {@linkplain GroupTypeCountMap} and returns a non-null Object as a
+		 * label. Function results must be stable over the life of the
+		 * partition.
+		 */
 		public Builder setGroupFunction(Function<GroupTypeCountMap, Object> groupPartitionFunction) {
 			scaffold.groupPartitionFunction = groupPartitionFunction;
 			return this;
@@ -122,18 +128,30 @@ public class Partition {
 		/**
 		 * Sets the compartment partition labeling function. This function
 		 * receives a {@linkplain CompartmentId} and returns a non-null Object
-		 * as a label.
+		 * as a label. Function results must be stable over the life of the
+		 * partition.
 		 */
 		public Builder setCompartmentFunction(Function<CompartmentId, Object> compartmentPartitionFunction) {
 			scaffold.compartmentPartitionFunction = compartmentPartitionFunction;
 			return this;
 		}
 
+		/**
+		 * Sets the region partition labeling function. This function receives a
+		 * {@linkplain RegionId} and returns a non-null Object as a label.
+		 * Function results must be stable over the life of the partition.
+		 */
 		public Builder setRegionFunction(Function<RegionId, Object> regionPartitionFunction) {
 			scaffold.regionPartitionFunction = regionPartitionFunction;
 			return this;
 		}
 
+		/**
+		 * Sets the person property partition labeling function for the
+		 * specified {@linkplain PersonPropertyId} This function receives a
+		 * person property value and returns a non-null Object as a label.
+		 * Function results must be stable over the life of the partition.
+		 */
 		public Builder setPersonPropertyFunction(PersonPropertyId personPropertyId, Function<Object, Object> personPropertyFunction) {
 			if (personPropertyFunction != null) {
 				scaffold.personPropertyPartitionFunctions.put(personPropertyId, personPropertyFunction);
@@ -143,6 +161,13 @@ public class Partition {
 			return this;
 		}
 
+		/**
+		 * Sets the resource partition labeling function for the specified
+		 * {@linkplain ResourceId} This function receives a resource
+		 * level(amount of resource assigned to a person) and returns a non-null
+		 * Object as a label. Function results must be stable over the life of
+		 * the partition.
+		 */
 		public Builder setPersonResourceFunction(ResourceId resourceId, Function<Long, Object> personResourceFunction) {
 			if (personResourceFunction != null) {
 				scaffold.personResourcePartitionFunctions.put(resourceId, personResourceFunction);
@@ -152,6 +177,10 @@ public class Partition {
 			return this;
 		}
 
+		/**
+		 * Sets the filter for the {@linkplain Partition}. If no filter is provided, a
+		 * default filter that accepts all people is used instead.
+		 */
 		public Builder setFilter(Filter filter) {
 			scaffold.filter = filter;
 			return this;

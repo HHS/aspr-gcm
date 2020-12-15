@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import javax.swing.plaf.synth.Region;
+
 import gcm.scenario.CompartmentId;
 import gcm.scenario.GroupId;
 import gcm.scenario.GroupTypeId;
@@ -14,7 +16,7 @@ import gcm.simulation.Equality;
 import gcm.util.annotations.Source;
 
 /**
- * A filter is used to determine membership in population indexes.
+ * A filter is used to determine membership in partitions.
  * 
  * Filter does not support descendant classes but rather provides 12 curated
  * implementors that are accessed via public static methods. These correspond to
@@ -30,7 +32,7 @@ import gcm.util.annotations.Source;
  * Filter filter = groupsForPersonAndGroupType(GroupType.WORK,
  * Equality.GREATER_THAN, 0).and(property(PersonProperty.AGE,
  * Equality.GREATER_THAN_EQUAL, 65))
- * .and(region(Region.REGION_1).or(region(Region.REGION_1)));
+ * .and(region(Region.REGION_1).or(region(Region.REGION_1));
  * 
  *
  * @author Shawn Hatch
@@ -38,7 +40,7 @@ import gcm.util.annotations.Source;
  */
 @Source
 public abstract class Filter {
-
+	
 	static class AllPeopleFilter extends Filter {
 		// TODO convert filters to use an instance-based fluent build pattern
 	}
@@ -51,7 +53,6 @@ public abstract class Filter {
 			this.a = a;
 			this.b = b;
 		}
-
 	}
 
 	static class CompartmentFilter extends Filter {
@@ -186,14 +187,14 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a filter that selects people associated with the given compartment.
+	 * Returns a filter that selects people associated with the given {@link CompartmentId}.
 	 */
 	public static Filter compartment(final CompartmentId compartmentId) {
 		return new CompartmentFilter(compartmentId);
 	}
 
 	/**
-	 * Returns a filter that selects people associated with the given group.
+	 * Returns a filter that selects people associated with the given {@link GroupId}.
 	 */
 	public static Filter groupMember(final GroupId groupId) {
 		return new GroupMemberFilter(groupId);
@@ -234,7 +235,7 @@ public abstract class Filter {
 
 	/**
 	 * Returns a filter that selects people who are associated with the equality
-	 * relation to the given property id and value.
+	 * relation to the given {@link PersonPropertyId} and value.
 	 */
 	public static Filter property(final PersonPropertyId personPropertyId, final Equality equality,
 			final Object personPropertyValue) {
@@ -242,7 +243,7 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a filter that selects people associated with the given region(s).
+	 * Returns a filter that selects people associated with the given {@link RegionId} values.
 	 */
 	public static Filter region(final RegionId... regionIds) {
 		Set<RegionId> set = new LinkedHashSet<>();
@@ -253,7 +254,7 @@ public abstract class Filter {
 	}
 
 	/**
-	 * Returns a filter that selects people associated with the given region(s).
+	 * Returns a filter that selects people associated with the given {@link Region} values.
 	 */
 	public static Filter region(Set<RegionId> regionIds) {
 		return new RegionFilter(regionIds);
@@ -261,7 +262,7 @@ public abstract class Filter {
 
 	/**
 	 * Returns a filter that selects people who are associated with the equality
-	 * relation to the given resource id and value.
+	 * relation to the given {@link ResourceId} and value.
 	 */
 	public static Filter resource(final ResourceId resourceId, final Equality equality, final long resourceValue) {
 		return new ResourceFilter(resourceId, equality, resourceValue);

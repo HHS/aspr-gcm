@@ -11,18 +11,12 @@ import gcm.simulation.StochasticPersonSelection;
 
 public interface PopulationPartition {
 
-
 	public ComponentId getOwningComponentId();
 	
-
-
 	/**
 	 * Precondition : the person id is not null.
 	 */
 	public void handleAddPerson(long tranactionId, PersonId personId);
-
-
-	
 
 	/**
 	 * Precondition: Person must exist
@@ -30,7 +24,6 @@ public interface PopulationPartition {
 	 */
 	public void handleRemovePerson(long transactionId, PersonId personId);
 	
-
 	public void handleRegionChange(long transactionId, PersonId personId);
 
 	public void handlePersonPropertyChange(long transactionId, PersonId personId, PersonPropertyId personPropertyId);
@@ -41,15 +34,11 @@ public interface PopulationPartition {
 
 	public void handleGroupMembershipChange(long transactionId, PersonId personId);
 
-
-
 	public boolean validateLabelSetInfo(LabelSet labelSet);
-
 
 	public int getPeopleCount();
 
 	public int getPeopleCount(LabelSet labelSet);
-
 
 	public boolean contains(PersonId personId);
 
@@ -80,6 +69,4 @@ public interface PopulationPartition {
 	public FilterInfo getFilterInfo();
 
 	public Partition getPartition();
-	
-
 }

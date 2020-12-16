@@ -293,8 +293,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	 * Precondition : the person id is not null.
 	 */
 	@Override
-	public void handleAddPerson(long tranactionId, PersonId personId) {
-		if (!acceptTransactionId(tranactionId)) {
+	public void handleAddPerson(long transactionId, PersonId personId) {
+		if (!acceptTransactionId(transactionId)) {
 			return;
 		}
 		evaluate(personId);

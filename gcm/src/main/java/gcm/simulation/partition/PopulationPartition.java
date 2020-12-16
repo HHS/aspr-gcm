@@ -34,7 +34,7 @@ public interface PopulationPartition {
 	 * 
 	 * Precondition : the person id is not null.
 	 */
-	public void handleAddPerson(long tranactionId, PersonId personId);
+	public void handleAddPerson(long transactionId, PersonId personId);
 
 	/**
 	 * Handles the removal of a person from the simulation

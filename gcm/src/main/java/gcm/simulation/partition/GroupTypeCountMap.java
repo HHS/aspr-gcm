@@ -9,7 +9,17 @@ import gcm.scenario.GroupTypeId;
 import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import net.jcip.annotations.Immutable;
+import net.jcip.annotations.NotThreadSafe;
 
+/**
+ * Represents the mapping from the various {@link GroupTypeId} values to the
+ * number of such groups a particular person is contained in. These are used to
+ * match people in a {@link Partition} who are associated with some specific
+ * numbers of groups of specific group types.
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Immutable
 public final class GroupTypeCountMap {
 
@@ -85,11 +95,22 @@ public final class GroupTypeCountMap {
 		return result;
 	}
 
+	/**
+	 * Returns a new Builder instance
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	/**
+	 * Standard builder class for group type count maps. All inputs are
+	 * optional.
+	 * 
+	 * @author Shawn Hatch
+	 *
+	 */
 	@Source(status = TestStatus.REQUIRED, proxy = GroupTypeCountMap.class)
+	@NotThreadSafe
 	public static class Builder {
 		private GroupTypeCountMap groupTypeCountMap = new GroupTypeCountMap();
 
@@ -124,20 +145,30 @@ public final class GroupTypeCountMap {
 		}
 	}
 
+	/**
+	 * Returns a standard string implementation of the form:
+	 * 
+	 * GroupTypeCountMap [GROUP_TYPE_1=2, GROUP_TYPE_2=1]
+	 * 
+	 * that includes only non-zero group type counts.
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("GroupTypeCountMap [");
 		boolean first = true;
-		for(GroupTypeId groupTypeId : map.keySet()) {
-			if(first) {
-				first = false;
-			}else {
-				sb.append(", ");
+		for (GroupTypeId groupTypeId : map.keySet()) {
+			Integer count = map.get(groupTypeId);
+			if (count > 0) {
+				if (first) {
+					first = false;
+				} else {
+					sb.append(", ");
+				}
+				sb.append(groupTypeId);
+				sb.append("=");
+				sb.append(map.get(groupTypeId));
 			}
-			sb.append(groupTypeId);
-			sb.append("=");
-			sb.append(map.get(groupTypeId));			
 		}
 		sb.append("]");
 		return sb.toString();

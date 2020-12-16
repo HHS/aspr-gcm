@@ -35,7 +35,8 @@ import gcm.util.annotations.TestStatus;
 /**
  * A utility class that mirrors the Filter class, publishes the internal data of
  * a filter and presents behaviors convenient for filter validation, trigger
- * formation and other filter related tasks.
+ * formation and other filter related tasks. The various descendant classes of
+ * FilterInfo mirror the internal Filter class implementors.
  * 
  * @author Shawn Hatch
  *
@@ -43,8 +44,19 @@ import gcm.util.annotations.TestStatus;
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public abstract class FilterInfo {
 
+	/**
+	 * Returns the {@link FilterInfoType} for this {@link FilterInfo}
+	 */
 	public abstract FilterInfoType getFilterInfoType();
 
+	/**
+	 * A enumeration that mirrors the various implementation classes for
+	 * {@link FilterInfo} that is generally used to apply switch statements to
+	 * subclass types. Each such subclass corresponds to one enum member
+	 * 
+	 * @author Shawn Hatch
+	 *
+	 */
 	public static enum FilterInfoType {
 
 		AND(AndFilterInfo.class),
@@ -75,12 +87,11 @@ public abstract class FilterInfo {
 
 		private Class<? extends FilterInfo> filterInfoClass;
 
+		/**
+		 * Returns the {@link FilterInfo} subclass that this member represents
+		 */
 		public Class<? extends FilterInfo> getFilterInfoClass() {
 			return filterInfoClass;
-		}
-
-		public void setFilterInfoClass(Class<? extends FilterInfo> filterInfoClass) {
-			this.filterInfoClass = filterInfoClass;
 		}
 
 		private FilterInfoType(Class<? extends FilterInfo> filterInfoClass) {
@@ -152,6 +163,12 @@ public abstract class FilterInfo {
 		list.add(this);
 	}
 
+	/**
+	 * Like a Filter, the {@link FilterInfo} can be composed of other
+	 * {@link FilterInfo} instances that form a logical tree. This method
+	 * returns each of the recursive {@link FilterInfo} child instances in a
+	 * single list.
+	 */
 	public static List<FilterInfo> getHierarchyAsList(FilterInfo filterInfo) {
 		List<FilterInfo> result = new ArrayList<>();
 		filterInfo.putHierarchyToList(result);
@@ -205,29 +222,28 @@ public abstract class FilterInfo {
 		}
 
 	}
-	
+
 	private static FilterInfo getFilterInfoFromNegateFilter(NegateFilter negateFilter) {
 		FilterInfo a = build(negateFilter.a);
-		switch(a.getFilterInfoType()) {
+		switch (a.getFilterInfoType()) {
 		case ALL:
 			return new NonePeopleFilterInfo();
 		case NONE:
 			return new AllPeopleFilterInfo();
 		default:
 			return new NegateFilterInfo(a);
-		}		
+		}
 	}
-
 
 	/**
 	 * Returns the {@link FilterInfo} that corresponds to the given Filter. Note
-	 * that this is not a direct one for one structural translation of the filter.
-	 * AND, OR, and NEGATE filters can collapse when they have
+	 * that this is not a direct one for one structural translation of the
+	 * filter. AND, OR, and NEGATE filters can collapse when they have
 	 * {@link AllPeopleFilterInfo} or {@link NonePeopleFilterInfo} children,
-	 * allowing the top level filter to be identified as possibly an always true or
-	 * always false filter. Partitions that have an always true filter can
-	 * effectively ignore the filter. When a partition has an always false filter,
-	 * the partition is known to be empty.
+	 * allowing the top level filter to be identified as possibly an always true
+	 * or always false filter. Partitions that have an always true filter can
+	 * effectively ignore the filter. When a partition has an always false
+	 * filter, the partition is known to be empty.
 	 */
 	public static FilterInfo build(Filter filter) {
 		if (filter == null) {
@@ -256,26 +272,22 @@ public abstract class FilterInfo {
 			return new NonePeopleFilterInfo();
 		case PROPERTY:
 			PropertyFilter propertyFilter = (PropertyFilter) filter;
-			return new PropertyFilterInfo(propertyFilter.personPropertyId, propertyFilter.equality,
-					propertyFilter.personPropertyValue);
+			return new PropertyFilterInfo(propertyFilter.personPropertyId, propertyFilter.equality, propertyFilter.personPropertyValue);
 		case RESOURCE:
 			ResourceFilter resourceFilter = (ResourceFilter) filter;
-			return new ResourceFilterInfo(resourceFilter.resourceId, resourceFilter.equality,
-					resourceFilter.resourceValue);
+			return new ResourceFilterInfo(resourceFilter.resourceId, resourceFilter.equality, resourceFilter.resourceValue);
 		case GROUP_MEMBER:
 			GroupMemberFilter groupMemberFilter = (GroupMemberFilter) filter;
 			return new GroupMemberFilterInfo(groupMemberFilter.groupId);
 		case GROUPS_FOR_PERSON_AND_GROUP_TYPE:
 			GroupsForPersonAndGroupTypeFilter groupsForPersonAndGroupTypeFilter = (GroupsForPersonAndGroupTypeFilter) filter;
-			return new GroupsForPersonAndGroupTypeFilterInfo(groupsForPersonAndGroupTypeFilter.groupTypeId,
-					groupsForPersonAndGroupTypeFilter.equality, groupsForPersonAndGroupTypeFilter.groupCount);
+			return new GroupsForPersonAndGroupTypeFilterInfo(groupsForPersonAndGroupTypeFilter.groupTypeId, groupsForPersonAndGroupTypeFilter.equality, groupsForPersonAndGroupTypeFilter.groupCount);
 		case GROUPS_FOR_PERSON:
 			GroupsForPersonFilter groupsForPersonFilter = (GroupsForPersonFilter) filter;
 			return new GroupsForPersonFilterInfo(groupsForPersonFilter.equality, groupsForPersonFilter.groupCount);
 		case GROUP_TYPES_FOR_PERSON:
 			GroupTypesForPersonFilter groupTypesForPersonFilter = (GroupTypesForPersonFilter) filter;
-			return new GroupTypesForPersonFilterInfo(groupTypesForPersonFilter.equality,
-					groupTypesForPersonFilter.groupTypeCount);
+			return new GroupTypesForPersonFilterInfo(groupTypesForPersonFilter.equality, groupTypesForPersonFilter.groupTypeCount);
 		default:
 			throw new RuntimeException("unhandled filter type " + filterType);
 		}
@@ -576,6 +588,9 @@ public abstract class FilterInfo {
 		}
 	}
 
+	/**
+	 * Returns a multi-line, indented string representation of this {@link FilterInfo}
+	 */
 	@Override
 	public String toString() {
 		return FilterDisplay.getPrettyPrint(this);

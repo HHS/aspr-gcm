@@ -189,6 +189,11 @@ public class FilterDisplay {
 
 	}
 
+	/**
+	 * Returns a string representation of a {@link FilterInfo} where the filter
+	 * is displayed across multiple lines with tabbed indents for logical sub
+	 * filters.
+	 */
 	public static String getPrettyPrint(FilterInfo filterInfo) {
 
 		return getPrettyPrintInternal(filterInfo, 0);

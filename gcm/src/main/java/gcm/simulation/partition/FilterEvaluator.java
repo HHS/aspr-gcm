@@ -40,6 +40,9 @@ public abstract class FilterEvaluator {
 	private FilterEvaluator() {
 	}
 
+	/**
+	 * Returns a {@link FilterEvaluator} from the given {@link FilterInfo}
+	 */
 	public static FilterEvaluator build(FilterInfo filterInfo) {
 
 		FilterInfoType filterInfoType = filterInfo.getFilterInfoType();
@@ -123,7 +126,7 @@ public abstract class FilterEvaluator {
 
 	private static final class RegionFilterEvaluator extends FilterEvaluator {
 
-		//the region ids will be an unmodifiable list
+		// the region ids will be an unmodifiable list
 		private final Set<RegionId> regionIds;
 
 		public RegionFilterEvaluator(Set<RegionId> regionIds) {
@@ -310,6 +313,10 @@ public abstract class FilterEvaluator {
 		}
 	}
 
+	/**
+	 * Returns true if and only if the given {@link PersonId} passes the
+	 * {@link FilterInfo} used to construct this {@link FilterEvaluator}
+	 */
 	public abstract boolean evaluate(Environment environment, PersonId personId);
 
 }

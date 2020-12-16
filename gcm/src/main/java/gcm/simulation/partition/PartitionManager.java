@@ -18,7 +18,7 @@ import gcm.util.annotations.Source;
 /**
  * A manager for partitions. The Context uses a single instance of
  * this manager to manage all partitions. Components are not exposed to
- * partitions  or the PartitionManager but instead work with the
+ * partitions or the PartitionManager but instead work with the
  * Environment as a proxy.
  *
  * @author Shawn Hatch

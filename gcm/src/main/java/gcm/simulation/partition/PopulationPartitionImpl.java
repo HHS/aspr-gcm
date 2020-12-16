@@ -35,7 +35,13 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.containers.people.BasePeopleContainer;
 import gcm.util.containers.people.PeopleContainer;
-
+/**
+ * Primary implementor for {@link PopulationPartition}
+ * 
+ * 
+ * @author Shawn Hatch
+ *
+ */
 @Source(status = TestStatus.REQUIRED, proxy = EnvironmentImpl.class)
 public final class PopulationPartitionImpl implements PopulationPartition {
 

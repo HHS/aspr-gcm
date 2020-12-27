@@ -42,7 +42,7 @@ import gcm.util.annotations.Source;
 public abstract class Filter {
 	
 	static class AllPeopleFilter extends Filter {
-		// TODO convert filters to use an instance-based fluent build pattern
+		
 	}
 
 	static class AndFilter extends Filter {

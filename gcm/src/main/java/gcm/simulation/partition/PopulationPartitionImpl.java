@@ -1225,38 +1225,4 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		throw new ModelException(simulationErrorType, errorDescription);
 	}
 
-	// private long reportObject(Object object, String label) {
-	// MemSizer memSizer = context.getContextFreeMemSizer();
-	// memSizer.excludeClass(PersonId.class);
-	// long result = memSizer.getByteCount(object);
-	// System.out.println(label + " = " + result);
-	// return result;
-	// }
-
-	// private long reportObjectVerbose(Object object, String label) {
-	// MemSizer memSizer = context.getContextFreeMemSizer();
-	// memSizer.setVerbose(true);
-	// memSizer.excludeClass(PersonId.class);
-	// long result = memSizer.getByteCount(object);
-	// System.out.println(label + " = " + result);
-	// return result;
-	// }
-
-	// @Override
-	// public void report() {
-	// // TODO Auto-generated method stub
-	// reportObject(personPropertyLabelIndexes, "personPropertyLabelIndexes");
-	// reportObject(resourceLabelIndexes, "resourceLabelIndexes");
-	// reportObject(keyToPeopleMap, "keyToPeopleMap");
-	// reportObjectVerbose(personToKeyMap, "personToKeyMap");
-	// reportObject(keyMap, "keyMap");
-	// reportObject(labelSetInfoMap, "labelSetInfoMap");
-	// reportObject(labelManagers, "labelManagers");
-	// reportObject(owningComponentId, "owningComponentId");
-	// reportObject(partitionInfo, "partitionInfo");
-	// reportObject(filterInfo, "filterInfo");
-	// reportObject(filterEvaluator, "filterEvaluator");
-	// reportObject(identifierKey, "identifierKey");
-	// }
-
 }

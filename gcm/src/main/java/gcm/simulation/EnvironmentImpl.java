@@ -3616,7 +3616,7 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		try {
 			validateComponentHasFocus();
 			validateGroupExists(groupId);
-			GroupTypeId groupTypeId = getGroupType(groupId);
+			GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
 			validateGroupPropertyId(groupTypeId, groupPropertyId);
 			mutationResolver.observeGroupPropertyChangeByGroupAndProperty(observe, groupPropertyId, groupId);
 		} finally {
@@ -3768,23 +3768,15 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 		}
 	}
 
-	private void validateFilterInfo_Deep(final FilterInfo filterInfo) {
-		// TODO -- collapse the validation methods
-		/*
-		 * Get a FilterInfo for the filter, decompose it into all its individual
-		 * children and validate each child
-		 */
-		FilterInfo.getHierarchyAsList(filterInfo).forEach(this::validateFilterInfo);
-	}
-
+	
 	private void validatePopulationPartitionDefinition(final Partition partition) {
 		if (partition == null) {
 			throwModelException(SimulationErrorType.NULL_POPULATION_PARTITION_DEFINITION);
 		}
 
 		Filter filter = partition.getFilter().orElse(Filter.allPeople());
-		FilterInfo filterInfo = FilterInfo.build(filter);
-		validateFilterInfo_Deep(filterInfo);
+		FilterInfo filterInfo = FilterInfo.build(filter);		
+		FilterInfo.getHierarchyAsList(filterInfo).forEach(this::validateFilterInfo);
 
 		for (PersonPropertyId personPropertyId : partition.getPersonPropertyIds()) {
 			validatePersonPropertyId(personPropertyId);
@@ -3810,7 +3802,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 
 	@Override
 	public void addPartition(Partition partition, Object key) {
-		externalAccessManager.acquireWriteAccess();
+		//externalAccessManager.acquireWriteAccess();
+		externalAccessManager.acquireReadAccess();
 		try {
 			validateComponentHasFocus();
 			validatePopulationPartitionDefinition(partition);
@@ -3818,7 +3811,8 @@ public final class EnvironmentImpl extends BaseElement implements Environment {
 			validatePopulationPartitionDoesNotExist(key);
 			mutationResolver.addPartition(componentManager.getFocalComponentId(), partition, key);
 		} finally {
-			externalAccessManager.releaseWriteAccess();
+			//externalAccessManager.releaseWriteAccess();
+			externalAccessManager.releaseReadAccess();
 		}
 	}
 

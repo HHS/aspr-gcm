@@ -180,6 +180,7 @@ public final class ComponentManagerImpl extends BaseElement implements Component
 		setFocus(GCM);
 
 	}
+	
 	@Override
 	public void wrapComponentsInProxies() {
 		for(ComponentRecord componentRecord : componentRecords.values()) {
@@ -200,8 +201,8 @@ public final class ComponentManagerImpl extends BaseElement implements Component
 
 	@Override
 	public void addGlobalComponent(GlobalComponentId globalComponentId, Class<? extends Component> globalComponentClass) {
-		//TODO -- proxy wrapping not addressed
-		final Component component = getComponent(globalComponentClass);
+		Component component = getComponent(globalComponentClass);
+		component = profileManager.getProfiledProxy(component);
 		componentRecords.put(globalComponentId, new ComponentRecord(component, ComponentType.GLOBAL, globalComponentId));
 	}
 }

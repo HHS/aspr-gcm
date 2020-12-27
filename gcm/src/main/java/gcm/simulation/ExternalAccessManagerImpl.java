@@ -77,7 +77,7 @@ public final class ExternalAccessManagerImpl extends BaseElement implements Exte
 		if (globalReadAccessLocked) {
 			throw new RuntimeException(
 					"A contributed element is attempting to read data while read/write permission is blocked");
-		}
+		}		
 		readDepth++;
 	}
 

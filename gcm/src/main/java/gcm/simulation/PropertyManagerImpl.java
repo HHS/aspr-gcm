@@ -41,8 +41,8 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	/*
 	 * Record for holding the value and assignment time for a property. People
-	 * property values, being numerous, are stored in specialized classes. All other
-	 * property values are stored via maps to PropertyValueRecord.
+	 * property values, being numerous, are stored in specialized classes. All
+	 * other property values are stored via maps to PropertyValueRecord.
 	 */
 	private static class PropertyValueRecord {
 
@@ -107,12 +107,12 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		Scenario scenario = context.getScenario();
 
 		/*
-		 * NOTE: For some of the property definitions contained in the scenario, there
-		 * may be a default value of null. A null value will reside in the
-		 * propertyValueRecord after this method executes, but the scenario guarantees
-		 * that a non-null property value exists in the scenario that will be loaded
-		 * before any component is initialized and so no component will be able to
-		 * retrieve a null property value.
+		 * NOTE: For some of the property definitions contained in the scenario,
+		 * there may be a default value of null. A null value will reside in the
+		 * propertyValueRecord after this method executes, but the scenario
+		 * guarantees that a non-null property value exists in the scenario that
+		 * will be loaded before any component is initialized and so no
+		 * component will be able to retrieve a null property value.
 		 */
 
 		for (RegionId regionId : scenario.getRegionIds()) {
@@ -135,8 +135,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<CompartmentPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			compartmentPropertyMap.put(compartmentId, map);
 			for (CompartmentPropertyId compartmentPropertyId : scenario.getCompartmentPropertyIds(compartmentId)) {
-				PropertyDefinition compartmentPropertyDefinition = scenario
-						.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
+				PropertyDefinition compartmentPropertyDefinition = scenario.getCompartmentPropertyDefinition(compartmentId, compartmentPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (compartmentPropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(compartmentPropertyDefinition.getDefaultValue().get());
@@ -152,8 +151,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<MaterialsProducerPropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			materialsProducerPropertyMap.put(materialsProducerId, map);
 			for (MaterialsProducerPropertyId materialsProducerPropertyId : scenario.getMaterialsProducerPropertyIds()) {
-				PropertyDefinition materialsProducerPropertyDefinition = scenario
-						.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
+				PropertyDefinition materialsProducerPropertyDefinition = scenario.getMaterialsProducerPropertyDefinition(materialsProducerPropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (materialsProducerPropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(materialsProducerPropertyDefinition.getDefaultValue().get());
@@ -169,8 +167,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			Map<ResourcePropertyId, PropertyValueRecord> map = new LinkedHashMap<>();
 			resourcePropertyMap.put(resourceId, map);
 			for (ResourcePropertyId resourcePropertyId : scenario.getResourcePropertyIds(resourceId)) {
-				PropertyDefinition resourcePropertyDefinition = scenario.getResourcePropertyDefinition(resourceId,
-						resourcePropertyId);
+				PropertyDefinition resourcePropertyDefinition = scenario.getResourcePropertyDefinition(resourceId, resourcePropertyId);
 				PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 				if (resourcePropertyDefinition.getDefaultValue().isPresent()) {
 					propertyValueRecord.setPropertyValue(resourcePropertyDefinition.getDefaultValue().get());
@@ -201,35 +198,32 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		}
 
 		/*
-		 * Using the PropertyDefinition associated with each person property, we select
-		 * an appropriate PropertyManager implementor and place it in the
-		 * propertyManagerMap. The default for anything we don't understand such as
-		 * modeler-defined types and Strings get handled with an ObjectPropertyManager.
+		 * Using the PropertyDefinition associated with each person property, we
+		 * select an appropriate PropertyManager implementor and place it in the
+		 * propertyManagerMap. The default for anything we don't understand such
+		 * as modeler-defined types and Strings get handled with an
+		 * ObjectPropertyManager.
 		 */
 		int intialSize = context.getScenario().getSuggestedPopulationSize();
 		for (PersonPropertyId personPropertyId : scenario.getPersonPropertyIds()) {
 			PropertyDefinition propertyDefinition = scenario.getPersonPropertyDefinition(personPropertyId);
-			IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition,
-					intialSize);
+			IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition, intialSize);
 
-			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);			
+			personPropertyManagerMap.put(personPropertyId, indexedPropertyManager);
 		}
 
 		for (GroupTypeId groupTypeId : scenario.getGroupTypeIds()) {
 			Map<GroupPropertyId, IndexedPropertyManager> managerMap = new LinkedHashMap<>();
 			groupPropertyManagerMap.put(groupTypeId, managerMap);
 			for (GroupPropertyId groupPropertyId : scenario.getGroupPropertyIds(groupTypeId)) {
-				PropertyDefinition propertyDefinition = scenario.getGroupPropertyDefinition(groupTypeId,
-						groupPropertyId);
-				IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition,
-						0);
+				PropertyDefinition propertyDefinition = scenario.getGroupPropertyDefinition(groupTypeId, groupPropertyId);
+				IndexedPropertyManager indexedPropertyManager = getIndexedPropertyManager(context, propertyDefinition, 0);
 				managerMap.put(groupPropertyId, indexedPropertyManager);
 			}
 		}
 	}
 
-	private IndexedPropertyManager getIndexedPropertyManager(Context context, PropertyDefinition propertyDefinition,
-			int intialSize) {
+	private IndexedPropertyManager getIndexedPropertyManager(Context context, PropertyDefinition propertyDefinition, int intialSize) {
 
 		IndexedPropertyManager indexedPropertyManager;
 		if (propertyDefinition.getType() == Boolean.class) {
@@ -266,21 +260,19 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId,
-			Object personPropertyValue) {		
+	public void setPersonPropertyValue(PersonId personId, PersonPropertyId personPropertyId, Object personPropertyValue) {
 		personPropertyManagerMap.get(personPropertyId).setPropertyValue(personId.getValue(), personPropertyValue);
 	}
 
 	@Override
-	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId,
-			final Object personPropertyValue) {
+	public List<PersonId> getPeopleWithPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 
 		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 
 		/*
 		 * We are not maintaining a map from property values to people. We first
-		 * determine the number of people who will be returned so that we can size the
-		 * resulting ArrayList properly.
+		 * determine the number of people who will be returned so that we can
+		 * size the resulting ArrayList properly.
 		 */
 		int n = personIdManager.getPersonIdLimit();
 		int count = 0;
@@ -314,13 +306,12 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId,
-			final Object personPropertyValue) {
+	public int getPersonCountForPropertyValue(final PersonPropertyId personPropertyId, final Object personPropertyValue) {
 
 		/*
 		 * We are not maintaining a map from property values to people. We first
-		 * determine the number of people who will be returned so that we can size the
-		 * resulting ArrayList properly.
+		 * determine the number of people who will be returned so that we can
+		 * size the resulting ArrayList properly.
 		 */
 
 		IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
@@ -341,12 +332,16 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 
 	@Override
 	public void handlePersonAddition(final PersonId personId) {
-		//TODO -- can this be removed?
+		/*
+		 * The current implementation does not require any action when a person
+		 * is added since that person's property values will all be set to the
+		 * default values for those properties.
+		 */
 	}
 
 	@Override
 	public void handlePersonRemoval(final PersonId personId) {
-		
+
 		for (PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
 			indexedPropertyManager.removeId(personId.getValue());
@@ -354,8 +349,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setRegionPropertyValue(RegionId regionId, RegionPropertyId regionPropertyId,
-			Object regionPropertyValue) {
+	public void setRegionPropertyValue(RegionId regionId, RegionPropertyId regionPropertyId, Object regionPropertyValue) {
 		regionPropertyMap.get(regionId).get(regionPropertyId).setPropertyValue(regionPropertyValue);
 	}
 
@@ -371,8 +365,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setCompartmentPropertyValue(CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId,
-			Object compartmentPropertyValue) {
+	public void setCompartmentPropertyValue(CompartmentId compartmentId, CompartmentPropertyId compartmentPropertyId, Object compartmentPropertyValue) {
 		compartmentPropertyMap.get(compartmentId).get(compartmentPropertyId).setPropertyValue(compartmentPropertyValue);
 	}
 
@@ -388,29 +381,23 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
-			MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
-		materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId)
-				.setPropertyValue(materialsProducerPropertyValue);
+	public void setMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId, Object materialsProducerPropertyValue) {
+		materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).setPropertyValue(materialsProducerPropertyValue);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId,
-			MaterialsProducerPropertyId materialsProducerPropertyId) {
+	public <T> T getMaterialsProducerPropertyValue(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
 		return (T) materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getValue();
 	}
 
 	@Override
-	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId,
-			MaterialsProducerPropertyId materialsProducerPropertyId) {
-		return materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId)
-				.getAssignmentTime();
+	public double getMaterialsProducerPropertyTime(MaterialsProducerId materialsProducerId, MaterialsProducerPropertyId materialsProducerPropertyId) {
+		return materialsProducerPropertyMap.get(materialsProducerId).get(materialsProducerPropertyId).getAssignmentTime();
 	}
 
 	@Override
-	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId,
-			Object resourcPropertyValue) {
+	public void setResourcePropertyValue(ResourceId resourceId, ResourcePropertyId resourcePropertyId, Object resourcPropertyValue) {
 		resourcePropertyMap.get(resourceId).get(resourcePropertyId).setPropertyValue(resourcPropertyValue);
 	}
 
@@ -484,14 +471,12 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		Set<BatchPropertyId> batchPropertyIds = batchPropertyIdMap.get(materialId);
 
 		for (BatchPropertyId batchPropertyId : batchPropertyIds) {
-			PropertyDefinition propertyDefinition = propertyDefinitionManager.getBatchPropertyDefinition(materialId,
-					batchPropertyId);
+			PropertyDefinition propertyDefinition = propertyDefinitionManager.getBatchPropertyDefinition(materialId, batchPropertyId);
 			PropertyValueRecord propertyValueRecord = new PropertyValueRecord(eventManager);
 			if (propertyDefinition.getDefaultValue().isPresent()) {
 				propertyValueRecord.setPropertyValue(propertyDefinition.getDefaultValue().get());
 			} else {
-				throw new RuntimeException("Batch property id : " + batchPropertyId
-						+ " has a null default property value for its property definition: " + propertyDefinition);
+				throw new RuntimeException("Batch property id : " + batchPropertyId + " has a null default property value for its property definition: " + propertyDefinition);
 			}
 			map.put(batchPropertyId, propertyValueRecord);
 		}
@@ -511,8 +496,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		memoryPartition.addMemoryLink(this, personPropertyManagerMap, "Person Property Manager Map");
 		for (PersonPropertyId personPropertyId : personPropertyManagerMap.keySet()) {
 			IndexedPropertyManager indexedPropertyManager = personPropertyManagerMap.get(personPropertyId);
-			memoryPartition.addMemoryLink(this, indexedPropertyManager,
-					"Person Property: " + personPropertyId.toString());
+			memoryPartition.addMemoryLink(this, indexedPropertyManager, "Person Property: " + personPropertyId.toString());
 		}
 	}
 
@@ -521,7 +505,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 		globalPropertyMap.get(globalPropertyId).setPropertyValue(globalPropertyValue);
 	}
 
-/////////////NEW GROUP PROPERTY MANAGEMENT////////////////////
+	///////////// NEW GROUP PROPERTY MANAGEMENT////////////////////
 	private Map<GroupTypeId, Map<GroupPropertyId, IndexedPropertyManager>> groupPropertyManagerMap = new LinkedHashMap<>();
 
 	@Override
@@ -541,8 +525,7 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 	}
 
 	@Override
-	public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId,
-			Object groupPropertyValue) {
+	public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId, Object groupPropertyValue) {
 		GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
 		Map<GroupPropertyId, IndexedPropertyManager> map = groupPropertyManagerMap.get(groupTypeId);
 		IndexedPropertyManager indexedPropertyManager = map.get(groupPropertyId);
@@ -558,71 +541,81 @@ public final class PropertyManagerImpl extends BaseElement implements PropertyMa
 			indexedPropertyManager.removeId(groupId.getValue());
 		}
 	}
-/////////////OLD GROUP PROPERTY MANAGEMENT////////////////////
+	///////////// OLD GROUP PROPERTY MANAGEMENT////////////////////
 	// private Map<GroupId, Map<GroupPropertyId, PropertyValueRecord>>
 	// groupPropertyMap = new LinkedHashMap<>();
 
-//	@Override
-//	public double getGroupPropertyTime(final GroupId groupId, GroupPropertyId groupPropertyId) {
-//		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
-//		/*
-//		 * If we cannot find a property assignment time, then we assume it is time zero.
-//		 */
-//		PropertyValueRecord propertyValueRecord = null;
-//		if (propertyMap != null) {
-//			propertyValueRecord = propertyMap.get(groupPropertyId);
-//		}
-//		if (propertyValueRecord == null) {
-//			return 0;
-//		}
-//		return propertyValueRecord.assignmentTime;
-//	}
-//
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public <T> T getGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId) {
-//		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
-//		/*
-//		 * If we cannot find a property value record we will use the default value
-//		 * associated with the property definition.
-//		 */
-//		PropertyValueRecord propertyValueRecord = null;
-//		if (propertyMap != null) {
-//			propertyValueRecord = propertyMap.get(groupPropertyId);
-//		}
-//		if (propertyValueRecord == null) {
-//			GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
-//			PropertyDefinition propertyDefinition = propertyDefinitionManager.getGroupPropertyDefinition(groupTypeId,
-//					groupPropertyId);
-//			if (propertyDefinition.getDefaultValue().isPresent()) {
-//				return (T) propertyDefinition.getDefaultValue().get();
-//			} else {
-//				throw new RuntimeException("Group property id : " + groupPropertyId
-//						+ " has a null default property value for its property definition: " + propertyDefinition);
-//			}
-//		}
-//		return (T) propertyValueRecord.getValue();
-//	}
-//
-//	@Override
-//	public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId groupPropertyId,
-//			Object groupPropertyValue) {
-//		Map<GroupPropertyId, PropertyValueRecord> propertyMap = groupPropertyMap.get(groupId);
-//		if (propertyMap == null) {
-//			propertyMap = new LinkedHashMap<>();
-//			groupPropertyMap.put(groupId, propertyMap);
-//		}
-//
-//		PropertyValueRecord propertyValueRecord = propertyMap.get(groupPropertyId);
-//		if (propertyValueRecord == null) {
-//			propertyValueRecord = new PropertyValueRecord(eventManager);
-//			propertyMap.put(groupPropertyId, propertyValueRecord);
-//		}
-//		propertyValueRecord.setPropertyValue(groupPropertyValue);
-//	}
-//
-//	@Override
-//	public void handleGroupRemoval(final GroupId groupId) {
-//		groupPropertyMap.remove(groupId);
-//	}
+	// @Override
+	// public double getGroupPropertyTime(final GroupId groupId, GroupPropertyId
+	// groupPropertyId) {
+	// Map<GroupPropertyId, PropertyValueRecord> propertyMap =
+	// groupPropertyMap.get(groupId);
+	// /*
+	// * If we cannot find a property assignment time, then we assume it is time
+	// zero.
+	// */
+	// PropertyValueRecord propertyValueRecord = null;
+	// if (propertyMap != null) {
+	// propertyValueRecord = propertyMap.get(groupPropertyId);
+	// }
+	// if (propertyValueRecord == null) {
+	// return 0;
+	// }
+	// return propertyValueRecord.assignmentTime;
+	// }
+	//
+	// @SuppressWarnings("unchecked")
+	// @Override
+	// public <T> T getGroupPropertyValue(final GroupId groupId, GroupPropertyId
+	// groupPropertyId) {
+	// Map<GroupPropertyId, PropertyValueRecord> propertyMap =
+	// groupPropertyMap.get(groupId);
+	// /*
+	// * If we cannot find a property value record we will use the default value
+	// * associated with the property definition.
+	// */
+	// PropertyValueRecord propertyValueRecord = null;
+	// if (propertyMap != null) {
+	// propertyValueRecord = propertyMap.get(groupPropertyId);
+	// }
+	// if (propertyValueRecord == null) {
+	// GroupTypeId groupTypeId = personGroupManger.getGroupType(groupId);
+	// PropertyDefinition propertyDefinition =
+	// propertyDefinitionManager.getGroupPropertyDefinition(groupTypeId,
+	// groupPropertyId);
+	// if (propertyDefinition.getDefaultValue().isPresent()) {
+	// return (T) propertyDefinition.getDefaultValue().get();
+	// } else {
+	// throw new RuntimeException("Group property id : " + groupPropertyId
+	// + " has a null default property value for its property definition: " +
+	// propertyDefinition);
+	// }
+	// }
+	// return (T) propertyValueRecord.getValue();
+	// }
+	//
+	// @Override
+	// public void setGroupPropertyValue(final GroupId groupId, GroupPropertyId
+	// groupPropertyId,
+	// Object groupPropertyValue) {
+	// Map<GroupPropertyId, PropertyValueRecord> propertyMap =
+	// groupPropertyMap.get(groupId);
+	// if (propertyMap == null) {
+	// propertyMap = new LinkedHashMap<>();
+	// groupPropertyMap.put(groupId, propertyMap);
+	// }
+	//
+	// PropertyValueRecord propertyValueRecord =
+	// propertyMap.get(groupPropertyId);
+	// if (propertyValueRecord == null) {
+	// propertyValueRecord = new PropertyValueRecord(eventManager);
+	// propertyMap.put(groupPropertyId, propertyValueRecord);
+	// }
+	// propertyValueRecord.setPropertyValue(groupPropertyValue);
+	// }
+	//
+	// @Override
+	// public void handleGroupRemoval(final GroupId groupId) {
+	// groupPropertyMap.remove(groupId);
+	// }
 }

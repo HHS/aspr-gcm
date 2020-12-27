@@ -175,8 +175,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		final Set<RegionId> regionIds;
-		if (partition.getRegionPartitionFunction().isPresent()) {
-			// TODO -- do something faster than this
+		if (partition.getRegionPartitionFunction().isPresent()) {			
 			regionIds = context.getScenario().getRegionIds();
 		} else {
 			regionIds = trigger.getRegionIdentifiers();
@@ -203,13 +202,13 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 			set.add(populationPartition);
 		}
 
-		// The trigger's value-sensitive and value-insensitive property ids are
-		// expected
-		// to be disjoint. However, the partition may demand evaluation for a
-		// particular
-		// property id, and thus for all values of that property, overriding the
-		// expectations of the trigger. We blend those expectations, favoring
-		// value-insensitive re-evaluations.
+		/*
+		 * The trigger's value-sensitive and value-insensitive property ids are
+		 * expected to be disjoint. However, the partition may demand evaluation
+		 * for a particular property id, and thus for all values of that
+		 * property, overriding the expectations of the trigger. We blend those
+		 * expectations, favoring value-insensitive re-evaluations.
+		 */
 
 		final Set<PersonPropertyId> valueInsensitivePropertyIdentifiers = trigger.getValueInsensitivePropertyIdentifiers();
 		valueInsensitivePropertyIdentifiers.addAll(partition.getPersonPropertyIds());
@@ -277,13 +276,13 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 
 	@Override
 	public void collectMemoryLinks(final MemoryPartition memoryPartition) {
-		
-		for(Object key : partitions.keySet()) {
+
+		for (Object key : partitions.keySet()) {
 			PopulationPartition populationPartition = partitions.get(key);
 			populationPartition.getOwningComponentId();
 			memoryPartition.addMemoryLink(this, populationPartition, key.toString());
 		}
-		
+
 	}
 
 	@Override
@@ -575,8 +574,7 @@ public final class PartitionManagerImpl extends BaseElement implements Partition
 		}
 
 		final Set<RegionId> regionIds;
-		if (partition.getRegionPartitionFunction().isPresent()) {
-			// TODO -- do something faster than this
+		if (partition.getRegionPartitionFunction().isPresent()) {			
 			regionIds = context.getScenario().getRegionIds();
 		} else {
 			regionIds = trigger.getRegionIdentifiers();

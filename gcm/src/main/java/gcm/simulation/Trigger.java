@@ -23,7 +23,7 @@ import gcm.util.annotations.TestStatus;
 
 /**
  * A distillation of the values, types and other relevant data used by a filter.
- * It is used by the Index Population Manager to efficiently map changes to a
+ * It is used by the Partition Manager to efficiently map changes to a
  * person or its relationships to just those population indexes that may be
  * effected.
  */

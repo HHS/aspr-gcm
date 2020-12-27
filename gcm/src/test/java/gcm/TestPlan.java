@@ -603,35 +603,6 @@ public class TestPlan {
 			}
 		}
 
-		// Show that the test classes are in one to one correspondence with the
-		// contents of the suite test file
-
-		// TODO Remove this?
-//		SuiteClasses suiteClasses = SuiteTest.class.getAnnotation(SuiteClasses.class);
-//
-//		Set<Class<?>> automatedTestClasses = new LinkedHashSet<>();
-//		for (TestClassRec testClassRec : testClassRecs.values()) {
-//			automatedTestClasses.add(testClassRec.getTestClass());
-//		}
-//
-//		Class<?>[] value = suiteClasses.value();
-//		Set<Class<?>> coveredClasses = new LinkedHashSet<>();
-//		for (Class<?> c : value) {
-//			coveredClasses.add(c);
-//		}
-//
-//		for (Class<?> c : automatedTestClasses) {
-//			if (!coveredClasses.contains(c)) {
-//				addWarning(WarningType.SUITE_CLASS_MISSING_TEST_CLASS, c.getCanonicalName());
-//			}
-//		}
-//
-//		for (Class<?> c : coveredClasses) {
-//			if (!automatedTestClasses.contains(c)) {
-//				addWarning(WarningType.SUITE_CLASS_CONTAINS_NON_TEST_CLASS, c.getCanonicalName());
-//			}
-//		}
-
 	}
 
 	private void validateSourceClassRecs() {

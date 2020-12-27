@@ -9,20 +9,9 @@ import net.jcip.annotations.Immutable;
 
 /**
  * A Path is an ordered a walk through a set of nodes by way of edges without
- * any breaks.
- * 
- * 1) The pathEdges iterator returns the edges of the graph in a well defined
- * order 2) If two consecutive edges e1 and e2 are returned by the pathEdges
- * iterator, then e1's destination node will equal e2's origin node via
- * Object.equals();
- * 
- * Note that a path may be crossing or cyclic. The pathEdges() iterator may
- * repeat edges since it represents the walk through the graph. Contrast this
- * with the Graph.getEdgesIterator() iterator which merely iterates through the
- * unique edges in the graph.
- * 
- * A path may be a degenerate, having no edges. Degenerate paths are the
- * expected results for paths that do not exist.
+ * any breaks. A path may be crossing or cyclic, with the getEdges() list
+ * containing repeated edges. A path may be a degenerate, having no edges.
+ * Degenerate paths are the expected results for paths that do not exist.
  * 
  * @author Shawn Hatch
  * 
@@ -30,7 +19,6 @@ import net.jcip.annotations.Immutable;
 @Source(status = TestStatus.REQUIRED)
 @Immutable
 public final class Path<E> {
-	// TODO rewrite class doc
 
 	/**
 	 * Returns a new instance of the Builder class

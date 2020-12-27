@@ -26,14 +26,7 @@ public final class ModelException extends RuntimeException {
 
 	private final SimulationErrorType simulationErrorType;
 
-	/*
-	 * Package access constructor. Creates a ModelException having the given
-	 * ErrorType and a message value of the given description
-	 *
-	 * @param simulationErrorType
-	 */
-	public ModelException(final SimulationErrorType simulationErrorType, final String description) {
-		//TODO return this to package access?
+	public ModelException(final SimulationErrorType simulationErrorType, final String description) {		
 		super(description);
 		this.simulationErrorType = simulationErrorType;
 	}

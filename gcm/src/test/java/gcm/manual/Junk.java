@@ -26,6 +26,7 @@ import gcm.automated.support.TestGlobalComponentId;
 import gcm.automated.support.TestGroupTypeId;
 import gcm.automated.support.TestMaterialsProducerId;
 import gcm.automated.support.TestPersonPropertyId;
+import gcm.automated.support.TestRandomGeneratorId;
 import gcm.automated.support.TestRegionId;
 import gcm.automated.support.TestRegionPropertyId;
 import gcm.replication.Replication;
@@ -37,6 +38,7 @@ import gcm.scenario.ScenarioBuilder;
 import gcm.scenario.UnstructuredScenarioBuilder;
 import gcm.simulation.EnvironmentImpl;
 import gcm.simulation.Equality;
+import gcm.simulation.ObservableEnvironment;
 import gcm.simulation.Simulation;
 import gcm.simulation.SimulationErrorType;
 import gcm.simulation.partition.Filter;
@@ -80,7 +82,7 @@ public class Junk {
 			Filter filter = Filter.property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.GREATER_THAN_EQUAL, 6);
 			filter = filter.and(Filter.property(TestPersonPropertyId.PERSON_PROPERTY_1, Equality.LESS_THAN_EQUAL, 12));
 
-			Partition partition = Partition	.builder().setFilter(filter)
+			Partition partition = Partition	.builder().setFilter(filter)					
 											.setRegionFunction((regionId) -> {
 												String regionCode = environment.getRegionPropertyValue(regionId, TestRegionPropertyId.REGION_PROPERTY_1);
 												String stateCode = regionCode.substring(3, 5);
@@ -97,7 +99,17 @@ public class Junk {
 			environment.addPartition(partition, UNVACCINATED_SCHOOL_AGE_CHILDREN);
 
 			LabelSet labelSet = LabelSet.builder().setRegionLabel("MD").build();
-			PartitionSampler partitionSampler = PartitionSampler.builder().setLabelSet(labelSet).build();
+			PartitionSampler partitionSampler = PartitionSampler.builder().					
+					setLabelSet(labelSet).
+					//setExcludedPerson(excludedPersonId).
+					setRandomNumberGeneratorId(TestRandomGeneratorId.COMET).
+					setLabelSetWeightingFunction((env, labels)->{						
+						if(labels.getRegionLabel().equals("VA")) {
+							return 0.5;
+						}
+						return 1;
+					}).
+					build();
 			Optional<PersonId> partitionSample = environment.samplePartition(UNVACCINATED_SCHOOL_AGE_CHILDREN, partitionSampler);
 			if (partitionSample.isPresent()) {
 				PersonId sampledPersonid = partitionSample.get();

@@ -35,6 +35,7 @@ import gcm.util.annotations.Source;
 import gcm.util.annotations.TestStatus;
 import gcm.util.containers.people.BasePeopleContainer;
 import gcm.util.containers.people.PeopleContainer;
+
 /**
  * Primary implementor for {@link PopulationPartition}
  * 
@@ -52,14 +53,19 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 	private static class LabelManager {
 
 		private Map<Object, LabelCounter> labels = new LinkedHashMap<>();
-		private List<Object> labelList = new ArrayList<>();
+		private Iterator<Object> iterator;
+		private int lastIndexForIteration = -1;
+		private Object lastIterationResult;
 
 		public void addLabel(Object label) {
 			LabelCounter labelCounter = labels.get(label);
 			if (labelCounter == null) {
-				labelList.add(label);
 				labelCounter = new LabelCounter();
 				labels.put(label, labelCounter);
+				if (iterator != null) {
+					iterator = null;
+					lastIndexForIteration = -1;
+				}
 			}
 			labelCounter.count++;
 		}
@@ -69,16 +75,37 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			labelCounter.count--;
 			if (labelCounter.count == 0) {
 				labels.remove(label);
-				labelList.remove(label);
+				if (iterator != null) {
+					iterator = null;
+					lastIndexForIteration = -1;
+				}
 			}
+
 		}
+		
 
 		public int getLabelCount() {
-			return labelList.size();
+			return labels.size();
 		}
 
+		/*
+		 * The client must invoke this method with the ordered inputs
+		 * 0,1,2...getLabelCount()-1 and may repeat that order continuously.
+		 * 
+		 */
 		public Object getLabel(int index) {
-			return labelList.get(index);
+			if (lastIndexForIteration == index) {
+				return lastIterationResult;
+			}
+
+			if (iterator == null || !iterator.hasNext()) {
+				iterator = labels.keySet().iterator();
+			}
+
+			lastIndexForIteration = index;
+			lastIterationResult = iterator.next();
+
+			return lastIterationResult;
 		}
 
 	}
@@ -337,18 +364,18 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			Object personPropertyValue = environment.getPersonPropertyValue(personId, personPropertyId);
 			Object label = partition.getPersonPropertyPartitionFunction(personPropertyId).get().apply(personPropertyValue);
 			if (label == null) {
-				throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL, personPropertyId+"="+personPropertyValue);
-			}			
-			key.keys[index++] = label; 
+				throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL, personPropertyId + "=" + personPropertyValue);
+			}
+			key.keys[index++] = label;
 		}
 
 		for (ResourceId resourceId : partition.getPersonResourceIds()) {
 			long personResourceLevel = environment.getPersonResourceLevel(personId, resourceId);
 			Object label = partition.getPersonResourcePartitionFunction(resourceId).get().apply(personResourceLevel);
 			if (label == null) {
-				throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId+"="+personResourceLevel);
-			}			
-			key.keys[index++] = label; 
+				throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId + "=" + personResourceLevel);
+			}
+			key.keys[index++] = label;
 		}
 
 		if (partition.getGroupPartitionFunction().isPresent()) {
@@ -363,8 +390,8 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 			Object label = partition.getGroupPartitionFunction().get().apply(groupTypeCountMap);
 			if (label == null) {
 				throwModelException(SimulationErrorType.NULL_GROUP_LABEL, groupTypeCountMap);
-			}	
-			key.keys[index++] = label; 
+			}
+			key.keys[index++] = label;
 		}
 
 		Key cleanedKey = keyMap.get(key);
@@ -495,7 +522,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object newRegionLabel = partition.getRegionPartitionFunction().get().apply(environment.getPersonRegion(personId));
 
 		if (newRegionLabel == null) {
-			throwModelException(SimulationErrorType.NULL_REGION_LABEL,environment.getPersonRegion(personId));
+			throwModelException(SimulationErrorType.NULL_REGION_LABEL, environment.getPersonRegion(personId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -537,7 +564,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object newPropertyLabel = partition.getPersonPropertyPartitionFunction(personPropertyId).get().apply(environment.getPersonPropertyValue(personId, personPropertyId));
 
 		if (newPropertyLabel == null) {
-			throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL,personPropertyId+"="+environment.getPersonPropertyValue(personId, personPropertyId));
+			throwModelException(SimulationErrorType.NULL_PROPERTY_LABEL, personPropertyId + "=" + environment.getPersonPropertyValue(personId, personPropertyId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -579,7 +606,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		Object newResourceLabel = partition.getPersonResourcePartitionFunction(resourceId).get().apply(environment.getPersonResourceLevel(personId, resourceId));
 
 		if (newResourceLabel == null) {
-			throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId+"="+environment.getPersonResourceLevel(personId, resourceId));
+			throwModelException(SimulationErrorType.NULL_RESOURCE_LABEL, resourceId + "=" + environment.getPersonResourceLevel(personId, resourceId));
 		}
 
 		// if the label did not change there is nothing to do
@@ -813,6 +840,7 @@ public final class PopulationPartitionImpl implements PopulationPartition {
 		}
 
 		private void calculateNextKey() {
+
 			if (index >= tuplator.size()) {
 				nextKey = null;
 			} else {
